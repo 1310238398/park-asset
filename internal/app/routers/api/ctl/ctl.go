@@ -19,5 +19,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewDictionary)
 	container.Provide(NewSystemParameter)
 	container.Provide(NewOrganization)
+	container.Provide(NewFile)
 	return nil
 }

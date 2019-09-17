@@ -1,9 +1,10 @@
 package impl
 
 import (
-	"go.uber.org/dig"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/bll/impl/internal"
+
+	"go.uber.org/dig"
 )
 
 // Inject 注入bll实现
@@ -22,5 +23,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewDictionary, dig.As(new(bll.IDictionary)))
 	container.Provide(internal.NewSystemParameter, dig.As(new(bll.ISystemParameter)))
 	container.Provide(internal.NewOrganization, dig.As(new(bll.IOrganization)))
+	container.Provide(internal.NewFile, dig.As(new(bll.IFile)))
 	return nil
 }
