@@ -8,6 +8,8 @@ import (
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/pkg/auth"
 	"gxt-park-assets/pkg/logger"
+	"gxt-park-assets/pkg/minio"
+
 	"github.com/casbin/casbin"
 	"go.uber.org/dig"
 )
@@ -103,6 +105,9 @@ func Init(ctx context.Context, opts ...Option) func() {
 	err = InitData(ctx, container)
 	handleError(err)
 
+	// 初始化文件服务
+	InitMinio()
+
 	// 初始化HTTP服务
 	httpCall := InitHTTPServer(ctx, container)
 	return func() {
@@ -116,6 +121,12 @@ func Init(ctx context.Context, opts ...Option) func() {
 			loggerCall()
 		}
 	}
+}
+
+// InitMinio 初始化minio
+func InitMinio() {
+	cfg := config.GetGlobalConfig().Minio
+	minio.Init(cfg.Addr, cfg.AssessKey, cfg.SecretKey)
 }
 
 // NewEnforcer 创建casbin校验

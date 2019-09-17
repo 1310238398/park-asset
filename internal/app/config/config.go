@@ -61,6 +61,7 @@ type Config struct {
 	MySQL           MySQL       `toml:"mysql"`
 	Postgres        Postgres    `toml:"postgres"`
 	Sqlite3         Sqlite3     `toml:"sqlite3"`
+	Minio           Minio       `toml:"minio"`
 }
 
 // Log 日志配置参数
@@ -182,7 +183,7 @@ type Postgres struct {
 	User     string `toml:"user"`
 	Password string `toml:"password"`
 	DBName   string `toml:"db_name"`
-	SSLMode   string `toml:"sslmode"`
+	SSLMode  string `toml:"sslmode"`
 }
 
 // DSN 数据库连接串
@@ -199,4 +200,11 @@ type Sqlite3 struct {
 // DSN 数据库连接串
 func (a Sqlite3) DSN() string {
 	return a.Path
+}
+
+// Minio minio配置参数
+type Minio struct {
+	Addr      string `toml:"addr"`
+	AssessKey string `toml:"assess_key"`
+	SecretKey string `toml:"secret_key"`
 }

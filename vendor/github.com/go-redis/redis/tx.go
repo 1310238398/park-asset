@@ -3,8 +3,8 @@ package redis
 import (
 	"context"
 
-	"github.com/go-redis/redis/internal/pool"
-	"github.com/go-redis/redis/internal/proto"
+	"github.com/go-redis/redis/v7/internal/pool"
+	"github.com/go-redis/redis/v7/internal/proto"
 )
 
 // TxFailedErr transaction redis failed.
@@ -15,20 +15,19 @@ const TxFailedErr = proto.RedisError("redis: transaction failed")
 // by multiple goroutines, because Exec resets list of watched keys.
 // If you don't need WATCH it is better to use Pipeline.
 type Tx struct {
+	baseClient
 	cmdable
 	statefulCmdable
-	baseClient
-
 	ctx context.Context
 }
 
-func (c *Client) newTx() *Tx {
+func (c *Client) newTx(ctx context.Context) *Tx {
 	tx := Tx{
 		baseClient: baseClient{
 			opt:      c.opt,
 			connPool: pool.NewStickyConnPool(c.connPool.(*pool.ConnPool), true),
 		},
-		ctx: c.ctx,
+		ctx: ctx,
 	}
 	tx.init()
 	return &tx
@@ -40,10 +39,7 @@ func (c *Tx) init() {
 }
 
 func (c *Tx) Context() context.Context {
-	if c.ctx != nil {
-		return c.ctx
-	}
-	return context.Background()
+	return c.ctx
 }
 
 func (c *Tx) WithContext(ctx context.Context) *Tx {
@@ -52,6 +48,7 @@ func (c *Tx) WithContext(ctx context.Context) *Tx {
 	}
 	clone := *c
 	clone.ctx = ctx
+	clone.init()
 	return &clone
 }
 
@@ -68,7 +65,11 @@ func (c *Tx) ProcessContext(ctx context.Context, cmd Cmder) error {
 //
 // The transaction is automatically closed when fn exits.
 func (c *Client) Watch(fn func(*Tx) error, keys ...string) error {
-	tx := c.newTx()
+	return c.WatchContext(c.ctx, fn, keys...)
+}
+
+func (c *Client) WatchContext(ctx context.Context, fn func(*Tx) error, keys ...string) error {
+	tx := c.newTx(ctx)
 	if len(keys) > 0 {
 		if err := tx.Watch(keys...).Err(); err != nil {
 			_ = tx.Close()
@@ -96,7 +97,7 @@ func (c *Tx) Watch(keys ...string) *StatusCmd {
 		args[1+i] = key
 	}
 	cmd := NewStatusCmd(args...)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -108,13 +109,14 @@ func (c *Tx) Unwatch(keys ...string) *StatusCmd {
 		args[1+i] = key
 	}
 	cmd := NewStatusCmd(args...)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
 // Pipeline creates a new pipeline. It is more convenient to use Pipelined.
 func (c *Tx) Pipeline() Pipeliner {
 	pipe := Pipeline{
+		ctx:  c.ctx,
 		exec: c.processTxPipeline,
 	}
 	pipe.init()
