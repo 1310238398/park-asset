@@ -68,12 +68,12 @@ func (a *Organization) QueryPage(c *gin.Context) {
 	ginplus.ResPage(c, result.Data, result.PageResult)
 }
 
-// QueryTree 查询字典树
-// @Summary 查询字典树
+// QueryTree 查询组织机构树
+// @Summary 查询组织机构树
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param parent_code query string false "父级编号"
 // @Param level query int false "层级(-1表示所有层级,0表示当前层级（默认为0）)"
-// @Success 200 option.Interface "查询结果：{list:字典树}"
+// @Success 200 option.Interface "查询结果：{list:组织机构树}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
