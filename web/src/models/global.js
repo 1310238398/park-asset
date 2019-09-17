@@ -4,8 +4,8 @@ export default {
   namespace: 'global',
 
   state: {
-    title: '权限管理脚手架',
-    copyRight: '2019 LyricTian',
+    title: '资产管理系统',
+    copyRight: '2019',
     defaultURL: '/dashboard',
     collapsed: false,
     openKeys: [],
