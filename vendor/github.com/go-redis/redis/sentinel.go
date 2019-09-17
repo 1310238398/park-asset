@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/internal"
-	"github.com/go-redis/redis/internal/pool"
+	"github.com/go-redis/redis/v7/internal"
+	"github.com/go-redis/redis/v7/internal/pool"
 )
 
 //------------------------------------------------------------------------------
@@ -90,13 +90,12 @@ func NewFailoverClient(failoverOpt *FailoverOptions) *Client {
 	}
 
 	c := Client{
-		client: &client{
-			baseClient: baseClient{
-				opt:      opt,
-				connPool: failover.Pool(),
-				onClose:  failover.Close,
-			},
+		baseClient: baseClient{
+			opt:      opt,
+			connPool: failover.Pool(),
+			onClose:  failover.Close,
 		},
+		ctx: context.Background(),
 	}
 	c.cmdable = c.Process
 
@@ -117,15 +116,13 @@ func NewSentinelClient(opt *Options) *SentinelClient {
 			opt:      opt,
 			connPool: newConnPool(opt),
 		},
+		ctx: context.Background(),
 	}
 	return c
 }
 
 func (c *SentinelClient) Context() context.Context {
-	if c.ctx != nil {
-		return c.ctx
-	}
-	return context.Background()
+	return c.ctx
 }
 
 func (c *SentinelClient) WithContext(ctx context.Context) *SentinelClient {
@@ -150,7 +147,7 @@ func (c *SentinelClient) pubSub() *PubSub {
 		opt: c.opt,
 
 		newConn: func(channels []string) (*pool.Conn, error) {
-			return c.newConn()
+			return c.newConn(context.TODO())
 		},
 		closeConn: c.connPool.CloseConn,
 	}
@@ -162,7 +159,7 @@ func (c *SentinelClient) pubSub() *PubSub {
 // measure latency.
 func (c *SentinelClient) Ping() *StringCmd {
 	cmd := NewStringCmd("ping")
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -188,13 +185,13 @@ func (c *SentinelClient) PSubscribe(channels ...string) *PubSub {
 
 func (c *SentinelClient) GetMasterAddrByName(name string) *StringSliceCmd {
 	cmd := NewStringSliceCmd("sentinel", "get-master-addr-by-name", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
 func (c *SentinelClient) Sentinels(name string) *SliceCmd {
 	cmd := NewSliceCmd("sentinel", "sentinels", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -202,7 +199,7 @@ func (c *SentinelClient) Sentinels(name string) *SliceCmd {
 // asking for agreement to other Sentinels.
 func (c *SentinelClient) Failover(name string) *StatusCmd {
 	cmd := NewStatusCmd("sentinel", "failover", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -212,7 +209,7 @@ func (c *SentinelClient) Failover(name string) *StatusCmd {
 // already discovered and associated with the master.
 func (c *SentinelClient) Reset(pattern string) *IntCmd {
 	cmd := NewIntCmd("sentinel", "reset", pattern)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -220,28 +217,28 @@ func (c *SentinelClient) Reset(pattern string) *IntCmd {
 // the current Sentinel state.
 func (c *SentinelClient) FlushConfig() *StatusCmd {
 	cmd := NewStatusCmd("sentinel", "flushconfig")
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
 // Master shows the state and info of the specified master.
 func (c *SentinelClient) Master(name string) *StringStringMapCmd {
 	cmd := NewStringStringMapCmd("sentinel", "master", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
 // Masters shows a list of monitored masters and their state.
 func (c *SentinelClient) Masters() *SliceCmd {
 	cmd := NewSliceCmd("sentinel", "masters")
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
 // Slaves shows a list of slaves for the specified master and their state.
 func (c *SentinelClient) Slaves(name string) *SliceCmd {
 	cmd := NewSliceCmd("sentinel", "slaves", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -251,7 +248,7 @@ func (c *SentinelClient) Slaves(name string) *SliceCmd {
 // Sentinel deployment is ok.
 func (c *SentinelClient) CkQuorum(name string) *StringCmd {
 	cmd := NewStringCmd("sentinel", "ckquorum", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -259,14 +256,14 @@ func (c *SentinelClient) CkQuorum(name string) *StringCmd {
 // name, ip, port, and quorum.
 func (c *SentinelClient) Monitor(name, ip, port, quorum string) *StringCmd {
 	cmd := NewStringCmd("sentinel", "monitor", name, ip, port, quorum)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
 // Set is used in order to change configuration parameters of a specific master.
 func (c *SentinelClient) Set(name, option, value string) *StringCmd {
 	cmd := NewStringCmd("sentinel", "set", name, option, value)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -275,7 +272,7 @@ func (c *SentinelClient) Set(name, option, value string) *StringCmd {
 // the Sentinel.
 func (c *SentinelClient) Remove(name string) *StringCmd {
 	cmd := NewStringCmd("sentinel", "remove", name)
-	c.Process(cmd)
+	_ = c.Process(cmd)
 	return cmd
 }
 
@@ -306,16 +303,20 @@ func (c *sentinelFailover) Close() error {
 
 func (c *sentinelFailover) Pool() *pool.ConnPool {
 	c.poolOnce.Do(func() {
-		c.opt.Dialer = c.dial
-		c.pool = newConnPool(c.opt)
+		opt := *c.opt
+		opt.Dialer = c.dial
+		c.pool = newConnPool(&opt)
 	})
 	return c.pool
 }
 
-func (c *sentinelFailover) dial(ctx context.Context, network, addr string) (net.Conn, error) {
+func (c *sentinelFailover) dial(ctx context.Context, network, _ string) (net.Conn, error) {
 	addr, err := c.MasterAddr()
 	if err != nil {
 		return nil, err
+	}
+	if c.opt.Dialer != nil {
+		return c.opt.Dialer(ctx, network, addr)
 	}
 	return net.DialTimeout("tcp", addr, c.opt.DialTimeout)
 }
@@ -360,7 +361,7 @@ func (c *sentinelFailover) masterAddr() (string, error) {
 
 		masterAddr, err := sentinel.GetMasterAddrByName(c.masterName).Result()
 		if err != nil {
-			internal.Logf("sentinel: GetMasterAddrByName master=%q failed: %s",
+			internal.Logger.Printf("sentinel: GetMasterAddrByName master=%q failed: %s",
 				c.masterName, err)
 			_ = sentinel.Close()
 			continue
@@ -388,11 +389,11 @@ func (c *sentinelFailover) getMasterAddr() string {
 
 	addr, err := sentinel.GetMasterAddrByName(c.masterName).Result()
 	if err != nil {
-		internal.Logf("sentinel: GetMasterAddrByName name=%q failed: %s",
+		internal.Logger.Printf("sentinel: GetMasterAddrByName name=%q failed: %s",
 			c.masterName, err)
 		c.mu.Lock()
 		if c.sentinel == sentinel {
-			c.closeSentinel()
+			_ = c.closeSentinel()
 		}
 		c.mu.Unlock()
 		return ""
@@ -412,7 +413,7 @@ func (c *sentinelFailover) switchMaster(addr string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	internal.Logf("sentinel: new master=%q addr=%q",
+	internal.Logger.Printf("sentinel: new master=%q addr=%q",
 		c.masterName, addr)
 	_ = c.Pool().Filter(func(cn *pool.Conn) bool {
 		return cn.RemoteAddr().String() != addr
@@ -429,16 +430,11 @@ func (c *sentinelFailover) setSentinel(sentinel *SentinelClient) {
 }
 
 func (c *sentinelFailover) closeSentinel() error {
-	var firstErr error
-
-	err := c.pubsub.Close()
-	if err != nil && firstErr == err {
-		firstErr = err
-	}
+	firstErr := c.pubsub.Close()
 	c.pubsub = nil
 
-	err = c.sentinel.Close()
-	if err != nil && firstErr == err {
+	err := c.sentinel.Close()
+	if err != nil && firstErr == nil {
 		firstErr = err
 	}
 	c.sentinel = nil
@@ -449,7 +445,7 @@ func (c *sentinelFailover) closeSentinel() error {
 func (c *sentinelFailover) discoverSentinels(sentinel *SentinelClient) {
 	sentinels, err := sentinel.Sentinels(c.masterName).Result()
 	if err != nil {
-		internal.Logf("sentinel: Sentinels master=%q failed: %s", c.masterName, err)
+		internal.Logger.Printf("sentinel: Sentinels master=%q failed: %s", c.masterName, err)
 		return
 	}
 	for _, sentinel := range sentinels {
@@ -459,7 +455,7 @@ func (c *sentinelFailover) discoverSentinels(sentinel *SentinelClient) {
 			if key == "name" {
 				sentinelAddr := vals[i+1].(string)
 				if !contains(c.sentinelAddrs, sentinelAddr) {
-					internal.Logf("sentinel: discovered new sentinel=%q for master=%q",
+					internal.Logger.Printf("sentinel: discovered new sentinel=%q for master=%q",
 						sentinelAddr, c.masterName)
 					c.sentinelAddrs = append(c.sentinelAddrs, sentinelAddr)
 				}
@@ -479,7 +475,7 @@ func (c *sentinelFailover) listen(pubsub *PubSub) {
 		if msg.Channel == "+switch-master" {
 			parts := strings.Split(msg.Payload, " ")
 			if parts[0] != c.masterName {
-				internal.Logf("sentinel: ignore addr for master=%q", parts[0])
+				internal.Logger.Printf("sentinel: ignore addr for master=%q", parts[0])
 				continue
 			}
 			addr := net.JoinHostPort(parts[3], parts[4])

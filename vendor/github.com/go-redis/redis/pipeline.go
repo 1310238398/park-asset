@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/go-redis/redis/internal/pool"
+	"github.com/go-redis/redis/v7/internal/pool"
 )
 
 type pipelineExecer func(context.Context, []Cmder) error
@@ -41,6 +41,7 @@ type Pipeline struct {
 	cmdable
 	statefulCmdable
 
+	ctx  context.Context
 	exec pipelineExecer
 
 	mu     sync.Mutex
@@ -70,7 +71,7 @@ func (c *Pipeline) Process(cmd Cmder) error {
 // Close closes the pipeline, releasing any open resources.
 func (c *Pipeline) Close() error {
 	c.mu.Lock()
-	c.discard()
+	_ = c.discard()
 	c.closed = true
 	c.mu.Unlock()
 	return nil
@@ -98,7 +99,7 @@ func (c *Pipeline) discard() error {
 // Exec always returns list of commands and error of the first failed
 // command if any.
 func (c *Pipeline) Exec() ([]Cmder, error) {
-	return c.ExecContext(nil)
+	return c.ExecContext(c.ctx)
 }
 
 func (c *Pipeline) ExecContext(ctx context.Context) ([]Cmder, error) {
