@@ -12,6 +12,8 @@ type IDictionary interface {
 	Query(ctx context.Context, params schema.DictionaryQueryParam, opts ...schema.DictionaryQueryOptions) (*schema.DictionaryQueryResult, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.DictionaryQueryOptions) (*schema.Dictionary, error)
+	// 根据编号获取数据
+	GetByCode(ctx context.Context, code string) (*schema.Dictionary, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.Dictionary) (*schema.Dictionary, error)
 	// 更新数据

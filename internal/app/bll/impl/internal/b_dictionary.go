@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"strings"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model"
@@ -38,6 +39,27 @@ func (a *Dictionary) Get(ctx context.Context, recordID string, opts ...schema.Di
 	}
 
 	return item, nil
+}
+
+// GetByCode 根据编号获取数据
+func (a *Dictionary) GetByCode(ctx context.Context, code string) (*schema.Dictionary, error) {
+	var params schema.DictionaryQueryParam
+
+	idx := strings.LastIndex(code, a.getSep())
+	if idx != -1 {
+		params.ParentPath = code[:idx]
+		params.Code = code[idx+len(a.getSep()):]
+	} else {
+		params.Code = code
+	}
+
+	result, err := a.DictionaryModel.Query(ctx, params)
+	if err != nil {
+		return nil, err
+	} else if len(result.Data) > 0 {
+		return result.Data[0], nil
+	}
+	return nil, nil
 }
 
 func (a *Dictionary) getUpdate(ctx context.Context, recordID string) (*schema.Dictionary, error) {

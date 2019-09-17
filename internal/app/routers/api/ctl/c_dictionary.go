@@ -30,6 +30,8 @@ func (a *Dictionary) Query(c *gin.Context) {
 		a.QueryPage(c)
 	case "tree":
 		a.QueryPage(c)
+	case "code":
+		a.GetByCode(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -96,6 +98,31 @@ func (a *Dictionary) QueryTree(c *gin.Context) {
 	}
 
 	ginplus.ResList(c, result.Data.ToTrees().ToTree())
+}
+
+// GetByCode 根据编号查询数据
+// @Summary 根据编号查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param code query string false "字典编号"
+// @Success 200 schema.Dictionary "字典数据"
+// @Failure 400 schema.HTTPError "{code:0,message:未知的查询类型}"
+// @Failure 401 schema.HTTPError "{code:0,message:未授权}"
+// @Failure 500 schema.HTTPError "{code:0,message:服务器错误}"
+// @Router GET /api/v1/dictionaries?q=code
+func (a *Dictionary) GetByCode(c *gin.Context) {
+	code := c.Query("code")
+	if code == "" {
+		ginplus.ResSuccess(c, nil)
+		return
+	}
+
+	item, err := a.DictionaryBll.GetByCode(ginplus.NewContext(c), code)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResSuccess(c, item)
 }
 
 // Get 查询指定数据
