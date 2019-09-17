@@ -1,2 +1,2 @@
 -- Create a database
-CREATE DATABASE `ginadmin` DEFAULT CHARACTER SET = `utf8mb4`;
+CREATE DATABASE `parkassets` DEFAULT CHARACTER SET = `utf8mb4`;
