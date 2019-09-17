@@ -146,7 +146,7 @@ password = ""
 # 是否开启调试模式
 debug = true
 # 数据库类型(目前支持的数据库类型：mysql/sqlite3/postgres)
-db_type = "sqlite3"
+db_type = "mysql"
 # 设置连接可以重用的最长时间(单位：秒)
 max_lifetime = 7200
 # 设置数据库的最大打开连接数
@@ -154,20 +154,20 @@ max_open_conns = 150
 # 设置空闲连接池中的最大连接数
 max_idle_conns = 50
 # 数据库表名前缀
-table_prefix = "g_"
+table_prefix = "pa_"
 
 # mysql数据库配置
 [mysql]
 # 连接地址
-host = "127.0.0.1"
+host = "39.98.250.155"
 # 连接端口
 port= 3306
 # 用户名
 user = "root"
 # 密码
-password = "123456"
+password = "gEkYDPloQcp93t4WHr3X"
 # 数据库
-db_name = "ginadmin"
+db_name = "parkassets"
 # 连接参数
 parameters = "charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true"
 
@@ -183,11 +183,27 @@ user = "root"
 password = "123456"
 # 数据库
 db_name = "ginadmin"
-
+# ssl模式
 sslmode = "disable"
-
 
 # sqlite数据库配置
 [sqlite3]
 # 数据库路径
 path = "data/ginadmin.db"
+
+# minio存储
+[minio]
+addr = "39.98.250.155:9000"
+assess_key = "TR9JPEM8NLLC36QIP91H"
+secret_key = "c68hOHi4fFeby5Q0vMEFSN3IB3QTdJGFYe552Ja+"
+
+# 认证中心
+[auth]
+# 地址
+addr = "http://39.98.250.155:8098"
+# 客户端ID
+client_id = "5cd677d90e698a3d9a0a9ae3"
+# 客户端秘钥
+client_secret = "90ea8d5ca027bcae59980fb61ff106fdfd94a99e"
+# 唯一标识
+identify = "ASSETS"
