@@ -26,6 +26,7 @@ import (
 // Key represents a key under a section.
 type Key struct {
 	s               *Section
+	Comment         string
 	name            string
 	value           string
 	isAutoIncrement bool
@@ -34,7 +35,7 @@ type Key struct {
 	isShadow bool
 	shadows  []*Key
 
-	Comment string
+	nestedValues []string
 }
 
 // newKey simply return a key object with given values.
@@ -67,6 +68,23 @@ func (k *Key) AddShadow(val string) error {
 	return k.addShadow(val)
 }
 
+func (k *Key) addNestedValue(val string) error {
+	if k.isAutoIncrement || k.isBooleanType {
+		return errors.New("cannot add nested value to auto-increment or boolean key")
+	}
+
+	k.nestedValues = append(k.nestedValues, val)
+	return nil
+}
+
+// AddNestedValue adds a nested value to the key.
+func (k *Key) AddNestedValue(val string) error {
+	if !k.s.f.options.AllowNestedValues {
+		return errors.New("nested value is not allowed")
+	}
+	return k.addNestedValue(val)
+}
+
 // ValueMapper represents a mapping function for values, e.g. os.ExpandEnv
 type ValueMapper func(string) string
 
@@ -93,6 +111,12 @@ func (k *Key) ValueWithShadows() []string {
 	return vals
 }
 
+// NestedValues returns nested values stored in the key.
+// It is possible returned value is nil if no nested values stored in the key.
+func (k *Key) NestedValues() []string {
+	return k.nestedValues
+}
+
 // transformValue takes a raw value and transforms to its final string.
 func (k *Key) transformValue(val string) string {
 	if k.s.f.ValueMapper != nil {
@@ -103,19 +127,18 @@ func (k *Key) transformValue(val string) string {
 	if !strings.Contains(val, "%") {
 		return val
 	}
-	for i := 0; i < _DEPTH_VALUES; i++ {
+	for i := 0; i < depthValues; i++ {
 		vr := varPattern.FindString(val)
 		if len(vr) == 0 {
 			break
 		}
 
 		// Take off leading '%(' and trailing ')s'.
-		noption := strings.TrimLeft(vr, "%(")
-		noption = strings.TrimRight(noption, ")s")
+		noption := vr[2 : len(vr)-2]
 
 		// Search in the same section.
 		nk, err := k.s.GetKey(noption)
-		if err != nil {
+		if err != nil || k == nk {
 			// Search again in default section.
 			nk, _ = k.s.f.Section("").GetKey(noption)
 		}
@@ -164,23 +187,24 @@ func (k *Key) Float64() (float64, error) {
 
 // Int returns int type value.
 func (k *Key) Int() (int, error) {
-	return strconv.Atoi(k.String())
+	v, err := strconv.ParseInt(k.String(), 0, 64)
+	return int(v), err
 }
 
 // Int64 returns int64 type value.
 func (k *Key) Int64() (int64, error) {
-	return strconv.ParseInt(k.String(), 10, 64)
+	return strconv.ParseInt(k.String(), 0, 64)
 }
 
 // Uint returns uint type valued.
 func (k *Key) Uint() (uint, error) {
-	u, e := strconv.ParseUint(k.String(), 10, 64)
+	u, e := strconv.ParseUint(k.String(), 0, 64)
 	return uint(u), e
 }
 
 // Uint64 returns uint64 type value.
 func (k *Key) Uint64() (uint64, error) {
-	return strconv.ParseUint(k.String(), 10, 64)
+	return strconv.ParseUint(k.String(), 0, 64)
 }
 
 // Duration returns time.Duration type value.
@@ -468,7 +492,7 @@ func (k *Key) Strings(delim string) []string {
 				buf.WriteRune(runes[idx])
 			}
 		}
-		idx += 1
+		idx++
 		if idx == len(runes) {
 			break
 		}
@@ -645,7 +669,8 @@ func (k *Key) parseFloat64s(strs []string, addInvalid, returnOnInvalid bool) ([]
 func (k *Key) parseInts(strs []string, addInvalid, returnOnInvalid bool) ([]int, error) {
 	vals := make([]int, 0, len(strs))
 	for _, str := range strs {
-		val, err := strconv.Atoi(str)
+		valInt64, err := strconv.ParseInt(str, 0, 64)
+		val := int(valInt64)
 		if err != nil && returnOnInvalid {
 			return nil, err
 		}
@@ -660,7 +685,7 @@ func (k *Key) parseInts(strs []string, addInvalid, returnOnInvalid bool) ([]int,
 func (k *Key) parseInt64s(strs []string, addInvalid, returnOnInvalid bool) ([]int64, error) {
 	vals := make([]int64, 0, len(strs))
 	for _, str := range strs {
-		val, err := strconv.ParseInt(str, 10, 64)
+		val, err := strconv.ParseInt(str, 0, 64)
 		if err != nil && returnOnInvalid {
 			return nil, err
 		}
@@ -675,7 +700,7 @@ func (k *Key) parseInt64s(strs []string, addInvalid, returnOnInvalid bool) ([]in
 func (k *Key) parseUints(strs []string, addInvalid, returnOnInvalid bool) ([]uint, error) {
 	vals := make([]uint, 0, len(strs))
 	for _, str := range strs {
-		val, err := strconv.ParseUint(str, 10, 0)
+		val, err := strconv.ParseUint(str, 0, 0)
 		if err != nil && returnOnInvalid {
 			return nil, err
 		}
@@ -690,7 +715,7 @@ func (k *Key) parseUints(strs []string, addInvalid, returnOnInvalid bool) ([]uin
 func (k *Key) parseUint64s(strs []string, addInvalid, returnOnInvalid bool) ([]uint64, error) {
 	vals := make([]uint64, 0, len(strs))
 	for _, str := range strs {
-		val, err := strconv.ParseUint(str, 10, 64)
+		val, err := strconv.ParseUint(str, 0, 64)
 		if err != nil && returnOnInvalid {
 			return nil, err
 		}
