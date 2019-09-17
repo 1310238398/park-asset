@@ -1,7 +1,7 @@
 {
   "name": "gin-admin-react",
   "version": "2.0.0",
-  "description": "RBAC权限管理脚手架",
+  "description": "资产管理系统",
   "private": true,
   "scripts": {
     "start": "umi dev",
