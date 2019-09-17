@@ -83,7 +83,7 @@ class SystemParameterCard extends PureComponent {
               initialValue: formData.value,
               rules: [
                 {
-                  required: true,
+                  required: false,
                   message: '请输入参数值',
                 },
               ],

@@ -28,7 +28,10 @@ export default [
       },
       {
         path: 'basic',
-        routes: [{ path: '/basic/dictionary', component: './Dictionary/DictionaryList' }],
+        routes: [
+          { path: '/basic/dictionary', component: './Dictionary/DictionaryList' },
+          { path: '/basic/organstructurelist', component: './OrganStructure/OrganStructureList' },
+        ],
       },
     ],
   },
