@@ -1,18 +1,18 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Badge, Select } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
-import SystemParameterCard from './SystemParameterCard';
+import ProjectManageCard from './ProjectManageCard';
 
-import styles from './SystemParameterList.less';
+import styles from './ProjectManage.less';
 
 @connect(state => ({
-  loading: state.loading.models.systemParameter,
-  systemParameter: state.systemParameter,
+  park: state.park,
+  loading: state.loading.models.park,
 }))
 @Form.create()
-class SystemParameterList extends PureComponent {
+class ProjectManageList extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -20,51 +20,10 @@ class SystemParameterList extends PureComponent {
 
   componentDidMount() {
     this.dispatch({
-      type: 'systemParameter/fetch',
+      type: 'park/fetch',
       search: {},
       pagination: {},
     });
-  }
-
-  onItemDisableClick = item => {
-    this.dispatch({
-      type: 'systemParameter/changeStatus',
-      payload: { record_id: item.record_id, status: 2 },
-    });
-  };
-
-  onItemEnableClick = item => {
-    this.dispatch({
-      type: 'systemParameter/changeStatus',
-      payload: { record_id: item.record_id, status: 1 },
-    });
-  };
-
-  onItemEditClick = item => {
-    this.dispatch({
-      type: 'systemParameter/loadForm',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-      },
-    });
-  };
-
-  onAddClick = () => {
-    this.dispatch({
-      type: 'systemParameter/loadForm',
-      payload: {
-        type: 'A',
-      },
-    });
-  };
-
-  onDelOKClick(id) {
-    this.dispatch({
-      type: 'systemParameter/del',
-      payload: { record_id: id },
-    });
-    this.clearSelectRows();
   }
 
   clearSelectRows = () => {
@@ -75,32 +34,50 @@ class SystemParameterList extends PureComponent {
     this.setState({ selectedRowKeys: [], selectedRows: [] });
   };
 
-  onItemDelClick = item => {
-    Modal.confirm({
-      title: `确定删除【系统参数数据：${item.name}】？`,
-      okText: '确认',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: this.onDelOKClick.bind(this, item.record_id),
+  dispatch = action => {
+    const { dispatch } = this.props;
+    dispatch(action);
+  };
+
+  handleAddClick = () => {
+    this.dispatch({
+      type: 'park/loadForm',
+      payload: {
+        type: 'A',
+      },
     });
   };
 
-  onTableSelectRow = (selectedRowKeys, selectedRows) => {
-    let keys = [];
-    let rows = [];
-    if (selectedRowKeys.length > 0 && selectedRows.length > 0) {
-      keys = [selectedRowKeys[selectedRowKeys.length - 1]];
-      rows = [selectedRows[selectedRows.length - 1]];
-    }
+  handleEditClick = item => {
+    this.dispatch({
+      type: 'park/loadForm',
+      payload: {
+        type: 'E',
+        id: item.record_id,
+      },
+    });
+  };
+
+  handleDelClick = item => {
+    Modal.confirm({
+      title: `确定删除【园区数据：${item.name}】？`,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: this.handleDelOKClick.bind(this, item.record_id),
+    });
+  };
+
+  handleTableSelectRow = (keys, rows) => {
     this.setState({
       selectedRowKeys: keys,
       selectedRows: rows,
     });
   };
 
-  onTableChange = pagination => {
+  handleTableChange = pagination => {
     this.dispatch({
-      type: 'systemParameter/fetch',
+      type: 'park/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
@@ -109,27 +86,29 @@ class SystemParameterList extends PureComponent {
     this.clearSelectRows();
   };
 
-  onResetFormClick = () => {
+  handleResetFormClick = () => {
     const { form } = this.props;
     form.resetFields();
+
     this.dispatch({
-      type: 'systemParameter/fetch',
+      type: 'park/fetch',
       search: {},
       pagination: {},
     });
   };
 
-  onSearchFormSubmit = e => {
+  handleSearchFormSubmit = e => {
     if (e) {
       e.preventDefault();
     }
+
     const { form } = this.props;
     form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return;
       }
       this.dispatch({
-        type: 'systemParameter/fetch',
+        type: 'park/fetch',
         search: values,
         pagination: {},
       });
@@ -137,29 +116,49 @@ class SystemParameterList extends PureComponent {
     });
   };
 
-  onDataFormSubmit = data => {
+  handleDataFormSubmit = data => {
     this.dispatch({
-      type: 'systemParameter/submit',
+      type: 'park/submit',
       payload: data,
     });
     this.clearSelectRows();
   };
 
-  onDataFormCancel = () => {
+  handleDataFormCancel = () => {
     this.dispatch({
-      type: 'systemParameter/changeFormVisible',
+      type: 'park/changeFormVisible',
       payload: false,
     });
   };
 
-  dispatch = action => {
-    const { dispatch } = this.props;
-    dispatch(action);
+  handleItemDisableClick = item => {
+    this.dispatch({
+      type: 'park/changeStatus',
+      payload: { record_id: item.record_id, status: 2 },
+    });
   };
+
+  handleItemEnableClick = item => {
+    this.dispatch({
+      type: 'park/changeStatus',
+      payload: { record_id: item.record_id, status: 1 },
+    });
+  };
+
+  handleDelOKClick(id) {
+    this.dispatch({
+      type: 'park/del',
+      payload: { record_id: id },
+    });
+    this.clearSelectRows();
+  }
 
   renderDataForm() {
     return (
-      <SystemParameterCard onCancel={this.onDataFormCancel} onSubmit={this.onDataFormSubmit} />
+      <ProjectManageCard
+        onCancel={this.handleDataFormCancel}
+        onSubmit={this.handleDataFormSubmit}
+      />
     );
   }
 
@@ -167,40 +166,28 @@ class SystemParameterList extends PureComponent {
     const {
       form: { getFieldDecorator },
     } = this.props;
+
     return (
-      <Form onSubmit={this.onSearchFormSubmit} layout="inline">
+      <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
         <Row gutter={16}>
           <Col md={8} sm={24}>
-            <Form.Item label="编号">
-              {getFieldDecorator('code')(<Input placeholder="请输入" />)}
-            </Form.Item>
-          </Col>
-          <Col md={8} sm={24}>
-            <Form.Item label="名称">
+            <Form.Item label="园区名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
           <Col md={8} sm={24}>
-            <Form.Item label="状态">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Select.Option value="1">正常</Select.Option>
-                  <Select.Option value="2">停用</Select.Option>
-                </Select>
-              )}
-            </Form.Item>
+            <div style={{ overflow: 'hidden' }}>
+              <span style={{ marginBottom: 24 }}>
+                <Button type="primary" htmlType="submit">
+                  查询
+                </Button>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
+                  重置
+                </Button>
+              </span>
+            </div>
           </Col>
         </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <span style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
-              重置
-            </Button>
-          </span>
-        </div>
       </Form>
     );
   }
@@ -208,31 +195,42 @@ class SystemParameterList extends PureComponent {
   render() {
     const {
       loading,
-      systemParameter: {
+      park: {
         data: { list, pagination },
       },
     } = this.props;
 
-    const { selectedRows, selectedRowKeys } = this.state;
+    const { selectedRowKeys, selectedRows } = this.state;
 
     const columns = [
       {
-        title: '编号',
-        dataIndex: 'code',
-        width: 100,
+        title: '园区名称',
+        dataIndex: 'name',
+        width: 200,
       },
       {
-        title: '名称',
-        dataIndex: 'name',
+        title: '建筑面积',
+        dataIndex: 'floor_area',
         width: 150,
       },
       {
-        title: '参数值',
-        dataIndex: 'value',
+        title: '总面积',
+        dataIndex: 'total_area',
+        width: 150,
       },
       {
-        title: '备注',
-        dataIndex: 'memo',
+        title: '产权所有人',
+        dataIndex: 'property_owner',
+        width: 200,
+      },
+      {
+        title: '联系人',
+        dataIndex: 'contact',
+        width: 150,
+      },
+      {
+        title: '联系方式',
+        dataIndex: 'contact_tel',
         width: 200,
       },
       {
@@ -255,18 +253,15 @@ class SystemParameterList extends PureComponent {
       ...pagination,
     };
 
-    const breadcrumbList = [
-      { title: '系统管理' },
-      { title: '系统参数', href: '/system/systemparameter' },
-    ];
+    const breadcrumbList = [{ title: '基础数据' }, { title: '园区管理', href: '/basic/park' }];
 
     return (
-      <PageHeaderLayout title="系统参数" breadcrumbList={breadcrumbList}>
+      <PageHeaderLayout title="园区管理" breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              <PButton code="add" icon="plus" type="primary" onClick={() => this.onAddClick()}>
+              <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
                 新建
               </PButton>
               {selectedRows.length === 1 && [
@@ -274,7 +269,7 @@ class SystemParameterList extends PureComponent {
                   key="edit"
                   code="edit"
                   icon="edit"
-                  onClick={() => this.onItemEditClick(selectedRows[0])}
+                  onClick={() => this.handleEditClick(selectedRows[0])}
                 >
                   编辑
                 </PButton>,
@@ -283,8 +278,7 @@ class SystemParameterList extends PureComponent {
                   code="del"
                   icon="delete"
                   type="danger"
-                  ghost
-                  onClick={() => this.onItemDelClick(selectedRows[0])}
+                  onClick={() => this.handleDelClick(selectedRows[0])}
                 >
                   删除
                 </PButton>,
@@ -293,7 +287,7 @@ class SystemParameterList extends PureComponent {
                     key="enable"
                     code="enable"
                     icon="check"
-                    onClick={() => this.onItemEnableClick(selectedRows[0])}
+                    onClick={() => this.handleItemEnableClick(selectedRows[0])}
                   >
                     启用
                   </PButton>
@@ -304,8 +298,7 @@ class SystemParameterList extends PureComponent {
                     code="disable"
                     icon="stop"
                     type="danger"
-                    ghost
-                    onClick={() => this.onItemDisableClick(selectedRows[0])}
+                    onClick={() => this.handleItemDisableClick(selectedRows[0])}
                   >
                     禁用
                   </PButton>
@@ -316,14 +309,14 @@ class SystemParameterList extends PureComponent {
               <Table
                 rowSelection={{
                   selectedRowKeys,
-                  onChange: this.onTableSelectRow,
+                  onChange: this.handleTableSelectRow,
                 }}
                 loading={loading}
                 rowKey={record => record.record_id}
                 dataSource={list}
                 columns={columns}
                 pagination={paginationProps}
-                onChange={this.onTableChange}
+                onChange={this.handleTableChange}
                 size="small"
               />
             </div>
@@ -335,4 +328,4 @@ class SystemParameterList extends PureComponent {
   }
 }
 
-export default SystemParameterList;
+export default ProjectManageList;

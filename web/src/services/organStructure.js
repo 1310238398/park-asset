@@ -1,10 +1,8 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-const router = 'dictionaries';
-export async function queryTree(params) {
-  return request(`/v1/${router}?${stringify(params)}`);
-}
+const router = 'organizations';
+
 export async function queryPage(params) {
   return request(`/v1/${router}?${stringify(params)}`);
 }

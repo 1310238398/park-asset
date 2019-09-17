@@ -3,17 +3,18 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Button, Table, Modal, Layout, Tree } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
-import DictionaryCard from './DictionaryCard';
+import OrganStructureCard from './OrganStructureCard';
+import DicShow from '@/components/DictionaryNew/DicShow';
+import DicSelect from '@/components/DictionaryNew/DicSelect';
 
-import styles from './DictionaryList.less';
+import styles from './OrganStructure.less';
 
-const codeSeparator = '$#';
-@connect(({ dictionary, loading }) => ({
-  dictionary,
-  loading: loading.models.dictionary,
+@connect(({ organStructure, loading }) => ({
+  organStructure,
+  loading: loading.models.organStructure,
 }))
 @Form.create()
-class dictionaryList extends PureComponent {
+class OrganStructureList extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -22,11 +23,11 @@ class dictionaryList extends PureComponent {
 
   componentDidMount() {
     this.dispatch({
-      type: 'dictionary/loadTree',
+      type: 'organStructure/loadTree',
     });
 
     this.dispatch({
-      type: 'dictionary/fetch',
+      type: 'organStructure/fetch',
       search: {},
       pagination: {},
     });
@@ -39,7 +40,7 @@ class dictionaryList extends PureComponent {
     }
     const item = selectedRows[0];
     this.dispatch({
-      type: 'dictionary/loadForm',
+      type: 'organStructure/loadForm',
       payload: {
         type: 'E',
         id: item.record_id,
@@ -49,7 +50,7 @@ class dictionaryList extends PureComponent {
 
   handleAddClick = () => {
     this.dispatch({
-      type: 'dictionary/loadForm',
+      type: 'organStructure/loadForm',
       payload: {
         type: 'A',
       },
@@ -63,7 +64,7 @@ class dictionaryList extends PureComponent {
     }
     const item = selectedRows[0];
     Modal.confirm({
-      title: `确定删除【字典数据：${item.name}】？`,
+      title: `确定删除【机构数据：${item.name}】？`,
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
@@ -86,7 +87,7 @@ class dictionaryList extends PureComponent {
 
   onTableChange = pagination => {
     this.dispatch({
-      type: 'dictionary/fetch',
+      type: 'organStructure/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
@@ -99,7 +100,7 @@ class dictionaryList extends PureComponent {
     const { form } = this.props;
     form.resetFields();
     this.dispatch({
-      type: 'dictionary/fetch',
+      type: 'organStructure/fetch',
       search: { parent_id: this.getParentID() },
       pagination: {},
     });
@@ -116,7 +117,7 @@ class dictionaryList extends PureComponent {
         return;
       }
       this.dispatch({
-        type: 'dictionary/fetch',
+        type: 'organStructure/fetch',
         search: {
           ...values,
           parent_id: this.getParentID(),
@@ -129,7 +130,7 @@ class dictionaryList extends PureComponent {
 
   handleFormSubmit = data => {
     this.dispatch({
-      type: 'dictionary/submit',
+      type: 'organStructure/submit',
       payload: data,
     });
     this.clearSelectRows();
@@ -137,7 +138,7 @@ class dictionaryList extends PureComponent {
 
   handleFormCancel = () => {
     this.dispatch({
-      type: 'dictionary/changeFormVisible',
+      type: 'organStructure/changeFormVisible',
       payload: false,
     });
   };
@@ -166,14 +167,14 @@ class dictionaryList extends PureComponent {
 
   handleDelOKClick(id) {
     this.dispatch({
-      type: 'dictionary/del',
+      type: 'organStructure/del',
       payload: { record_id: id },
     });
     this.clearSelectRows();
   }
 
   renderDataForm() {
-    return <DictionaryCard onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />;
+    return <OrganStructureCard onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />;
   }
 
   renderTreeNodes = data =>
@@ -196,8 +197,19 @@ class dictionaryList extends PureComponent {
       <Form onSubmit={this.onSearchFormSubmit} layout="inline">
         <Row gutter={8}>
           <Col span={8}>
-            <Form.Item label="字典名称">
+            <Form.Item label="机构名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="机构类型">
+              {getFieldDecorator('org_type')(
+                <DicSelect
+                  vmode="int"
+                  pcode="pa$#organtype"
+                  selectProps={{ placeholder: '请选择' }}
+                />
+              )}
             </Form.Item>
           </Col>
           <Col span={6}>
@@ -220,7 +232,7 @@ class dictionaryList extends PureComponent {
   render() {
     const {
       loading,
-      dictionary: {
+      organStructure: {
         data: { list, pagination },
         treeData,
         expandedKeys,
@@ -231,25 +243,16 @@ class dictionaryList extends PureComponent {
 
     const columns = [
       {
-        title: '字典名称',
+        title: '机构名称',
         dataIndex: 'name',
         width: 150,
       },
       {
-        title: '字典编号',
-        dataIndex: 'code',
+        title: '机构类型',
+        dataIndex: 'org_type',
         width: 150,
-      },
-      {
-        title: '访问编码',
-        dataIndex: 'parent_path',
-        width: 200,
-        render: (val, record) => {
-          let v = val;
-          if (v !== '') {
-            v += codeSeparator;
-          }
-          return v + record.code;
+        render: value => {
+          return <DicShow pcode="pa$#organtype" code={[value]} />;
         },
       },
 
@@ -273,11 +276,11 @@ class dictionaryList extends PureComponent {
 
     const breadcrumbList = [
       { title: '基础数据' },
-      { title: '字典管理', href: '/basic/dictionary' },
+      { title: '机构组织', href: '/basic/organstructurelist' },
     ];
 
     return (
-      <PageHeaderLayout title="字典管理" breadcrumbList={breadcrumbList}>
+      <PageHeaderLayout title="组织机构管理" breadcrumbList={breadcrumbList}>
         <Layout>
           <Layout.Sider
             width={200}
@@ -291,7 +294,7 @@ class dictionaryList extends PureComponent {
                 });
 
                 const {
-                  dictionary: { search },
+                  organStructure: { search },
                 } = this.props;
 
                 const item = {
@@ -303,7 +306,7 @@ class dictionaryList extends PureComponent {
                 }
 
                 this.dispatch({
-                  type: 'dictionary/fetch',
+                  type: 'organStructure/fetch',
                   search: { ...search, ...item },
                   pagination: {},
                 });
@@ -312,7 +315,7 @@ class dictionaryList extends PureComponent {
               }}
               onExpand={keys => {
                 this.dispatch({
-                  type: 'dictionary/saveExpandedKeys',
+                  type: 'organStructure/saveExpandedKeys',
                   payload: keys,
                 });
               }}
@@ -375,4 +378,4 @@ class dictionaryList extends PureComponent {
     );
   }
 }
-export default dictionaryList;
+export default OrganStructureList;

@@ -1,13 +1,8 @@
 import { stringify } from 'qs';
-import request from '@/utils/request';
+import request from '../utils/request';
 
-const router = 'dictionaries';
-export async function queryTree(params) {
-  return request(`/v1/${router}?${stringify(params)}`);
-}
-export async function queryPage(params) {
-  return request(`/v1/${router}?${stringify(params)}`);
-}
+const router = 'parks';
+
 export async function query(params) {
   return request(`/v1/${router}?${stringify(params)}`);
 }
@@ -33,5 +28,17 @@ export async function update(params) {
 export async function del(params) {
   return request(`/v1/${router}/${params.record_id}`, {
     method: 'DELETE',
+  });
+}
+
+export async function enable(params) {
+  return request(`/v1/${router}/${params.record_id}/enable`, {
+    method: 'PATCH',
+  });
+}
+
+export async function disable(params) {
+  return request(`/v1/${router}/${params.record_id}/disable`, {
+    method: 'PATCH',
   });
 }
