@@ -4,6 +4,7 @@ import (
 	"gxt-park-assets/internal/app/middleware"
 	"gxt-park-assets/internal/app/routers/api/ctl"
 	"gxt-park-assets/pkg/auth"
+
 	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/dig"
@@ -24,6 +25,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cMenu *ctl.Menu,
 		cRole *ctl.Role,
 		cUser *ctl.User,
+		cDictionary *ctl.Dictionary,
 	) error {
 
 		g := app.Group("/api")
@@ -98,6 +100,13 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.DELETE("/users/:id", cUser.Delete)
 			v1.PATCH("/users/:id/enable", cUser.Enable)
 			v1.PATCH("/users/:id/disable", cUser.Disable)
+
+			// 注册/api/v1/dictionaries
+			v1.GET("/dictionaries", cDictionary.Query)
+			v1.GET("/dictionaries/:id", cDictionary.Get)
+			v1.POST("/dictionaries", cDictionary.Create)
+			v1.PUT("/dictionaries/:id", cDictionary.Update)
+			v1.DELETE("/dictionaries/:id", cDictionary.Delete)
 		}
 
 		return nil

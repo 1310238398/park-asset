@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="资产管理" id="Project_1d3054c" template="Default" database="MySql" >
+	<schema name="parkassets" catalogname="parkassets" >
+		<table name="pa_dictionary" >
+			<comment><![CDATA[字典管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="code" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[编号]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" />
+			<column name="sequence" type="int" length="10" decimal="0" jt="4" />
+			<column name="parent_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="parent_path" type="varchar" length="518" decimal="0" jt="12" />
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_menu_0" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_0" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_name_0" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_menu_parent_id_0" unique="NORMAL" >
+				<column name="parent_id" />
+			</index>
+			<index name="idx_pa_menu_parent_path_0" unique="NORMAL" >
+				<column name="parent_path" />
+			</index>
+			<index name="idx_pa_menu_record_id_0" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_pa_menu_sequence_0" unique="NORMAL" >
+				<column name="sequence" />
+			</index>
+		</table>
+		<table name="pa_menu" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="sequence" type="int" length="10" decimal="0" jt="4" />
+			<column name="icon" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="router" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="hidden" type="int" length="10" decimal="0" jt="4" />
+			<column name="parent_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="parent_path" type="varchar" length="518" decimal="0" jt="12" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_menu" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_hidden" unique="NORMAL" >
+				<column name="hidden" />
+			</index>
+			<index name="idx_pa_menu_name" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_menu_parent_id" unique="NORMAL" >
+				<column name="parent_id" />
+			</index>
+			<index name="idx_pa_menu_parent_path" unique="NORMAL" >
+				<column name="parent_path" />
+			</index>
+			<index name="idx_pa_menu_record_id" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_pa_menu_sequence" unique="NORMAL" >
+				<column name="sequence" />
+			</index>
+		</table>
+		<table name="pa_menu_action" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="menu_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="code" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="50" decimal="0" jt="12" />
+			<index name="pk_pa_menu_action" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_action_code" unique="NORMAL" >
+				<column name="code" />
+			</index>
+			<index name="idx_pa_menu_action_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_action_menu_id" unique="NORMAL" >
+				<column name="menu_id" />
+			</index>
+			<fk name="fk_pa_menu_action_pa_menu" virtual="y" to_schema="parkassets" to_table="pa_menu" >
+				<fk_column name="menu_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pa_menu_resource" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="menu_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="code" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="method" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="path" type="varchar" length="255" decimal="0" jt="12" />
+			<index name="pk_pa_menu_resource" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_resource_code" unique="NORMAL" >
+				<column name="code" />
+			</index>
+			<index name="idx_pa_menu_resource_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_resource_menu_id" unique="NORMAL" >
+				<column name="menu_id" />
+			</index>
+			<fk name="fk_pa_menu_resource_pa_menu" virtual="y" to_schema="parkassets" to_table="pa_menu" >
+				<fk_column name="menu_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pa_role" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="100" decimal="0" jt="12" />
+			<column name="sequence" type="int" length="10" decimal="0" jt="4" />
+			<column name="memo" type="varchar" length="200" decimal="0" jt="12" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_role" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_role_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_role_name" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_role_record_id" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_pa_role_sequence" unique="NORMAL" >
+				<column name="sequence" />
+			</index>
+		</table>
+		<table name="pa_role_menu" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="role_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="menu_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="action" type="varchar" length="2048" decimal="0" jt="12" />
+			<column name="resource" type="varchar" length="2048" decimal="0" jt="12" />
+			<index name="pk_pa_role_menu" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_role_menu_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_role_menu_menu_id" unique="NORMAL" >
+				<column name="menu_id" />
+			</index>
+			<index name="idx_pa_role_menu_role_id" unique="NORMAL" >
+				<column name="role_id" />
+			</index>
+			<fk name="fk_pa_role_menu_pa_menu" virtual="y" to_schema="parkassets" to_table="pa_menu" >
+				<fk_column name="menu_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pa_role_menu_pa_role" virtual="y" to_schema="parkassets" to_table="pa_role" >
+				<fk_column name="role_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pa_system_parameter" >
+			<comment><![CDATA[系统参数管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="code" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[编号]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="value" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[参数值]]></comment>
+			</column>
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[状态(1:启用 2:停用)]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_menu_1" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_1" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_name_1" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_menu_record_id_1" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="pa_user" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="user_name" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="real_name" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="password" type="varchar" length="40" decimal="0" jt="12" />
+			<column name="email" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="phone" type="varchar" length="20" decimal="0" jt="12" />
+			<column name="status" type="int" length="10" decimal="0" jt="4" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_user" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_user_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_user_email" unique="NORMAL" >
+				<column name="email" />
+			</index>
+			<index name="idx_pa_user_phone" unique="NORMAL" >
+				<column name="phone" />
+			</index>
+			<index name="idx_pa_user_real_name" unique="NORMAL" >
+				<column name="real_name" />
+			</index>
+			<index name="idx_pa_user_record_id" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_pa_user_status" unique="NORMAL" >
+				<column name="status" />
+			</index>
+			<index name="idx_pa_user_user_name" unique="NORMAL" >
+				<column name="user_name" />
+			</index>
+		</table>
+		<table name="pa_user_role" >
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="user_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="role_id" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_user_role" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_user_role_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_user_role_role_id" unique="NORMAL" >
+				<column name="role_id" />
+			</index>
+			<index name="idx_pa_user_role_user_id" unique="NORMAL" >
+				<column name="user_id" />
+			</index>
+			<fk name="fk_pa_user_role_pa_role" virtual="y" to_schema="parkassets" to_table="pa_role" >
+				<fk_column name="role_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pa_user_role_pa_user" virtual="y" to_schema="parkassets" to_table="pa_user" >
+				<fk_column name="user_id" pk="record_id" />
+			</fk>
+		</table>
+	</schema>
+	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
+		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="48" y="80" />
+		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="48" y="256" />
+		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="528" y="304" />
+		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="528" y="96" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="528" y="528" />
+		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="288" y="384" />
+		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="96" />
+		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="1024" y="80" />
+		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="800" y="80" />
+		<group name="权限管理" color="C4E0F9" >
+			<entity schema="parkassets" name="pa_menu" />
+			<entity schema="parkassets" name="pa_menu_action" />
+			<entity schema="parkassets" name="pa_menu_resource" />
+			<entity schema="parkassets" name="pa_role" />
+			<entity schema="parkassets" name="pa_role_menu" />
+			<entity schema="parkassets" name="pa_user" />
+			<entity schema="parkassets" name="pa_user_role" />
+		</group>
+		<group name="基础数据模块" color="FFE6CC" >
+			<entity schema="parkassets" name="pa_dictionary" />
+			<entity schema="parkassets" name="pa_system_parameter" />
+		</group>
+	</layout>
+</project>
