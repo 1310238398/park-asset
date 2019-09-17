@@ -130,6 +130,46 @@
 				<fk_column name="menu_id" pk="record_id" />
 			</fk>
 		</table>
+		<table name="pa_organization" >
+			<comment><![CDATA[组织机构管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="100" jt="12" />
+			<column name="org_type" type="int" length="20" jt="4" >
+				<comment><![CDATA[机构类型(1:集团 2:集团二级子公司 3:集团职能管理部门 4:集团二级子公司部门)]]></comment>
+			</column>
+			<column name="sequence" type="int" length="10" decimal="0" jt="4" />
+			<column name="parent_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="parent_path" type="varchar" length="518" decimal="0" jt="12" />
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<index name="pk_pa_menu_2" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_2" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_name_2" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_menu_parent_id_1" unique="NORMAL" >
+				<column name="parent_id" />
+			</index>
+			<index name="idx_pa_menu_parent_path_1" unique="NORMAL" >
+				<column name="parent_path" />
+			</index>
+			<index name="idx_pa_menu_record_id_2" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_pa_menu_sequence_1" unique="NORMAL" >
+				<column name="sequence" />
+			</index>
+		</table>
 		<table name="pa_role" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
@@ -295,6 +335,7 @@
 		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="96" />
 		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="1024" y="80" />
 		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="800" y="80" />
+		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="800" y="352" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
@@ -307,6 +348,7 @@
 		<group name="基础数据模块" color="FFE6CC" >
 			<entity schema="parkassets" name="pa_dictionary" />
 			<entity schema="parkassets" name="pa_system_parameter" />
+			<entity schema="parkassets" name="pa_organization" />
 		</group>
 	</layout>
 </project>

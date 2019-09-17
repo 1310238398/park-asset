@@ -26,6 +26,7 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.MenuResource),
 		new(entity.Dictionary),
 		new(entity.SystemParameter),
+		new(entity.Organization),
 	).Error
 }
 
@@ -43,5 +44,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewUser, dig.As(new(model.IUser)))
 	container.Provide(imodel.NewDictionary, dig.As(new(model.IDictionary)))
 	container.Provide(imodel.NewSystemParameter, dig.As(new(model.ISystemParameter)))
+	container.Provide(imodel.NewOrganization, dig.As(new(model.IOrganization)))
 	return nil
 }
