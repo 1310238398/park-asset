@@ -1,0 +1,55 @@
+{
+  "struct_name": "SystemParameter",
+  "comment": "系统参数管理",
+  "fields": [
+    {
+      "struct_field_name": "RecordID",
+      "comment": "记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "Code",
+      "comment": "参数编号",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:50;index;"
+    },
+    {
+      "struct_field_name": "Name",
+      "comment": "参数名称",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;index;"
+    },
+    {
+      "struct_field_name": "Value",
+      "comment": "参数值",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Status",
+      "comment": "状态(1:启用 2:停用)",
+      "struct_field_required": true,
+      "struct_field_type": "int",
+      "gorm_options": "index;"
+    },
+    {
+      "struct_field_name": "Memo",
+      "comment": "备注",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Creator",
+      "comment": "创建者",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    }
+  ]
+}

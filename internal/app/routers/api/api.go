@@ -26,6 +26,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cRole *ctl.Role,
 		cUser *ctl.User,
 		cDictionary *ctl.Dictionary,
+		cSystemParameter *ctl.SystemParameter,
 	) error {
 
 		g := app.Group("/api")
@@ -107,6 +108,15 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.POST("/dictionaries", cDictionary.Create)
 			v1.PUT("/dictionaries/:id", cDictionary.Update)
 			v1.DELETE("/dictionaries/:id", cDictionary.Delete)
+
+			// 注册/api/v1/system_parameters
+			v1.GET("/system_parameters", cSystemParameter.Query)
+			v1.GET("/system_parameters/:id", cSystemParameter.Get)
+			v1.POST("/system_parameters", cSystemParameter.Create)
+			v1.PUT("/system_parameters/:id", cSystemParameter.Update)
+			v1.DELETE("/system_parameters/:id", cSystemParameter.Delete)
+			v1.PATCH("/system_parameters/:id/enable", cSystemParameter.Enable)
+			v1.PATCH("/system_parameters/:id/disable", cSystemParameter.Disable)
 		}
 
 		return nil

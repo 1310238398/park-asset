@@ -20,5 +20,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewRole, dig.As(new(bll.IRole)))
 	container.Provide(internal.NewUser, dig.As(new(bll.IUser)))
 	container.Provide(internal.NewDictionary, dig.As(new(bll.IDictionary)))
+	container.Provide(internal.NewSystemParameter, dig.As(new(bll.ISystemParameter)))
 	return nil
 }

@@ -29,7 +29,7 @@ func (a *Dictionary) Query(c *gin.Context) {
 	case "page":
 		a.QueryPage(c)
 	case "tree":
-		a.QueryPage(c)
+		a.QueryTree(c)
 	case "code":
 		a.GetByCode(c)
 	default:
