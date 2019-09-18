@@ -13,6 +13,7 @@ type User struct {
 	Phone     string    `json:"phone" swaggo:"false,手机号"`
 	Email     string    `json:"email" swaggo:"false,邮箱"`
 	Status    int       `json:"status" binding:"required,max=2,min=1" swaggo:"true,用户状态(1:启用 2:停用)"`
+	OrgID     string    `json:"org_id" binding:"required" swaggo:"false,所属组织机构"`
 	Creator   string    `json:"creator" swaggo:"false,创建者"`
 	CreatedAt time.Time `json:"created_at" swaggo:"false,创建时间"`
 	Roles     UserRoles `json:"roles" binding:"required,gt=0" swaggo:"true,角色授权"`

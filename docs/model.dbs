@@ -170,6 +170,71 @@
 				<column name="sequence" />
 			</index>
 		</table>
+		<table name="pa_project" >
+			<comment><![CDATA[项目管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[项目名称]]></comment>
+			</column>
+			<column name="location" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[项目位置(经纬度)]]></comment>
+			</column>
+			<column name="address" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[项目地址]]></comment>
+			</column>
+			<column name="nature" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[资产性质]]></comment>
+			</column>
+			<column name="photo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[项目照片]]></comment>
+			</column>
+			<column name="asset_type" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[资产类型(写字楼/商铺)]]></comment>
+			</column>
+			<column name="peripheral" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[周边配套]]></comment>
+			</column>
+			<column name="basic_services" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[基础服务]]></comment>
+			</column>
+			<column name="tag" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[特色标签]]></comment>
+			</column>
+			<column name="has_model" type="int" jt="4" >
+				<comment><![CDATA[是否包含3D模型(1:包含 2:不包含)]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="parent_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="parent_path" type="varchar" length="518" decimal="0" jt="12" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="org_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目所属子公司]]></comment>
+			</column>
+			<index name="pk_pa_menu_3" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_3" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_name_3" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_menu_parent_id_2" unique="NORMAL" >
+				<column name="parent_id" />
+			</index>
+			<index name="idx_pa_menu_parent_path_2" unique="NORMAL" >
+				<column name="parent_path" />
+			</index>
+			<index name="idx_pa_menu_record_id_3" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+		</table>
 		<table name="pa_role" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
@@ -272,6 +337,9 @@
 			<column name="email" type="varchar" length="255" decimal="0" jt="12" />
 			<column name="phone" type="varchar" length="20" decimal="0" jt="12" />
 			<column name="status" type="int" length="10" decimal="0" jt="4" />
+			<column name="org_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[所属组织机构ID]]></comment>
+			</column>
 			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<index name="pk_pa_user" unique="PRIMARY_KEY" >
 				<column name="id" />
@@ -326,16 +394,17 @@
 		</table>
 	</schema>
 	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
-		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="48" y="80" />
-		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="48" y="256" />
-		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="528" y="304" />
-		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="528" y="96" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="528" y="528" />
-		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="288" y="384" />
-		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="96" />
-		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="1024" y="80" />
-		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="800" y="80" />
-		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="800" y="352" />
+		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="48" y="96" />
+		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="48" y="272" />
+		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="528" y="320" />
+		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="528" y="112" />
+		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="288" y="400" />
+		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="112" />
+		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="1040" y="80" />
+		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="816" y="80" />
+		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="816" y="352" />
+		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="816" y="672" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="528" y="544" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
@@ -349,6 +418,9 @@
 			<entity schema="parkassets" name="pa_dictionary" />
 			<entity schema="parkassets" name="pa_system_parameter" />
 			<entity schema="parkassets" name="pa_organization" />
+		</group>
+		<group name="资产管理" color="E6CCFF" >
+			<entity schema="parkassets" name="pa_project" />
 		</group>
 	</layout>
 </project>
