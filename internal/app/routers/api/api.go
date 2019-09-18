@@ -29,6 +29,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cSystemParameter *ctl.SystemParameter,
 		cOrganization *ctl.Organization,
 		cFile *ctl.File,
+		cProject *ctl.Project,
 	) error {
 
 		g := app.Group("/api")
@@ -129,6 +130,13 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 
 			// 注册/api/v1/files
 			v1.POST("/files", cFile.Upload)
+
+			// 注册/api/v1/projects
+			v1.GET("/projects", cProject.Query)
+			v1.GET("/projects/:id", cProject.Get)
+			v1.POST("/projects", cProject.Create)
+			v1.PUT("/projects/:id", cProject.Update)
+			v1.DELETE("/projects/:id", cProject.Delete)
 		}
 
 		return nil
