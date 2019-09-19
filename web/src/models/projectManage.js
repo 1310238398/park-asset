@@ -1,5 +1,6 @@
 import { message } from 'antd';
-import * as parkService from '@/services/projectManage';
+import { routerRedux } from 'dva/router';
+import * as projectManageService from '@/services/projectManage';
 
 export default {
   namespace: 'projectManage',
@@ -29,7 +30,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.park.search);
+        const s = yield select(state => state.projectManage.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -42,13 +43,13 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.park.pagination);
+        const p = yield select(state => state.projectManage.pagination);
         if (p) {
           params = { ...params, ...p };
         }
       }
 
-      const response = yield call(parkService.query, params);
+      const response = yield call(projectManageService.query, params);
       yield put({
         type: 'saveData',
         payload: response,
@@ -67,7 +68,7 @@ export default {
         }),
         put({
           type: 'saveFormTitle',
-          payload: '新建园区',
+          payload: '新建项目',
         }),
         put({
           type: 'saveFormID',
@@ -83,7 +84,7 @@ export default {
         yield [
           put({
             type: 'saveFormTitle',
-            payload: '编辑园区',
+            payload: '编辑项目',
           }),
           put({
             type: 'saveFormID',
@@ -97,7 +98,7 @@ export default {
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(parkService.get, payload);
+      const response = yield call(projectManageService.get, payload);
       yield [
         put({
           type: 'saveFormData',
@@ -112,14 +113,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.park.formType);
+      const formType = yield select(state => state.projectManage.formType);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.park.formID);
-        response = yield call(parkService.update, params);
+        params.record_id = yield select(state => state.projectManage.formID);
+        response = yield call(projectManageService.update, params);
       } else {
-        response = yield call(parkService.create, params);
+        response = yield call(projectManageService.create, params);
       }
 
       yield put({
@@ -139,42 +140,22 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(parkService.del, payload);
+      const response = yield call(projectManageService.del, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
       }
     },
-    *changeStatus({ payload }, { call, put, select }) {
-      let response;
-      if (payload.status === 1) {
-        response = yield call(parkService.enable, payload);
-      } else {
-        response = yield call(parkService.disable, payload);
-      }
-
-      if (response.status === 'OK') {
-        let msg = '启用成功';
-        if (payload.status === 2) {
-          msg = '停用成功';
-        }
-        message.success(msg);
-        const data = yield select(state => state.park.data);
-        const newData = { list: [], pagination: data.pagination };
-
-        for (let i = 0; i < data.list.length; i += 1) {
-          const item = data.list[i];
-          if (item.record_id === payload.record_id) {
-            item.status = payload.status;
-          }
-          newData.list.push(item);
-        }
-
-        yield put({
-          type: 'saveData',
-          payload: newData,
-        });
-      }
+    *redirectBuilings({ payload }, { put }) {
+      yield put(
+        routerRedux.push({
+          pathname: '/assetdatamaint/assetdatamaintlist',
+          query: {
+            record_id: payload.record_id,
+            type: payload.asset_type,
+          },
+        })
+      );
     },
   },
   reducers: {

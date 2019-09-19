@@ -33,6 +33,24 @@ export default [
           { path: '/basic/organstructurelist', component: './OrganStructure/OrganStructureList' },
         ],
       },
+      {
+        path: 'project',
+        routes: [
+          {
+            path: '/project/projectmanage',
+            component: './ProjectManage/ProjectManageList',
+          },
+        ],
+      },
+      {
+        path: 'assetdatamaint',
+        routes: [
+          {
+            path: '/assetdatamaint/assetdatamaintlist',
+            component: './AssetDataMaint/AssetDataMaintList',
+          },
+        ],
+      },
     ],
   },
   {
