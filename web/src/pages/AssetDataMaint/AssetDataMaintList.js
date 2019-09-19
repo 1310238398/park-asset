@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Card, Form, Tabs } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import AssetBuildMaint from './AssetBuildMaint';
+import AssetOfficeTemplate from './AssetOfficeTemplate';
 
 @connect(state => ({
   assetDatamaint: state.assetDatamaint,
@@ -41,7 +42,9 @@ class AssetDataMaintList extends PureComponent {
         <Card>
           <Tabs defaultActiveKey="1">
             <TabPane tab="写字楼管理" key="1">
+              {/* 有数据直接出示界面数据，没有则出现导入界面 */}
               <AssetBuildMaint onProjectId={recordID} />
+              <AssetOfficeTemplate />
             </TabPane>
             <TabPane tab="商铺管理" key="2">
               待定

@@ -3,7 +3,12 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Button, Table } from 'antd';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
-
+import loudongshu from '@/assets/loudongshu.png';
+import zichanmianji from '@/assets/zichanmianji.png';
+import yizumianji from '@/assets/yizumianji.png';
+import weizumianji from '@/assets/weizumianji.png';
+import chuzujunjia from '@/assets/chuzujunjia.png';
+import ruzhuqiyezongshu from '@/assets/ruzhuqiyezongshu.png';
 import styles from './AssetDataMaint.less';
 
 @connect(state => ({
@@ -145,47 +150,47 @@ class AssetBuildMaint extends PureComponent {
           <Row gutter={16}>
             <Col className="gutter-row" span={6}>
               <div className={styles.gutterboxbuild}>
-                <div>
-                  <img src="" alt="" />
+                <div className={styles.gutterboxbuildImg}>
+                  <img src={loudongshu} alt="" className={styles.dataImg} />
                 </div>
                 <div>
-                  <p>总楼栋数</p>
-                  <p>5楼</p>
-                </div>
-              </div>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <div className={styles.gutterboxbuild}>
-                <div>
-                  <img src="" alt="" />
-                </div>
-                <div>
-                  <p>资产总面积（㎡）</p>
-                  <p>291738.23</p>
+                  <span className={styles.titeleOne}>总楼栋数</span>
+                  <span className={styles.contenOne}>5楼</span>
                 </div>
               </div>
             </Col>
             <Col className="gutter-row" span={6}>
               <div className={styles.gutterboxbuild}>
-                <div>
-                  <img src="" alt="" />
+                <div className={styles.gutterboxbuildImg}>
+                  <img src={zichanmianji} alt="" className={styles.dataImg} />
                 </div>
                 <div>
-                  <p>已租面积（㎡）</p>
-                  <p>
-                    291738.23|<span className={styles.guttetZb}>18.91%</span>
-                  </p>
+                  <span className={styles.titeleOne}>资产总面积（㎡）</span>
+                  <span className={styles.contenOne}>291738.23</span>
                 </div>
               </div>
             </Col>
             <Col className="gutter-row" span={6}>
               <div className={styles.gutterboxbuild}>
-                <div>
-                  <img src="" alt="" />
+                <div className={styles.gutterboxbuildImg}>
+                  <img src={yizumianji} alt="" className={styles.dataImg} />
                 </div>
                 <div>
-                  <p>未租面积（㎡）</p>
-                  <p>291738.23</p>
+                  <span className={styles.titeleOne}>已租面积（㎡）</span>
+                  <span className={styles.contenOne}>
+                    291738.23<span className={styles.guttetZb}>18.91%</span>
+                  </span>
+                </div>
+              </div>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <div className={styles.gutterboxbuild}>
+                <div className={styles.gutterboxbuildImg}>
+                  <img src={weizumianji} alt="" className={styles.dataImg} />
+                </div>
+                <div>
+                  <span className={styles.titeleOne}>未租面积（㎡）</span>
+                  <span className={styles.contenOne}>291738.23</span>
                 </div>
               </div>
             </Col>
@@ -206,23 +211,23 @@ class AssetBuildMaint extends PureComponent {
           </Col> */}
             <Col className="gutter-row" span={6}>
               <div className={styles.gutterboxbuild}>
-                <div>
-                  <img src="" alt="" />
+                <div className={styles.gutterboxbuildImg}>
+                  <img src={chuzujunjia} alt="" className={styles.dataImg} />
                 </div>
                 <div>
-                  <p>出租均价（元/㎡/天）</p>
-                  <p>2.23</p>
+                  <span className={styles.titeleOne}>出租均价（元/㎡/天）</span>
+                  <span className={styles.contenOne}>2.23</span>
                 </div>
               </div>
             </Col>
             <Col className="gutter-row" span={6}>
               <div className={styles.gutterboxbuild}>
-                <div>
-                  <img src="" alt="" />
+                <div className={styles.gutterboxbuildImg}>
+                  <img src={ruzhuqiyezongshu} alt="" className={styles.dataImg} />
                 </div>
                 <div>
-                  <p>入驻企业总数</p>
-                  <p>40</p>
+                  <span className={styles.titeleOne}>入驻企业总数</span>
+                  <span className={styles.contenOne}>40</span>
                 </div>
               </div>
             </Col>
@@ -232,13 +237,18 @@ class AssetBuildMaint extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
-                新建
+              <PButton
+                code="addbuild"
+                icon="plus"
+                type="primary"
+                onClick={() => this.handleAddClick()}
+              >
+                新建楼栋
               </PButton>
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"
-                  code="edit"
+                  code="editbuild"
                   icon="edit"
                   onClick={() => this.handleEditClick(selectedRows[0])}
                 >
@@ -246,12 +256,15 @@ class AssetBuildMaint extends PureComponent {
                 </PButton>,
                 <PButton
                   key="del"
-                  code="del"
+                  code="delbuild"
                   icon="delete"
                   type="danger"
                   onClick={() => this.handleDelClick(selectedRows[0])}
                 >
                   删除
+                </PButton>,
+                <PButton code="seebuild" onClick={() => this.handleDelClick(selectedRows[0])}>
+                  查看
                 </PButton>,
                 // selectedRows[0].status === 2 && (
                 //   <PButton
