@@ -1,11 +1,12 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewProject 创建项目管理控制器
@@ -37,6 +38,9 @@ func (a *Project) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param name query string true "项目名称（模糊查询）"
+// @Param nature query string true "资产性质"
+// @Param org_id query string true "所属子公司"
 // @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -44,6 +48,12 @@ func (a *Project) Query(c *gin.Context) {
 // @Router GET /api/v1/projects?q=page
 func (a *Project) QueryPage(c *gin.Context) {
 	var params schema.ProjectQueryParam
+	params.LikeName = c.Query("name")
+	params.Nature = c.Query("nature")
+
+	if v := c.Query("org_id"); v != "" {
+		params.OrgIDs = []string{v}
+	}
 
 	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),

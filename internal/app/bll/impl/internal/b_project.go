@@ -23,7 +23,6 @@ type Project struct {
 
 // Query 查询数据
 func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, opts ...schema.ProjectQueryOptions) (*schema.ProjectQueryResult, error) {
-
 	return a.ProjectModel.Query(ctx, params, opts...)
 }
 

@@ -17,7 +17,7 @@ type Project struct {
 	ParentPath    string `json:"parent_path" swaggo:"false,父级路径"`
 	Memo          string `json:"memo" swaggo:"false,备注"`
 	Creator       string `json:"creator" swaggo:"false,创建者"`
-	OrgID         string `json:"org_id" swaggo:"false,所属子公司"`
+	OrgID         string `json:"org_id" binding:"required" swaggo:"false,所属子公司"`
 }
 
 // ProjectQueryParam 查询条件
@@ -25,7 +25,7 @@ type ProjectQueryParam struct {
 	LikeName string
 	Nature   string
 	Name     string
-	OrgID    string
+	OrgIDs   []string
 }
 
 // ProjectQueryOptions 查询可选参数项

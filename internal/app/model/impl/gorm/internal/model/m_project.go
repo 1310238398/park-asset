@@ -40,8 +40,8 @@ func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, op
 	if v := params.Name; v != "" {
 		db = db.Where("name=?", v)
 	}
-	if v := params.OrgID; v != "" {
-		db = db.Where("org_id=?", v)
+	if v := params.OrgIDs; len(v) > 0 {
+		db = db.Where("org_id IN(?)", v)
 	}
 
 	db = db.Order("id DESC")

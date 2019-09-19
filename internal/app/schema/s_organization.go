@@ -14,12 +14,13 @@ type Organization struct {
 
 // OrganizationQueryParam 查询条件
 type OrganizationQueryParam struct {
-	LikeName         string  // 组织机构名称(模糊查询)
-	Name             string  // 组织机构名称
-	OrgType          int     // 机构类型
-	ParentID         *string // 父级内码
-	PrefixParentPath string  // 父级路径(前缀模糊查询)
-	ParentPath       string  // 父级路径
+	LikeName         string   // 组织机构名称(模糊查询)
+	Name             string   // 组织机构名称
+	OrgType          int      // 机构类型
+	ParentID         *string  // 父级内码
+	PrefixParentPath string   // 父级路径(前缀模糊查询)
+	ParentPath       string   // 父级路径
+	RecordIDs        []string // 记录ID列表
 }
 
 // OrganizationQueryOptions 查询可选参数项

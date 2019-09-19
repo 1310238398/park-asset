@@ -31,6 +31,8 @@ func (a *Organization) Query(c *gin.Context) {
 		a.QueryPage(c)
 	case "tree":
 		a.QueryTree(c)
+	case "company":
+		a.QueryCompany(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -89,6 +91,24 @@ func (a *Organization) QueryTree(c *gin.Context) {
 	}
 
 	result, err := a.OrganizationBll.Query(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, result.Data.ToTrees().ToTree())
+}
+
+// QueryCompany 查询二级子公司列表
+// @Summary 查询二级子公司列表
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Success 200 []schema.Organization "查询结果：{list:组织机构树}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/organizations?q=company
+func (a *Organization) QueryCompany(c *gin.Context) {
+	result, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
