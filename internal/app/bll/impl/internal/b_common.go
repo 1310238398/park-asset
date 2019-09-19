@@ -27,6 +27,12 @@ func CheckIsRootUser(ctx context.Context, userID string) bool {
 	return GetRootUser().RecordID == userID
 }
 
+// GetUserID 获取用户ID
+func GetUserID(ctx context.Context) string {
+	userID, _ := icontext.FromUserID(ctx)
+	return userID
+}
+
 // TransFunc 定义事务执行函数
 type TransFunc func(context.Context) error
 

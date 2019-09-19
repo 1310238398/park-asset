@@ -1,0 +1,118 @@
+{
+  "struct_name": "Project",
+  "comment": "项目管理",
+  "fields": [
+    {
+      "struct_field_name": "RecordID",
+      "comment": "记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "Name",
+      "comment": "项目名称",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;index;"
+    },
+    {
+      "struct_field_name": "Location",
+      "comment": "项目位置(经纬度)",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Address",
+      "comment": "项目地址",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Nature",
+      "comment": "资产性质",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "Photo",
+      "comment": "项目照片",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "AssetType",
+      "comment": "资产类型",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "Peripheral",
+      "comment": "周边配套",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;"
+    },
+    {
+      "struct_field_name": "BasicServices",
+      "comment": "基础服务",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;"
+    },
+    {
+      "struct_field_name": "Tag",
+      "comment": "特色标签",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;"
+    },
+    {
+      "struct_field_name": "HasModel",
+      "comment": "是否包含3D模型(1:包含 2:不包含)",
+      "struct_field_required": false,
+      "struct_field_type": "int",
+      "gorm_options": ""
+    },
+    {
+      "struct_field_name": "ParentID",
+      "comment": "父级ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "36;index;"
+    },
+    {
+      "struct_field_name": "ParentPath",
+      "comment": "父级路径",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "518;index;"
+    },
+    {
+      "struct_field_name": "Memo",
+      "comment": "备注",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Creator",
+      "comment": "创建者",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "OrgID",
+      "comment": "所属子公司",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    }
+  ]
+}

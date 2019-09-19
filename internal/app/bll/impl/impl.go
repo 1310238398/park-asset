@@ -24,5 +24,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewSystemParameter, dig.As(new(bll.ISystemParameter)))
 	container.Provide(internal.NewOrganization, dig.As(new(bll.IOrganization)))
 	container.Provide(internal.NewFile, dig.As(new(bll.IFile)))
+	container.Provide(internal.NewProject, dig.As(new(bll.IProject)))
 	return nil
 }

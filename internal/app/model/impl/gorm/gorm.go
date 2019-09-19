@@ -1,11 +1,12 @@
 package gorm
 
 import (
-	"go.uber.org/dig"
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	imodel "gxt-park-assets/internal/app/model/impl/gorm/internal/model"
 	"gxt-park-assets/pkg/gormplus"
+
+	"go.uber.org/dig"
 )
 
 // SetTablePrefix 设定表名前缀
@@ -27,6 +28,7 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.Dictionary),
 		new(entity.SystemParameter),
 		new(entity.Organization),
+		new(entity.Project),
 	).Error
 }
 
@@ -45,5 +47,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewDictionary, dig.As(new(model.IDictionary)))
 	container.Provide(imodel.NewSystemParameter, dig.As(new(model.ISystemParameter)))
 	container.Provide(imodel.NewOrganization, dig.As(new(model.IOrganization)))
+	container.Provide(imodel.NewProject, dig.As(new(model.IProject)))
 	return nil
 }
