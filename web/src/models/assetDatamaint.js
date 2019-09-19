@@ -1,9 +1,8 @@
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-import * as projectManageService from '@/services/projectManage';
+import * as assetDatamaintService from '@/services/assetDatamaint';
 
 export default {
-  namespace: 'projectManage',
+  namespace: 'assetDatamaint',
   state: {
     search: {},
     pagination: {},
@@ -30,7 +29,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.projectManage.search);
+        const s = yield select(state => state.assetDatamaint.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -43,13 +42,13 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.projectManage.pagination);
+        const p = yield select(state => state.assetDatamaint.pagination);
         if (p) {
           params = { ...params, ...p };
         }
       }
 
-      const response = yield call(projectManageService.query, params);
+      const response = yield call(assetDatamaintService.query, params);
       yield put({
         type: 'saveData',
         payload: response,
@@ -98,7 +97,7 @@ export default {
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(projectManageService.get, payload);
+      const response = yield call(assetDatamaintService.get, payload);
       yield [
         put({
           type: 'saveFormData',
@@ -113,14 +112,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.projectManage.formType);
+      const formType = yield select(state => state.assetDatamaint.formType);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.projectManage.formID);
-        response = yield call(projectManageService.update, params);
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
       } else {
-        response = yield call(projectManageService.create, params);
+        response = yield call(assetDatamaintService.create, params);
       }
 
       yield put({
@@ -140,22 +139,11 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(projectManageService.del, payload);
+      const response = yield call(assetDatamaintService.del, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
       }
-    },
-    *redirectBuilings({ payload }, { put }) {
-      yield put(
-        routerRedux.push({
-          pathname: '/assetdatamaint/assetdatamaintlist',
-          query: {
-            recordID: payload.record_id,
-            type: payload.asset_type,
-          },
-        })
-      );
     },
   },
   reducers: {

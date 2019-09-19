@@ -1,15 +1,16 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Badge } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import ProjectManageCard from './ProjectManageCard';
+import DicShow from '@/components/DictionaryNew/DicShow';
 
 import styles from './ProjectManage.less';
 
 @connect(state => ({
-  park: state.park,
-  loading: state.loading.models.park,
+  projectManage: state.projectManage,
+  loading: state.loading.models.projectManage,
 }))
 @Form.create()
 class ProjectManageList extends PureComponent {
@@ -20,7 +21,7 @@ class ProjectManageList extends PureComponent {
 
   componentDidMount() {
     this.dispatch({
-      type: 'park/fetch',
+      type: 'projectManage/fetch',
       search: {},
       pagination: {},
     });
@@ -41,7 +42,7 @@ class ProjectManageList extends PureComponent {
 
   handleAddClick = () => {
     this.dispatch({
-      type: 'park/loadForm',
+      type: 'projectManage/loadForm',
       payload: {
         type: 'A',
       },
@@ -50,7 +51,7 @@ class ProjectManageList extends PureComponent {
 
   handleEditClick = item => {
     this.dispatch({
-      type: 'park/loadForm',
+      type: 'projectManage/loadForm',
       payload: {
         type: 'E',
         id: item.record_id,
@@ -60,7 +61,7 @@ class ProjectManageList extends PureComponent {
 
   handleDelClick = item => {
     Modal.confirm({
-      title: `确定删除【园区数据：${item.name}】？`,
+      title: `确定删除【项目数据：${item.name}】？`,
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
@@ -77,7 +78,7 @@ class ProjectManageList extends PureComponent {
 
   handleTableChange = pagination => {
     this.dispatch({
-      type: 'park/fetch',
+      type: 'projectManage/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
@@ -91,7 +92,7 @@ class ProjectManageList extends PureComponent {
     form.resetFields();
 
     this.dispatch({
-      type: 'park/fetch',
+      type: 'projectManage/fetch',
       search: {},
       pagination: {},
     });
@@ -108,7 +109,7 @@ class ProjectManageList extends PureComponent {
         return;
       }
       this.dispatch({
-        type: 'park/fetch',
+        type: 'projectManage/fetch',
         search: values,
         pagination: {},
       });
@@ -118,7 +119,7 @@ class ProjectManageList extends PureComponent {
 
   handleDataFormSubmit = data => {
     this.dispatch({
-      type: 'park/submit',
+      type: 'projectManage/submit',
       payload: data,
     });
     this.clearSelectRows();
@@ -126,28 +127,36 @@ class ProjectManageList extends PureComponent {
 
   handleDataFormCancel = () => {
     this.dispatch({
-      type: 'park/changeFormVisible',
+      type: 'projectManage/changeFormVisible',
       payload: false,
     });
   };
 
   handleItemDisableClick = item => {
     this.dispatch({
-      type: 'park/changeStatus',
+      type: 'projectManage/changeStatus',
       payload: { record_id: item.record_id, status: 2 },
     });
   };
 
   handleItemEnableClick = item => {
     this.dispatch({
-      type: 'park/changeStatus',
+      type: 'projectManage/changeStatus',
       payload: { record_id: item.record_id, status: 1 },
+    });
+  };
+
+  // 跳转写字楼
+  onItemDetailClick = item => {
+    this.dispatch({
+      type: 'projectManage/redirectBuilings',
+      payload: item,
     });
   };
 
   handleDelOKClick(id) {
     this.dispatch({
-      type: 'park/del',
+      type: 'projectManage/del',
       payload: { record_id: id },
     });
     this.clearSelectRows();
@@ -171,7 +180,7 @@ class ProjectManageList extends PureComponent {
       <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
         <Row gutter={16}>
           <Col md={8} sm={24}>
-            <Form.Item label="园区名称">
+            <Form.Item label="项目名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
@@ -195,7 +204,7 @@ class ProjectManageList extends PureComponent {
   render() {
     const {
       loading,
-      park: {
+      projectManage: {
         data: { list, pagination },
       },
     } = this.props;
@@ -204,44 +213,34 @@ class ProjectManageList extends PureComponent {
 
     const columns = [
       {
-        title: '园区名称',
+        title: '项目图片',
+        dataIndex: 'photo',
+        width: 100,
+        render: value => {
+          return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
+        },
+      },
+      {
+        title: '项目名称',
         dataIndex: 'name',
         width: 200,
       },
       {
-        title: '建筑面积',
+        title: '所属公司',
         dataIndex: 'floor_area',
         width: 150,
       },
       {
-        title: '总面积',
-        dataIndex: 'total_area',
+        title: '项目地址',
+        dataIndex: 'address',
         width: 150,
       },
       {
-        title: '产权所有人',
-        dataIndex: 'property_owner',
-        width: 200,
-      },
-      {
-        title: '联系人',
-        dataIndex: 'contact',
+        title: '项目资产类型',
+        dataIndex: 'asset_type',
         width: 150,
-      },
-      {
-        title: '联系方式',
-        dataIndex: 'contact_tel',
-        width: 200,
-      },
-      {
-        title: '状态',
-        dataIndex: 'status',
-        width: 100,
-        render: val => {
-          if (val === 1) {
-            return <Badge status="success" text="启用" />;
-          }
-          return <Badge status="error" text="停用" />;
+        render: value => {
+          return <DicShow pcode="pa$#atype" code={value.split(',')} />;
         },
       },
     ];
@@ -253,10 +252,13 @@ class ProjectManageList extends PureComponent {
       ...pagination,
     };
 
-    const breadcrumbList = [{ title: '基础数据' }, { title: '园区管理', href: '/basic/park' }];
+    const breadcrumbList = [
+      { title: '项目管理' },
+      { title: '项目管理', href: '/project/projectmanage' },
+    ];
 
     return (
-      <PageHeaderLayout title="园区管理" breadcrumbList={breadcrumbList}>
+      <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
@@ -282,27 +284,27 @@ class ProjectManageList extends PureComponent {
                 >
                   删除
                 </PButton>,
-                selectedRows[0].status === 2 && (
-                  <PButton
-                    key="enable"
-                    code="enable"
-                    icon="check"
-                    onClick={() => this.handleItemEnableClick(selectedRows[0])}
-                  >
-                    启用
-                  </PButton>
-                ),
-                selectedRows[0].status === 1 && (
-                  <PButton
-                    key="disable"
-                    code="disable"
-                    icon="stop"
-                    type="danger"
-                    onClick={() => this.handleItemDisableClick(selectedRows[0])}
-                  >
-                    禁用
-                  </PButton>
-                ),
+                // selectedRows[0].status === 2 && (
+                //   <PButton
+                //     key="enable"
+                //     code="enable"
+                //     icon="check"
+                //     onClick={() => this.handleItemEnableClick(selectedRows[0])}
+                //   >
+                //     启用
+                //   </PButton>
+                // ),
+                // selectedRows[0].status === 1 && (
+                //   <PButton
+                //     key="disable"
+                //     code="disable"
+                //     icon="stop"
+                //     type="danger"
+                //     onClick={() => this.handleItemDisableClick(selectedRows[0])}
+                //   >
+                //     禁用
+                //   </PButton>
+                // ),
               ]}
             </div>
             <div>
@@ -317,6 +319,13 @@ class ProjectManageList extends PureComponent {
                 columns={columns}
                 pagination={paginationProps}
                 onChange={this.handleTableChange}
+                onRow={record => {
+                  return {
+                    onClick: () => {
+                      this.onItemDetailClick(record);
+                    },
+                  };
+                }}
                 size="small"
               />
             </div>

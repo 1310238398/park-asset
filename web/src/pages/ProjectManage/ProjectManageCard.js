@@ -1,14 +1,19 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Modal, Row, Col, Tooltip, Icon, Radio } from 'antd';
+import { Form, Input, Modal, Row, Col } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
-import { checkPhoneNum } from '../../utils/utils';
+import DicSelect from '@/components/DictionaryNew/DicSelect';
+// import GetLocation from './GetLocation';
 
 @connect(state => ({
   projectManage: state.projectManage,
 }))
 @Form.create()
 class ProjectManageCard extends PureComponent {
+  // state = {
+  //   showMap: false,
+  // };
+
   onOKClick = () => {
     const { form, onSubmit } = this.props;
 
@@ -17,11 +22,16 @@ class ProjectManageCard extends PureComponent {
         return;
       }
       const formData = { ...values };
-      formData.status = parseInt(formData.status, 10);
-      if (formData.logo && formData.logo.length > 0) {
-        formData.logo = formData.logo.join('');
+      if (formData.photo && formData.photo.length > 0) {
+        formData.photo = formData.photo.join('');
       } else {
-        formData.logo = '';
+        formData.photo = '';
+      }
+
+      if (formData.asset_type && formData.asset_type.length > 0) {
+        formData.asset_type = formData.asset_type.join(',');
+      } else {
+        formData.asset_type = '';
       }
       onSubmit(formData);
     });
@@ -32,9 +42,37 @@ class ProjectManageCard extends PureComponent {
     dispatch(action);
   };
 
+  // // 地图选取经纬度
+  // changeMap() {
+  //   this.setState({ showMap: true });
+  // }
+
+  // // 关闭地图
+  // cancelMap() {
+  //   this.setState({ showMap: false });
+  // }
+
+  // // 地图经纬度
+  // onDataMap(data) {
+  //   // console.log('经纬度', data);
+  //   const { form } = this.props;
+  //   // let buildings = form.getFieldValue('location');
+  //   form.setFieldsValue({ location: data });
+  // }
+
+  // renderMap() {
+  //   if (this.state.showMap) {
+  //     return (
+  //       <div>
+  //         <GetLocation onCancel={this.cancelMap} onSubmit={this.onDataMap} />
+  //       </div>
+  //     );
+  //   }
+  // }
+
   render() {
     const {
-      park: { formTitle, formVisible, formData, submitting },
+      projectManage: { formTitle, formVisible, formData, submitting },
       form: { getFieldDecorator },
       onCancel,
     } = this.props;
@@ -71,21 +109,52 @@ class ProjectManageCard extends PureComponent {
         <Form>
           <Row>
             <Col span={12}>
-              <Form.Item {...formItemLayout} label="园区名称">
+              <Form.Item {...formItemLayout} label="项目名称">
                 {getFieldDecorator('name', {
                   initialValue: formData.name,
                   rules: [
                     {
                       required: true,
-                      message: '请输入园区名称',
+                      message: '请输入项目名称',
                     },
                   ],
-                })(<Input placeholder="请输入园区名称" />)}
+                })(<Input placeholder="请输入项目名称" />)}
               </Form.Item>
             </Col>
             <Col span={12}>
               {/* 嵌入高德地图--经纬度 */}
-              <Form.Item {...formItemLayout} label="位置">
+              <Form.Item {...formItemLayout} label="所属公司">
+                {getFieldDecorator('org_id', {
+                  initialValue: formData.org_id,
+                  rules: [
+                    {
+                      required: false,
+                      message: '请输入公司',
+                    },
+                  ],
+                })(<Input placeholder="请输入公司" />)}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item {...formItemLayout2} label="项目地址">
+                {getFieldDecorator('address', {
+                  initialValue: formData.address,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入项目地址',
+                    },
+                  ],
+                })(<Input placeholder="请输入项目地址" />)}
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* <Row>
+          <Col span={24}>
+             
+              <Form.Item {...formItemLayout2} label="所在位置">
                 {getFieldDecorator('location', {
                   initialValue: formData.location,
                   rules: [
@@ -94,14 +163,60 @@ class ProjectManageCard extends PureComponent {
                       message: '请输入位置',
                     },
                   ],
+                })( 
+                 <GetLocation onCancel={this.cancelMap} onSubmit={this.onDataMap} address={this.props.form.getFieldValue('floor_area')} />
+                  // <Input
+                  //   placeholder="请输入位置"
+                  //   suffix={
+                  //     <Tooltip title="地图选取位置">
+                  //       <Icon
+                  //         type="environment"
+                  //         style={{ color: 'rgb(47, 84, 235)' }}
+                  //         onClick={() => this.changeMap()}
+                  //       />
+                  //     </Tooltip>
+                  //   }
+                  // />
+                )}
+              </Form.Item>
+            </Col>
+                </Row> */}
+          <Row>
+            <Col span={12}>
+              <Form.Item {...formItemLayout} label="资产性质">
+                {getFieldDecorator('nature', {
+                  initialValue: formData.nature,
+                  rules: [
+                    {
+                      required: false,
+                      message: '请选择',
+                    },
+                  ],
                 })(
-                  <Input
-                    placeholder="请输入位置"
-                    suffix={
-                      <Tooltip title="地图选取位置">
-                        <Icon type="environment" style={{ color: 'rgb(47, 84, 235)' }} />
-                      </Tooltip>
-                    }
+                  <DicSelect
+                    vmode="int"
+                    pcode="pa$#anature"
+                    selectProps={{ placeholder: '请选择' }}
+                  />
+                )}
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item {...formItemLayout} label="资产类型">
+                {getFieldDecorator('asset_type', {
+                  initialValue: formData.asset_type ? formData.asset_type.split(',') : '',
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择资产类型',
+                    },
+                  ],
+                })(
+                  <DicSelect
+                    vmode="sting"
+                    pcode="pa$#atype"
+                    selectProps={{ mode: 'multiple', placeholder: '请选择' }}
                   />
                 )}
               </Form.Item>
@@ -109,137 +224,16 @@ class ProjectManageCard extends PureComponent {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item {...formItemLayout} label="占地面积">
-                {getFieldDecorator('floor_area', {
-                  initialValue: formData.floor_area,
+              <Form.Item {...formItemLayout} label="项目照片">
+                {getFieldDecorator('photo', {
+                  initialValue: formData.photo ? [formData.photo] : '',
                   rules: [
                     {
                       required: false,
-                      message: '请输入占地面积',
-                    },
-                  ],
-                })(<Input placeholder="请输入占地面积" />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="总面积">
-                {getFieldDecorator('total_area', {
-                  initialValue: formData.total_area,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请输入总面积',
-                    },
-                  ],
-                })(<Input placeholder="请输入总面积" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="容积率">
-                {getFieldDecorator('volume_rate', {
-                  initialValue: formData.volume_rate,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请输入容积率',
-                    },
-                  ],
-                })(<Input placeholder="请输入容积率" />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="绿化率">
-                {getFieldDecorator('greening_rate', {
-                  initialValue: formData.greening_rate,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请输入绿化率',
-                    },
-                  ],
-                })(<Input placeholder="请输入绿化率" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="产权所有人">
-                {getFieldDecorator('property_owner', {
-                  initialValue: formData.property_owner,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请输入产权所有人',
-                    },
-                  ],
-                })(<Input placeholder="请输入产权所有人" />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="联系人">
-                {getFieldDecorator('contact', {
-                  initialValue: formData.contact,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请输入联系人',
-                    },
-                  ],
-                })(<Input placeholder="请输入联系人" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="联系方式">
-                {getFieldDecorator('contact_tel', {
-                  initialValue: formData.contact_tel,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请输入联系方式',
-                    },
-                    { validator: checkPhoneNum },
-                  ],
-                })(<Input placeholder="请输入联系方式" />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="园区LOGO">
-                {getFieldDecorator('logo', {
-                  initialValue: formData.logo ? [formData.logo] : [],
-                  rules: [
-                    {
-                      required: false,
-                      message: '请上传',
+                      message: '请选择',
                     },
                   ],
                 })(<PicturesWall num={1} bucket="park" listType="picture-card" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Form.Item {...formItemLayout2} label="园区描述">
-                {getFieldDecorator('memo', {
-                  initialValue: formData.memo,
-                })(<Input.TextArea rows={2} placeholder="请输入园区描述" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Form.Item {...formItemLayout2} label="状态">
-                {getFieldDecorator('status', {
-                  initialValue: formData.status ? formData.status.toString() : '1',
-                })(
-                  <Radio.Group>
-                    <Radio value="1">正常</Radio>
-                    <Radio value="2">停用</Radio>
-                  </Radio.Group>
-                )}
               </Form.Item>
             </Col>
           </Row>

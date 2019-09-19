@@ -1,0 +1,87 @@
+.gutterboxbuild {
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  padding: 5px 0;
+  border: 1px solid #ececec;
+  justify-content: start;
+  padding-left: 16px;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.guttetZb {
+  color: #2f5cff;
+  font-size: 18px;
+  margin-left: 20px;
+}
+
+@import '~antd/lib/style/themes/default.less';
+
+.tableList {
+  .tableListOperator {
+    margin-bottom: 16px;
+    button {
+      margin-right: 8px;
+    }
+  }
+}
+
+.tableListForm {
+  :global {
+    .ant-form-item {
+      margin-bottom: 24px;
+      margin-right: 0;
+      display: flex;
+      > .ant-form-item-label {
+        width: auto;
+        line-height: 32px;
+        padding-right: 8px;
+        margin-left: 10px;
+      }
+      .ant-form-item-control {
+        line-height: 32px;
+      }
+    }
+    .ant-form-item-control-wrapper {
+      flex: 1;
+    }
+  }
+  .submitButtons {
+    white-space: nowrap;
+    margin-bottom: 24px;
+  }
+}
+
+@media screen and (max-width: @screen-lg) {
+  .tableListForm :global(.ant-form-item) {
+    margin-right: 24px;
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .tableListForm :global(.ant-form-item) {
+    margin-right: 8px;
+  }
+}
+
+.titeleOne {
+  color: #8798ad;
+  font-size: 14px;
+}
+.contenOne {
+  color: #2e384d;
+  font-size: 18px;
+  display: inherit;
+}
+.dataImg {
+  width: 40px;
+  height: 40px;
+}
+.gutterboxbuildImg {
+  margin-right: 4px;
+}
+.BtnFin {
+  display: flex;
+  justify-content: center;
+}
