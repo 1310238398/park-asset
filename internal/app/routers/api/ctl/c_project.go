@@ -1,17 +1,20 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewProject 创建项目管理控制器
-func NewProject(bProject bll.IProject) *Project {
+func NewProject(bProject bll.IProject, bOrganization bll.IOrganization) *Project {
 	return &Project{
-		ProjectBll: bProject,
+		ProjectBll:      bProject,
+		OrganizationBll: bOrganization,
 	}
 }
 
@@ -19,7 +22,8 @@ func NewProject(bProject bll.IProject) *Project {
 // @Name Project
 // @Description 项目管理控制器
 type Project struct {
-	ProjectBll bll.IProject
+	ProjectBll      bll.IProject
+	OrganizationBll bll.IOrganization
 }
 
 // Query 查询数据
@@ -37,6 +41,9 @@ func (a *Project) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param name query string false "项目名称（模糊查询）"
+// @Param org_id query string false "所属子公司"
+// @Param asset_type query string false "资产类型（多个以逗号分隔）"
 // @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -44,6 +51,24 @@ func (a *Project) Query(c *gin.Context) {
 // @Router GET /api/v1/projects?q=page
 func (a *Project) QueryPage(c *gin.Context) {
 	var params schema.ProjectQueryParam
+	params.LikeName = c.Query("name")
+
+	if v := c.Query("asset_type"); v != "" {
+		params.AssetTypes = strings.Split(v, ",")
+	}
+
+	if v := c.Query("org_id"); v != "" {
+		params.OrgIDs = []string{v}
+	} else {
+		if !ginplus.CheckIsRootUser(c) {
+			result, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
+			if err != nil {
+				ginplus.ResError(c, err)
+				return
+			}
+			params.OrgIDs = result.Data.ToRecordIDs()
+		}
+	}
 
 	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),

@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 
+	"github.com/LyricTian/fuh"
+
 	"gxt-park-assets/internal/app/bll/impl"
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/pkg/auth"
@@ -126,7 +128,8 @@ func Init(ctx context.Context, opts ...Option) func() {
 // InitMinio 初始化minio
 func InitMinio() {
 	cfg := config.GetGlobalConfig().Minio
-	minio.Init(cfg.Addr, cfg.AssessKey, cfg.SecretKey)
+	cli := minio.Init(cfg.Addr, cfg.AssessKey, cfg.SecretKey)
+	fuh.SetStore(cli)
 }
 
 // NewEnforcer 创建casbin校验

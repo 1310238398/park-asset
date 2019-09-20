@@ -14,12 +14,13 @@ type Organization struct {
 
 // OrganizationQueryParam 查询条件
 type OrganizationQueryParam struct {
-	LikeName         string  // 组织机构名称(模糊查询)
-	Name             string  // 组织机构名称
-	OrgType          int     // 机构类型
-	ParentID         *string // 父级内码
-	PrefixParentPath string  // 父级路径(前缀模糊查询)
-	ParentPath       string  // 父级路径
+	LikeName         string   // 组织机构名称(模糊查询)
+	Name             string   // 组织机构名称
+	OrgType          int      // 机构类型
+	ParentID         *string  // 父级内码
+	PrefixParentPath string   // 父级路径(前缀模糊查询)
+	ParentPath       string   // 父级路径
+	RecordIDs        []string // 记录ID列表
 }
 
 // OrganizationQueryOptions 查询可选参数项
@@ -36,6 +37,15 @@ type OrganizationQueryResult struct {
 // Organizations 组织机构列表
 type Organizations []*Organization
 
+// ToRecordIDs 转换为记录ID列表
+func (a Organizations) ToRecordIDs() []string {
+	recordIDs := make([]string, len(a))
+	for i, item := range a {
+		recordIDs[i] = item.RecordID
+	}
+	return recordIDs
+}
+
 // ToTrees 转换为组织机构列表
 func (a Organizations) ToTrees() OrganizationTrees {
 	list := make(OrganizationTrees, len(a))
@@ -49,6 +59,15 @@ func (a Organizations) ToTrees() OrganizationTrees {
 		}
 	}
 	return list
+}
+
+// ToMap 转换为map
+func (a Organizations) ToMap() map[string]*Organization {
+	m := make(map[string]*Organization)
+	for _, item := range a {
+		m[item.RecordID] = item
+	}
+	return m
 }
 
 // OrganizationTree 组织机构树

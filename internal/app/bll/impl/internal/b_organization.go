@@ -10,17 +10,42 @@ import (
 )
 
 // NewOrganization 创建组织机构管理
-func NewOrganization(mOrganization model.IOrganization, mTrans model.ITrans) *Organization {
+func NewOrganization(mOrganization model.IOrganization,
+	mTrans model.ITrans,
+	mUser model.IUser) *Organization {
 	return &Organization{
 		OrganizationModel: mOrganization,
 		TransModel:        mTrans,
+		UserModel:         mUser,
 	}
 }
 
 // Organization 组织机构管理业务逻辑
 type Organization struct {
 	OrganizationModel model.IOrganization
+	UserModel         model.IUser
 	TransModel        model.ITrans
+}
+
+// QueryCompany 查询用户的二级子公司
+func (a *Organization) QueryCompany(ctx context.Context, userID string) (*schema.OrganizationQueryResult, error) {
+	if CheckIsRootUser(ctx, userID) {
+		return a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{OrgType: 2})
+	}
+
+	result, err := a.UserModel.Query(ctx, schema.UserQueryParam{
+		RecordIDs: []string{userID},
+	})
+	if err != nil {
+		return nil, nil
+	} else if len(result.Data) == 0 || len(result.Data.ToOrgIDs()) == 0 {
+		return nil, nil
+	}
+
+	return a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{
+		RecordIDs: result.Data.ToOrgIDs(),
+		OrgType:   2,
+	})
 }
 
 // Query 查询数据
