@@ -49,6 +49,14 @@ export default [
             path: '/assetdatamaint/assetdatamaintlist',
             component: './AssetDataMaint/AssetDataMaintList',
           },
+          {
+            path: '/assetdatamaint/assetunitmaint',
+            component: './AssetDataMaint/AssetUnitMaint',
+          },
+          {
+            path: '/assetdatamaint/assetfloormaint',
+            component: './AssetDataMaint/AssetFloorMaint',
+          },
         ],
       },
     ],

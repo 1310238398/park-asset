@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, Select } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import ProjectManageCard from './ProjectManageCard';
 import DicShow from '@/components/DictionaryNew/DicShow';
-
+import DicSelect from '@/components/DictionaryNew/DicSelect';
 import styles from './ProjectManage.less';
 
 @connect(state => ({
@@ -24,6 +24,9 @@ class ProjectManageList extends PureComponent {
       type: 'projectManage/fetch',
       search: {},
       pagination: {},
+    });
+    this.dispatch({
+      type: 'projectManage/queryCompany',
     });
   }
 
@@ -108,9 +111,15 @@ class ProjectManageList extends PureComponent {
       if (err) {
         return;
       }
+      const formData = { ...values };
+      if (formData.asset_type && formData.asset_type.length > 0) {
+        formData.asset_type = formData.asset_type.join(',');
+      } else {
+        formData.asset_type = '';
+      }
       this.dispatch({
         type: 'projectManage/fetch',
-        search: values,
+        search: formData,
         pagination: {},
       });
       this.clearSelectRows();
@@ -174,17 +183,43 @@ class ProjectManageList extends PureComponent {
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
+      projectManage: { companyList },
     } = this.props;
 
     return (
       <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
         <Row gutter={16}>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <Form.Item label="项目名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
+            <Form.Item label="资产类型">
+              {getFieldDecorator('asset_type')(
+                <DicSelect
+                  vmode="sting"
+                  pcode="pa$#atype"
+                  selectProps={{ mode: 'multiple', placeholder: '请选择' }}
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col md={6} sm={24}>
+            <Form.Item label="所属公司">
+              {getFieldDecorator('org_id')(
+                <Select placeholder="请选择" style={{ width: '100%' }}>
+                  {companyList &&
+                    companyList.map(item => (
+                      <Select.Option key={item.record_id} value={item.record_id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                </Select>
+              )}
+            </Form.Item>
+          </Col>
+          <Col md={6} sm={24}>
             <div style={{ overflow: 'hidden' }}>
               <span style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">
@@ -227,7 +262,7 @@ class ProjectManageList extends PureComponent {
       },
       {
         title: '所属公司',
-        dataIndex: 'floor_area',
+        dataIndex: 'org_name',
         width: 150,
       },
       {

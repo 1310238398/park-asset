@@ -16,6 +16,7 @@ export default {
     formID: '',
     formVisible: false,
     formData: {},
+    companyList: [],
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -99,6 +100,9 @@ export default {
     },
     *fetchForm({ payload }, { call, put }) {
       const response = yield call(projectManageService.get, payload);
+      if (response && response.asset_type) {
+        response.asset_type = response.asset_type.split(',');
+      }
       yield [
         put({
           type: 'saveFormData',
@@ -146,6 +150,17 @@ export default {
         yield put({ type: 'fetch' });
       }
     },
+    *queryCompany(_, { call, put }) {
+      const params = {
+        q: 'company',
+      };
+      const response = yield call(projectManageService.companySecond, params);
+      const result = response.list ? response.list : [];
+      yield put({
+        type: 'saveDataCompany',
+        payload: result,
+      });
+    },
     *redirectBuilings({ payload }, { put }) {
       yield put(
         routerRedux.push({
@@ -185,6 +200,9 @@ export default {
     },
     changeSubmitting(state, { payload }) {
       return { ...state, submitting: payload };
+    },
+    saveDataCompany(state, { payload }) {
+      return { ...state, companyList: payload };
     },
   },
 };
