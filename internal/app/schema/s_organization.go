@@ -61,6 +61,15 @@ func (a Organizations) ToTrees() OrganizationTrees {
 	return list
 }
 
+// ToMap 转换为map
+func (a Organizations) ToMap() map[string]*Organization {
+	m := make(map[string]*Organization)
+	for _, item := range a {
+		m[item.RecordID] = item
+	}
+	return m
+}
+
 // OrganizationTree 组织机构树
 type OrganizationTree struct {
 	RecordID   string               `json:"record_id" swaggo:"false,记录ID"`

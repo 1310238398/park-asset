@@ -10,20 +10,38 @@ import (
 )
 
 // NewProject 创建项目管理
-func NewProject(mProject model.IProject) *Project {
+func NewProject(mProject model.IProject, mOrganization model.IOrganization) *Project {
 	return &Project{
-		ProjectModel: mProject,
+		ProjectModel:      mProject,
+		OrganizationModel: mOrganization,
 	}
 }
 
 // Project 项目管理业务逻辑
 type Project struct {
-	ProjectModel model.IProject
+	ProjectModel      model.IProject
+	OrganizationModel model.IOrganization
 }
 
 // Query 查询数据
 func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, opts ...schema.ProjectQueryOptions) (*schema.ProjectQueryResult, error) {
-	return a.ProjectModel.Query(ctx, params, opts...)
+	result, err := a.ProjectModel.Query(ctx, params, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	orgIDs := result.Data.ToOrgIDs()
+	if len(orgIDs) > 0 {
+		orgResult, err := a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{
+			RecordIDs: orgIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+		result.Data.FillOrgData(orgResult.Data.ToMap())
+	}
+
+	return result, nil
 }
 
 // Get 查询指定数据

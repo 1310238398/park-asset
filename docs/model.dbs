@@ -192,17 +192,29 @@
 			<column name="photo" type="varchar" length="1024" jt="12" >
 				<comment><![CDATA[项目照片]]></comment>
 			</column>
-			<column name="asset_type" type="int" length="100" jt="4" >
-				<comment><![CDATA[资产类型(写字楼/商铺)(多选,位运算)]]></comment>
+			<column name="asset_type" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[资产类型(写字楼/商铺)]]></comment>
 			</column>
-			<column name="peripheral" type="int" length="200" jt="4" >
+			<column name="asset_type_calc" type="int" jt="4" >
+				<comment><![CDATA[资产类型计算值(位运算)]]></comment>
+			</column>
+			<column name="peripheral" type="varchar" length="100" jt="12" >
 				<comment><![CDATA[周边配套]]></comment>
 			</column>
-			<column name="basic_services" type="int" length="200" jt="4" >
+			<column name="peripheral_calc" type="int" jt="4" >
+				<comment><![CDATA[周边配套计算值(位运算)]]></comment>
+			</column>
+			<column name="basic_services" type="varchar" length="100" jt="12" >
 				<comment><![CDATA[基础服务]]></comment>
 			</column>
-			<column name="tag" type="int" length="200" jt="4" >
+			<column name="basic_services_calc" type="int" jt="4" >
+				<comment><![CDATA[基础服务计算值(位运算)]]></comment>
+			</column>
+			<column name="tag" type="varchar" length="100" jt="12" >
 				<comment><![CDATA[特色标签]]></comment>
+			</column>
+			<column name="tag_calc" type="int" jt="4" >
+				<comment><![CDATA[特色标签计算值(位运算)]]></comment>
 			</column>
 			<column name="has_model" type="int" jt="4" >
 				<comment><![CDATA[是否包含3D模型(1:包含 2:不包含)]]></comment>
