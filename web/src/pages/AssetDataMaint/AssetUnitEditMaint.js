@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-
+import CustomInfo from './CustomInfo/CustomInfo';
+import AgreementInfo from './CustomInfo/AgreementInfo';
 @connect(({ assetDatamaint }) => ({
   assetDatamaint,
 }))
@@ -54,20 +55,20 @@ class AssetUnitEditMaint extends PureComponent {
         span: 18,
       },
     };
-    // const formItemLayoutmome = {
-    //   labelCol: {
-    //     span: 3,
-    //   },
-    //   wrapperCol: {
-    //     span: 21,
-    //   },
-    // };
-    const formItemLayoutTwo = {
+    const formItemLayoutmome = {
       labelCol: {
-        span: 8,
+        span: 3,
       },
       wrapperCol: {
-        span: 16,
+        span: 21,
+      },
+    };
+    const formItemLayoutTwo = {
+      labelCol: {
+        span: 12,
+      },
+      wrapperCol: {
+        span: 12,
       },
     };
     return (
@@ -141,7 +142,7 @@ class AssetUnitEditMaint extends PureComponent {
               </Col>
             </Row>
             <Row>
-              <Col span={12}>
+              <Col span={8}>
                 <Form.Item
                   {...formItemLayoutTwo}
                   label="建筑面积（㎡）"
@@ -160,7 +161,7 @@ class AssetUnitEditMaint extends PureComponent {
                   })(<InputNumber placeholder="请输入" />)}
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <Form.Item
                   {...formItemLayoutTwo}
                   label="计租面积（㎡）"
@@ -179,9 +180,7 @@ class AssetUnitEditMaint extends PureComponent {
                   })(<InputNumber placeholder="请输入" />)}
                 </Form.Item>
               </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
+              <Col span={8}>
                 <Form.Item
                   {...formItemLayout}
                   label="装修情况"
@@ -217,17 +216,31 @@ class AssetUnitEditMaint extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('lease_status', {
-                    initialValue: formDataUnit ? formDataUnit.lease_status : 20,
+                    initialValue: formDataUnit.lease_status,
                     rules: [{ required: true, message: '请选择' }],
                   })(
                     <RadioGroup>
                       <Radio.Button value={20}>未租</Radio.Button>
                       <Radio.Button value={10}>锁定</Radio.Button>
-                      <Radio.Button value={10}>已租</Radio.Button>
+                      <Radio.Button value={30}>已租</Radio.Button>
                     </RadioGroup>
                   )}
                 </Form.Item>
               </Col>
+            </Row>
+            <Row
+              style={{
+                display: getFieldValue('lease_status') === 10 ? 'block' : 'none',
+              }}
+            >
+              <CustomInfo />
+            </Row>
+            <Row
+              style={{
+                display: getFieldValue('lease_status') === 30 ? 'block' : 'none',
+              }}
+            >
+              <AgreementInfo />
             </Row>
           </Form>
         </Card>

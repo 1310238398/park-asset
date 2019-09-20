@@ -249,7 +249,7 @@ class ProjectManageCard extends PureComponent {
                       message: '请选择',
                     },
                   ],
-                })(<PicturesWall num={1} bucket="park" listType="picture-card" />)}
+                })(<PicturesWall num={1}  listType="picture-card" />)}
               </Form.Item>
             </Col>
           </Row>

@@ -3,20 +3,7 @@ import { connect } from 'dva';
 import { Form, Input, Row, Col, Radio, Card } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 12 },
-    md: { span: 6 },
-    lg: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 12 },
-    md: { span: 6 },
-    lg: { span: 12 },
-  },
-};
+
 
 @connect(({ menu }) => ({
   menu,
@@ -38,12 +25,28 @@ class CustomInfo extends PureComponent {
     } = this.props;
 
     const { value } = this.state;
+
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 12 },
+        md: { span: 6 },
+        lg: { span: 8 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 12 },
+        md: { span: 6 },
+        lg: { span: 12 },
+      },
+    };
+
     return (
       <Card>
         <Form className="custominfo-form">
           <Row>
-            <Col span={4}>
-              <Form.Item {...formItemLayout} label="租户类型:">
+            <Col span={12}>
+              <Form.Item {...formItemLayout} label="租户类型">
                 {getFieldDecorator('type', {
                   initialValue: formData.name ? formData.name : '1',
                   rules: [
@@ -65,8 +68,8 @@ class CustomInfo extends PureComponent {
           {value === '1' ? (
             <div>
               <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="客户名称:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="客户名称">
                     {getFieldDecorator('name', {
                       initialValue: formData.name,
                       rules: [
@@ -78,8 +81,8 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入企业名称" />)}
                   </Form.Item>
                 </Col>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="行业分类:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="行业分类">
                     {getFieldDecorator('parent_id', {
                       initialValue: formData.parent_id,
                       rules: [
@@ -100,8 +103,8 @@ class CustomInfo extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="联系人姓名:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="联系人姓名">
                     {getFieldDecorator('contacts', {
                       initialValue: formData.contacts,
                       rules: [
@@ -113,8 +116,8 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入联系人姓名" />)}
                   </Form.Item>
                 </Col>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="联系人电话:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="联系人电话">
                     {getFieldDecorator('tel', {
                       initialValue: formData.tel,
                       rules: [
@@ -126,8 +129,11 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入联系人电话" />)}
                   </Form.Item>
                 </Col>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="邮箱号:">
+        
+              </Row>
+              <Row>
+              <Col span={12}>
+                  <Form.Item {...formItemLayout} label="邮箱号">
                     {getFieldDecorator('email', {
                       initialValue: formData.email,
                       rules: [
@@ -138,10 +144,8 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入邮箱号" />)}
                   </Form.Item>
                 </Col>
-              </Row>
-              <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="联系人地址:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="联系人地址">
                     {getFieldDecorator('address', {
                       initialValue: formData.address,
                       rules: [
@@ -156,8 +160,8 @@ class CustomInfo extends PureComponent {
               </Row>
               <h1 style={{ marginTop: 10 }}>开票信息</h1>
               <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="发票抬头:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="发票抬头">
                     {getFieldDecorator('invoice', {
                       initialValue: formData.invoice,
 
@@ -170,8 +174,8 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入发票抬头" />)}
                   </Form.Item>
                 </Col>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="税号:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="税号">
                     {getFieldDecorator('duty', {
                       initialValue: formData.duty,
                       rules: [
@@ -185,8 +189,8 @@ class CustomInfo extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="开户行及账号:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="开户行及账号">
                     {getFieldDecorator('account', {
                       initialValue: formData.account,
                       rules: [
@@ -203,8 +207,8 @@ class CustomInfo extends PureComponent {
           ) : (
             <div>
               <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="租户姓名:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="租户姓名">
                     {getFieldDecorator('minename', {
                       initialValue: formData.minename,
                       rules: [
@@ -216,8 +220,8 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入租户姓名" />)}
                   </Form.Item>
                 </Col>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="租户电话:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="租户电话">
                     {getFieldDecorator('minetel', {
                       initialValue: formData.minetel,
                       rules: [
@@ -229,8 +233,11 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入租户电话" />)}
                   </Form.Item>
                 </Col>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="邮箱号:">
+               
+              </Row>
+              <Row>
+              <Col span={12}>
+                  <Form.Item {...formItemLayout} label="邮箱号">
                     {getFieldDecorator('mineemail', {
                       initialValue: formData.mineemail,
                       rules: [
@@ -241,10 +248,8 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入邮箱号" />)}
                   </Form.Item>
                 </Col>
-              </Row>
-              <Row>
-                <Col span={6}>
-                  <Form.Item {...formItemLayout} label="业主地址:">
+                <Col span={12}>
+                  <Form.Item {...formItemLayout} label="业主地址">
                     {getFieldDecorator('mineaddress', {
                       initialValue: formData.mineaddress,
                       rules: [
