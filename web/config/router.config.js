@@ -49,6 +49,14 @@ export default [
             path: '/assetdatamaint/assetdatamaintlist',
             component: './AssetDataMaint/AssetDataMaintList',
           },
+          {
+            path: '/assetdatamaint/assetcustominfo',
+            component: './AssetDataMaint/CustomInfo/CustomInfo',
+          },
+          {
+            path: '/assetdatamaint/assetagreementinfo',
+            component: './AssetDataMaint/CustomInfo/AgreementInfo',
+          },
         ],
       },
     ],
