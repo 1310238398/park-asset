@@ -56,14 +56,34 @@ func (a *Project) Get(ctx context.Context, recordID string, opts ...schema.Proje
 	return item, nil
 }
 
+func (a *Project) checkName(ctx context.Context, name, orgID string) error {
+	result, err := a.ProjectModel.Query(ctx, schema.ProjectQueryParam{
+		Name:   name,
+		OrgIDs: []string{orgID},
+	}, schema.ProjectQueryOptions{
+		PageParam: &schema.PaginationParam{PageSize: -1},
+	})
+	if err != nil {
+		return err
+	} else if result.PageResult.Total > 0 {
+		return errors.ErrResourceExists
+	}
+	return nil
+}
+
 func (a *Project) getUpdate(ctx context.Context, recordID string) (*schema.Project, error) {
 	return a.Get(ctx, recordID)
 }
 
 // Create 创建数据
 func (a *Project) Create(ctx context.Context, item schema.Project) (*schema.Project, error) {
+	err := a.checkName(ctx, item.Name, item.OrgID)
+	if err != nil {
+		return nil, err
+	}
+
 	item.RecordID = util.MustUUID()
-	err := a.ProjectModel.Create(ctx, item)
+	err = a.ProjectModel.Create(ctx, item)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +97,12 @@ func (a *Project) Update(ctx context.Context, recordID string, item schema.Proje
 		return nil, err
 	} else if oldItem == nil {
 		return nil, errors.ErrNotFound
+	} else if oldItem.Name != item.Name ||
+		oldItem.OrgID != item.OrgID {
+		err := a.checkName(ctx, item.Name, item.OrgID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = a.ProjectModel.Update(ctx, recordID, item)
@@ -94,6 +120,8 @@ func (a *Project) Delete(ctx context.Context, recordID string) error {
 	} else if oldItem == nil {
 		return errors.ErrNotFound
 	}
+
+	// TODO: 检查项目下的资产数据，如果存在，则不允许删除
 
 	return a.ProjectModel.Delete(ctx, recordID)
 }
