@@ -37,6 +37,15 @@ type OrganizationQueryResult struct {
 // Organizations 组织机构列表
 type Organizations []*Organization
 
+// ToRecordIDs 转换为记录ID列表
+func (a Organizations) ToRecordIDs() []string {
+	recordIDs := make([]string, len(a))
+	for i, item := range a {
+		recordIDs[i] = item.RecordID
+	}
+	return recordIDs
+}
+
 // ToTrees 转换为组织机构列表
 func (a Organizations) ToTrees() OrganizationTrees {
 	list := make(OrganizationTrees, len(a))

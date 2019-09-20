@@ -10,9 +10,10 @@ import (
 )
 
 // NewProject 创建项目管理控制器
-func NewProject(bProject bll.IProject) *Project {
+func NewProject(bProject bll.IProject, bOrganization bll.IOrganization) *Project {
 	return &Project{
-		ProjectBll: bProject,
+		ProjectBll:      bProject,
+		OrganizationBll: bOrganization,
 	}
 }
 
@@ -20,7 +21,8 @@ func NewProject(bProject bll.IProject) *Project {
 // @Name Project
 // @Description 项目管理控制器
 type Project struct {
-	ProjectBll bll.IProject
+	ProjectBll      bll.IProject
+	OrganizationBll bll.IOrganization
 }
 
 // Query 查询数据
@@ -53,6 +55,15 @@ func (a *Project) QueryPage(c *gin.Context) {
 
 	if v := c.Query("org_id"); v != "" {
 		params.OrgIDs = []string{v}
+	} else {
+		if !ginplus.CheckIsRootUser(c) {
+			result, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
+			if err != nil {
+				ginplus.ResError(c, err)
+				return
+			}
+			params.OrgIDs = result.Data.ToRecordIDs()
+		}
 	}
 
 	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{

@@ -186,22 +186,22 @@
 			<column name="address" type="varchar" length="1024" jt="12" >
 				<comment><![CDATA[项目地址]]></comment>
 			</column>
-			<column name="nature" type="varchar" length="50" jt="12" >
+			<column name="nature" type="varchar" length="100" jt="12" >
 				<comment><![CDATA[资产性质]]></comment>
 			</column>
 			<column name="photo" type="varchar" length="1024" jt="12" >
 				<comment><![CDATA[项目照片]]></comment>
 			</column>
-			<column name="asset_type" type="varchar" length="100" jt="12" >
-				<comment><![CDATA[资产类型(写字楼/商铺)]]></comment>
+			<column name="asset_type" type="int" length="100" jt="4" >
+				<comment><![CDATA[资产类型(写字楼/商铺)(多选,位运算)]]></comment>
 			</column>
-			<column name="peripheral" type="varchar" length="200" jt="12" >
+			<column name="peripheral" type="int" length="200" jt="4" >
 				<comment><![CDATA[周边配套]]></comment>
 			</column>
-			<column name="basic_services" type="varchar" length="200" jt="12" >
+			<column name="basic_services" type="int" length="200" jt="4" >
 				<comment><![CDATA[基础服务]]></comment>
 			</column>
-			<column name="tag" type="varchar" length="200" jt="12" >
+			<column name="tag" type="int" length="200" jt="4" >
 				<comment><![CDATA[特色标签]]></comment>
 			</column>
 			<column name="has_model" type="int" jt="4" >
@@ -402,9 +402,9 @@
 		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="112" />
 		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="1040" y="80" />
 		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="816" y="80" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="528" y="544" />
 		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="816" y="352" />
 		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="816" y="672" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="528" y="544" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />

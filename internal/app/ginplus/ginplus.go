@@ -3,6 +3,7 @@ package ginplus
 import (
 	"context"
 	"fmt"
+	"gxt-park-assets/internal/app/config"
 	"net/http"
 	"strings"
 
@@ -11,6 +12,7 @@ import (
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/logger"
 	"gxt-park-assets/pkg/util"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -94,6 +96,11 @@ func GetTraceID(c *gin.Context) string {
 // GetUserID 获取用户ID
 func GetUserID(c *gin.Context) string {
 	return c.GetString(UserIDKey)
+}
+
+// CheckIsRootUser 检查用户是否是root用户
+func CheckIsRootUser(c *gin.Context) bool {
+	return config.GetGlobalConfig().Root.UserName == GetUserID(c)
 }
 
 // SetUserID 设定用户ID
