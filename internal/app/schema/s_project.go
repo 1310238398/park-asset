@@ -24,7 +24,6 @@ type Project struct {
 // ProjectQueryParam 查询条件
 type ProjectQueryParam struct {
 	LikeName   string   // 项目名称(模糊查询)
-	Nature     string   // 资产性质
 	Name       string   // 项目名称
 	OrgIDs     []string // 子公司列表
 	AssetTypes []string // 资产类型列表

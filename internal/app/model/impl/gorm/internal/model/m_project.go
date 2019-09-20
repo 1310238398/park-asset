@@ -37,9 +37,6 @@ func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, op
 	if v := params.LikeName; v != "" {
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
-	if v := params.Nature; v != "" {
-		db = db.Where("nature=?", v)
-	}
 	if v := params.Name; v != "" {
 		db = db.Where("name=?", v)
 	}

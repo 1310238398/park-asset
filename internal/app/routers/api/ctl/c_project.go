@@ -42,7 +42,6 @@ func (a *Project) Query(c *gin.Context) {
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
 // @Param name query string false "项目名称（模糊查询）"
-// @Param nature query string false "资产性质"
 // @Param org_id query string false "所属子公司"
 // @Param asset_type query string false "资产类型（多个以逗号分隔）"
 // @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
@@ -53,7 +52,6 @@ func (a *Project) Query(c *gin.Context) {
 func (a *Project) QueryPage(c *gin.Context) {
 	var params schema.ProjectQueryParam
 	params.LikeName = c.Query("name")
-	params.Nature = c.Query("nature")
 
 	if v := c.Query("asset_type"); v != "" {
 		params.AssetTypes = strings.Split(v, ",")
