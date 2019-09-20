@@ -197,6 +197,12 @@ addr = "39.98.250.155:9000"
 assess_key = "TR9JPEM8NLLC36QIP91H"
 secret_key = "c68hOHi4fFeby5Q0vMEFSN3IB3QTdJGFYe552Ja+"
 
+[upload]
+# 上传文件前缀
+prefix = "s"
+# 上传大小限制(单位M)
+size_limit = 64
+
 # 认证中心
 [auth]
 # 地址

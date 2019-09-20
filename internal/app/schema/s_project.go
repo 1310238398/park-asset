@@ -48,10 +48,6 @@ func (a Projects) ToOrgIDs() []string {
 	var orgIDs []string
 
 	for _, item := range a {
-		if item.OrgID == "" {
-			continue
-		}
-
 		exists := false
 		for _, orgID := range orgIDs {
 			if orgID == item.OrgID {
