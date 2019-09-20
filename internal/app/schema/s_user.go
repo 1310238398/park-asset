@@ -37,6 +37,7 @@ type UserQueryParam struct {
 	LikeRealName string   // 真实姓名(模糊查询)
 	Status       int      // 用户状态(1:启用 2:停用)
 	RoleIDs      []string // 角色ID列表
+	RecordIDs    []string // 记录ID列表
 }
 
 // UserQueryOptions 查询可选参数项
@@ -61,6 +62,15 @@ func (a Users) ToRoleIDs() []string {
 		roleIDs = append(roleIDs, item.Roles.ToRoleIDs()...)
 	}
 	return roleIDs
+}
+
+// ToOrgIDs 获取组织ID列表
+func (a Users) ToOrgIDs() []string {
+	var orgIDs []string
+	for _, item := range a {
+		orgIDs = append(orgIDs, item.OrgID)
+	}
+	return orgIDs
 }
 
 // ToUserShows 转换为用户显示列表

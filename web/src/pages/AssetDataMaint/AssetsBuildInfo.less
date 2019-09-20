@@ -1,0 +1,99 @@
+.main {
+  background: #fff;
+  padding: 25px 47px;
+}
+
+.topInfo {
+  width: 100%;
+  height: 200px;
+  background-image: url(/assets/store-header-bg.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: 50%;
+  display: flex;
+  color: #fff;
+}
+
+.warnLabel {
+  width: 71px;
+  height: 42px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #e84228;
+  border-radius: 20px;
+  color: #fff;
+}
+
+.topInfoLeft {
+  flex: 0 0 99px;
+  display: flex;
+  align-items: center;
+}
+
+.topInfoCenter {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 20px;
+
+  :global {
+    span {
+      font-size: 14px;
+    }
+    span:first-child {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.topInfoRight {
+  flex: 0 0 208px;
+  display: flex;
+  align-items: center;
+}
+
+.form {
+  :global {
+    label {
+      color: #8798ad;
+    }
+    .ant-form-item-label {
+      text-align: left;
+    }
+  }
+}
+
+.formImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e0e7ff;
+  padding: 6px;
+  border-radius: 3px;
+
+  :global {
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}
+.title {
+  width: 120px;
+  min-width: 120px;
+  line-height: 48px;
+  text-align: left;
+  font-weight: bold;
+  color: #8798ad;
+  font-size: 14px;
+}
+.label {
+  line-height: 48px;
+}

@@ -100,7 +100,7 @@ class AssetOfficeTemplate extends PureComponent {
               </div>
             </TabPane>
             <TabPane tab="手动创建" key="2">
-              <div className={styles.BtnFin}>
+              <div style={{ marginBottom: '10px' }}>
                 <Button type="primary">新建楼栋</Button>
               </div>
               <Steps current={3}>

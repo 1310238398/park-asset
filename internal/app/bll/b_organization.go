@@ -10,6 +10,8 @@ import (
 type IOrganization interface {
 	// 查询数据
 	Query(ctx context.Context, params schema.OrganizationQueryParam, opts ...schema.OrganizationQueryOptions) (*schema.OrganizationQueryResult, error)
+	// 查询用户的二级子公司
+	QueryCompany(ctx context.Context, userID string) (*schema.OrganizationQueryResult, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.OrganizationQueryOptions) (*schema.Organization, error)
 	// 创建数据

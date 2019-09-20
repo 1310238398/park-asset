@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 
+	"github.com/LyricTian/fuh"
+
 	"gxt-park-assets/internal/app/bll/impl"
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/pkg/auth"
@@ -125,8 +127,15 @@ func Init(ctx context.Context, opts ...Option) func() {
 
 // InitMinio 初始化minio
 func InitMinio() {
-	cfg := config.GetGlobalConfig().Minio
-	minio.Init(cfg.Addr, cfg.AssessKey, cfg.SecretKey)
+	cfg := config.GetGlobalConfig()
+	cli := minio.Init(cfg.Minio.Addr, cfg.Minio.AssessKey, cfg.Minio.SecretKey)
+
+	// 设置文件上传参数
+	fuh.SetConfig(&fuh.Config{
+		BasePath:  cfg.Upload.Prefix,
+		SizeLimit: cfg.Upload.SizeLimit * 1024 * 1024,
+	})
+	fuh.SetStore(cli)
 }
 
 // NewEnforcer 创建casbin校验

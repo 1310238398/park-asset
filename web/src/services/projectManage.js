@@ -42,3 +42,7 @@ export async function disable(params) {
     method: 'PATCH',
   });
 }
+
+export async function companySecond(params) {
+  return request(`/v1/organizations?${stringify(params)}`);
+}

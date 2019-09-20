@@ -17,15 +17,16 @@ type Project struct {
 	ParentPath    string `json:"parent_path" swaggo:"false,父级路径"`
 	Memo          string `json:"memo" swaggo:"false,备注"`
 	Creator       string `json:"creator" swaggo:"false,创建者"`
-	OrgID         string `json:"org_id" swaggo:"false,所属子公司"`
+	OrgID         string `json:"org_id" binding:"required" swaggo:"false,所属子公司"`
+	OrgName       string `json:"org_name" swaggo:"false,所属子公司名称"`
 }
 
 // ProjectQueryParam 查询条件
 type ProjectQueryParam struct {
-	LikeName string
-	Nature   string
-	Name     string
-	OrgID    string
+	LikeName   string   // 项目名称(模糊查询)
+	Name       string   // 项目名称
+	OrgIDs     []string // 子公司列表
+	AssetTypes []string // 资产类型列表
 }
 
 // ProjectQueryOptions 查询可选参数项
@@ -35,6 +36,41 @@ type ProjectQueryOptions struct {
 
 // ProjectQueryResult 查询结果
 type ProjectQueryResult struct {
-	Data       []*Project
+	Data       Projects
 	PageResult *PaginationResult
+}
+
+// Projects 项目列表
+type Projects []*Project
+
+// ToOrgIDs 转换为组织机构ID列表
+func (a Projects) ToOrgIDs() []string {
+	var orgIDs []string
+
+	for _, item := range a {
+		exists := false
+		for _, orgID := range orgIDs {
+			if orgID == item.OrgID {
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
+			orgIDs = append(orgIDs, item.OrgID)
+		}
+	}
+
+	return orgIDs
+}
+
+// FillOrgData 填充组织机构数据
+func (a Projects) FillOrgData(m map[string]*Organization) Projects {
+	for i, item := range a {
+		if v, ok := m[item.OrgID]; ok {
+			a[i].OrgName = v.Name
+		}
+	}
+
+	return a
 }

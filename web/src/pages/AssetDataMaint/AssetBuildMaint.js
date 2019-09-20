@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Button, Table } from 'antd';
 import PButton from '@/components/PermButton';
-import DicShow from '@/components/DictionaryNew/DicShow';
 import loudongshu from '@/assets/loudongshu.png';
 import zichanmianji from '@/assets/zichanmianji.png';
 import yizumianji from '@/assets/yizumianji.png';
@@ -12,8 +11,8 @@ import ruzhuqiyezongshu from '@/assets/ruzhuqiyezongshu.png';
 import styles from './AssetDataMaint.less';
 
 @connect(state => ({
-  projectManage: state.projectManage,
-  loading: state.loading.models.projectManage,
+  assetDatamaint: state.assetDatamaint,
+  loading: state.loading.models.assetDatamaint,
 }))
 @Form.create()
 class AssetBuildMaint extends PureComponent {
@@ -25,7 +24,7 @@ class AssetBuildMaint extends PureComponent {
   componentDidMount() {
     const { onProjectId } = this.props;
     this.dispatch({
-      type: 'projectManage/loadForm',
+      type: 'assetDatamaint/loadForm',
       payload: {
         onProjectId,
       },
@@ -35,6 +34,21 @@ class AssetBuildMaint extends PureComponent {
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
+  };
+
+  // 跳转 如果有单元数，就跳转单元，如果没有，就跳转楼层。
+  onItemDetailClick = item => {
+    if (item) {
+      this.dispatch({
+        type: 'assetDatamaint/cellRoute',
+        payload: item,
+      });
+    } else {
+      this.dispatch({
+        type: 'assetDatamaint/floorRoute',
+        payload: item,
+      });
+    }
   };
 
   renderSearchForm() {
@@ -97,7 +111,7 @@ class AssetBuildMaint extends PureComponent {
   render() {
     const {
       loading,
-      projectManage: {
+      assetDatamaint: {
         data: { list, pagination },
       },
     } = this.props;
@@ -105,7 +119,7 @@ class AssetBuildMaint extends PureComponent {
     const { selectedRowKeys, selectedRows } = this.state;
     const columns = [
       {
-        title: '项目图片',
+        title: '楼栋号',
         dataIndex: 'photo',
         width: 100,
         render: value => {
@@ -113,27 +127,34 @@ class AssetBuildMaint extends PureComponent {
         },
       },
       {
-        title: '项目名称',
+        title: '是否整栋出租',
         dataIndex: 'name',
         width: 200,
       },
       {
-        title: '所属公司',
+        title: '出租状态',
         dataIndex: 'floor_area',
         width: 150,
       },
       {
-        title: '项目地址',
+        title: '建筑面积（㎡）',
         dataIndex: 'address',
         width: 150,
       },
       {
-        title: '项目资产类型',
+        title: '已租面积（㎡）',
+        dataIndex: 'address',
+        width: 150,
+      },
+      {
+        title: '出租率',
+        dataIndex: 'address',
+        width: 150,
+      },
+      {
+        title: '未租面积（㎡）',
         dataIndex: 'asset_type',
         width: 150,
-        render: value => {
-          return <DicShow pcode="pa$#atype" code={value.split(',')} />;
-        },
       },
     ];
 
@@ -244,6 +265,22 @@ class AssetBuildMaint extends PureComponent {
                 onClick={() => this.handleAddClick()}
               >
                 新建楼栋
+              </PButton>
+              <PButton
+                code="tembuild"
+                // icon="plus"
+                type="primary"
+                onClick={() => this.handleAddClick()}
+              >
+                模板下载
+              </PButton>
+              <PButton
+                code="loadbuild"
+                // icon="plus"
+                type="primary"
+                onClick={() => this.handleAddClick()}
+              >
+                批量导入
               </PButton>
               {selectedRows.length === 1 && [
                 <PButton

@@ -46,6 +46,9 @@ func (a *User) Query(ctx context.Context, params schema.UserQueryParam, opts ...
 		subQuery := entity.GetUserRoleDB(ctx, a.db).Select("user_id").Where("role_id IN(?)", v).SubQuery()
 		db = db.Where("record_id IN(?)", subQuery)
 	}
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN(?)", v)
+	}
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

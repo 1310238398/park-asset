@@ -49,6 +49,9 @@ func (a *Organization) Query(ctx context.Context, params schema.OrganizationQuer
 	if v := params.PrefixParentPath; v != "" {
 		db = db.Where("parent_path LIKE ?", v+"%")
 	}
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN(?)", v)
+	}
 	db = db.Order("sequence DESC,id DESC")
 
 	opt := a.getQueryOption(opts...)

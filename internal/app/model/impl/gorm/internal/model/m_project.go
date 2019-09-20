@@ -2,11 +2,14 @@ package model
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/gormplus"
+	"gxt-park-assets/pkg/util"
 )
 
 // NewProject 创建项目管理存储实例
@@ -34,14 +37,19 @@ func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, op
 	if v := params.LikeName; v != "" {
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
-	if v := params.Nature; v != "" {
-		db = db.Where("nature=?", v)
-	}
 	if v := params.Name; v != "" {
 		db = db.Where("name=?", v)
 	}
-	if v := params.OrgID; v != "" {
-		db = db.Where("org_id=?", v)
+	if v := params.OrgIDs; len(v) > 0 {
+		db = db.Where("org_id IN(?)", v)
+	}
+	if v := params.AssetTypes; len(v) > 0 {
+		var q []string
+		for _, s := range v {
+			iv := util.S(s).DefaultInt(0)
+			q = append(q, fmt.Sprintf("asset_type_calc & %d=%d", iv, iv))
+		}
+		db = db.Where(strings.Join(q, " OR "))
 	}
 
 	db = db.Order("id DESC")
