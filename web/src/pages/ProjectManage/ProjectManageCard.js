@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Modal, Row, Col } from 'antd';
+import { Form, Input, Modal, Row, Col, Select } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 // import GetLocation from './GetLocation';
@@ -13,6 +13,12 @@ class ProjectManageCard extends PureComponent {
   // state = {
   //   showMap: false,
   // };
+
+  componentDidMount() {
+    this.dispatch({
+      type: 'projectManage/queryCompany',
+    });
+  }
 
   onOKClick = () => {
     const { form, onSubmit } = this.props;
@@ -72,7 +78,7 @@ class ProjectManageCard extends PureComponent {
 
   render() {
     const {
-      projectManage: { formTitle, formVisible, formData, submitting },
+      projectManage: { formTitle, formVisible, formData, submitting, companyList },
       form: { getFieldDecorator },
       onCancel,
     } = this.props;
@@ -93,6 +99,7 @@ class ProjectManageCard extends PureComponent {
         span: 21,
       },
     };
+
     return (
       <Modal
         title={formTitle}
@@ -128,11 +135,20 @@ class ProjectManageCard extends PureComponent {
                   initialValue: formData.org_id,
                   rules: [
                     {
-                      required: false,
-                      message: '请输入公司',
+                      required: true,
+                      message: '请选择公司',
                     },
                   ],
-                })(<Input placeholder="请输入公司" />)}
+                })(
+                  <Select placeholder="请选择" style={{ width: '100%' }}>
+                    {companyList &&
+                      companyList.map(item => (
+                        <Select.Option key={item.record_id} value={item.record_id}>
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                )}
               </Form.Item>
             </Col>
           </Row>
@@ -205,7 +221,7 @@ class ProjectManageCard extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="资产类型">
                 {getFieldDecorator('asset_type', {
-                  initialValue: formData.asset_type ? formData.asset_type.split(',') : '',
+                  initialValue: formData.asset_type,
                   rules: [
                     {
                       required: true,

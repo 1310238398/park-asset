@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { routerRedux } from 'dva/router';
 import * as assetDatamaintService from '@/services/assetDatamaint';
 
 export default {
@@ -15,6 +16,12 @@ export default {
     formID: '',
     formVisible: false,
     formData: {},
+    // 单元数据
+    formTypeUnit: '',
+    formVisibleUnit: false,
+    formDataUnit: {},
+    formTitleUnit: '',
+    formIDUnit: '',
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -145,6 +152,98 @@ export default {
         yield put({ type: 'fetch' });
       }
     },
+    // 单元部分数据
+    *cellRoute({ payload }, { put }) {
+      yield put(
+        routerRedux.push({
+          pathname: '/assetdatamaint/assetunitmaint',
+          query: {
+            recordID: payload.record_id,
+            type: payload.asset_type,
+          },
+        })
+      );
+    },
+
+    *LoadUnit({ payload }, { put }) {
+      yield put({
+        type: 'changeFormVisibleUnit',
+        payload: true,
+      });
+
+      yield [
+        put({
+          type: 'saveFormTypeUnit',
+          payload: payload.type,
+        }),
+        put({
+          type: 'saveFormTitleUnit',
+          payload: '新建单元',
+        }),
+        put({
+          type: 'saveFormIDUnit',
+          payload: '',
+        }),
+        put({
+          type: 'saveFormDataUnit',
+          payload: {},
+        }),
+      ];
+
+      if (payload.type === 'E') {
+        yield [
+          put({
+            type: 'saveFormTitleUnit',
+            payload: '编辑单元',
+          }),
+          put({
+            type: 'saveFormIDUnit',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormUnit',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitleUnit',
+            payload: '查看单元',
+          }),
+          put({
+            type: 'saveFormIDUnit',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormUnit',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+    },
+    *fetchFormUnit({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.get, payload);
+      yield [
+        put({
+          type: 'saveFormDataUnit',
+          payload: response,
+        }),
+      ];
+    },
+    // 楼层部分数据
+    *floorRoute({ payload }, { put }) {
+      yield put(
+        routerRedux.push({
+          pathname: '/assetdatamaint/assetfloormaint',
+          query: {
+            recordID: payload.record_id,
+            type: payload.asset_type,
+          },
+        })
+      );
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -173,6 +272,23 @@ export default {
     },
     changeSubmitting(state, { payload }) {
       return { ...state, submitting: payload };
+    },
+
+    // 单元数据
+    changeFormVisibleUnit(state, { payload }) {
+      return { ...state, formVisibleUnit: payload };
+    },
+    saveFormTitleUnit(state, { payload }) {
+      return { ...state, formTitleUnit: payload };
+    },
+    saveFormTypeUnit(state, { payload }) {
+      return { ...state, formTypeUnit: payload };
+    },
+    saveFormIDUnit(state, { payload }) {
+      return { ...state, formIDUnit: payload };
+    },
+    saveFormDataUnit(state, { payload }) {
+      return { ...state, formDataUnit: payload };
     },
   },
 };
