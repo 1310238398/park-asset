@@ -61,6 +61,7 @@ type Config struct {
 	MySQL           MySQL       `toml:"mysql"`
 	Postgres        Postgres    `toml:"postgres"`
 	Sqlite3         Sqlite3     `toml:"sqlite3"`
+	Upload          Upload      `toml:"upload"`
 	Minio           Minio       `toml:"minio"`
 }
 
@@ -200,6 +201,12 @@ type Sqlite3 struct {
 // DSN 数据库连接串
 func (a Sqlite3) DSN() string {
 	return a.Path
+}
+
+// Upload 文件上传配置参数
+type Upload struct {
+	Prefix    string `toml:"prefix"`
+	SizeLimit int64  `toml:"size_limit"`
 }
 
 // Minio minio配置参数

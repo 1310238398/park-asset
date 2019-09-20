@@ -10,6 +10,7 @@ import (
 	"gxt-park-assets/internal/app/middleware"
 	"gxt-park-assets/internal/app/routers/api"
 	"gxt-park-assets/pkg/logger"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/dig"
 )
@@ -23,7 +24,8 @@ func InitWeb(container *dig.Container) *gin.Engine {
 	app.NoMethod(middleware.NoMethodHandler())
 	app.NoRoute(middleware.NoRouteHandler())
 
-	apiPrefixes := []string{"/api/"}
+	uploadPrefix := fmt.Sprintf("/%s/", cfg.Upload.Prefix)
+	apiPrefixes := []string{"/api/", uploadPrefix}
 
 	// 跟踪ID
 	app.Use(middleware.TraceMiddleware(middleware.AllowPathPrefixNoSkipper(apiPrefixes...)))
@@ -47,6 +49,9 @@ func InitWeb(container *dig.Container) *gin.Engine {
 	if dir := cfg.Swagger; dir != "" {
 		app.Static("/swagger", dir)
 	}
+
+	// 文件服务中间件
+	app.Use(middleware.FileMiddleware(middleware.AllowPathPrefixNoSkipper(uploadPrefix)))
 
 	// 静态站点
 	if dir := cfg.WWW; dir != "" {
