@@ -16,6 +16,12 @@ export default {
     formID: '',
     formVisible: false,
     formData: {},
+    // 楼栋数据
+    formTypeBuild: '',
+    formVisibleBuild: false,
+    formDataBuild: {},
+    formTitleBuild: '',
+    formIDBuild: '',
     // 单元数据
     formTypeUnit: '',
     formVisibleUnit: false,
@@ -152,6 +158,65 @@ export default {
         yield put({ type: 'fetch' });
       }
     },
+    // 楼栋数据
+    *LoadBuild({ payload }, { put }) {
+      yield put({
+        type: 'changeFormVisibleBuild',
+        payload: true,
+      });
+
+      yield [
+        put({
+          type: 'saveFormTypeBuild',
+          payload: payload.type,
+        }),
+        put({
+          type: 'saveFormTitleBuild',
+          payload: '新建楼栋',
+        }),
+        put({
+          type: 'saveFormIDBuild',
+          payload: '',
+        }),
+        put({
+          type: 'saveFormDataBuild',
+          payload: {},
+        }),
+      ];
+
+      if (payload.type === 'E') {
+        yield [
+          put({
+            type: 'saveFormTitleBuild',
+            payload: '编辑楼栋',
+          }),
+          put({
+            type: 'saveFormIDBuild',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormBuild',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitleBuild',
+            payload: '查看楼栋',
+          }),
+          put({
+            type: 'saveFormIDBuild',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormBuild',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+    },
     // 单元部分数据
     *cellRoute({ payload }, { put }) {
       yield put(
@@ -232,6 +297,40 @@ export default {
         }),
       ];
     },
+    *submitUnit({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetDatamaint.formType);
+
+      let response;
+      if (formType === 'E') {
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
+      } else {
+        response = yield call(assetDatamaintService.create, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleUnit',
+          payload: false,
+        });
+        // TODO 查询单元列表
+        yield put({
+          type: 'fetch',
+        });
+      }
+    },
     // 楼层部分数据
     *floorRoute({ payload }, { put }) {
       yield put(
@@ -273,7 +372,22 @@ export default {
     changeSubmitting(state, { payload }) {
       return { ...state, submitting: payload };
     },
-
+    // 楼栋数据
+    changeFormVisibleBuild(state, { payload }) {
+      return { ...state, formVisibleBuild: payload };
+    },
+    saveFormTitleBuild(state, { payload }) {
+      return { ...state, formTitleBuild: payload };
+    },
+    saveFormTypeBuild(state, { payload }) {
+      return { ...state, formTypeBuild: payload };
+    },
+    saveFormIDBuild(state, { payload }) {
+      return { ...state, formIDBuild: payload };
+    },
+    saveFormDataBuild(state, { payload }) {
+      return { ...state, formDataBuild: payload };
+    },
     // 单元数据
     changeFormVisibleUnit(state, { payload }) {
       return { ...state, formVisibleUnit: payload };

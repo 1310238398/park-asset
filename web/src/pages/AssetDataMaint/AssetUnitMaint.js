@@ -104,6 +104,23 @@ class AssetUnitMaint extends PureComponent {
     });
     this.clearSelectRows();
   }
+  
+  // 关闭弹窗
+  handleFormCancel= () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleUnit',
+      payload: false,
+    });
+  };
+
+  // 提交数据
+  handleFormSubmit=(data)=>{
+    this.dispatch({
+      type: 'assetDatamaint/submitUnit',
+      payload: data,
+    });
+    this.clearSelectRows();
+  }
 
   // 显示弹窗
   renderDataForm() {

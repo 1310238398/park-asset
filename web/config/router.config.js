@@ -67,6 +67,15 @@ export default [
           },
         ],
       },
+      {
+        path: 'assetssituation',
+        routes: [
+          {
+            path: '/assetssituation/assetssituationlist',
+            component: './AssetsSituation/AssetsSituation',
+          },
+        ],
+      },
     ],
   },
   {

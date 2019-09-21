@@ -3,11 +3,6 @@ import { connect } from 'dva';
 import { Form, Input, Row, Col, Radio, Card } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
-
-
-@connect(({ menu }) => ({
-  menu,
-}))
 @Form.create()
 class CustomInfo extends PureComponent {
   state = {
@@ -19,8 +14,8 @@ class CustomInfo extends PureComponent {
   };
 
   render() {
+    const formData = {};
     const {
-      menu: { formData },
       form: { getFieldDecorator },
     } = this.props;
 
@@ -129,10 +124,9 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入联系人电话" />)}
                   </Form.Item>
                 </Col>
-        
               </Row>
               <Row>
-              <Col span={12}>
+                <Col span={12}>
                   <Form.Item {...formItemLayout} label="邮箱号">
                     {getFieldDecorator('email', {
                       initialValue: formData.email,
@@ -167,7 +161,7 @@ class CustomInfo extends PureComponent {
 
                       rules: [
                         {
-                          required: true,
+                          required: false,
                           message: '请输入发票抬头',
                         },
                       ],
@@ -180,7 +174,7 @@ class CustomInfo extends PureComponent {
                       initialValue: formData.duty,
                       rules: [
                         {
-                          required: true,
+                          required: false,
                           message: '请输入税号',
                         },
                       ],
@@ -195,7 +189,7 @@ class CustomInfo extends PureComponent {
                       initialValue: formData.account,
                       rules: [
                         {
-                          required: true,
+                          required: false,
                           message: '请输入开户行及账号',
                         },
                       ],
@@ -233,10 +227,9 @@ class CustomInfo extends PureComponent {
                     })(<Input placeholder="请输入租户电话" />)}
                   </Form.Item>
                 </Col>
-               
               </Row>
               <Row>
-              <Col span={12}>
+                <Col span={12}>
                   <Form.Item {...formItemLayout} label="邮箱号">
                     {getFieldDecorator('mineemail', {
                       initialValue: formData.mineemail,

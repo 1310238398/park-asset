@@ -3,17 +3,16 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Button, Table, Modal, Select } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
-import ProjectManageCard from './ProjectManageCard';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import styles from './ProjectManage.less';
+import styles from './AssetsSituation.less';
 
 @connect(state => ({
   projectManage: state.projectManage,
   loading: state.loading.models.projectManage,
 }))
 @Form.create()
-class ProjectManageList extends PureComponent {
+class AssetsSituationList extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -173,66 +172,11 @@ class ProjectManageList extends PureComponent {
 
   renderDataForm() {
     return (
-      <ProjectManageCard
-        onCancel={this.handleDataFormCancel}
-        onSubmit={this.handleDataFormSubmit}
-      />
-    );
-  }
-
-  renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-      projectManage: { companyList },
-    } = this.props;
-
-    return (
-      <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
-        <Row gutter={16}>
-          <Col md={6} sm={24}>
-            <Form.Item label="项目名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={24}>
-            <Form.Item label="资产类型">
-              {getFieldDecorator('asset_type')(
-                <DicSelect
-                  vmode="sting"
-                  pcode="pa$#atype"
-                  selectProps={{ mode: 'multiple', placeholder: '请选择' }}
-                />
-              )}
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={24}>
-            <Form.Item label="所属公司">
-              {getFieldDecorator('org_id')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {companyList &&
-                    companyList.map(item => (
-                      <Select.Option key={item.record_id} value={item.record_id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                </Select>
-              )}
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={24}>
-            <div style={{ overflow: 'hidden' }}>
-              <span style={{ marginBottom: 24 }}>
-                <Button type="primary" htmlType="submit">
-                  查询
-                </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
-                  重置
-                </Button>
-              </span>
-            </div>
-          </Col>
-        </Row>
-      </Form>
+        <div>1212</div>
+    //   <ProjectManageCard
+    //     onCancel={this.handleDataFormCancel}
+    //     onSubmit={this.handleDataFormSubmit}
+    //   />
     );
   }
 
@@ -288,79 +232,30 @@ class ProjectManageList extends PureComponent {
     };
 
     const breadcrumbList = [
-      { title: '项目管理' },
-      { title: '项目管理', href: '/project/projectmanage' },
+      { title: '资产管理' },
+      { title: '资产管理', href: '/assetssituation/assetssituationlist' },
     ];
 
     return (
-      <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}>
+      <PageHeaderLayout title="资产管理" breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
-            <div className={styles.tableListOperator}>
-              <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
-                新建
-              </PButton>
-              {selectedRows.length === 1 && [
-                <PButton
-                  key="edit"
-                  code="edit"
-                  icon="edit"
-                  onClick={() => this.handleEditClick(selectedRows[0])}
-                >
-                  编辑
-                </PButton>,
-                <PButton
-                  key="del"
-                  code="del"
-                  icon="delete"
-                  type="danger"
-                  onClick={() => this.handleDelClick(selectedRows[0])}
-                >
-                  删除
-                </PButton>,
-                // selectedRows[0].status === 2 && (
-                //   <PButton
-                //     key="enable"
-                //     code="enable"
-                //     icon="check"
-                //     onClick={() => this.handleItemEnableClick(selectedRows[0])}
-                //   >
-                //     启用
-                //   </PButton>
-                // ),
-                // selectedRows[0].status === 1 && (
-                //   <PButton
-                //     key="disable"
-                //     code="disable"
-                //     icon="stop"
-                //     type="danger"
-                //     onClick={() => this.handleItemDisableClick(selectedRows[0])}
-                //   >
-                //     禁用
-                //   </PButton>
-                // ),
-              ]}
-            </div>
             <div>
               <Table
-                rowSelection={{
-                  selectedRowKeys,
-                  onChange: this.handleTableSelectRow,
-                }}
+               
                 loading={loading}
                 rowKey={record => record.record_id}
                 dataSource={list}
                 columns={columns}
                 pagination={paginationProps}
                 onChange={this.handleTableChange}
-                // onRow={record => {
-                //   return {
-                //     onClick: () => {
-                //       this.onItemDetailClick(record);
-                //     },
-                //   };
-                // }}
+                onRow={record => {
+                  return {
+                    onClick: () => {
+                      this.onItemDetailClick(record);
+                    },
+                  };
+                }}
                 size="small"
               />
             </div>
@@ -372,4 +267,4 @@ class ProjectManageList extends PureComponent {
   }
 }
 
-export default ProjectManageList;
+export default AssetsSituationList;

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio } from 'antd';
+import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio, Tabs } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import CustomInfo from './CustomInfo/CustomInfo';
 import AgreementInfo from './CustomInfo/AgreementInfo';
@@ -8,10 +8,11 @@ import AgreementInfo from './CustomInfo/AgreementInfo';
   assetDatamaint,
 }))
 @Form.create()
-class AssetUnitEditMaint extends PureComponent {
+class AssetBuildEditMaint extends PureComponent {
   constructor(props) {
     super(props);
     this.custom = React.createRef();
+    this.agreement = React.createRef();
   }
 
   onOKClick = () => {
@@ -22,12 +23,18 @@ class AssetUnitEditMaint extends PureComponent {
         formData.sequence = parseInt(formData.sequence, 10);
         this.custom.current.validateFields((err, values) => {
           if (!err) {
-            formData = {formData,...values}
+            formData = { formData, ...values };
             // console.log(formData)
           }
         });
+        this.agreement.current.validateFields((err, values) => {
+            if (!err) {
+              formData = { formData, ...values };
+              // console.log(formData)
+            }
+          });
 
-       // onSubmit(formData);
+        // onSubmit(formData);
       }
     });
   };
@@ -39,11 +46,12 @@ class AssetUnitEditMaint extends PureComponent {
 
   render() {
     const {
-      assetDatamaint: { formVisibleUnit, formTitleUnit, formDataUnit, submitting },
+      assetDatamaint: { formVisibleBuild, formTitleBuild, formDataBuild, submitting },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
     const RadioGroup = Radio.Group;
+    const { TabPane } = Tabs;
     const formItemLayout = {
       labelCol: {
         span: 6,
@@ -70,9 +78,9 @@ class AssetUnitEditMaint extends PureComponent {
     };
     return (
       <Modal
-        title={formTitleUnit}
+        title={formTitleBuild}
         width={850}
-        visible={formVisibleUnit}
+        visible={formVisibleBuild}
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
@@ -87,7 +95,7 @@ class AssetUnitEditMaint extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="园区名称">
                   {getFieldDecorator('name', {
-                    initialValue: formDataUnit.name,
+                    initialValue: formDataBuild.name,
                     rules: [
                       {
                         required: true,
@@ -100,7 +108,7 @@ class AssetUnitEditMaint extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="楼栋名称">
                   {getFieldDecorator('parent_id', {
-                    initialValue: formDataUnit.parent_id,
+                    initialValue: formDataBuild.parent_id,
                     rules: [
                       {
                         required: true,
@@ -113,22 +121,9 @@ class AssetUnitEditMaint extends PureComponent {
             </Row>
             <Row>
               <Col span={12}>
-                <Form.Item {...formItemLayout} label="单元名称">
-                  {getFieldDecorator('code', {
-                    initialValue: formDataUnit.code,
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入',
-                      },
-                    ],
-                  })(<Input placeholder="请输入" />)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
                 <Form.Item {...formItemLayoutTwo} label="是否整单元出租">
                   {getFieldDecorator('sequence', {
-                    initialValue: formDataUnit.sequence,
+                    initialValue: formDataBuild.sequence,
                     rules: [
                       {
                         required: true,
@@ -147,6 +142,46 @@ class AssetUnitEditMaint extends PureComponent {
             <Row>
               <Col span={8}>
                 <Form.Item
+                  {...formItemLayout}
+                  label="单元数"
+                  style={{
+                    display: getFieldValue('sequence') === 10 ? 'block' : 'none',
+                  }}
+                >
+                  {getFieldDecorator('code', {
+                    initialValue: formDataBuild.code,
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入',
+                      },
+                    ],
+                  })(<InputNumber placeholder="请输入" />)}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  {...formItemLayout}
+                  label="楼层数"
+                  style={{
+                    display: getFieldValue('sequence') === 10 ? 'block' : 'none',
+                  }}
+                >
+                  {getFieldDecorator('code', {
+                    initialValue: formDataBuild.code,
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入',
+                      },
+                    ],
+                  })(<InputNumber placeholder="请输入" />)}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <Form.Item
                   {...formItemLayoutTwo}
                   label="建筑面积（㎡）"
                   style={{
@@ -154,7 +189,7 @@ class AssetUnitEditMaint extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('code', {
-                    initialValue: formDataUnit.code,
+                    initialValue: formDataBuild.code,
                     rules: [
                       {
                         required: true,
@@ -173,7 +208,7 @@ class AssetUnitEditMaint extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('code', {
-                    initialValue: formDataUnit.code,
+                    initialValue: formDataBuild.code,
                     rules: [
                       {
                         required: true,
@@ -192,7 +227,7 @@ class AssetUnitEditMaint extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('code', {
-                    initialValue: formDataUnit.code,
+                    initialValue: formDataBuild.code,
                     rules: [
                       {
                         required: false,
@@ -219,7 +254,7 @@ class AssetUnitEditMaint extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('lease_status', {
-                    initialValue: formDataUnit.lease_status,
+                    initialValue: formDataBuild.lease_status,
                     rules: [{ required: true, message: '请选择' }],
                   })(
                     <RadioGroup>
@@ -236,14 +271,25 @@ class AssetUnitEditMaint extends PureComponent {
                 display: getFieldValue('lease_status') === 10 ? 'block' : 'none',
               }}
             >
-              <CustomInfo ref={this.custom} />
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="客户信息" key="1">
+                  <CustomInfo ref={this.custom} />
+                </TabPane>
+              </Tabs>
             </Row>
             <Row
               style={{
                 display: getFieldValue('lease_status') === 30 ? 'block' : 'none',
               }}
             >
-              <AgreementInfo />
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="客户信息" key="1">
+                  <CustomInfo ref={this.custom} />
+                </TabPane>
+                <TabPane tab="合同信息" key="2">
+                  <AgreementInfo  ref={this.agreement}/>
+                </TabPane>
+              </Tabs>
             </Row>
           </Form>
         </Card>
@@ -252,4 +298,4 @@ class AssetUnitEditMaint extends PureComponent {
   }
 }
 
-export default AssetUnitEditMaint;
+export default AssetBuildEditMaint;
