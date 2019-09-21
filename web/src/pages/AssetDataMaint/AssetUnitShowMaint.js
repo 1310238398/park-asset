@@ -63,30 +63,18 @@ class AssetUnitShowMaint extends PureComponent {
     const {
       enterprise: { formData },
     } = this.props;
-    let headerImgUrl = null;
-
-    if (formData.logo) {
-      headerImgUrl = formData.logo;
-    } else {
-      headerImgUrl = '/s/mall/noimage.jpg';
-    }
-
-    let pidImage1 = '';
-    let pidImage2 = '';
-    if (formData.representative_idcard_front) {
-      pidImage1 = formData.representative_idcard_front;
-    } else {
-      pidImage1 = '/s/mall/noimage.jpg';
-    }
-    if (formData.representative_idcard_back) {
-      pidImage2 = formData.representative_idcard_back;
-    } else {
-      pidImage2 = '/s/mall/noimage.jpg';
-    }
+    const { TabPane } = Tabs;
+    const operations = (
+      <div>
+        <Button>作废</Button>
+        <Button>退租</Button>
+        <Button>续签</Button>
+      </div>
+    );
     return (
       <div className={styles.main}>
-        <Card title="企业基本信息" bordered={false}>
-          <div className={styles.topInfo}>
+        <Card title="基本信息" bordered={false}>
+          {/* <div className={styles.topInfo}>
             <div className={styles.topInfoLeft}>
               <Avatar
                 src={headerImgUrl}
@@ -115,59 +103,41 @@ class AssetUnitShowMaint extends PureComponent {
                     );
                   })}
               </span>
-              {/* <span>
-                企业简介：
-                {formData.memo}
-              </span> */}
+       
             </div>
+          </div> */}
+          <p>A3-5</p>
+          <div className={styles.form} style={{ marginTop: 25 }}>
+            <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
+              <Description term="园区">{formData.phone}</Description>
+              <Description term="楼栋">{formData.representative}</Description>
+              <Description term="出租规模">{formData.applicant_name}</Description>
+            </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="企业电话">{formData.phone}</Description>
-              <Description term="法定代表人">{formData.representative}</Description>
-              <Description term="企业管理员">{formData.applicant_name}</Description>
-              <Description term="联系电话">{formData.applicant_tel}</Description>
+              <Description term="单元数">{formData.applicant_tel}</Description>
+              <Description term="楼层数">{formData.representative}</Description>
+              <Description term="装修情况">{formData.applicant_name}</Description>
+            </DescriptionList>
+          </div>
+          <div className={styles.form} style={{ marginTop: 25 }}>
+            <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
+              <Description term="建筑面积（㎡）">{formData.applicant_tel}</Description>
+              <Description term="计租面积（㎡）">{formData.representative}</Description>
             </DescriptionList>
           </div>
         </Card>
-        <Card title="经营单位基本信息" bordered={false}>
-          <div className={styles.form}>
-            <DescriptionList title="" size="large" style={{ marginBottom: 32 }}>
-              <Description term="统一社会信用代码">{formData.credit_code}</Description>
-            </DescriptionList>
-            <DescriptionList col={1} style={{ marginBottom: 32 }}>
-              <Description term="经营范围">{formData.business_scope}</Description>
-            </DescriptionList>
-
-            <DescriptionList title="" size="large" style={{ marginBottom: 32 }}>
-              <Description term="法定代表人信息">
-                <div style={{ display: 'flex' }}>
-                  {pidImage1 && (
-                    <div
-                      className={styles.formImage}
-                      style={{ width: 248, height: 160, marginLeft: 20 }}
-                    >
-                      <img src={pidImage1} alt="身份证" />
-                    </div>
-                  )}
-                  {pidImage2 && (
-                    <div
-                      className={styles.formImage}
-                      style={{ width: 248, height: 160, marginLeft: 20 }}
-                    >
-                      <img src={pidImage2} alt="身份证" />
-                    </div>
-                  )}
-                </div>
-              </Description>
-            </DescriptionList>
-
-            <DescriptionList>
-              <Description term="热门企业">
-                {formData.flag && formData.flag === 1 ? '是' : '否'}
-              </Description>
-            </DescriptionList>
-          </div>
+        <Card>
+          <Tabs defaultActiveKey="1" tabBarExtraContent={operations}>
+            <TabPane tab="客户信息" key="1">
+              <CustomInfoShow/>
+            </TabPane>
+            <TabPane tab="合同信息" key="2">
+              
+            </TabPane>
+            <TabPane tab="租金信息" key="3"></TabPane>
+          </Tabs>
         </Card>
       </div>
     );
