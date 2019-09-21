@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Button, Table } from 'antd';
 import PButton from '@/components/PermButton';
+import AssetBuildEditMaint from './AssetBuildEditMaint';
 import loudongshu from '@/assets/loudongshu.png';
 import zichanmianji from '@/assets/zichanmianji.png';
 import yizumianji from '@/assets/yizumianji.png';
@@ -50,6 +51,105 @@ class AssetBuildMaint extends PureComponent {
       });
     }
   };
+  
+  // 新建楼栋
+  handleAddBuildClick=()=>{
+    this.dispatch({
+      type: 'assetDatamaint/LoadBuild',
+      payload: {
+        type: 'A',
+      },
+    });   
+  }
+
+   // 编辑单元
+   handleEditClick = () => {
+    const { selectedRows } = this.state;
+    if (selectedRows.length === 0) {
+      return;
+    }
+    const item = selectedRows[0];
+    this.dispatch({
+      type: 'assetDatamaint/LoadBuild',
+      payload: {
+        type: 'E',
+        id: item.record_id,
+      },
+    });
+  };
+
+  // 删除单元
+  handleDelClick = () => {
+    const { selectedRows } = this.state;
+    if (selectedRows.length === 0) {
+      return;
+    }
+    const item = selectedRows[0];
+    Modal.confirm({
+      title: `确定删除【楼栋数据：${item.name}】？`,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: this.handleDelOKClick.bind(this, item.record_id),
+    });
+  };
+
+  // 查看单元
+  handleSeeClick = () => {
+    const { selectedRows } = this.state;
+    if (selectedRows.length === 0) {
+      return;
+    }
+    const item = selectedRows[0];
+    this.dispatch({
+      type: 'assetDatamaint/LoadBuild',
+      payload: {
+        type: 'S',
+        id: item.record_id,
+      },
+    });
+  };
+
+  handleDelOKClick(id) {
+    this.dispatch({
+      type: 'assetDatamaint/delBuild',
+      payload: { record_id: id },
+    });
+    this.clearSelectRows();
+  }
+  
+  // 关闭弹窗
+  handleFormCancel= () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleBuild',
+      payload: false,
+    });
+  };
+
+  // 提交数据
+  handleFormSubmit=(data)=>{
+    this.dispatch({
+      type: 'assetDatamaint/submitBuild',
+      payload: data,
+    });
+    this.clearSelectRows();
+  }
+
+    // 显示弹窗
+    renderDataForm() {
+      const {
+        assetDatamaint: { formTypeBuild },
+      } = this.props;
+      if (formTypeBuild === 'A' || formTypeBuild === 'E') {
+        return (
+          <AssetBuildEditMaint onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />
+        );
+      }
+      if (formTypeBuild === 'S') {
+        return <AssetUnitShowMaint onCancel={this.handleFormCancel} />;
+      }
+      return <React.Fragment></React.Fragment>;
+    }
 
   renderSearchForm() {
     const {
@@ -262,7 +362,7 @@ class AssetBuildMaint extends PureComponent {
                 code="addbuild"
                 icon="plus"
                 type="primary"
-                onClick={() => this.handleAddClick()}
+                onClick={() => this.handleAddBuildClick()}
               >
                 新建楼栋
               </PButton>
@@ -349,7 +449,7 @@ class AssetBuildMaint extends PureComponent {
               />
             </div>
           </div>
-          {/* {this.renderDataForm()} */}
+          {this.renderDataForm()}
         </Card>
       </div>
     );
