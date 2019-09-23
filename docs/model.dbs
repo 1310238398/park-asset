@@ -7,6 +7,7 @@
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="project_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[项目ID]]></comment>
@@ -14,7 +15,6 @@
 			<column name="asset_type" type="int" jt="4" >
 				<comment><![CDATA[资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商]]></comment>
 			</column>
-			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="history_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[历史记录ID]]></comment>
 			</column>
@@ -30,6 +30,9 @@
 			<fk name="fk_pa_assets_pa_project" virtual="y" to_schema="parkassets" to_table="pa_project" >
 				<fk_column name="project_id" pk="record_id" />
 			</fk>
+			<fk name="fk_pa_assets_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_assets_history" >
+				<fk_column name="history_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_assets_history" >
 			<comment><![CDATA[资产历史表]]></comment>
@@ -37,11 +40,31 @@
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="assets_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[资产ID]]></comment>
 			</column>
-			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[1:未租
+2:锁定
+3:已租
+4:退租
+5:作废
+6:续签]]></comment>
+			</column>
+			<column name="reason" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[原因]]></comment>
+			</column>
+			<column name="source" type="int" jt="4" >
+				<comment><![CDATA[数据来源:1录入 2导入]]></comment>
+			</column>
+			<column name="operator" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[操作人]]></comment>
+			</column>
+			<column name="operator_tel" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[操作人手机号]]></comment>
+			</column>
 			<index name="pk_pa_menu_7" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -51,6 +74,80 @@
 			<index name="idx_pa_menu_record_id_7" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
+			<fk name="fk_pa_assets_history_pa_assets" virtual="y" to_schema="parkassets" to_table="pa_assets" >
+				<fk_column name="assets_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pa_contract" >
+			<comment><![CDATA[合同信息管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[创建者]]></comment>
+			</column>
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="history_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[资产历史ID]]></comment>
+			</column>
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[合同状态: 1租 2续签]]></comment>
+			</column>
+			<column name="code" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[合同编号]]></comment>
+			</column>
+			<column name="photo" type="varchar" length="2048" jt="12" >
+				<comment><![CDATA[合同照片(JSON数组)]]></comment>
+			</column>
+			<column name="rent_calc_method" type="int" jt="4" >
+				<comment><![CDATA[租金计算方式: 1日租金 2月租金]]></comment>
+			</column>
+			<column name="rent" type="int" jt="4" >
+				<comment><![CDATA[租金]]></comment>
+			</column>
+			<column name="payment_cycle" type="int" jt="4" >
+				<comment><![CDATA[缴费周期(月)]]></comment>
+			</column>
+			<column name="advance_payment" type="int" jt="4" >
+				<comment><![CDATA[提前付款天数]]></comment>
+			</column>
+			<column name="lease_start_date" type="date" jt="91" >
+				<comment><![CDATA[租赁开始日期]]></comment>
+			</column>
+			<column name="lease_end_date" type="date" jt="91" >
+				<comment><![CDATA[租赁结束日期]]></comment>
+			</column>
+			<column name="is_rent_free" type="int" jt="4" >
+				<comment><![CDATA[是否有免租期:1是 2否]]></comment>
+			</column>
+			<column name="rent_free_deadline" type="date" jt="91" >
+				<comment><![CDATA[免租截止日期]]></comment>
+			</column>
+			<column name="signing_date" type="date" jt="91" >
+				<comment><![CDATA[合同签署日期]]></comment>
+			</column>
+			<column name="deposit_due_amount" type="int" jt="4" >
+				<comment><![CDATA[押金应交金额(分)]]></comment>
+			</column>
+			<column name="deposit_actual_amount" type="int" jt="4" >
+				<comment><![CDATA[押金实缴金额(分)]]></comment>
+			</column>
+			<column name="deposit_receipt_photo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[押金收据照片(JSON)]]></comment>
+			</column>
+			<index name="pk_pa_menu_9" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_9" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_record_id_9" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pa_contract_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_assets_history" >
+				<fk_column name="history_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_dictionary" >
 			<comment><![CDATA[字典管理]]></comment>
@@ -187,6 +284,9 @@
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[创建者]]></comment>
+			</column>
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="project_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[项目ID]]></comment>
@@ -286,6 +386,7 @@
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="name" type="varchar" length="200" jt="12" >
 				<comment><![CDATA[项目名称]]></comment>
@@ -334,7 +435,6 @@
 			</column>
 			<column name="parent_id" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="parent_path" type="varchar" length="518" decimal="0" jt="12" />
-			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="org_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[项目所属子公司]]></comment>
 			</column>
@@ -356,6 +456,59 @@
 			<index name="idx_pa_menu_record_id_3" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
+		</table>
+		<table name="pa_rent_details" >
+			<comment><![CDATA[租金明细]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[创建者]]></comment>
+			</column>
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="history_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[资产历史ID]]></comment>
+			</column>
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[合同状态: 1未交费 2已缴费]]></comment>
+			</column>
+			<column name="payment_start_date" type="date" jt="91" >
+				<comment><![CDATA[缴费开始日期]]></comment>
+			</column>
+			<column name="payment_end_date" type="date" jt="91" >
+				<comment><![CDATA[缴费截止日期]]></comment>
+			</column>
+			<column name="payment_amount" type="int" jt="4" >
+				<comment><![CDATA[缴费金额]]></comment>
+			</column>
+			<column name="payment_deadline" type="date" jt="91" >
+				<comment><![CDATA[缴费截止期限]]></comment>
+			</column>
+			<column name="actual_amount" type="int" jt="4" >
+				<comment><![CDATA[实缴金额]]></comment>
+			</column>
+			<column name="receipt_photo" type="varchar" length="2048" jt="12" >
+				<comment><![CDATA[收据照片(JSON)]]></comment>
+			</column>
+			<column name="operator" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[操作人]]></comment>
+			</column>
+			<column name="operator_tel" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[操作人手机号]]></comment>
+			</column>
+			<index name="pk_pa_menu_10" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_10" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_record_id_10" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pa_rent_details_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_assets_history" >
+				<fk_column name="history_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_role" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -453,6 +606,9 @@
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[创建者]]></comment>
+			</column>
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="history_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[资产历史ID]]></comment>
@@ -499,6 +655,9 @@
 			<index name="idx_pa_menu_record_id_6" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
+			<fk name="fk_pa_tenant_customer_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_assets_history" >
+				<fk_column name="history_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_user" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -567,23 +726,70 @@
 				<fk_column name="user_id" pk="record_id" />
 			</fk>
 		</table>
+		<table name="pa_withdrawal" >
+			<comment><![CDATA[退租管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[创建者]]></comment>
+			</column>
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="history_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[资产历史ID]]></comment>
+			</column>
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[状态: 1合同正常结束 2合同提前结束]]></comment>
+			</column>
+			<column name="withdrawal_date" type="date" jt="91" >
+				<comment><![CDATA[退租日期]]></comment>
+			</column>
+			<column name="deposit_refund" type="int" jt="4" >
+				<comment><![CDATA[应退押金]]></comment>
+			</column>
+			<column name="real_deposit" type="int" jt="4" >
+				<comment><![CDATA[实退押金]]></comment>
+			</column>
+			<column name="liquidated_damages" type="int" jt="4" >
+				<comment><![CDATA[违约金收缴]]></comment>
+			</column>
+			<column name="reason" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[退租原因]]></comment>
+			</column>
+			<index name="pk_pa_menu_8" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_8" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_record_id_8" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pa_withdrawal_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_assets_history" >
+				<fk_column name="history_id" pk="record_id" />
+			</fk>
+		</table>
 	</schema>
 	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
-		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="48" y="96" />
-		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="48" y="272" />
-		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="528" y="320" />
-		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="528" y="112" />
-		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="288" y="400" />
-		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="112" />
-		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="1040" y="80" />
-		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="816" y="80" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="528" y="544" />
-		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="816" y="352" />
-		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="816" y="672" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="1072" y="896" />
-		<entity schema="parkassets" name="pa_assets" color="E6CCFF" x="1072" y="672" />
-		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1344" y="896" />
-		<entity schema="parkassets" name="pa_assets_history" color="3986C1" x="1344" y="672" />
+		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="384" />
+		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="560" />
+		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="544" y="608" />
+		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="400" />
+		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="304" y="688" />
+		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="304" y="400" />
+		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1152" />
+		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1152" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="832" />
+		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1424" />
+		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1120" y="96" />
+		<entity schema="parkassets" name="pa_rent_details" color="E6CCFF" x="1616" y="544" />
+		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1616" y="96" />
+		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="1040" y="720" />
+		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="496" />
+		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1408" y="80" />
+		<entity schema="parkassets" name="pa_assets_history" color="E6CCFF" x="1280" y="480" />
+		<entity schema="parkassets" name="pa_assets" color="E6CCFF" x="1040" y="496" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
@@ -603,6 +809,10 @@
 			<entity schema="parkassets" name="pa_assets" />
 			<entity schema="parkassets" name="pa_office_building" />
 			<entity schema="parkassets" name="pa_tenant_customer" />
+			<entity schema="parkassets" name="pa_assets_history" />
+			<entity schema="parkassets" name="pa_withdrawal" />
+			<entity schema="parkassets" name="pa_contract" />
+			<entity schema="parkassets" name="pa_rent_details" />
 		</group>
 	</layout>
 </project>
