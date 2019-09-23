@@ -14,7 +14,7 @@ func CalcBitValueByString(s string) *int {
 	}
 
 	for _, v := range strings.Split(s, ",") {
-		val = val | 1<<S(v).DefaultInt(0)
+		val = val | 1<<S(v).DefaultUint(0)
 	}
 
 	return &val
