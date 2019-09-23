@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Avatar, Modal, Card, Button, Tag } from 'antd';
+import { Form, Modal, Card, Button, Tag, Table, Tabs } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
+import CustomInfoShow from './CustomInfo/CustomInfoShow';
+import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
 import styles from './AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
@@ -59,6 +61,21 @@ class AssetUnitShowMaint extends PureComponent {
     }
   };
 
+  onTableChange = pagination => {
+    this.dispatch({
+      type: 'enterprise/fetch',
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
+    });
+  };
+
+  dispatch = action => {
+    const { dispatch } = this.props;
+    dispatch(action);
+  };
+
   renderFirstView = () => {
     const {
       enterprise: { formData },
@@ -71,6 +88,31 @@ class AssetUnitShowMaint extends PureComponent {
         <Button>续签</Button>
       </div>
     );
+    const columns = [
+      {
+        title: '缴费周期',
+        dataIndex: 'name',
+        width: 150,
+      },
+      {
+        title: '应收金额（元）',
+        dataIndex: 'sequence',
+        width: 100,
+      },
+      {
+        title: '缴费期限',
+        dataIndex: 'hidden',
+        width: 100,
+      },
+    ];
+
+    // const paginationProps = {
+    //   showSizeChanger: true,
+    //   showQuickJumper: true,
+    //   showTotal: total => <span>共{total}条</span>,
+    //   ...pagination,
+    // };
+
     return (
       <div className={styles.main}>
         <Card title="基本信息" bordered={false}>
@@ -131,12 +173,22 @@ class AssetUnitShowMaint extends PureComponent {
         <Card>
           <Tabs defaultActiveKey="1" tabBarExtraContent={operations}>
             <TabPane tab="客户信息" key="1">
-              <CustomInfoShow/>
+              <CustomInfoShow />
             </TabPane>
             <TabPane tab="合同信息" key="2">
-              
+              <AgreementInfoShow />
             </TabPane>
-            <TabPane tab="租金信息" key="3"></TabPane>
+            <TabPane tab="租金信息" key="3">
+              <Table
+                // loading={loading}
+                rowKey={record => record.record_id}
+                // dataSource={list}
+                columns={columns}
+                //  pagination={paginationProps}
+                // onChange={this.onTableChange}
+                size="small"
+              />
+            </TabPane>
           </Tabs>
         </Card>
       </div>

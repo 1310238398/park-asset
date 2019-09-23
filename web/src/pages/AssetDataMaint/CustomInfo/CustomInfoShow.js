@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Avatar, Modal, Card, Button, Tag } from 'antd';
+import { Form, Card, Tag } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
-import styles from './AssetsBuildInfo.less';
+import styles from '../AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
 @connect(state => ({
@@ -63,21 +63,14 @@ class CustomInfoShow extends PureComponent {
     const {
       enterprise: { formData },
     } = this.props;
-    const { TabPane } = Tabs;
-    const operations = (
-      <div>
-        <Button>作废</Button>
-        <Button>退租</Button>
-        <Button>续签</Button>
-      </div>
-    );
+
     return (
       <div className={styles.main}>
         {/* <Card  bordered={false}> */}
-            <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="租户类型">{formData.phone}</Description>
-              </DescriptionList>
-              <Card title="基本信息" bordered={false}>
+        <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
+          <Description term="租户类型">{formData.phone}</Description>
+        </DescriptionList>
+        <Card title="基本信息" bordered={false}>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
               <Description term="客户名称">{formData.phone}</Description>
@@ -114,7 +107,7 @@ class CustomInfoShow extends PureComponent {
         </Card>
 
         <Card title="开票信息" bordered={false}>
-        <div className={styles.form} style={{ marginTop: 25 }}>
+          <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
               <Description term="发票抬头">{formData.applicant_tel}</Description>
               <Description term="税号">{formData.applicant_tel}</Description>
@@ -127,15 +120,11 @@ class CustomInfoShow extends PureComponent {
   };
 
   render() {
-    const {
-      enterprise: { formVisible, submitting },
-    } = this.props;
+    // const {
+    //   enterprise: { formVisible, submitting },
+    // } = this.props;
 
-    return (
-      <div>
-        {this.renderFirstView()}
-      </div>
-    );
+    return <div>{this.renderFirstView()}</div>;
   }
 }
 export default CustomInfoShow;
