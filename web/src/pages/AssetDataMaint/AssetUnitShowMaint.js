@@ -18,7 +18,7 @@ class AssetUnitShowMaint extends PureComponent {
   componentDidMount() {
     const { id, type } = this.props;
     this.dispatch({
-      type: 'enterprise/loadForm',
+      type: 'assetDatamaint/loadForm',
       payload: {
         id,
         type,
@@ -29,7 +29,7 @@ class AssetUnitShowMaint extends PureComponent {
   onModalCancelClick = () => {
     const { callback } = this.props;
     this.dispatch({
-      type: 'enterprise/changeFormVisible',
+      type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
     callback();
@@ -63,7 +63,7 @@ class AssetUnitShowMaint extends PureComponent {
 
   onTableChange = pagination => {
     this.dispatch({
-      type: 'enterprise/fetch',
+      type: 'assetDatamaint/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,

@@ -28,6 +28,19 @@ export default {
     formDataUnit: {},
     formTitleUnit: '',
     formIDUnit: '',
+
+    // 租金数据
+    formTypeZJ: '',
+    formVisibleZJ: false,
+    formDataZJ: {},
+    formTitleZJ: '',
+    formIDZJ: '',
+    // 缴费数据
+    formTypeJF: '',
+    formVisibleJF: false,
+    formDataJF: {},
+    formTitleJF: '',
+    formIDJF: '',
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -343,6 +356,82 @@ export default {
         })
       );
     },
+
+    // 楼栋详情-作废操作TODO
+    // 弹窗关闭-跳转哪儿？是否关闭父级弹窗
+    // *SaveDataDisCard({ params }, { put }) {
+    //   const response = yield call(assetDatamaintService.SaveDisCard, params);
+    //   yield put({ type: 'fetch' });
+    // },
+
+    // 租金
+    *loadFormZJ({ payload }, { put }) {
+      if (payload.type === 'AZJ') {
+        yield put({
+          type: 'changeFormVisibleZJ',
+          payload: true,
+        });
+        yield [
+          put({
+            type: 'saveFormTypeZJ',
+            payload: payload.type,
+          }),
+          put({
+            type: 'saveFormTitleZJ',
+            payload: '新建租金',
+          }),
+          put({
+            type: 'saveFormIDZJ',
+            payload: '',
+          }),
+          put({
+            type: 'saveFormDataZJ',
+            payload: {},
+          }),
+        ];
+      }
+      if (payload.type === 'AJF') {
+        yield put({
+          type: 'changeFormVisibleJF',
+          payload: true,
+        });
+        yield [
+          put({
+            type: 'saveFormTypeJF',
+            payload: payload.type,
+          }),
+          put({
+            type: 'saveFormTitleJF',
+            payload: '新建缴费',
+          }),
+          put({
+            type: 'saveFormIDJF',
+            payload: '',
+          }),
+          put({
+            type: 'saveFormDataJF',
+            payload: {},
+          }),
+        ];
+      }
+
+      if (payload.type === 'EJF') {
+        yield [
+          put({
+            type: 'saveFormTitleJF',
+            payload: '编辑缴费',
+          }),
+          put({
+            type: 'saveFormIDJF',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormJF',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -403,6 +492,40 @@ export default {
     },
     saveFormDataUnit(state, { payload }) {
       return { ...state, formDataUnit: payload };
+    },
+
+    // 租金信息
+    changeFormVisibleZJ(state, { payload }) {
+      return { ...state, formVisibleZJ: payload };
+    },
+    saveFormTitleZJ(state, { payload }) {
+      return { ...state, formTitleZJ: payload };
+    },
+    saveFormTypeZJ(state, { payload }) {
+      return { ...state, formTypeZJ: payload };
+    },
+    saveFormIDZJ(state, { payload }) {
+      return { ...state, formIDZJ: payload };
+    },
+    saveFormDataZJ(state, { payload }) {
+      return { ...state, formDataZJ: payload };
+    },
+
+    // 缴费信息
+    changeFormVisibleJF(state, { payload }) {
+      return { ...state, formVisibleJF: payload };
+    },
+    saveFormTitleJF(state, { payload }) {
+      return { ...state, formTitleJF: payload };
+    },
+    saveFormTypeJF(state, { payload }) {
+      return { ...state, formTypeJF: payload };
+    },
+    saveFormIDJF(state, { payload }) {
+      return { ...state, formIDJF: payload };
+    },
+    saveFormDataJF(state, { payload }) {
+      return { ...state, formDataJF: payload };
     },
   },
 };

@@ -4,6 +4,7 @@ import { Form, Modal, Card, Button, Tag, Table, Tabs } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import CustomInfoShow from './CustomInfo/CustomInfoShow';
 import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
+import DiscardOpertaPage from './DetailOperationPage/DiscardOpertaPage';
 import styles from './AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
@@ -14,6 +15,10 @@ const { Description } = DescriptionList;
 
 //  企业入驻的模态对话框组件。
 class AssetBuildShowMaint extends PureComponent {
+  state = {
+    showDisCard: false,
+  };
+
   //  默认的组件挂载时的初始化。
   componentDidMount() {
     const { id, type } = this.props;
@@ -63,7 +68,7 @@ class AssetBuildShowMaint extends PureComponent {
 
   onTableChange = pagination => {
     this.dispatch({
-      type: 'enterprise/fetch',
+      type: 'assetDatamaint/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
@@ -76,6 +81,31 @@ class AssetBuildShowMaint extends PureComponent {
     dispatch(action);
   };
 
+  DisOper = () => {
+    this.setState({
+      showDisCard: true,
+    });
+  };
+
+  renderShowDisCarView = () => {
+    const { showDisCard } = this.state;
+    if (showDisCard) {
+      return <DiscardOpertaPage onSubmit={this.DataDisCardBack} onCancel={this.cloeseDisCard} />;
+    }
+    return <React.Fragment></React.Fragment>;
+  };
+
+  cloeseDisCard = () => {
+    this.setState({ showDisCard: false });
+  };
+
+  DataDisCardBack = () => {
+    this.dispatch({
+      type: 'assetDatamaint/SaveDataDisCard',
+      data: '',
+    });
+  };
+
   renderFirstView = () => {
     const {
       assetDatamaint: { formData },
@@ -83,7 +113,7 @@ class AssetBuildShowMaint extends PureComponent {
     const { TabPane } = Tabs;
     const operations = (
       <div>
-        <Button>作废</Button>
+        <Button onClick={() => this.DisOper()}>作废</Button>
         <Button>退租</Button>
         <Button>续签</Button>
       </div>
@@ -202,7 +232,7 @@ class AssetBuildShowMaint extends PureComponent {
 
     return (
       <Modal
-        title="企业详情"
+        title="楼栋详情"
         width={873}
         visible={formVisibleBuild}
         maskClosable={false}
@@ -218,6 +248,7 @@ class AssetBuildShowMaint extends PureComponent {
         bodyStyle={{ height: 550, overflowY: 'scroll' }}
       >
         {this.renderFirstView()}
+        {this.renderShowDisCarView()}
       </Modal>
     );
   }
