@@ -13,12 +13,12 @@ const { Description } = DescriptionList;
 @Form.create()
 
 //  企业入驻的模态对话框组件。
-class AssetUnitShowMaint extends PureComponent {
+class AssetBuildShowMaint extends PureComponent {
   //  默认的组件挂载时的初始化。
   componentDidMount() {
     const { id, type } = this.props;
     this.dispatch({
-      type: 'enterprise/loadForm',
+      type: 'assetDatamaint/loadForm',
       payload: {
         id,
         type,
@@ -29,7 +29,7 @@ class AssetUnitShowMaint extends PureComponent {
   onModalCancelClick = () => {
     const { callback } = this.props;
     this.dispatch({
-      type: 'enterprise/changeFormVisible',
+      type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
     callback();
@@ -197,14 +197,14 @@ class AssetUnitShowMaint extends PureComponent {
 
   render() {
     const {
-      assetDatamaint: { formVisibleUnit, submitting },
+      assetDatamaint: { formVisibleBuild, submitting },
     } = this.props;
 
     return (
       <Modal
         title="企业详情"
         width={873}
-        visible={formVisibleUnit}
+        visible={formVisibleBuild}
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
@@ -222,4 +222,4 @@ class AssetUnitShowMaint extends PureComponent {
     );
   }
 }
-export default AssetUnitShowMaint;
+export default AssetBuildShowMaint;
