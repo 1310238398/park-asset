@@ -8,7 +8,7 @@ import styles from './AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
 @connect(state => ({
-  enterprise: state.enterprise,
+  assetDatamaint: state.assetDatamaint,
 }))
 @Form.create()
 
@@ -18,7 +18,7 @@ class AssetBuildShowMaint extends PureComponent {
   componentDidMount() {
     const { id, type } = this.props;
     this.dispatch({
-      type: 'enterprise/loadForm',
+      type: 'assetDatamaint/loadForm',
       payload: {
         id,
         type,
@@ -29,7 +29,7 @@ class AssetBuildShowMaint extends PureComponent {
   onModalCancelClick = () => {
     const { callback } = this.props;
     this.dispatch({
-      type: 'enterprise/changeFormVisible',
+      type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
     callback();
@@ -78,7 +78,7 @@ class AssetBuildShowMaint extends PureComponent {
 
   renderFirstView = () => {
     const {
-      enterprise: { formData },
+      assetDatamaint: { formData },
     } = this.props;
     const { TabPane } = Tabs;
     const operations = (
@@ -197,14 +197,14 @@ class AssetBuildShowMaint extends PureComponent {
 
   render() {
     const {
-      enterprise: { formVisible, submitting },
+      assetDatamaint: { formVisibleBuild, submitting },
     } = this.props;
 
     return (
       <Modal
         title="企业详情"
         width={873}
-        visible={formVisible}
+        visible={formVisibleBuild}
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose

@@ -8,7 +8,7 @@ import styles from './AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
 @connect(state => ({
-  enterprise: state.enterprise,
+  assetDatamaint: state.assetDatamaint,
 }))
 @Form.create()
 
@@ -78,7 +78,7 @@ class AssetUnitShowMaint extends PureComponent {
 
   renderFirstView = () => {
     const {
-      enterprise: { formData },
+      assetDatamaint: { formData },
     } = this.props;
     const { TabPane } = Tabs;
     const operations = (
@@ -197,14 +197,14 @@ class AssetUnitShowMaint extends PureComponent {
 
   render() {
     const {
-      enterprise: { formVisible, submitting },
+      assetDatamaint: { formVisibleUnit, submitting },
     } = this.props;
 
     return (
       <Modal
         title="企业详情"
         width={873}
-        visible={formVisible}
+        visible={formVisibleUnit}
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose

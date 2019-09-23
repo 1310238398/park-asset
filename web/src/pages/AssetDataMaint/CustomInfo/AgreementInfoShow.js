@@ -6,7 +6,7 @@ import styles from '../AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
 @connect(state => ({
-  enterprise: state.enterprise,
+  assetDatamaint: state.assetDatamaint,
 }))
 @Form.create()
 
@@ -16,7 +16,7 @@ class AgreementInfoShow extends PureComponent {
   componentDidMount() {
     const { id, type } = this.props;
     this.dispatch({
-      type: 'enterprise/loadForm',
+      type: 'assetDatamaint/loadForm',
       payload: {
         id,
         type,
@@ -24,10 +24,15 @@ class AgreementInfoShow extends PureComponent {
     });
   }
 
+  dispatch = action => {
+    const { dispatch } = this.props;
+    dispatch(action);
+  };
+
   onModalCancelClick = () => {
     const { callback } = this.props;
     this.dispatch({
-      type: 'enterprise/changeFormVisible',
+      type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
     callback();
@@ -61,7 +66,7 @@ class AgreementInfoShow extends PureComponent {
 
   renderFirstView = () => {
     const {
-      enterprise: { formData },
+      assetDatamaint: { formData },
     } = this.props;
 
     return (

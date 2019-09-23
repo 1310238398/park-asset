@@ -128,6 +128,19 @@ class AssetBuildMaint extends PureComponent {
     this.clearSelectRows();
   };
 
+  handleTableSelectRow = (selectedRowKeys, selectedRows) => {
+    let keys = [];
+    let rows = [];
+    if (selectedRowKeys.length > 0 && selectedRows.length > 0) {
+      keys = [selectedRowKeys[selectedRowKeys.length - 1]];
+      rows = [selectedRows[selectedRows.length - 1]];
+    }
+    this.setState({
+      selectedRowKeys: keys,
+      selectedRows: rows,
+    });
+  };
+
   handleDelOKClick(id) {
     this.dispatch({
       type: 'assetDatamaint/delBuild',
@@ -401,7 +414,7 @@ class AssetBuildMaint extends PureComponent {
                 >
                   删除
                 </PButton>,
-                <PButton code="seebuild" onClick={() => this.handleDelClick(selectedRows[0])}>
+                <PButton code="querybuild" onClick={() => this.handleSeeClick(selectedRows[0])}>
                   查看
                 </PButton>,
                 // selectedRows[0].status === 2 && (

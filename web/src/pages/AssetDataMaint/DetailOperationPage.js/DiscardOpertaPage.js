@@ -53,7 +53,7 @@ class DiscardOpertaPage extends PureComponent {
 
   render() {
     const {
-      menu: { formVisible, formTitle, formData, submitting, treeData },
+      menu: { formData, submitting, treeData },
       form: { getFieldDecorator },
       onCancel,
     } = this.props;
@@ -69,9 +69,9 @@ class DiscardOpertaPage extends PureComponent {
 
     return (
       <Modal
-        title={formTitle}
+        title="作废信息填写"
         width={900}
-        visible={formVisible}
+        visible
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
@@ -84,7 +84,7 @@ class DiscardOpertaPage extends PureComponent {
           <Form>
             <Row>
               <Col span={12}>
-                <Form.Item {...formItemLayout} label="菜单名称">
+                <Form.Item {...formItemLayout} label="作废原因">
                   {getFieldDecorator('name', {
                     initialValue: formData.name,
                     rules: [

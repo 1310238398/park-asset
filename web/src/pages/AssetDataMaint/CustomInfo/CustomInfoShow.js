@@ -6,7 +6,7 @@ import styles from '../AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
 @connect(state => ({
-  enterprise: state.enterprise,
+  assetDatamaint: state.assetDatamaint,
 }))
 @Form.create()
 
@@ -16,7 +16,7 @@ class CustomInfoShow extends PureComponent {
   componentDidMount() {
     const { id, type } = this.props;
     this.dispatch({
-      type: 'enterprise/loadForm',
+      type: 'assetDatamaint/loadForm',
       payload: {
         id,
         type,
@@ -27,7 +27,7 @@ class CustomInfoShow extends PureComponent {
   onModalCancelClick = () => {
     const { callback } = this.props;
     this.dispatch({
-      type: 'enterprise/changeFormVisible',
+      type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
     callback();
@@ -59,9 +59,14 @@ class CustomInfoShow extends PureComponent {
     }
   };
 
+  dispatch = action => {
+    const { dispatch } = this.props;
+    dispatch(action);
+  };
+
   renderFirstView = () => {
     const {
-      enterprise: { formData },
+      assetDatamaint: { formData },
     } = this.props;
 
     return (
