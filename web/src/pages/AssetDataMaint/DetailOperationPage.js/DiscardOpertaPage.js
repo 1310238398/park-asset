@@ -18,7 +18,7 @@ import {
   menu,
 }))
 @Form.create()
-class MenuCard extends PureComponent {
+class DiscardOpertaPage extends PureComponent {
   onOKClick = () => {
     const { form, onSubmit } = this.props;
     form.validateFieldsAndScroll((err, values) => {
@@ -178,4 +178,4 @@ class MenuCard extends PureComponent {
   }
 }
 
-export default MenuCard;
+export default DiscardOpertaPage;

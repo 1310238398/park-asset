@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal } from 'antd';
 import PButton from '@/components/PermButton';
 import AssetBuildEditMaint from './AssetBuildEditMaint';
+import AssetBuildShowMaint from './AssetBuildShowMaint';
 import loudongshu from '@/assets/loudongshu.png';
 import zichanmianji from '@/assets/zichanmianji.png';
 import yizumianji from '@/assets/yizumianji.png';
@@ -51,19 +52,19 @@ class AssetBuildMaint extends PureComponent {
       });
     }
   };
-  
+
   // 新建楼栋
-  handleAddBuildClick=()=>{
+  handleAddBuildClick = () => {
     this.dispatch({
       type: 'assetDatamaint/LoadBuild',
       payload: {
         type: 'A',
       },
-    });   
-  }
+    });
+  };
 
-   // 编辑单元
-   handleEditClick = () => {
+  // 编辑单元
+  handleEditClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -110,16 +111,8 @@ class AssetBuildMaint extends PureComponent {
     });
   };
 
-  handleDelOKClick(id) {
-    this.dispatch({
-      type: 'assetDatamaint/delBuild',
-      payload: { record_id: id },
-    });
-    this.clearSelectRows();
-  }
-  
   // 关闭弹窗
-  handleFormCancel= () => {
+  handleFormCancel = () => {
     this.dispatch({
       type: 'assetDatamaint/changeFormVisibleBuild',
       payload: false,
@@ -127,29 +120,37 @@ class AssetBuildMaint extends PureComponent {
   };
 
   // 提交数据
-  handleFormSubmit=(data)=>{
+  handleFormSubmit = data => {
     this.dispatch({
       type: 'assetDatamaint/submitBuild',
       payload: data,
     });
     this.clearSelectRows();
+  };
+
+  handleDelOKClick(id) {
+    this.dispatch({
+      type: 'assetDatamaint/delBuild',
+      payload: { record_id: id },
+    });
+    this.clearSelectRows();
   }
 
-    // 显示弹窗
-    renderDataForm() {
-      const {
-        assetDatamaint: { formTypeBuild },
-      } = this.props;
-      if (formTypeBuild === 'A' || formTypeBuild === 'E') {
-        return (
-          <AssetBuildEditMaint onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />
-        );
-      }
-      if (formTypeBuild === 'S') {
-        return <AssetUnitShowMaint onCancel={this.handleFormCancel} />;
-      }
-      return <React.Fragment></React.Fragment>;
+  // 显示弹窗
+  renderDataForm() {
+    const {
+      assetDatamaint: { formTypeBuild },
+    } = this.props;
+    if (formTypeBuild === 'A' || formTypeBuild === 'E') {
+      return (
+        <AssetBuildEditMaint onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />
+      );
     }
+    if (formTypeBuild === 'S') {
+      return <AssetBuildShowMaint onCancel={this.handleFormCancel} />;
+    }
+    return <React.Fragment></React.Fragment>;
+  }
 
   renderSearchForm() {
     const {
