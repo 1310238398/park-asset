@@ -4,6 +4,7 @@ import { Form, Modal, Card, Button, Tag, Table, Tabs } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import CustomInfoShow from './CustomInfo/CustomInfoShow';
 import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
+// import RentDrawInfoShow from './CustomInfo/RentDrawInfoShow';
 import styles from './AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
@@ -14,6 +15,10 @@ const { Description } = DescriptionList;
 
 //  企业入驻的模态对话框组件。
 class AssetBuildShowMaint extends PureComponent {
+  // state = {
+  //   rentDrawInfoShow: false,
+  // };
+
   //  默认的组件挂载时的初始化。
   componentDidMount() {
     const { id, type } = this.props;
@@ -25,6 +30,14 @@ class AssetBuildShowMaint extends PureComponent {
       },
     });
   }
+
+  // 关闭弹窗
+  handleFormCancel = () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleBuild',
+      payload: false,
+    });
+  };
 
   onModalCancelClick = () => {
     const { callback } = this.props;
@@ -76,11 +89,18 @@ class AssetBuildShowMaint extends PureComponent {
     dispatch(action);
   };
 
+  // showModal = () => {
+  //   this.setState({
+  //     rentDrawInfoShow: true,
+  //   });
+  // };
+
   renderFirstView = () => {
     const {
       assetDatamaint: { formData },
     } = this.props;
     const { TabPane } = Tabs;
+
     const operations = (
       <div>
         <Button>作废</Button>

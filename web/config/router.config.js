@@ -54,6 +54,10 @@ export default [
             component: './AssetDataMaint/CustomInfo/CustomInfo',
           },
           {
+            path: '/assetdatamaint/assetrentdraw',
+            component: './AssetDataMaint/CustomInfo/RentDrawInfoShow',
+          },
+          {
             path: '/assetdatamaint/assetagreementinfo',
             component: './AssetDataMaint/CustomInfo/AgreementInfo',
           },
