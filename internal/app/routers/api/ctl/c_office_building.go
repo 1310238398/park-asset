@@ -1,11 +1,13 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/util"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewOfficeBuilding 创建写字楼管理控制器
@@ -37,6 +39,10 @@ func (a *OfficeBuilding) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param name query string false "建筑名称（模糊查询）"
+// @Param building_type query int false "建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌"
+// @Param is_all_rent query int false "是否全部出租:(1是 2否)"
+// @Param rent_status query int false "出租状态:1未租 2锁定 3已租"
 // @Success 200 []schema.OfficeBuilding "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -44,6 +50,10 @@ func (a *OfficeBuilding) Query(c *gin.Context) {
 // @Router GET /api/v1/office_buildings?q=page
 func (a *OfficeBuilding) QueryPage(c *gin.Context) {
 	var params schema.OfficeBuildingQueryParam
+	params.LikeName = c.Query("name")
+	params.BuildingType = util.S(c.Query("building_type")).DefaultInt(0)
+	params.IsAllRent = util.S(c.Query("is_all_rent")).DefaultInt(0)
+	params.RentStatus = util.S(c.Query("rent_status")).DefaultInt(0)
 
 	result, err := a.OfficeBuildingBll.Query(ginplus.NewContext(c), params, schema.OfficeBuildingQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),

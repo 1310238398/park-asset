@@ -22,6 +22,10 @@ type OfficeBuilding struct {
 
 // OfficeBuildingQueryParam 查询条件
 type OfficeBuildingQueryParam struct {
+	LikeName     string
+	BuildingType int
+	IsAllRent    int
+	RentStatus   int
 }
 
 // OfficeBuildingQueryOptions 查询可选参数项

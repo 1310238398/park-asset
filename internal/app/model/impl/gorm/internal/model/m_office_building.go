@@ -31,6 +31,19 @@ func (a *OfficeBuilding) getQueryOption(opts ...schema.OfficeBuildingQueryOption
 func (a *OfficeBuilding) Query(ctx context.Context, params schema.OfficeBuildingQueryParam, opts ...schema.OfficeBuildingQueryOptions) (*schema.OfficeBuildingQueryResult, error) {
 	db := entity.GetOfficeBuildingDB(ctx, a.db).DB
 
+	if v := params.LikeName; v != "" {
+		db = db.Where("name LIKE ?", "%"+v+"%")
+	}
+	if v := params.BuildingType; v != 0 {
+		db = db.Where("building_type=?", v)
+	}
+	if v := params.IsAllRent; v != 0 {
+		db = db.Where("is_all_rent=?", v)
+	}
+	if v := params.RentStatus; v != 0 {
+		db = db.Where("rent_status=?", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)
