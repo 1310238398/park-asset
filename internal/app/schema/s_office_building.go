@@ -22,6 +22,7 @@ type OfficeBuilding struct {
 
 // OfficeBuildingQueryParam 查询条件
 type OfficeBuildingQueryParam struct {
+	ProjectID    string
 	LikeName     string
 	BuildingType int
 	IsAllRent    int

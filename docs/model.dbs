@@ -324,7 +324,7 @@
 			<column name="rent_status" type="int" length="1" jt="4" >
 				<comment><![CDATA[出租状态:1未租 2锁定 3已租]]></comment>
 			</column>
-			<column name="lock_reason" type="varchar" length="1024" jt="12" >
+			<column name="lock_reason" type="varchar" length="200" jt="12" >
 				<comment><![CDATA[锁定原因]]></comment>
 			</column>
 			<column name="parent_id" type="varchar" length="36" jt="12" >
@@ -832,9 +832,9 @@
 		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="496" />
 		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1408" y="80" />
 		<entity schema="parkassets" name="pa_assets_history" color="E6CCFF" x="1280" y="480" />
-		<entity schema="parkassets" name="pa_assets" color="E6CCFF" x="1040" y="496" />
 		<entity schema="parkassets" name="pa_rent_details" color="E6CCFF" x="1616" y="544" />
 		<entity schema="parkassets" name="pa_rent_details_day" color="E6CCFF" x="1632" y="880" />
+		<entity schema="parkassets" name="pa_assets" color="E6CCFF" x="1040" y="496" />
 		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="1040" y="720" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
