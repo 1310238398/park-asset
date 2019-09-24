@@ -4,6 +4,7 @@ import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio, Tabs } from 'an
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import CustomInfo from './CustomInfo/CustomInfo';
 import AgreementInfo from './CustomInfo/AgreementInfo';
+
 @connect(({ assetDatamaint }) => ({
   assetDatamaint,
 }))
@@ -16,23 +17,23 @@ class AssetBuildEditMaint extends PureComponent {
   }
 
   onOKClick = () => {
-    const { form, onSubmit } = this.props;
+    const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
         formData.sequence = parseInt(formData.sequence, 10);
-        this.custom.current.validateFields((err, values) => {
-          if (!err) {
-            formData = { formData, ...values };
+        this.custom.current.validateFields((errCut, valuesCut) => {
+          if (!errCut) {
+            formData = { formData, ...valuesCut };
             // console.log(formData)
           }
         });
-        this.agreement.current.validateFields((err, values) => {
-            if (!err) {
-              formData = { formData, ...values };
-              // console.log(formData)
-            }
-          });
+        this.agreement.current.validateFields((errAgre, valuesAgre) => {
+          if (!errAgre) {
+            formData = { formData, ...valuesAgre };
+            // console.log(formData)
+          }
+        });
 
         // onSubmit(formData);
       }
@@ -46,7 +47,13 @@ class AssetBuildEditMaint extends PureComponent {
 
   render() {
     const {
-      assetDatamaint: { formVisibleBuild, formTitleBuild, formDataBuild, submitting },
+      assetDatamaint: {
+        formVisibleBuild,
+        formTitleBuild,
+        formDataBuild,
+        submitting,
+        formTypeBuild,
+      },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
@@ -60,14 +67,14 @@ class AssetBuildEditMaint extends PureComponent {
         span: 18,
       },
     };
-    const formItemLayoutmome = {
-      labelCol: {
-        span: 3,
-      },
-      wrapperCol: {
-        span: 21,
-      },
-    };
+    // const formItemLayoutmome = {
+    //   labelCol: {
+    //     span: 3,
+    //   },
+    //   wrapperCol: {
+    //     span: 21,
+    //   },
+    // };
     const formItemLayoutTwo = {
       labelCol: {
         span: 12,
@@ -93,7 +100,7 @@ class AssetBuildEditMaint extends PureComponent {
           <Form>
             <Row>
               <Col span={12}>
-                <Form.Item {...formItemLayout} label="园区名称">
+                <Form.Item {...formItemLayout} label="项目名称">
                   {getFieldDecorator('name', {
                     initialValue: formDataBuild.name,
                     rules: [
@@ -102,7 +109,7 @@ class AssetBuildEditMaint extends PureComponent {
                         message: '请输入',
                       },
                     ],
-                  })(<Input placeholder="请输入" />)}
+                  })(<Input placeholder="请输入" disabled />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -123,7 +130,7 @@ class AssetBuildEditMaint extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayoutTwo} label="是否整单元出租">
                   {getFieldDecorator('sequence', {
-                    initialValue: formDataBuild.sequence,
+                    initialValue: formDataBuild.sequence ? formDataBuild.sequence : 10,
                     rules: [
                       {
                         required: true,
@@ -139,8 +146,9 @@ class AssetBuildEditMaint extends PureComponent {
                 </Form.Item>
               </Col>
             </Row>
+
             <Row>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item
                   {...formItemLayout}
                   label="单元数"
@@ -156,10 +164,29 @@ class AssetBuildEditMaint extends PureComponent {
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
+                <Form.Item
+                  {...formItemLayout}
+                  label="单元命名规则"
+                  style={{
+                    display: getFieldValue('sequence') === 10 ? 'block' : 'none',
+                  }}
+                >
+                  {getFieldDecorator('code', {
+                    initialValue: formDataBuild.code ? formDataBuild.code : '单元',
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入',
+                      },
+                    ],
+                  })(<Input placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
                 <Form.Item
                   {...formItemLayout}
                   label="楼层数"
@@ -175,7 +202,26 @@ class AssetBuildEditMaint extends PureComponent {
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  {...formItemLayout}
+                  label="楼层命名规则"
+                  style={{
+                    display: getFieldValue('sequence') === 10 ? 'block' : 'none',
+                  }}
+                >
+                  {getFieldDecorator('code', {
+                    initialValue: formDataBuild.code ? formDataBuild.code : 'F',
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入',
+                      },
+                    ],
+                  })(<Input placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -287,7 +333,7 @@ class AssetBuildEditMaint extends PureComponent {
                   <CustomInfo ref={this.custom} />
                 </TabPane>
                 <TabPane tab="合同信息" key="2">
-                  <AgreementInfo  ref={this.agreement}/>
+                  <AgreementInfo ref={this.agreement} />
                 </TabPane>
               </Tabs>
             </Row>

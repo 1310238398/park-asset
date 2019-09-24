@@ -432,6 +432,78 @@ export default {
         ];
       }
     },
+
+    // 缴费信息
+    *submitJF({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetDatamaint.formTypeJF);
+
+      let response;
+      if (formType === 'EJF') {
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
+      } else {
+        response = yield call(assetDatamaintService.create, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleJF',
+          payload: false,
+        });
+        // TODO 查询单元列表
+        yield put({
+          type: 'fetch',
+        });
+      }
+    },
+
+    // 租金信息
+    *submitZJ({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetDatamaint.formTypeZJ);
+
+      let response;
+      if (formType === 'EZJ') {
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
+      } else {
+        response = yield call(assetDatamaintService.create, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleZJ',
+          payload: false,
+        });
+        // TODO 查询单元列表
+        yield put({
+          type: 'fetch',
+        });
+      }
+    },
   },
   reducers: {
     saveData(state, { payload }) {
