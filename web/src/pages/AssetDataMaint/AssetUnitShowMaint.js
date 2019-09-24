@@ -27,12 +27,12 @@ class AssetUnitShowMaint extends PureComponent {
   }
 
   onModalCancelClick = () => {
-    const { callback } = this.props;
+    // const { callback } = this.props;
     this.dispatch({
       type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
-    callback();
+    // callback();
   };
 
   statusRender = status => {

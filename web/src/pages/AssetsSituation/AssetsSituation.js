@@ -1,10 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Select } from 'antd';
+import { Card, Form, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
-import DicSelect from '@/components/DictionaryNew/DicSelect';
 import styles from './AssetsSituation.less';
 
 @connect(state => ({
@@ -13,11 +11,6 @@ import styles from './AssetsSituation.less';
 }))
 @Form.create()
 class AssetsSituationList extends PureComponent {
-  state = {
-    selectedRowKeys: [],
-    selectedRows: [],
-  };
-
   componentDidMount() {
     this.dispatch({
       type: 'projectManage/fetch',
@@ -28,14 +21,6 @@ class AssetsSituationList extends PureComponent {
       type: 'projectManage/queryCompany',
     });
   }
-
-  clearSelectRows = () => {
-    const { selectedRowKeys } = this.state;
-    if (selectedRowKeys.length === 0) {
-      return;
-    }
-    this.setState({ selectedRowKeys: [], selectedRows: [] });
-  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -71,13 +56,6 @@ class AssetsSituationList extends PureComponent {
     });
   };
 
-  handleTableSelectRow = (keys, rows) => {
-    this.setState({
-      selectedRowKeys: keys,
-      selectedRows: rows,
-    });
-  };
-
   handleTableChange = pagination => {
     this.dispatch({
       type: 'projectManage/fetch',
@@ -86,7 +64,6 @@ class AssetsSituationList extends PureComponent {
         pageSize: pagination.pageSize,
       },
     });
-    this.clearSelectRows();
   };
 
   handleResetFormClick = () => {
@@ -121,7 +98,6 @@ class AssetsSituationList extends PureComponent {
         search: formData,
         pagination: {},
       });
-      this.clearSelectRows();
     });
   };
 
@@ -130,7 +106,6 @@ class AssetsSituationList extends PureComponent {
       type: 'projectManage/submit',
       payload: data,
     });
-    this.clearSelectRows();
   };
 
   handleDataFormCancel = () => {
@@ -167,17 +142,6 @@ class AssetsSituationList extends PureComponent {
       type: 'projectManage/del',
       payload: { record_id: id },
     });
-    this.clearSelectRows();
-  }
-
-  renderDataForm() {
-    return (
-        <div>1212</div>
-    //   <ProjectManageCard
-    //     onCancel={this.handleDataFormCancel}
-    //     onSubmit={this.handleDataFormSubmit}
-    //   />
-    );
   }
 
   render() {
@@ -187,8 +151,6 @@ class AssetsSituationList extends PureComponent {
         data: { list, pagination },
       },
     } = this.props;
-
-    const { selectedRowKeys, selectedRows } = this.state;
 
     const columns = [
       {
@@ -242,7 +204,6 @@ class AssetsSituationList extends PureComponent {
           <div className={styles.tableList}>
             <div>
               <Table
-               
                 loading={loading}
                 rowKey={record => record.record_id}
                 dataSource={list}
@@ -261,7 +222,6 @@ class AssetsSituationList extends PureComponent {
             </div>
           </div>
         </Card>
-        {this.renderDataForm()}
       </PageHeaderLayout>
     );
   }

@@ -11,6 +11,12 @@ export default {
       list: [],
       pagination: {},
     },
+    searchBuild: {},
+    paginationBuild: {},
+    dataBuild: {
+      list: [],
+      pagination: {},
+    },
     submitting: false,
     formTitle: '',
     formID: '',
@@ -41,6 +47,8 @@ export default {
     formDataJF: {},
     formTitleJF: '',
     formIDJF: '',
+    // 项目数据
+    proData: {},
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -177,6 +185,12 @@ export default {
         type: 'changeFormVisibleBuild',
         payload: true,
       });
+      if (payload.inProjectID) {
+        yield put({
+          type: 'selectProjectIDName',
+          payload: { ID: payload.inProjectID },
+        });
+      }
 
       yield [
         put({
@@ -230,6 +244,56 @@ export default {
         ];
       }
     },
+    // 查询楼栋单条数据
+    *fetchFormBuild({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.getBuildOne, payload);
+      yield put({
+        type: 'saveFormDataBuild',
+        payload: response,
+      });
+    },
+
+    *submitBuild({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formTypeBuild = yield select(state => state.assetDatamaint.formTypeBuild);
+
+      let response;
+      if (formTypeBuild === 'E') {
+        params.record_id = yield select(state => state.assetDatamaint.formIDBuild);
+        response = yield call(assetDatamaintService.updateBuild, params);
+      } else {
+        response = yield call(assetDatamaintService.createBuild, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleBuild',
+          payload: false,
+        });
+        // TODO 查询单元列表
+        yield put({
+          type: 'fetchBuidings',
+        });
+      }
+    },
+
+    // 查询项目名称和ID
+    *selectProjectIDName({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.selectProInfo, payload);
+      yield put({ type: 'saveProData', payload: response });
+    },
+
     // 单元部分数据
     *cellRoute({ payload }, { put }) {
       yield put(
@@ -433,12 +497,107 @@ export default {
       }
     },
 
+    // 缴费信息
+    *submitJF({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetDatamaint.formTypeJF);
+
+      let response;
+      if (formType === 'EJF') {
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
+      } else {
+        response = yield call(assetDatamaintService.create, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleJF',
+          payload: false,
+        });
+        // TODO 查询单元列表
+        yield put({
+          type: 'fetch',
+        });
+      }
+    },
+
+    // 租金信息
+    *submitZJ({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetDatamaint.formTypeZJ);
+
+      let response;
+      if (formType === 'EZJ') {
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
+      } else {
+        response = yield call(assetDatamaintService.create, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleZJ',
+          payload: false,
+        });
+        // TODO 查询单元列表
+        yield put({
+          type: 'fetch',
+        });
+      }
+    },
     // 查询写字楼列表
-    *fetchBuidings({ payload }, { call, put }) {
+    *fetchBuidings({ search, pagination, select }, { call, put }) {
       let params = {
         q: 'page',
       };
-      params = { ...params, ...payload };
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchBuild',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.assetDatamaint.searchBuild);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePagination',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.assetDatamaint.paginationBuild);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
       const response = yield call(assetDatamaintService.queryBuildingsPage, params);
       yield [
         put({
@@ -511,7 +670,13 @@ export default {
 
     // 写字楼列表
     saveBuidings(state, { payload }) {
-      return { ...state, formDataUnit: payload };
+      return { ...state, dataBuild: payload };
+    },
+    saveSearchBuild(state, { payload }) {
+      return { ...state, searchBuild: payload };
+    },
+    savePaginationBuild(state, { payload }) {
+      return { ...state, paginationBuild: payload };
     },
 
     // 租金信息
@@ -546,6 +711,11 @@ export default {
     },
     saveFormDataJF(state, { payload }) {
       return { ...state, formDataJF: payload };
+    },
+
+    // 项目名称
+    saveProData(state, { payload }) {
+      return { ...state, proData: payload };
     },
   },
 };

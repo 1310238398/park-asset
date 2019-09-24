@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Form, Button, Table, Modal } from 'antd';
 import PButton from '@/components/PermButton';
-// import RoleCard from './RoleCard';
+import PayEdit from './PayEdit';
+import RentEdit from './RentEdit';
 
 import styles from '../AssetDataMaint.less';
 
@@ -62,7 +63,7 @@ class RentInformation extends PureComponent {
     this.dispatch({
       type: 'assetDatamaint/loadFormZJ',
       payload: {
-        type: 'EZJ',
+        type: 'EJF',
         id: item.record_id,
       },
     });
@@ -128,6 +129,36 @@ class RentInformation extends PureComponent {
     });
   };
 
+  handleJFCancel = () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleJF',
+      payload: false,
+    });
+  };
+
+  handleJFSubmit = data => {
+    this.dispatch({
+      type: 'assetDatamaint/submitJF',
+      payload: data,
+    });
+    this.clearSelectRows();
+  };
+
+  handleZJCancel = () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleZJ',
+      payload: false,
+    });
+  };
+
+  handleZJSubmit = data => {
+    this.dispatch({
+      type: 'assetDatamaint/submitZJ',
+      payload: data,
+    });
+    this.clearSelectRows();
+  };
+
   handleDelOKClick(id) {
     this.dispatch({
       type: 'assetDatamaint/del',
@@ -136,9 +167,18 @@ class RentInformation extends PureComponent {
     this.clearSelectRows();
   }
 
-  renderDataForm = () => {
+  renderDataFormZJ = () => {
+    const {
+      assetDatamaint: { formTypeJF },
+    } = this.props;
+    if (formTypeJF === 'AJF' || formTypeJF === 'EJF') {
+      return <PayEdit onCancel={this.handleJFCancel} onSubmit={this.handleJFSubmit} />;
+    }
+    if (formTypeJF === 'AZJ') {
+      return <RentEdit onCancel={this.handleZJCancel} onSubmit={this.handleZJSubmit} />;
+    }
+
     return <React.Fragment></React.Fragment>;
-    //  return <RoleCard onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />;
   };
 
   render() {
@@ -233,7 +273,8 @@ class RentInformation extends PureComponent {
             </div>
           </div>
         </Card>
-        {this.renderDataForm()}
+        {this.renderDataFormZJ()}
+        {this.renderDataFormJF()}
       </div>
     );
   }
