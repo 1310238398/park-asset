@@ -34,6 +34,9 @@ func (a *OfficeBuilding) Query(ctx context.Context, params schema.OfficeBuilding
 	if v := params.ProjectID; v != "" {
 		db = db.Where("project_id=?", v)
 	}
+	if v := params.Name; v != "" {
+		db = db.Where("name=?", v)
+	}
 	if v := params.LikeName; v != "" {
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
