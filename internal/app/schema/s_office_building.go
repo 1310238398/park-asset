@@ -24,10 +24,12 @@ type OfficeBuilding struct {
 // OfficeBuildingQueryParam 查询条件
 type OfficeBuildingQueryParam struct {
 	ProjectID    string
+	Name         string
 	LikeName     string
 	BuildingType int
 	IsAllRent    int
 	RentStatus   int
+	ParentID     string
 }
 
 // OfficeBuildingQueryOptions 查询可选参数项

@@ -37,3 +37,11 @@ func ContentDisposition(fileName, dispositionType string) (header string) {
 	}
 	return
 }
+
+// FillZero 填充零
+func FillZero(i int) string {
+	if i < 10 {
+		return fmt.Sprintf("0%d", i)
+	}
+	return fmt.Sprintf("%d", i)
+}
