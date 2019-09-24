@@ -4,6 +4,7 @@ import { Form, Modal, Card, Button, Tag, Table, Tabs } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import CustomInfoShow from './CustomInfo/CustomInfoShow';
 import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
+import RentDrawInfoShow from './CustomInfo/RentDrawInfoShow';
 import DiscardOpertaPage from './DetailOperationPage/DiscardOpertaPage';
 import styles from './AssetsBuildInfo.less';
 
@@ -30,6 +31,14 @@ class AssetBuildShowMaint extends PureComponent {
       },
     });
   }
+
+  // 关闭弹窗
+  handleFormCancel = () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleBuild',
+      payload: false,
+    });
+  };
 
   onModalCancelClick = () => {
     const { callback } = this.props;
@@ -87,6 +96,12 @@ class AssetBuildShowMaint extends PureComponent {
     });
   };
 
+  DrawOper = () => {
+    this.setState({
+      showDrawCard: true,
+    });
+  };
+
   renderShowDisCarView = () => {
     const { showDisCard } = this.state;
     if (showDisCard) {
@@ -95,8 +110,20 @@ class AssetBuildShowMaint extends PureComponent {
     return <React.Fragment></React.Fragment>;
   };
 
+  renderShowDrawCarView = () => {
+    const { showDrawCard } = this.state;
+    if (showDrawCard) {
+      return <RentDrawInfoShow onSubmit={this.DataDisCardBack} onCancel={this.cloeseDrawCard} />;
+    }
+    return <React.Fragment></React.Fragment>;
+  };
+
   cloeseDisCard = () => {
     this.setState({ showDisCard: false });
+  };
+
+  cloeseDrawCard = () => {
+    this.setState({ showDrawCard: false });
   };
 
   DataDisCardBack = () => {
@@ -111,10 +138,11 @@ class AssetBuildShowMaint extends PureComponent {
       assetDatamaint: { formData },
     } = this.props;
     const { TabPane } = Tabs;
+
     const operations = (
       <div>
         <Button onClick={() => this.DisOper()}>作废</Button>
-        <Button>退租</Button>
+        <Button onClick={() => this.DrawOper()}>退租</Button>
         <Button>续签</Button>
       </div>
     );
@@ -249,6 +277,7 @@ class AssetBuildShowMaint extends PureComponent {
       >
         {this.renderFirstView()}
         {this.renderShowDisCarView()}
+        {this.renderShowDrawCarView()}
       </Modal>
     );
   }
