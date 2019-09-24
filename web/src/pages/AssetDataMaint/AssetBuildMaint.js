@@ -56,10 +56,12 @@ class AssetBuildMaint extends PureComponent {
 
   // 新建楼栋
   handleAddBuildClick = () => {
+    const { onProjectId } = this.props;
     this.dispatch({
       type: 'assetDatamaint/LoadBuild',
       payload: {
         type: 'A',
+        inProjectID: onProjectId,
       },
     });
   };
@@ -122,11 +124,16 @@ class AssetBuildMaint extends PureComponent {
 
   // 提交数据
   handleFormSubmit = data => {
+    const {
+      assetDatamaint: { formTypeBuild },
+    } = this.props;
     this.dispatch({
       type: 'assetDatamaint/submitBuild',
       payload: data,
     });
-    this.clearSelectRows();
+    if (formTypeBuild === 'E') {
+      this.clearSelectRows();
+    }
   };
 
   handleTableSelectRow = (selectedRowKeys, selectedRows) => {

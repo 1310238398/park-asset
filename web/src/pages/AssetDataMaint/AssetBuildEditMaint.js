@@ -4,6 +4,7 @@ import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio, Tabs } from 'an
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import CustomInfo from './CustomInfo/CustomInfo';
 import AgreementInfo from './CustomInfo/AgreementInfo';
+
 @connect(({ assetDatamaint }) => ({
   assetDatamaint,
 }))
@@ -16,25 +17,39 @@ class AssetBuildEditMaint extends PureComponent {
   }
 
   onOKClick = () => {
-    const { form, onSubmit } = this.props;
+    const {
+      form,
+      assetDatamaint: { proData },
+      onSubmit,
+    } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
-        formData.sequence = parseInt(formData.sequence, 10);
-        this.custom.current.validateFields((err, values) => {
-          if (!err) {
-            formData = { formData, ...values };
-            // console.log(formData)
-          }
-        });
-        this.agreement.current.validateFields((err, values) => {
-            if (!err) {
-              formData = { formData, ...values };
+        formData.project_id = proData.record_id;
+        formData.building_type = 1;
+        if (formData && formData.building_area) {
+          formData.building_area = Math.round(Number(formData.building_area) * 100);
+        }
+        if (formData && formData.rent_area) {
+          formData.rent_area = Math.round(Number(formData.rent_area) * 100);
+        }
+
+        if (formData.is_all_rent === 1 && formData.rent_status !== 1) {
+          this.custom.current.validateFields((errCut, valuesCut) => {
+            if (!errCut) {
+              formData = { formData, ...valuesCut };
               // console.log(formData)
             }
           });
+          this.agreement.current.validateFields((errAgre, valuesAgre) => {
+            if (!errAgre) {
+              formData = { formData, ...valuesAgre };
+              // console.log(formData)
+            }
+          });
+        }
 
-        // onSubmit(formData);
+        onSubmit(formData);
       }
     });
   };
@@ -46,7 +61,14 @@ class AssetBuildEditMaint extends PureComponent {
 
   render() {
     const {
-      assetDatamaint: { formVisibleBuild, formTitleBuild, formDataBuild, submitting },
+      assetDatamaint: {
+        formVisibleBuild,
+        formTitleBuild,
+        formDataBuild,
+        submitting,
+        formTypeBuild,
+        proData,
+      },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
@@ -62,10 +84,10 @@ class AssetBuildEditMaint extends PureComponent {
     };
     const formItemLayoutmome = {
       labelCol: {
-        span: 3,
+        span: 10,
       },
       wrapperCol: {
-        span: 21,
+        span: 14,
       },
     };
     const formItemLayoutTwo = {
@@ -92,8 +114,13 @@ class AssetBuildEditMaint extends PureComponent {
         <Card bordered={false}>
           <Form>
             <Row>
-              <Col span={12}>
-                <Form.Item {...formItemLayout} label="园区名称">
+              <Col span={8}>
+                <Form.Item {...formItemLayout} label="项目名称">
+                  <span className="ant-form-text">{proData.name}</span>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item {...formItemLayoutmome} label="楼栋名称">
                   {getFieldDecorator('name', {
                     initialValue: formDataBuild.name,
                     rules: [
@@ -105,25 +132,11 @@ class AssetBuildEditMaint extends PureComponent {
                   })(<Input placeholder="请输入" />)}
                 </Form.Item>
               </Col>
-              <Col span={12}>
-                <Form.Item {...formItemLayout} label="楼栋名称">
-                  {getFieldDecorator('parent_id', {
-                    initialValue: formDataBuild.parent_id,
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入',
-                      },
-                    ],
-                  })(<Input placeholder="请输入" />)}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <Form.Item {...formItemLayoutTwo} label="是否整单元出租">
-                  {getFieldDecorator('sequence', {
-                    initialValue: formDataBuild.sequence,
+
+              <Col span={8}>
+                <Form.Item {...formItemLayoutTwo} label="是否整栋出租">
+                  {getFieldDecorator('is_all_rent', {
+                    initialValue: formDataBuild.is_all_rent ? formDataBuild.is_all_rent : 2,
                     rules: [
                       {
                         required: true,
@@ -132,50 +145,96 @@ class AssetBuildEditMaint extends PureComponent {
                     ],
                   })(
                     <RadioGroup>
-                      <Radio value={20}>是</Radio>
-                      <Radio value={10}>否</Radio>
+                      <Radio value={1}>是</Radio>
+                      <Radio value={2}>否</Radio>
                     </RadioGroup>
                   )}
                 </Form.Item>
               </Col>
             </Row>
+
             <Row>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item
                   {...formItemLayout}
                   label="单元数"
                   style={{
-                    display: getFieldValue('sequence') === 10 ? 'block' : 'none',
+                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
                   }}
                 >
-                  {getFieldDecorator('code', {
-                    initialValue: formDataBuild.code,
+                  {getFieldDecorator('unit_num', {
+                    initialValue: formDataBuild.unit_num ? formDataBuild.unit_num : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(
+                    <InputNumber
+                      min={1}
+                      max={9999}
+                      placeholder="请输入"
+                      disabled={formTypeBuild === 'E'}
+                    />
+                  )}
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
+                <Form.Item
+                  {...formItemLayoutmome}
+                  label="单元命名规则"
+                  style={{
+                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
+                  }}
+                >
+                  {getFieldDecorator('unit_naming', {
+                    initialValue: formDataBuild.unit_naming ? formDataBuild.unit_naming : '单元',
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入',
+                      },
+                    ],
+                  })(<Input placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
                 <Form.Item
                   {...formItemLayout}
                   label="楼层数"
                   style={{
-                    display: getFieldValue('sequence') === 10 ? 'block' : 'none',
+                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
                   }}
                 >
-                  {getFieldDecorator('code', {
-                    initialValue: formDataBuild.code,
+                  {getFieldDecorator('layer_num', {
+                    initialValue: formDataBuild.layer_num ? formDataBuild.layer_num : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  {...formItemLayoutmome}
+                  label="楼层命名规则"
+                  style={{
+                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
+                  }}
+                >
+                  {getFieldDecorator('layer_naming', {
+                    initialValue: formDataBuild.layer_naming ? formDataBuild.layer_naming : 'F',
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入',
+                      },
+                    ],
+                  })(<Input placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -185,18 +244,20 @@ class AssetBuildEditMaint extends PureComponent {
                   {...formItemLayoutTwo}
                   label="建筑面积（㎡）"
                   style={{
-                    display: getFieldValue('sequence') === 20 ? 'block' : 'none',
+                    display: getFieldValue('is_all_rent') === 1 ? 'block' : 'none',
                   }}
                 >
-                  {getFieldDecorator('code', {
-                    initialValue: formDataBuild.code,
+                  {getFieldDecorator('building_area', {
+                    initialValue: formDataBuild.building_area
+                      ? formDataBuild.building_area / 100
+                      : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" step={0.1} min={0} max={1000000} />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -204,18 +265,18 @@ class AssetBuildEditMaint extends PureComponent {
                   {...formItemLayoutTwo}
                   label="计租面积（㎡）"
                   style={{
-                    display: getFieldValue('sequence') === 20 ? 'block' : 'none',
+                    display: getFieldValue('is_all_rent') === 1 ? 'block' : 'none',
                   }}
                 >
-                  {getFieldDecorator('code', {
-                    initialValue: formDataBuild.code,
+                  {getFieldDecorator('rent_area', {
+                    initialValue: formDataBuild.rent_area ? formDataBuild.rent_area / 100 : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" step={0.1} min={0} max={1000000} />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -223,11 +284,11 @@ class AssetBuildEditMaint extends PureComponent {
                   {...formItemLayout}
                   label="装修情况"
                   style={{
-                    display: getFieldValue('sequence') === 20 ? 'block' : 'none',
+                    display: getFieldValue('is_all_rent') === 1 ? 'block' : 'none',
                   }}
                 >
-                  {getFieldDecorator('code', {
-                    initialValue: formDataBuild.code,
+                  {getFieldDecorator('decoration', {
+                    initialValue: formDataBuild.decoration,
                     rules: [
                       {
                         required: false,
@@ -236,7 +297,7 @@ class AssetBuildEditMaint extends PureComponent {
                     ],
                   })(
                     <DicSelect
-                      vmode="sting"
+                      vmode="int"
                       pcode="pa$#build$#decora"
                       selectProps={{ placeholder: '请选择' }}
                     />
@@ -250,17 +311,17 @@ class AssetBuildEditMaint extends PureComponent {
                   {...formItemLayout}
                   label="出租状态"
                   style={{
-                    display: getFieldValue('sequence') === 20 ? 'block' : 'none',
+                    display: getFieldValue('is_all_rent') === 1 ? 'block' : 'none',
                   }}
                 >
-                  {getFieldDecorator('lease_status', {
-                    initialValue: formDataBuild.lease_status,
+                  {getFieldDecorator('rent_status', {
+                    initialValue: formDataBuild.rent_status ? formDataBuild.rent_status : 0,
                     rules: [{ required: true, message: '请选择' }],
                   })(
                     <RadioGroup>
-                      <Radio.Button value={20}>未租</Radio.Button>
-                      <Radio.Button value={10}>锁定</Radio.Button>
-                      <Radio.Button value={30}>已租</Radio.Button>
+                      <Radio.Button value={1}>未租</Radio.Button>
+                      <Radio.Button value={2}>锁定</Radio.Button>
+                      <Radio.Button value={3}>已租</Radio.Button>
                     </RadioGroup>
                   )}
                 </Form.Item>
@@ -268,7 +329,7 @@ class AssetBuildEditMaint extends PureComponent {
             </Row>
             <Row
               style={{
-                display: getFieldValue('lease_status') === 10 ? 'block' : 'none',
+                display: getFieldValue('rent_status') === 2 ? 'block' : 'none',
               }}
             >
               <Tabs defaultActiveKey="1">
@@ -279,7 +340,7 @@ class AssetBuildEditMaint extends PureComponent {
             </Row>
             <Row
               style={{
-                display: getFieldValue('lease_status') === 30 ? 'block' : 'none',
+                display: getFieldValue('lease_status') === 3 ? 'block' : 'none',
               }}
             >
               <Tabs defaultActiveKey="1">
@@ -287,7 +348,7 @@ class AssetBuildEditMaint extends PureComponent {
                   <CustomInfo ref={this.custom} />
                 </TabPane>
                 <TabPane tab="合同信息" key="2">
-                  <AgreementInfo  ref={this.agreement}/>
+                  <AgreementInfo ref={this.agreement} />
                 </TabPane>
               </Tabs>
             </Row>
