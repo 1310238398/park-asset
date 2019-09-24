@@ -7,6 +7,7 @@ import (
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/util"
+
 	"github.com/casbin/casbin"
 )
 
@@ -15,19 +16,22 @@ func NewUser(
 	e *casbin.Enforcer,
 	mUser model.IUser,
 	mRole model.IRole,
+	mOrganization model.IOrganization,
 ) *User {
 	return &User{
-		Enforcer:  e,
-		UserModel: mUser,
-		RoleModel: mRole,
+		Enforcer:          e,
+		UserModel:         mUser,
+		RoleModel:         mRole,
+		OrganizationModel: mOrganization,
 	}
 }
 
 // User 用户管理
 type User struct {
-	Enforcer  *casbin.Enforcer
-	UserModel model.IUser
-	RoleModel model.IRole
+	Enforcer          *casbin.Enforcer
+	UserModel         model.IUser
+	RoleModel         model.IRole
+	OrganizationModel model.IOrganization
 }
 
 // Query 查询数据
@@ -42,6 +46,16 @@ func (a *User) QueryShow(ctx context.Context, params schema.UserQueryParam, opts
 		return nil, err
 	} else if userResult == nil {
 		return nil, nil
+	}
+
+	if orgIDs := userResult.Data.ToOrgIDs(); len(orgIDs) > 0 {
+		orgResult, err := a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{
+			RecordIDs: orgIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+		userResult.Data.FillOrgData(orgResult.Data.ToMap())
 	}
 
 	result := &schema.UserShowQueryResult{

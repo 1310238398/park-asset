@@ -12,6 +12,7 @@ import chuzujunjia from '@/assets/chuzujunjia.png';
 import ruzhuqiyezongshu from '@/assets/ruzhuqiyezongshu.png';
 import styles from './AssetDataMaint.less';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
+import DicShow from '@/components/DictionaryNew/DicShow';
 
 @connect(state => ({
   assetDatamaint: state.assetDatamaint,
@@ -28,15 +29,38 @@ class AssetBuildMaint extends PureComponent {
     const { onProjectId } = this.props;
     this.dispatch({
       type: 'assetDatamaint/fetchBuidings',
-      payload: {
-        onProjectId,
+      search: {
+        project_id: onProjectId,
+        building_type: 1,
       },
+      pagination: {},
     });
   }
+
+  handleTableChange = pagination => {
+    this.dispatch({
+      type: 'assetDatamaint/fetchBuidings',
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
+    });
+    this.clearSelectRows();
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
+  };
+
+  onResetFormClick = () => {
+    const { form, onProjectId } = this.props;
+    form.resetFields();
+    this.dispatch({
+      type: 'assetDatamaint/fetchBuidings',
+      search: { project_id: onProjectId, building_type: 1 },
+      pagination: {},
+    });
   };
 
   // 跳转 如果有单元数，就跳转单元，如果没有，就跳转楼层。
@@ -82,6 +106,14 @@ class AssetBuildMaint extends PureComponent {
     });
   };
 
+  // 判断数值
+  statusValue = value => {
+    if (value && value !== 0) {
+      return value / 100;
+    }
+    return 0;
+  };
+
   // 删除单元
   handleDelClick = () => {
     const { selectedRows } = this.state;
@@ -114,6 +146,14 @@ class AssetBuildMaint extends PureComponent {
     });
   };
 
+  clearSelectRows = () => {
+    const { selectedRowKeys } = this.state;
+    if (selectedRowKeys.length === 0) {
+      return;
+    }
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
+  };
+
   // 关闭弹窗
   handleFormCancel = () => {
     this.dispatch({
@@ -134,6 +174,27 @@ class AssetBuildMaint extends PureComponent {
     if (formTypeBuild === 'E') {
       this.clearSelectRows();
     }
+  };
+
+  // 查询表单数据
+  handleSearchFormSubmit = e => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    const { form, onProjectId } = this.props;
+    form.validateFields({ force: true }, (err, values) => {
+      if (err) {
+        return;
+      }
+      this.dispatch({
+        type: 'assetDatamaint/fetchBuidings',
+        building_type: 1,
+        search: { ...values, project_id: onProjectId, building_type: 1 },
+        pagination: {},
+      });
+      this.clearSelectRows();
+    });
   };
 
   handleTableSelectRow = (selectedRowKeys, selectedRows) => {
@@ -205,7 +266,7 @@ class AssetBuildMaint extends PureComponent {
           </Col>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="出租规模">
-              {getFieldDecorator('name')(
+              {getFieldDecorator('is_all_rent')(
                 <DicSelect
                   vmode="string"
                   pcode="pa$#build$#scale"
@@ -217,7 +278,7 @@ class AssetBuildMaint extends PureComponent {
           </Col>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="出租状态">
-              {getFieldDecorator('name')(
+              {getFieldDecorator('rent_status')(
                 <DicSelect
                   vmode="string"
                   pcode="pa$#build$#rente"
@@ -233,7 +294,7 @@ class AssetBuildMaint extends PureComponent {
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
+                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
                   重置
                 </Button>
               </span>
@@ -248,7 +309,7 @@ class AssetBuildMaint extends PureComponent {
     const {
       loading,
       assetDatamaint: {
-        data: { list, pagination },
+        dataBuild: { list, pagination },
       },
     } = this.props;
 
@@ -256,41 +317,74 @@ class AssetBuildMaint extends PureComponent {
     const columns = [
       {
         title: '楼栋号',
-        dataIndex: 'photo',
+        dataIndex: 'name',
         width: 100,
-        render: value => {
-          return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
-        },
       },
       {
         title: '是否整栋出租',
-        dataIndex: 'name',
-        width: 200,
+        dataIndex: 'is_all_rent',
+        width: 150,
+        render: val => {
+          return <span>{val === 1 ? '是' : '否'}</span>;
+        },
       },
       {
         title: '出租状态',
-        dataIndex: 'floor_area',
+        dataIndex: 'rent_status',
         width: 150,
+        render: val => {
+          if (val === 0) {
+            return '';
+          }
+          return <DicShow pcode="pa$#build$#rente" code={[val]} />;
+        },
       },
       {
         title: '建筑面积（㎡）',
-        dataIndex: 'address',
+        dataIndex: 'building_area',
         width: 150,
+        render: val => {
+          return <span>{this.statusValue(val)}</span>;
+        },
       },
       {
         title: '已租面积（㎡）',
-        dataIndex: 'address',
+        dataIndex: 'rent_area',
         width: 150,
+        render: item => {
+          if (item.is_all_rent === 1) {
+            if (item.rent_status !== 3) {
+              return 0;
+            }
+            return -1;
+          }
+          return <span>{this.statusValue(item.rent_area)}</span>;
+        },
       },
       {
         title: '出租率',
-        dataIndex: 'address',
+        dataIndex: '',
         width: 150,
+        render: item => {
+          if (item.is_all_rent === 1) {
+            if (item.rent_status !== 3) {
+              return 0;
+            }
+            return <span>100%</span>;
+          }
+          return <span>{this.statusValue(item.rent_area)}</span>;
+        },
       },
       {
         title: '未租面积（㎡）',
-        dataIndex: 'asset_type',
+        dataIndex: 'parent_path',
         width: 150,
+        render: item => {
+          if (item.is_all_rent === 1 && item.rent_status !== 3) {
+            return item.rent_area;
+          }
+          return <span>{this.statusValue(item.rent_area)}</span>;
+        },
       },
     ];
 

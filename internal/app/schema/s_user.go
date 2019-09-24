@@ -13,10 +13,11 @@ type User struct {
 	Phone     string    `json:"phone" swaggo:"false,手机号"`
 	Email     string    `json:"email" swaggo:"false,邮箱"`
 	Status    int       `json:"status" binding:"required,max=2,min=1" swaggo:"true,用户状态(1:启用 2:停用)"`
-	OrgID     string    `json:"org_id" binding:"required" swaggo:"false,所属组织机构"`
+	OrgID     string    `json:"org_id" binding:"required" swaggo:"true,所属组织机构"`
 	Creator   string    `json:"creator" swaggo:"false,创建者"`
 	CreatedAt time.Time `json:"created_at" swaggo:"false,创建时间"`
 	Roles     UserRoles `json:"roles" binding:"required,gt=0" swaggo:"true,角色授权"`
+	OrgName   string    `json:"org_name" swaggo:"true,组织机构名称"`
 }
 
 // CleanSecure 清理安全数据
@@ -38,6 +39,7 @@ type UserQueryParam struct {
 	Status       int      // 用户状态(1:启用 2:停用)
 	RoleIDs      []string // 角色ID列表
 	RecordIDs    []string // 记录ID列表
+	OrgID        string
 }
 
 // UserQueryOptions 查询可选参数项
@@ -73,6 +75,17 @@ func (a Users) ToOrgIDs() []string {
 	return orgIDs
 }
 
+// FillOrgData 填充组织机构数据
+func (a Users) FillOrgData(m map[string]*Organization) Users {
+	for i, item := range a {
+		if v, ok := m[item.OrgID]; ok {
+			a[i].OrgName = v.Name
+		}
+	}
+
+	return a
+}
+
 // ToUserShows 转换为用户显示列表
 func (a Users) ToUserShows(mroles map[string]*Role) UserShows {
 	list := make(UserShows, len(a))
@@ -85,6 +98,7 @@ func (a Users) ToUserShows(mroles map[string]*Role) UserShows {
 			Email:     item.Email,
 			Phone:     item.Phone,
 			Status:    item.Status,
+			OrgName:   item.OrgName,
 			CreatedAt: item.CreatedAt,
 		}
 
@@ -123,6 +137,7 @@ type UserShow struct {
 	Status    int       `json:"status" swaggo:"true,用户状态(1:启用 2:停用)"`
 	CreatedAt time.Time `json:"created_at" swaggo:"false,创建时间"`
 	Roles     []*Role   `json:"roles" swaggo:"true,授权角色列表"`
+	OrgName   string    `json:"org_name" swaggo:"true,组织机构名称"`
 }
 
 // UserShows 用户显示项列表

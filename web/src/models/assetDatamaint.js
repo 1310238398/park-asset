@@ -11,6 +11,12 @@ export default {
       list: [],
       pagination: {},
     },
+    searchBuild: {},
+    paginationBuild: {},
+    dataBuild: {
+      list: [],
+      pagination: {},
+    },
     submitting: false,
     formTitle: '',
     formID: '',
@@ -563,8 +569,36 @@ export default {
       }
     },
     // 查询写字楼列表
-    *fetchBuidings({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.queryBuildingsPage, payload);
+    *fetchBuidings({ search, pagination, select }, { call, put }) {
+      let params = {
+        q: 'page',
+      };
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchBuild',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.assetDatamaint.searchBuild);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePagination',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.assetDatamaint.paginationBuild);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
+      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveBuidings',
@@ -636,7 +670,13 @@ export default {
 
     // 写字楼列表
     saveBuidings(state, { payload }) {
-      return { ...state, formDataUnit: payload };
+      return { ...state, dataBuild: payload };
+    },
+    saveSearchBuild(state, { payload }) {
+      return { ...state, searchBuild: payload };
+    },
+    savePaginationBuild(state, { payload }) {
+      return { ...state, paginationBuild: payload };
     },
 
     // 租金信息
