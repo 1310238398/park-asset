@@ -31,6 +31,9 @@ func (a *OfficeBuilding) getQueryOption(opts ...schema.OfficeBuildingQueryOption
 func (a *OfficeBuilding) Query(ctx context.Context, params schema.OfficeBuildingQueryParam, opts ...schema.OfficeBuildingQueryOptions) (*schema.OfficeBuildingQueryResult, error) {
 	db := entity.GetOfficeBuildingDB(ctx, a.db).DB
 
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id=?", v)
+	}
 	if v := params.LikeName; v != "" {
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}

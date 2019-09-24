@@ -39,6 +39,7 @@ func (a *OfficeBuilding) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param project_id query string true "项目ID"
 // @Param name query string false "建筑名称（模糊查询）"
 // @Param building_type query int false "建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌"
 // @Param is_all_rent query int false "是否全部出租:(1是 2否)"
@@ -50,6 +51,11 @@ func (a *OfficeBuilding) Query(c *gin.Context) {
 // @Router GET /api/v1/office_buildings?q=page
 func (a *OfficeBuilding) QueryPage(c *gin.Context) {
 	var params schema.OfficeBuildingQueryParam
+	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 	params.LikeName = c.Query("name")
 	params.BuildingType = util.S(c.Query("building_type")).DefaultInt(0)
 	params.IsAllRent = util.S(c.Query("is_all_rent")).DefaultInt(0)

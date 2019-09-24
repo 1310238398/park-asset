@@ -26,6 +26,7 @@ func (a SchemaOfficeBuilding) ToOfficeBuilding() *OfficeBuilding {
 		UnitNaming:   &a.UnitNaming,
 		LayerNum:     &a.LayerNum,
 		LayerNaming:  &a.LayerNaming,
+		BuildingArea: &a.BuildingArea,
 		RentArea:     &a.RentArea,
 		Decoration:   &a.Decoration,
 		RentStatus:   &a.RentStatus,
@@ -49,6 +50,7 @@ type OfficeBuilding struct {
 	UnitNaming   *string `gorm:"column:unit_naming;size:50;"`      // 单元命名规则
 	LayerNum     *int    `gorm:"column:layer_num;"`                // 层数
 	LayerNaming  *string `gorm:"column:layer_naming;size:50;"`     // 层命名规则
+	BuildingArea *int    `gorm:"column:building_area;"`            // 建筑面积
 	RentArea     *int    `gorm:"column:rent_area;"`                // 计租面积
 	Decoration   *int    `gorm:"column:decoration;"`               // 装修情况
 	RentStatus   *int    `gorm:"column:rent_status;"`              // 出租状态:1未租 2锁定 3已租
@@ -79,6 +81,7 @@ func (a OfficeBuilding) ToSchemaOfficeBuilding() *schema.OfficeBuilding {
 		UnitNaming:   *a.UnitNaming,
 		LayerNum:     *a.LayerNum,
 		LayerNaming:  *a.LayerNaming,
+		BuildingArea: *a.BuildingArea,
 		RentArea:     *a.RentArea,
 		Decoration:   *a.Decoration,
 		RentStatus:   *a.RentStatus,
