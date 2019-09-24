@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Badge, Radio } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, Badge, Radio, TreeSelect } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import UserCard from './UserCard';
@@ -12,6 +12,7 @@ import styles from './UserList.less';
 @connect(state => ({
   loading: state.loading.models.user,
   user: state.user,
+  organStructure: state.organStructure,
 }))
 @Form.create()
 class UserList extends PureComponent {
@@ -167,6 +168,21 @@ class UserList extends PureComponent {
     dispatch(action);
   };
 
+  toTreeSelect = data => {
+    if (!data) {
+      return [];
+    }
+    const newData = [];
+    for (let i = 0; i < data.length; i += 1) {
+      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
+      if (item.children && item.children.length > 0) {
+        item.children = this.toTreeSelect(item.children);
+      }
+      newData.push(item);
+    }
+    return newData;
+  };
+
   renderDataForm() {
     return <UserCard onCancel={this.onDataFormCancel} onSubmit={this.onDataFormSubmit} />;
   }
@@ -174,6 +190,7 @@ class UserList extends PureComponent {
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
+      organStructure: { treeData },
     } = this.props;
     return (
       <Form onSubmit={this.onSearchFormSubmit}>
@@ -201,6 +218,20 @@ class UserList extends PureComponent {
                   <Radio value="1">正常</Radio>
                   <Radio value="2">停用</Radio>
                 </Radio.Group>
+              )}
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="组织机构">
+              {getFieldDecorator('org_id')(
+                <TreeSelect
+                  showSearch
+                  treeNodeFilterProp="title"
+                  style={{ width: '100%' }}
+                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                  treeData={this.toTreeSelect(treeData)}
+                  placeholder="请选择"
+                />
               )}
             </Form.Item>
           </Col>
@@ -263,6 +294,11 @@ class UserList extends PureComponent {
           return <Badge status="error" text="停用" />;
         },
       },
+      {
+        title: '组织机构',
+        dataIndex: 'org_name',
+      },
+
       {
         title: '邮箱',
         dataIndex: 'email',

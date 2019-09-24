@@ -18,10 +18,10 @@ class AssetUnitMaint extends PureComponent {
   };
 
   componentDidMount() {
-    // const { record_id, type } = this.props.location.query;
+    // const { recordID } = this.props.location.query;
     this.dispatch({
-      type: 'assetDatamaint/fetch',
-      search: {},
+      type: 'assetDatamaint/fetchUnit',
+      search: { building_type: 2 },
       pagination: {},
     });
   }
@@ -162,25 +162,22 @@ class AssetUnitMaint extends PureComponent {
     const columns = [
       {
         title: '单元号',
-        dataIndex: 'photo',
+        dataIndex: 'name',
         width: 100,
-        render: value => {
-          return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
-        },
       },
       {
         title: '是否整单元出租',
-        dataIndex: 'name',
+        dataIndex: 'is_all_rent',
         width: 200,
       },
       {
         title: '出租状态',
-        dataIndex: 'floor_area',
+        dataIndex: 'rent_status',
         width: 150,
       },
       {
         title: '建筑面积（㎡）',
-        dataIndex: 'address',
+        dataIndex: 'building_area',
         width: 150,
       },
       {

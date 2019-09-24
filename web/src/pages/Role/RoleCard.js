@@ -1,21 +1,14 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Modal, message, Card, Row, Col, InputNumber, TreeSelect } from 'antd';
+import { Form, Input, Modal, message, Card, Row, Col, InputNumber } from 'antd';
 
 import RoleMenu from './RoleMenu';
 
 @connect(state => ({
   role: state.role,
-  organStructure: state.organStructure,
 }))
 @Form.create()
 class RoleCard extends PureComponent {
-  componentDidMount() {
-    this.dispatch({
-      type: 'organStructure/loadTree',
-    });
-  }
-
   onOKClick = () => {
     const { form, onSubmit } = this.props;
 
@@ -56,7 +49,6 @@ class RoleCard extends PureComponent {
   render() {
     const {
       role: { formTitle, formVisible, formData, submitting },
-      organStructure: { treeData },
       form: { getFieldDecorator },
       onCancel,
     } = this.props;
@@ -109,22 +101,6 @@ class RoleCard extends PureComponent {
                     },
                   ],
                 })(<InputNumber min={1} style={{ width: '100%' }} />)}
-              </Form.Item>
-            </Col>
-            <Col>
-              <Form.Item {...formItemLayout} label="组织机构">
-                {getFieldDecorator('org_id', {
-                  initialValue: formData.org_id,
-                })(
-                  <TreeSelect
-                    showSearch
-                    treeNodeFilterProp="title"
-                    style={{ width: '100%' }}
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    treeData={this.toTreeSelect(treeData)}
-                    placeholder="请选择"
-                  />
-                )}
               </Form.Item>
             </Col>
             <Col>
