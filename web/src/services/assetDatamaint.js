@@ -2,8 +2,12 @@ import { stringify } from 'qs';
 import request from '@/utils/request';
 
 const router = 'organizations';
-const routerBuild = 'office_buildings';
 const routerPro = 'projects';
+const buildingsRouter = 'office_buildings';
+
+export async function queryBuildingsPage(params) {
+  return request(`/v1/${buildingsRouter}?${stringify(params)}`);
+}
 
 export async function queryPage(params) {
   return request(`/v1/${router}?${stringify(params)}`);
@@ -38,7 +42,7 @@ export async function del(params) {
 
 // 查询单条楼栋数据
 export async function getBuildOne(params) {
-  return request(`/v1/${routerBuild}/${params.record_id}`);
+  return request(`/v1/${buildingsRouter}/${params.record_id}`);
 }
 
 // 查询项目ID和名字
@@ -48,7 +52,7 @@ export async function selectProInfo(params) {
 
 // 更新保存楼栋
 export async function updateBuild(params) {
-  return request(`/v1/${routerBuild}/${params.record_id}`, {
+  return request(`/v1/${buildingsRouter}/${params.record_id}`, {
     method: 'PUT',
     body: params,
   });
@@ -56,7 +60,7 @@ export async function updateBuild(params) {
 
 // 创建保存楼栋
 export async function createBuild(params) {
-  return request(`/v1/${routerBuild}`, {
+  return request(`/v1/${buildingsRouter}`, {
     method: 'POST',
     body: params,
   });

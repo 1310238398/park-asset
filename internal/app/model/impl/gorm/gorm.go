@@ -30,6 +30,7 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.Organization),
 		new(entity.Project),
 		new(entity.OfficeBuilding),
+		new(entity.Asset),
 	).Error
 }
 
@@ -50,5 +51,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewOrganization, dig.As(new(model.IOrganization)))
 	container.Provide(imodel.NewProject, dig.As(new(model.IProject)))
 	container.Provide(imodel.NewOfficeBuilding, dig.As(new(model.IOfficeBuilding)))
+	container.Provide(imodel.NewAsset, dig.As(new(model.IAsset)))
 	return nil
 }

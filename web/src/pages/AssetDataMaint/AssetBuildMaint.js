@@ -11,6 +11,7 @@ import weizumianji from '@/assets/weizumianji.png';
 import chuzujunjia from '@/assets/chuzujunjia.png';
 import ruzhuqiyezongshu from '@/assets/ruzhuqiyezongshu.png';
 import styles from './AssetDataMaint.less';
+import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 @connect(state => ({
   assetDatamaint: state.assetDatamaint,
@@ -26,7 +27,7 @@ class AssetBuildMaint extends PureComponent {
   componentDidMount() {
     const { onProjectId } = this.props;
     this.dispatch({
-      type: 'assetDatamaint/loadForm',
+      type: 'assetDatamaint/fetchBuidings',
       payload: {
         onProjectId,
       },
@@ -203,13 +204,27 @@ class AssetBuildMaint extends PureComponent {
             </Form.Item>
           </Col>
           <Col {...col}>
-            <Form.Item {...formItemLayout} label="建筑类型">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <Form.Item {...formItemLayout} label="出租规模">
+              {getFieldDecorator('name')(
+                <DicSelect
+                  vmode="string"
+                  pcode="pa$#build$#scale"
+                  placeholder="请选择"
+                  selectProps={{ placeholder: '请选择' }}
+                />
+              )}
             </Form.Item>
           </Col>
           <Col {...col}>
-            <Form.Item {...formItemLayout} label="在租均价">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <Form.Item {...formItemLayout} label="出租状态">
+              {getFieldDecorator('name')(
+                <DicSelect
+                  vmode="string"
+                  pcode="pa$#build$#rente"
+                  placeholder="请选择"
+                  selectProps={{ placeholder: '请选择' }}
+                />
+              )}
             </Form.Item>
           </Col>
           <Col {...col}>
