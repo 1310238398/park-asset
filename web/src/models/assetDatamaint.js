@@ -277,7 +277,7 @@ export default {
         });
         // TODO 查询单元列表
         yield put({
-          type: 'fetch',
+          type: 'fetchBuidings',
         });
       }
     },

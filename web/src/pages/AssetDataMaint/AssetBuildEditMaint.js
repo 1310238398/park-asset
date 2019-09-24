@@ -34,7 +34,7 @@ class AssetBuildEditMaint extends PureComponent {
           formData.rent_area = Math.round(Number(formData.rent_area) * 100);
         }
 
-        if (formData.is_all_rent === 1) {
+        if (formData.is_all_rent === 1 && formData.rent_status !== 1) {
           this.custom.current.validateFields((errCut, valuesCut) => {
             if (!errCut) {
               formData = { formData, ...valuesCut };
@@ -257,7 +257,7 @@ class AssetBuildEditMaint extends PureComponent {
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" step={0.1} min={0} max={1000000} />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -276,7 +276,7 @@ class AssetBuildEditMaint extends PureComponent {
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" />)}
+                  })(<InputNumber placeholder="请输入" step={0.1} min={0} max={1000000} />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
