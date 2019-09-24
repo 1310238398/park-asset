@@ -30,6 +30,9 @@ func (a *User) getQueryOption(opts ...schema.UserQueryOptions) schema.UserQueryO
 // Query 查询数据
 func (a *User) Query(ctx context.Context, params schema.UserQueryParam, opts ...schema.UserQueryOptions) (*schema.UserQueryResult, error) {
 	db := entity.GetUserDB(ctx, a.db).DB
+	if v := params.OrgID; v != "" {
+		db = db.Where("org_id=?", v)
+	}
 	if v := params.UserName; v != "" {
 		db = db.Where("user_name=?", v)
 	}

@@ -58,7 +58,7 @@ type User struct {
 	Email    *string `gorm:"column:email;size:255;index;"`    // 邮箱
 	Phone    *string `gorm:"column:phone;size:20;index;"`     // 手机号
 	Status   *int    `gorm:"column:status;index;"`            // 状态(1:启用 2:停用)
-	OrgID  *string `gorm:"column:org_id;size:36;index;"`         // 所属组织机构
+	OrgID    *string `gorm:"column:org_id;size:36;index;"`    // 所属组织机构
 	Creator  *string `gorm:"column:creator;size:36;"`         // 创建者
 }
 

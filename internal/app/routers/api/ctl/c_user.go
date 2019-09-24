@@ -8,6 +8,7 @@ import (
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/util"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,6 +44,7 @@ func (a *User) Query(c *gin.Context) {
 // @Param user_name query string false "用户名(模糊查询)"
 // @Param real_name query string false "真实姓名(模糊查询)"
 // @Param role_ids query string false "角色ID(多个以英文逗号分隔)"
+// @Param org_id query string false "组织机构ID"
 // @Param status query int false "状态(1:启用 2:停用)"
 // @Success 200 []schema.UserShow "分页查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
@@ -53,6 +55,7 @@ func (a *User) QueryPage(c *gin.Context) {
 	var params schema.UserQueryParam
 	params.LikeUserName = c.Query("user_name")
 	params.LikeRealName = c.Query("real_name")
+	params.OrgID = c.Query("org_id")
 	if v := util.S(c.Query("status")).DefaultInt(0); v > 0 {
 		params.Status = v
 	}
