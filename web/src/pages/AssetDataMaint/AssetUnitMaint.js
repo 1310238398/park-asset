@@ -39,6 +39,19 @@ class AssetUnitMaint extends PureComponent {
     dispatch(action);
   };
 
+  handleTableSelectRow = (selectedRowKeys, selectedRows) => {
+    let keys = [];
+    let rows = [];
+    if (selectedRowKeys.length > 0 && selectedRows.length > 0) {
+      keys = [selectedRowKeys[selectedRowKeys.length - 1]];
+      rows = [selectedRows[selectedRows.length - 1]];
+    }
+    this.setState({
+      selectedRowKeys: keys,
+      selectedRows: rows,
+    });
+  };
+
   // 新增单元
   handleAddClick = () => {
     this.dispatch({
@@ -97,16 +110,8 @@ class AssetUnitMaint extends PureComponent {
     });
   };
 
-  handleDelOKClick(id) {
-    this.dispatch({
-      type: 'assetDatamaint/del',
-      payload: { record_id: id },
-    });
-    this.clearSelectRows();
-  }
-  
   // 关闭弹窗
-  handleFormCancel= () => {
+  handleFormCancel = () => {
     this.dispatch({
       type: 'assetDatamaint/changeFormVisibleUnit',
       payload: false,
@@ -114,10 +119,18 @@ class AssetUnitMaint extends PureComponent {
   };
 
   // 提交数据
-  handleFormSubmit=(data)=>{
+  handleFormSubmit = data => {
     this.dispatch({
       type: 'assetDatamaint/submitUnit',
       payload: data,
+    });
+    this.clearSelectRows();
+  };
+
+  handleDelOKClick(id) {
+    this.dispatch({
+      type: 'assetDatamaint/del',
+      payload: { record_id: id },
     });
     this.clearSelectRows();
   }

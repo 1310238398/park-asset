@@ -4,7 +4,8 @@ import { Form, Modal, Card, Button, Tag, Table, Tabs } from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import CustomInfoShow from './CustomInfo/CustomInfoShow';
 import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
-// import RentDrawInfoShow from './CustomInfo/RentDrawInfoShow';
+import RentDrawInfoShow from './CustomInfo/RentDrawInfoShow';
+import DiscardOpertaPage from './DetailOperationPage/DiscardOpertaPage';
 import styles from './AssetsBuildInfo.less';
 
 const { Description } = DescriptionList;
@@ -15,9 +16,9 @@ const { Description } = DescriptionList;
 
 //  企业入驻的模态对话框组件。
 class AssetBuildShowMaint extends PureComponent {
-  // state = {
-  //   rentDrawInfoShow: false,
-  // };
+  state = {
+    showDisCard: false,
+  };
 
   //  默认的组件挂载时的初始化。
   componentDidMount() {
@@ -76,7 +77,7 @@ class AssetBuildShowMaint extends PureComponent {
 
   onTableChange = pagination => {
     this.dispatch({
-      type: 'enterprise/fetch',
+      type: 'assetDatamaint/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
@@ -89,11 +90,48 @@ class AssetBuildShowMaint extends PureComponent {
     dispatch(action);
   };
 
-  // showModal = () => {
-  //   this.setState({
-  //     rentDrawInfoShow: true,
-  //   });
-  // };
+  DisOper = () => {
+    this.setState({
+      showDisCard: true,
+    });
+  };
+
+  DrawOper = () => {
+    this.setState({
+      showDrawCard: true,
+    });
+  };
+
+  renderShowDisCarView = () => {
+    const { showDisCard } = this.state;
+    if (showDisCard) {
+      return <DiscardOpertaPage onSubmit={this.DataDisCardBack} onCancel={this.cloeseDisCard} />;
+    }
+    return <React.Fragment></React.Fragment>;
+  };
+
+  renderShowDrawCarView = () => {
+    const { showDrawCard } = this.state;
+    if (showDrawCard) {
+      return <RentDrawInfoShow onSubmit={this.DataDisCardBack} onCancel={this.cloeseDrawCard} />;
+    }
+    return <React.Fragment></React.Fragment>;
+  };
+
+  cloeseDisCard = () => {
+    this.setState({ showDisCard: false });
+  };
+
+  cloeseDrawCard = () => {
+    this.setState({ showDrawCard: false });
+  };
+
+  DataDisCardBack = () => {
+    this.dispatch({
+      type: 'assetDatamaint/SaveDataDisCard',
+      data: '',
+    });
+  };
 
   renderFirstView = () => {
     const {
@@ -103,8 +141,8 @@ class AssetBuildShowMaint extends PureComponent {
 
     const operations = (
       <div>
-        <Button>作废</Button>
-        <Button>退租</Button>
+        <Button onClick={() => this.DisOper()}>作废</Button>
+        <Button onClick={() => this.DrawOper()}>退租</Button>
         <Button>续签</Button>
       </div>
     );
@@ -222,7 +260,7 @@ class AssetBuildShowMaint extends PureComponent {
 
     return (
       <Modal
-        title="企业详情"
+        title="楼栋详情"
         width={873}
         visible={formVisibleBuild}
         maskClosable={false}
@@ -238,6 +276,8 @@ class AssetBuildShowMaint extends PureComponent {
         bodyStyle={{ height: 550, overflowY: 'scroll' }}
       >
         {this.renderFirstView()}
+        {this.renderShowDisCarView()}
+        {this.renderShowDrawCarView()}
       </Modal>
     );
   }
