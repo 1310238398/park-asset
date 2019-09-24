@@ -1,0 +1,41 @@
+{
+  "struct_name": "Asset",
+  "comment": "资产管理",
+  "fields": [
+    {
+      "struct_field_name": "RecordID",
+      "comment": "记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "ProjectID",
+      "comment": "项目ID",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "AssetType",
+      "comment": "资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商",
+      "struct_field_required": true,
+      "struct_field_type": "int",
+      "gorm_options": "index;"
+    },
+    {
+      "struct_field_name": "HistoryID",
+      "comment": "历史记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "Creator",
+      "comment": "创建者",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    }
+  ]
+}
