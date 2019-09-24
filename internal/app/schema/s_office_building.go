@@ -11,6 +11,7 @@ type OfficeBuilding struct {
 	UnitNaming   string `json:"unit_naming" swaggo:"false,单元命名规则"`
 	LayerNum     int    `json:"layer_num" swaggo:"false,层数"`
 	LayerNaming  string `json:"layer_naming" swaggo:"false,层命名规则"`
+	BuildingArea int    `json:"building_area" swaggo:"false,建筑面积"`
 	RentArea     int    `json:"rent_area" swaggo:"false,计租面积"`
 	Decoration   int    `json:"decoration" swaggo:"false,装修情况"`
 	RentStatus   int    `json:"rent_status" swaggo:"false,出租状态:1未租 2锁定 3已租"`
