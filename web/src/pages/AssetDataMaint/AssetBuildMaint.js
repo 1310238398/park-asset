@@ -29,14 +29,37 @@ class AssetBuildMaint extends PureComponent {
     this.dispatch({
       type: 'assetDatamaint/fetchBuidings',
       payload: {
-        onProjectId,
+        project_id: onProjectId,
+        building_type: 1,
+        pagination: {},
       },
     });
   }
 
+  handleTableChange = pagination => {
+    this.dispatch({
+      type: 'assetDatamaint/fetchBuidings',
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
+    });
+    this.clearSelectRows();
+  };
+
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
+  };
+
+  onResetFormClick = () => {
+    const { form } = this.props;
+    form.resetFields();
+    this.dispatch({
+      type: 'assetDatamaint/fetchBuidings',
+      search: { parent_id: this.getParentID() },
+      pagination: {},
+    });
   };
 
   // 跳转 如果有单元数，就跳转单元，如果没有，就跳转楼层。
@@ -110,6 +133,14 @@ class AssetBuildMaint extends PureComponent {
         id: item.record_id,
       },
     });
+  };
+
+  clearSelectRows = () => {
+    const { selectedRowKeys } = this.state;
+    if (selectedRowKeys.length === 0) {
+      return;
+    }
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
   };
 
   // 关闭弹窗
@@ -249,25 +280,22 @@ class AssetBuildMaint extends PureComponent {
     const columns = [
       {
         title: '楼栋号',
-        dataIndex: 'photo',
-        width: 100,
-        render: value => {
-          return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
-        },
-      },
-      {
-        title: '是否整栋出租',
         dataIndex: 'name',
         width: 200,
       },
       {
+        title: '是否整栋出租',
+        dataIndex: 'is_all_rent',
+        width: 100,
+      },
+      {
         title: '出租状态',
-        dataIndex: 'floor_area',
+        dataIndex: 'rent_status',
         width: 150,
       },
       {
         title: '建筑面积（㎡）',
-        dataIndex: 'address',
+        dataIndex: 'building_area',
         width: 150,
       },
       {

@@ -435,7 +435,11 @@ export default {
 
     // 查询写字楼列表
     *fetchBuidings({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.queryBuildingsPage, payload);
+      let params = {
+        q: 'page',
+      };
+      params = { ...params, ...payload };
+      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveBuidings',
