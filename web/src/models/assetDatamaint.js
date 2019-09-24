@@ -432,6 +432,17 @@ export default {
         ];
       }
     },
+
+    // 查询写字楼列表
+    *fetchBuidings({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.queryBuildingsPage, payload);
+      yield [
+        put({
+          type: 'saveBuidings',
+          payload: response,
+        }),
+      ];
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -491,6 +502,11 @@ export default {
       return { ...state, formIDUnit: payload };
     },
     saveFormDataUnit(state, { payload }) {
+      return { ...state, formDataUnit: payload };
+    },
+
+    // 写字楼列表
+    saveBuidings(state, { payload }) {
       return { ...state, formDataUnit: payload };
     },
 
