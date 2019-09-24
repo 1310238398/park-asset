@@ -2,6 +2,11 @@ import { stringify } from 'qs';
 import request from '@/utils/request';
 
 const router = 'organizations';
+const buildingsRouter = 'office_buildings';
+
+export async function queryBuildingsPage(params) {
+  return request(`/v1/${buildingsRouter}?${stringify(params)}`);
+}
 
 export async function queryPage(params) {
   return request(`/v1/${router}?${stringify(params)}`);
