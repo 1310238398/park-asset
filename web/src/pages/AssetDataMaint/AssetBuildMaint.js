@@ -349,6 +349,10 @@ class AssetBuildMaint extends PureComponent {
           return <span>{this.statusValue(val)}</span>;
         },
       },
+
+      // 判断是否是整栋出租
+      // 整栋&&（未租||锁定） 已租面积和出租率是0， 未租面积=计租面积
+      // 整栋&&已租  已租面积=计租面积 未租面积=0 出租率=100%
       {
         title: '已租面积（㎡）',
         dataIndex: 'rent_area',
