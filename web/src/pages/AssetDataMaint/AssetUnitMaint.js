@@ -18,11 +18,20 @@ class AssetUnitMaint extends PureComponent {
   };
 
   componentDidMount() {
-    // const { recordID } = this.props.location.query;
+    const {
+      location: {
+        query: { recordID },
+      },
+    } = this.props;
     this.dispatch({
       type: 'assetDatamaint/fetchUnit',
-      search: { building_type: 2 },
+      search: { building_type: 2, record_id: recordID },
       pagination: {},
+    });
+
+    this.dispatch({
+      type: 'assetDatamaint/fetchFormBuild',
+      payload: { record_id: recordID },
     });
   }
 
@@ -156,6 +165,7 @@ class AssetUnitMaint extends PureComponent {
       loading,
       assetDatamaint: {
         data: { list, pagination },
+        formDataBuild,
       },
     } = this.props;
     const { selectedRowKeys, selectedRows } = this.state;
@@ -207,16 +217,19 @@ class AssetUnitMaint extends PureComponent {
       <div>
         <Card>
           <div>
-            <p>A3-5</p>
+            <p>{formDataBuild.name}</p>
             <Row type="flex" justify="start">
-              <Col span={4}>单元数：3</Col>
-              <Col span={4}>楼层数：2</Col>
+              <Col span={4}>单元数：{formDataBuild.unit_num}</Col>
+              <Col span={4}>楼层数：{formDataBuild.layer_num}</Col>
             </Row>
             <Row type="flex" justify="start">
-              <Col span={4}>建筑面积（㎡）：1</Col>
-              <Col span={4}>已租面积（㎡）：2</Col>
+              <Col span={4}>
+                建筑面积（㎡）：
+                {formDataBuild.building_area ? formDataBuild.building_area / 100 : 0}
+              </Col>
+              {/* <Col span={4}>已租面积（㎡）：2</Col>
               <Col span={4}>出租率：1%</Col>
-              <Col span={4}>未租面积（㎡）：2</Col>
+              <Col span={4}>未租面积（㎡）：2</Col> */}
             </Row>
           </div>
         </Card>
