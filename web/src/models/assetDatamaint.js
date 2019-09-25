@@ -17,6 +17,13 @@ export default {
       list: [],
       pagination: {},
     },
+    searchUnit: {},
+    paginationUnit: {},
+    dataUnit: {
+      list: [],
+      pagination: {},
+    },
+
     submitting: false,
     formTitle: '',
     formID: '',
@@ -49,6 +56,7 @@ export default {
     formIDJF: '',
     // 项目数据
     proData: {},
+    proID: '',
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -190,6 +198,12 @@ export default {
           type: 'selectProjectIDName',
           payload: { ID: payload.inProjectID },
         });
+
+        // 保存proId
+        yield put({
+          type: 'saveProjectID',
+          payload: payload.inProjectID,
+        });
       }
 
       yield [
@@ -301,7 +315,8 @@ export default {
           pathname: '/assetdatamaint/assetunitmaint',
           query: {
             recordID: payload.record_id,
-            type: payload.asset_type,
+            currentName: payload.name,
+            projectID: payload.project_id,
           },
         })
       );
@@ -313,6 +328,12 @@ export default {
         payload: true,
       });
 
+      if (payload.inProjectID) {
+        yield put({
+          type: 'selectProjectIDName',
+          payload: { ID: payload.inProjectID },
+        });
+      }
       yield [
         put({
           type: 'saveFormTypeUnit',
@@ -606,6 +627,44 @@ export default {
         }),
       ];
     },
+    // 查询单元列表
+    *fetchUnit({ search, pagination, select }, { call, put }) {
+      let params = {
+        q: 'page',
+      };
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchUint',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.assetDatamaint.searchUnit);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePaginationUnit',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.assetDatamaint.paginationUnit);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
+      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      yield [
+        put({
+          type: 'saveUnitList',
+          payload: response,
+        }),
+      ];
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -652,6 +711,16 @@ export default {
       return { ...state, formDataBuild: payload };
     },
     // 单元数据
+
+    saveUnitList(state, { payload }) {
+      return { ...state, dataUnit: payload };
+    },
+    saveSearchUint(state, { payload }) {
+      return { ...state, searchUnit: payload };
+    },
+    savePaginationUnit(state, { payload }) {
+      return { ...state, paginationUnit: payload };
+    },
     changeFormVisibleUnit(state, { payload }) {
       return { ...state, formVisibleUnit: payload };
     },
@@ -716,6 +785,10 @@ export default {
     // 项目名称
     saveProData(state, { payload }) {
       return { ...state, proData: payload };
+    },
+    // 保存项目ID
+    saveProjectID(state, { payload }) {
+      return { ...state, proID: payload };
     },
   },
 };

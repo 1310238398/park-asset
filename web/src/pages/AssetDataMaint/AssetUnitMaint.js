@@ -4,6 +4,7 @@ import { Card, Form, Row, Col, Table, Modal } from 'antd';
 import PButton from '@/components/PermButton';
 import AssetUnitEditMaint from './AssetUnitEditMaint';
 import AssetUnitShowMaint from './AssetUnitShowMaint';
+import DicShow from '@/components/DictionaryNew/DicShow';
 import styles from './AssetDataMaint.less';
 
 @connect(state => ({
@@ -20,12 +21,12 @@ class AssetUnitMaint extends PureComponent {
   componentDidMount() {
     const {
       location: {
-        query: { recordID },
+        query: { recordID, projectID },
       },
     } = this.props;
     this.dispatch({
       type: 'assetDatamaint/fetchUnit',
-      search: { building_type: 2, record_id: recordID },
+      search: { building_type: 2, parent_id: recordID, project_id: projectID },
       pagination: {},
     });
 
@@ -63,16 +64,27 @@ class AssetUnitMaint extends PureComponent {
 
   // 新增单元
   handleAddClick = () => {
+    const {
+      location: {
+        query: { projectID },
+      },
+    } = this.props;
     this.dispatch({
       type: 'assetDatamaint/LoadUnit',
       payload: {
         type: 'A',
+        inProjectID: projectID,
       },
     });
   };
 
   // 编辑单元
   handleEditClick = () => {
+    const {
+      location: {
+        query: { projectID },
+      },
+    } = this.props;
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -83,6 +95,7 @@ class AssetUnitMaint extends PureComponent {
       payload: {
         type: 'E',
         id: item.record_id,
+        inProjectID: projectID,
       },
     });
   };
@@ -136,6 +149,47 @@ class AssetUnitMaint extends PureComponent {
     this.clearSelectRows();
   };
 
+  // 判断数值
+  statusValue = value => {
+    if (value && value !== 0) {
+      return value / 100;
+    }
+    return 0;
+  };
+
+  // 出租率
+  statusLv = value => {
+    if (value.is_all_rent === 1) {
+      if (value.rent_status !== 3) {
+        return 0;
+      }
+      return <span>100%</span>;
+    }
+    return <span>{value.rent_area}</span>;
+  };
+
+  // 计算已租面积
+  statusArea = value => {
+    if (value.is_all_rent === 1) {
+      if (value.rent_status !== 3) {
+        return 0;
+      }
+      return -1;
+    }
+    return <span>{this.statusValue(value.rent_area)}</span>;
+  };
+
+  // 计算未租面积
+  statusTorentArea = value => {
+    if (value.is_all_rent === 1) {
+      if (value.rent_status !== 3) {
+        return 0;
+      }
+      return -1;
+    }
+    return <span>{this.statusValue(value.rent_area)}</span>;
+  };
+
   handleDelOKClick(id) {
     this.dispatch({
       type: 'assetDatamaint/del',
@@ -148,10 +202,17 @@ class AssetUnitMaint extends PureComponent {
   renderDataForm() {
     const {
       assetDatamaint: { formTypeUnit },
+      location: {
+        query: { currentName },
+      },
     } = this.props;
     if (formTypeUnit === 'A' || formTypeUnit === 'E') {
       return (
-        <AssetUnitEditMaint onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />
+        <AssetUnitEditMaint
+          onCancel={this.handleFormCancel}
+          onSubmit={this.handleFormSubmit}
+          titleName={currentName}
+        />
       );
     }
     if (formTypeUnit === 'S') {
@@ -164,7 +225,7 @@ class AssetUnitMaint extends PureComponent {
     const {
       loading,
       assetDatamaint: {
-        data: { list, pagination },
+        dataUnit: { list, pagination },
         formDataBuild,
       },
     } = this.props;
@@ -179,31 +240,67 @@ class AssetUnitMaint extends PureComponent {
         title: '是否整单元出租',
         dataIndex: 'is_all_rent',
         width: 200,
+        render: val => {
+          return <span>{val === 1 ? '是' : '否'}</span>;
+        },
       },
       {
         title: '出租状态',
         dataIndex: 'rent_status',
         width: 150,
+        render: val => {
+          if (val === 0) {
+            return '';
+          }
+          return <DicShow pcode="pa$#build$#rente" code={[val]} />;
+        },
       },
       {
         title: '建筑面积（㎡）',
         dataIndex: 'building_area',
         width: 150,
+        render: val => {
+          return <span>{this.statusValue(val)}</span>;
+        },
       },
       {
         title: '已租面积（㎡）',
-        dataIndex: 'address',
+        dataIndex: 'rent_area',
         width: 150,
+        render: item => {
+          if (item.is_all_rent === 1) {
+            if (item.rent_status !== 3) {
+              return 0;
+            }
+            return -1;
+          }
+          return <span>{this.statusValue(item.rent_area)}</span>;
+        },
       },
       {
         title: '出租率',
-        dataIndex: 'address',
+        dataIndex: '',
         width: 150,
+        render: item => {
+          if (item.is_all_rent === 1) {
+            if (item.rent_status !== 3) {
+              return 0;
+            }
+            return <span>100%</span>;
+          }
+          return <span>{item.rent_area}</span>;
+        },
       },
       {
         title: '未租面积（㎡）',
-        dataIndex: 'asset_type',
+        dataIndex: 'parent_path',
         width: 150,
+        render: item => {
+          if (item.is_all_rent === 1 && item.rent_status !== 3) {
+            return item.rent_area;
+          }
+          return <span>{this.statusValue(item.rent_area)}</span>;
+        },
       },
     ];
     const paginationProps = {
@@ -227,9 +324,9 @@ class AssetUnitMaint extends PureComponent {
                 建筑面积（㎡）：
                 {formDataBuild.building_area ? formDataBuild.building_area / 100 : 0}
               </Col>
-              {/* <Col span={4}>已租面积（㎡）：2</Col>
-              <Col span={4}>出租率：1%</Col>
-              <Col span={4}>未租面积（㎡）：2</Col> */}
+              <Col span={4}>已租面积（㎡）：{this.statusArea(formDataBuild)}</Col>
+              <Col span={4}>出租率：{this.statusLv(formDataBuild)}</Col>
+              <Col span={4}>未租面积（㎡）：{this.statusTorentArea(formDataBuild)}</Col>
             </Row>
           </div>
         </Card>
