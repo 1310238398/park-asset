@@ -7,6 +7,7 @@ import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
 import RentDrawInfoShow from './CustomInfo/RentDrawInfoShow';
 import DiscardOpertaPage from './DetailOperationPage/DiscardOpertaPage';
 import styles from './AssetsBuildInfo.less';
+import DicShow from '@/components/DictionaryNew/DicShow';
 
 const { Description } = DescriptionList;
 @connect(state => ({
@@ -41,12 +42,12 @@ class AssetBuildShowMaint extends PureComponent {
   };
 
   onModalCancelClick = () => {
-    const { callback } = this.props;
+    // const { callback } = this.props;
     this.dispatch({
       type: 'assetDatamaint/changeFormVisible',
       payload: false,
     });
-    callback();
+    // callback();
   };
 
   statusRender = status => {
@@ -133,12 +134,19 @@ class AssetBuildShowMaint extends PureComponent {
     });
   };
 
+  // 判断数值
+  statusValue = value => {
+    if (value && value !== 0) {
+      return value / 100;
+    }
+    return 0;
+  };
+
   renderFirstView = () => {
     const {
-      assetDatamaint: { formData },
+      assetDatamaint: { formDataBuild, proData },
     } = this.props;
     const { TabPane } = Tabs;
-
     const operations = (
       <div>
         <Button onClick={() => this.DisOper()}>作废</Button>
@@ -170,7 +178,6 @@ class AssetBuildShowMaint extends PureComponent {
     //   showTotal: total => <span>共{total}条</span>,
     //   ...pagination,
     // };
-
     return (
       <div className={styles.main}>
         <Card title="基本信息" bordered={false}>
@@ -185,17 +192,17 @@ class AssetBuildShowMaint extends PureComponent {
               />
             </div>
             <div className={styles.topInfoCenter}>
-              <span>{formData.name}</span>
+              <span>{formDataBuild.name}</span>
               <span>
                 企业联系电话：
-                {formData.phone}
+                {formDataBuild.phone}
                 企业邮箱：
-                {formData.zip_code}
+                {formDataBuild.zip_code}
               </span>
               <span>
                 入驻园区地址：
-                {formData.buildings &&
-                  formData.buildings.map(item => {
+                {formDataBuild.buildings &&
+                  formDataBuild.buildings.map(item => {
                     return (
                       <Tag>
                         {item.building_name} {this.renderBuildingType(item.incoming_type)}
@@ -206,25 +213,37 @@ class AssetBuildShowMaint extends PureComponent {
        
             </div>
           </div> */}
-          <p>A3-5</p>
+          {/* <p>A3-5</p> */}
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="园区">{formData.phone}</Description>
-              <Description term="楼栋">{formData.representative}</Description>
-              <Description term="出租规模">{formData.applicant_name}</Description>
+              <Description term="项目">{proData.name}</Description>
+              <Description term="楼栋">{formDataBuild.name}</Description>
+              <Description term="出租规模">
+                <DicShow pcode="pa$#build$#scale" code={[formDataBuild.is_all_rent]} />
+              </Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="单元数">{formData.applicant_tel}</Description>
-              <Description term="楼层数">{formData.representative}</Description>
-              <Description term="装修情况">{formData.applicant_name}</Description>
+              <Description term="单元数">
+                {formDataBuild.unit_num ? formDataBuild.unit_num.toString() : '0'}
+              </Description>
+              <Description term="楼层数">
+                {formDataBuild.layer_num ? formDataBuild.layer_num.toString() : '0'}
+              </Description>
+              <Description term="装修情况">
+                <DicShow pcode="pa$#build$#decora" code={[formDataBuild.decoration]} />
+              </Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="建筑面积（㎡）">{formData.applicant_tel}</Description>
-              <Description term="计租面积（㎡）">{formData.representative}</Description>
+              <Description term="建筑面积（㎡）">
+                {this.statusValue(formDataBuild.building_area)}
+              </Description>
+              <Description term="计租面积（㎡）">
+                {this.statusValue(formDataBuild.rent_area)}
+              </Description>
             </DescriptionList>
           </div>
         </Card>
@@ -257,7 +276,6 @@ class AssetBuildShowMaint extends PureComponent {
     const {
       assetDatamaint: { formVisibleBuild, submitting },
     } = this.props;
-
     return (
       <Modal
         title="楼栋详情"

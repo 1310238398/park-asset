@@ -244,6 +244,7 @@ export default {
         ];
       }
     },
+
     // 查询楼栋单条数据
     *fetchFormBuild({ payload }, { call, put }) {
       const response = yield call(assetDatamaintService.getBuildOne, payload);
