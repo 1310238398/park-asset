@@ -829,25 +829,25 @@
 	</schema>
 	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
 		<comment><![CDATA[资产管理]]></comment>
-		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="400" />
-		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="576" />
-		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="544" y="624" />
-		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="416" />
-		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="304" y="704" />
-		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="304" y="416" />
-		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1168" />
-		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1168" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="848" />
-		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1440" />
-		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1408" y="96" />
-		<entity schema="parkassets" name="pa_rent_details" color="E6CCFF" x="1632" y="528" />
-		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1616" y="80" />
-		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="512" />
-		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1040" y="512" />
-		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1376" y="688" />
-		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1120" y="112" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="1040" y="736" />
-		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1376" y="416" />
+		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="416" />
+		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="592" />
+		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="544" y="640" />
+		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="432" />
+		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="304" y="720" />
+		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="304" y="432" />
+		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1184" />
+		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1184" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="864" />
+		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1456" />
+		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1040" y="528" />
+		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1376" y="704" />
+		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1376" y="432" />
+		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1088" y="112" />
+		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1376" y="112" />
+		<entity schema="parkassets" name="pa_rent_details" color="E6CCFF" x="1648" y="544" />
+		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1648" y="96" />
+		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="80" />
+		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="784" y="544" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
