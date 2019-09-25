@@ -65,7 +65,7 @@ class AssetBuildMaint extends PureComponent {
 
   // 跳转 如果有单元数，就跳转单元，如果没有，就跳转楼层。
   onItemDetailClick = item => {
-    if (item) {
+    if (item.unit_num !== 0) {
       this.dispatch({
         type: 'assetDatamaint/cellRoute',
         payload: item,
@@ -97,11 +97,13 @@ class AssetBuildMaint extends PureComponent {
       return;
     }
     const item = selectedRows[0];
+    const { onProjectId } = this.props;
     this.dispatch({
       type: 'assetDatamaint/LoadBuild',
       payload: {
         type: 'E',
         id: item.record_id,
+        inProjectID: onProjectId,
       },
     });
   };
