@@ -36,6 +36,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cApartment *ctl.Apartment,
 		cAgriculturalMarket *ctl.AgriculturalMarket,
 		cCarChanger *ctl.CarChanger,
+		cFactoryBuilding *ctl.FactoryBuilding,
 	) error {
 
 		g := app.Group("/api")
@@ -185,6 +186,13 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.POST("/car_changers", cCarChanger.Create)
 			v1.PUT("/car_changers/:id", cCarChanger.Update)
 			v1.DELETE("/car_changers/:id", cCarChanger.Delete)
+
+			// 注册/api/v1/factory_buildings
+			v1.GET("/factory_buildings", cFactoryBuilding.Query)
+			v1.GET("/factory_buildings/:id", cFactoryBuilding.Get)
+			v1.POST("/factory_buildings", cFactoryBuilding.Create)
+			v1.PUT("/factory_buildings/:id", cFactoryBuilding.Update)
+			v1.DELETE("/factory_buildings/:id", cFactoryBuilding.Delete)
 		}
 
 		return nil
