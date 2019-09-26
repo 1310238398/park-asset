@@ -168,7 +168,6 @@ export default {
           query: {
             recordID: payload.record_id,
             type: payload.asset_type,
-            name: payload.name,
           },
         })
       );

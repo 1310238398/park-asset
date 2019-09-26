@@ -18,13 +18,14 @@ class AssetUnitEditMaint extends PureComponent {
   onOKClick = () => {
     const {
       form,
-      assetDatamaint: { proData },
+      assetDatamaint: { proData, formDataBuild },
       onSubmit,
     } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
         formData.project_id = proData.record_id;
+        formData.parent_id = formDataBuild.record_id;
         formData.building_type = 2;
         if (formData && formData.building_area) {
           formData.building_area = Math.round(Number(formData.building_area) * 100);

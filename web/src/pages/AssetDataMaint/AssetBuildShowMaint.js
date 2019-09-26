@@ -21,33 +21,14 @@ class AssetBuildShowMaint extends PureComponent {
     showDisCard: false,
   };
 
-  //  默认的组件挂载时的初始化。
-  componentDidMount() {
-    const { id, type } = this.props;
-    this.dispatch({
-      type: 'assetDatamaint/loadForm',
-      payload: {
-        id,
-        type,
-      },
-    });
-  }
-
   // 关闭弹窗
   handleFormCancel = () => {
-    this.dispatch({
-      type: 'assetDatamaint/changeFormVisibleBuild',
-      payload: false,
-    });
-  };
-
-  onModalCancelClick = () => {
-    // const { callback } = this.props;
-    this.dispatch({
-      type: 'assetDatamaint/changeFormVisible',
-      payload: false,
-    });
-    // callback();
+    const { onCancel } = this.props;
+    onCancel();
+    // this.dispatch({
+    //   type: 'assetDatamaint/changeFormVisibleBuild',
+    //   payload: false,
+    // });
   };
 
   statusRender = status => {
@@ -137,9 +118,9 @@ class AssetBuildShowMaint extends PureComponent {
   // 判断数值
   statusValue = value => {
     if (value && value !== 0) {
-      return value / 100;
+      return (value / 100).toString();
     }
-    return 0;
+    return '0';
   };
 
   renderFirstView = () => {
@@ -181,45 +162,12 @@ class AssetBuildShowMaint extends PureComponent {
     return (
       <div className={styles.main}>
         <Card title="基本信息" bordered={false}>
-          {/* <div className={styles.topInfo}>
-            <div className={styles.topInfoLeft}>
-              <Avatar
-                src={headerImgUrl}
-                shape="circle"
-                size={100}
-                style={{ marginLeft: 49 }}
-                onClick={() => this.shouBigImage(headerImgUrl)}
-              />
-            </div>
-            <div className={styles.topInfoCenter}>
-              <span>{formDataBuild.name}</span>
-              <span>
-                企业联系电话：
-                {formDataBuild.phone}
-                企业邮箱：
-                {formDataBuild.zip_code}
-              </span>
-              <span>
-                入驻园区地址：
-                {formDataBuild.buildings &&
-                  formDataBuild.buildings.map(item => {
-                    return (
-                      <Tag>
-                        {item.building_name} {this.renderBuildingType(item.incoming_type)}
-                      </Tag>
-                    );
-                  })}
-              </span>
-       
-            </div>
-          </div> */}
-          {/* <p>A3-5</p> */}
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
               <Description term="项目">{proData.name}</Description>
               <Description term="楼栋">{formDataBuild.name}</Description>
               <Description term="出租规模">
-                <DicShow pcode="pa$#build$#scale" code={[formDataBuild.is_all_rent]} />
+                {<DicShow pcode="pa$#build$#scale" code={[formDataBuild.is_all_rent]} />}
               </Description>
             </DescriptionList>
           </div>
@@ -232,7 +180,11 @@ class AssetBuildShowMaint extends PureComponent {
                 {formDataBuild.layer_num ? formDataBuild.layer_num.toString() : '0'}
               </Description>
               <Description term="装修情况">
-                <DicShow pcode="pa$#build$#decora" code={[formDataBuild.decoration]} />
+                {formDataBuild.decoration === 0 ? (
+                  ''
+                ) : (
+                  <DicShow pcode="pa$#build$#decora" code={[formDataBuild.decoration]} />
+                )}
               </Description>
             </DescriptionList>
           </div>
@@ -284,9 +236,9 @@ class AssetBuildShowMaint extends PureComponent {
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
-        onCancel={this.onModalCancelClick}
+        onCancel={this.handleFormCancel}
         footer={[
-          <Button key="back" onClick={this.onModalCancelClick}>
+          <Button key="back" onClick={this.handleFormCancel}>
             关闭
           </Button>,
         ]}

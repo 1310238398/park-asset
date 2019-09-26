@@ -24,6 +24,14 @@ export default {
       pagination: {},
     },
 
+    // 楼层
+    searchFloor: {},
+    paginationFloor: {},
+    dataFloor: {
+      list: [],
+      pagination: {},
+    },
+
     submitting: false,
     formTitle: '',
     formID: '',
@@ -41,6 +49,13 @@ export default {
     formDataUnit: {},
     formTitleUnit: '',
     formIDUnit: '',
+
+    // 楼层数据
+    formTypeFloor: '',
+    formVisibleFloor: false,
+    formDataFloor: {},
+    formTitleFloor: '',
+    formIDFloor: '',
 
     // 租金数据
     formTypeZJ: '',
@@ -437,6 +452,7 @@ export default {
           pathname: '/assetdatamaint/assetfloormaint',
           query: {
             recordID: payload.record_id,
+            projectID: payload.project_id,
             type: payload.asset_type,
           },
         })
@@ -666,6 +682,152 @@ export default {
         }),
       ];
     },
+
+    // 查询楼层列表
+    *fetchFloor({ search, pagination, select }, { call, put }) {
+      let params = {
+        q: 'page',
+      };
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchFloor',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.assetDatamaint.searchFloor);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePaginationFloor',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.assetDatamaint.paginationFloor);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
+      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      yield [
+        put({
+          type: 'saveFloorList',
+          payload: response,
+        }),
+      ];
+    },
+    // 查询楼层单条数据
+    *fetchFormFloor({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.getBuildOne, payload);
+      yield put({
+        type: 'saveFormDataFloor',
+        payload: response,
+      });
+    },
+
+    *LoadFloor({ payload }, { put }) {
+      yield put({
+        type: 'changeFormVisibleUnit',
+        payload: true,
+      });
+
+      if (payload.inProjectID) {
+        yield put({
+          type: 'selectProjectIDName',
+          payload: { ID: payload.inProjectID },
+        });
+      }
+      yield [
+        put({
+          type: 'saveFormTypeFloor',
+          payload: payload.type,
+        }),
+        put({
+          type: 'saveFormTitleFloor',
+          payload: '新建楼层',
+        }),
+        put({
+          type: 'saveFormIDFloor',
+          payload: '',
+        }),
+        put({
+          type: 'saveFormDataFloor',
+          payload: {},
+        }),
+      ];
+
+      if (payload.type === 'E') {
+        yield [
+          put({
+            type: 'saveFormTitleFloor',
+            payload: '编辑楼层',
+          }),
+          put({
+            type: 'saveFormIDFloor',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormFloor',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitleFloor',
+            payload: '查看楼层',
+          }),
+          put({
+            type: 'saveFormIDFloor',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormFloor',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+    },
+    *submitFloor({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetDatamaint.formType);
+
+      let response;
+      if (formType === 'E') {
+        params.record_id = yield select(state => state.assetDatamaint.formID);
+        response = yield call(assetDatamaintService.update, params);
+      } else {
+        response = yield call(assetDatamaintService.create, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleFloor',
+          payload: false,
+        });
+        // TODO 查询楼栋列表
+        yield put({
+          type: 'fetch',
+        });
+      }
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -712,7 +874,6 @@ export default {
       return { ...state, formDataBuild: payload };
     },
     // 单元数据
-
     saveUnitList(state, { payload }) {
       return { ...state, dataUnit: payload };
     },
@@ -736,6 +897,32 @@ export default {
     },
     saveFormDataUnit(state, { payload }) {
       return { ...state, formDataUnit: payload };
+    },
+
+    // 楼层数据
+    saveFloorList(state, { payload }) {
+      return { ...state, dataFloor: payload };
+    },
+    saveSearchFloor(state, { payload }) {
+      return { ...state, searchFloor: payload };
+    },
+    savePaginationFloor(state, { payload }) {
+      return { ...state, paginationFloor: payload };
+    },
+    changeFormVisibleFloor(state, { payload }) {
+      return { ...state, formVisibleFloor: payload };
+    },
+    saveFormTitleFloor(state, { payload }) {
+      return { ...state, formTitleFloor: payload };
+    },
+    saveFormTypeFloor(state, { payload }) {
+      return { ...state, formTypeFloor: payload };
+    },
+    saveFormIDFloor(state, { payload }) {
+      return { ...state, formIDFloor: payload };
+    },
+    saveFormDataFloor(state, { payload }) {
+      return { ...state, formDataFloor: payload };
     },
 
     // 写字楼列表

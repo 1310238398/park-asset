@@ -73,35 +73,35 @@ class CustomInfoShow extends PureComponent {
       <div className={styles.main}>
         {/* <Card  bordered={false}> */}
         <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-          <Description term="租户类型">{formData.phone}</Description>
+          <Description term="租户类型">{formData.tenant_type === 1 ? '企业' : '个人'}</Description>
         </DescriptionList>
         <Card title="基本信息" bordered={false}>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="客户名称">{formData.phone}</Description>
-              <Description term="营业执照编号">{formData.representative}</Description>
-              <Description term="行业分类">{formData.applicant_name}</Description>
+              <Description term="客户名称">{formData.name}</Description>
+              <Description term="营业执照编号">{formData.business_license}</Description>
+              <Description term="行业分类">{formData.category}</Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="联系人姓名">{formData.applicant_tel}</Description>
-              <Description term="联系人电话">{formData.representative}</Description>
-              <Description term="邮箱号">{formData.applicant_name}</Description>
+              <Description term="联系人姓名">{formData.contact_name}</Description>
+              <Description term="联系人电话">{formData.contact_tel}</Description>
+              <Description term="邮箱号">{formData.contact_email}</Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="联系人地址">{formData.applicant_tel}</Description>
+              <Description term="联系人地址">{formData.contact_address}</Description>
             </DescriptionList>
           </div>
 
           {/* 个人信息显示 */}
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="租户姓名">{formData.applicant_tel}</Description>
-              <Description term="租户电话">{formData.representative}</Description>
-              <Description term="邮箱号">{formData.applicant_name}</Description>
+              <Description term="租户姓名">{formData.contact_name}</Description>
+              <Description term="租户电话">{formData.contact_tel}</Description>
+              <Description term="邮箱号">{formData.contact_email}</Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
@@ -114,9 +114,9 @@ class CustomInfoShow extends PureComponent {
         <Card title="开票信息" bordered={false}>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="发票抬头">{formData.applicant_tel}</Description>
-              <Description term="税号">{formData.applicant_tel}</Description>
-              <Description term="开户行及账号">{formData.applicant_tel}</Description>
+              <Description term="发票抬头">{formData.invoice}</Description>
+              <Description term="税号">{formData.tax_number}</Description>
+              <Description term="开户行及账号">{formData.bank_account}</Description>
             </DescriptionList>
           </div>
         </Card>

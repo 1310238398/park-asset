@@ -150,6 +150,14 @@ class AssetBuildMaint extends PureComponent {
     });
   };
 
+  handleFormBuildShow = () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleBuild',
+      payload: false,
+    });
+    this.clearSelectRows();
+  };
+
   clearSelectRows = () => {
     const { selectedRowKeys } = this.state;
     if (selectedRowKeys.length === 0) {
@@ -233,7 +241,7 @@ class AssetBuildMaint extends PureComponent {
       );
     }
     if (formTypeBuild === 'S') {
-      return <AssetBuildShowMaint onCancel={this.handleFormCancel} />;
+      return <AssetBuildShowMaint onCancel={this.handleFormBuildShow} />;
     }
     return <React.Fragment></React.Fragment>;
   }
