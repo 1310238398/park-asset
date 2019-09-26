@@ -25,5 +25,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewShop)
 	container.Provide(NewHotel)
 	container.Provide(NewApartment)
+	container.Provide(NewAgriculturalMarket)
 	return nil
 }
