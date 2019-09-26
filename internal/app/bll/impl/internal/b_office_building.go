@@ -84,12 +84,17 @@ func (a *OfficeBuilding) getParentPath(ctx context.Context, parentID string) (st
 }
 
 func (a *OfficeBuilding) joinParentPath(parentPath, parentID string) string {
+	if parentPath == "" && parentID == "" {
+		return ""
+	}
+
 	if parentPath != "" {
 		parentPath += "/"
 	}
 	return parentPath + parentID
 }
 
+// 基于父级数据创建写字楼
 func (a *OfficeBuilding) createWithParentItem(ctx context.Context, pitem schema.OfficeBuilding, name string, btype int) (*schema.OfficeBuilding, error) {
 	item := schema.OfficeBuilding{
 		RecordID:     util.MustUUID(),
@@ -104,7 +109,28 @@ func (a *OfficeBuilding) createWithParentItem(ctx context.Context, pitem schema.
 	if err != nil {
 		return nil, err
 	}
+
+	err = a.createAsset(ctx, item, "")
+	if err != nil {
+		return nil, err
+	}
+
 	return &item, nil
+}
+
+// 创建资产数据
+func (a *OfficeBuilding) createAsset(ctx context.Context, item schema.OfficeBuilding, historyID string) error {
+	return a.AssetModel.Create(ctx, schema.Asset{
+		RecordID:     item.RecordID,
+		ProjectID:    item.ProjectID,
+		AssetType:    1,
+		Creator:      item.Creator,
+		HistoryID:    historyID,
+		Name:         item.Name,
+		BuildingArea: item.BuildingArea,
+		RentArea:     item.RentArea,
+		RentStatus:   item.RentStatus,
+	})
 }
 
 // Create 创建数据
@@ -126,13 +152,7 @@ func (a *OfficeBuilding) Create(ctx context.Context, item schema.OfficeBuilding)
 			return err
 		}
 
-		assetItem := schema.Asset{
-			RecordID:  item.RecordID,
-			ProjectID: item.ProjectID,
-			AssetType: 1,
-			Creator:   item.Creator,
-		}
-		err = a.AssetModel.Create(ctx, assetItem)
+		err = a.createAsset(ctx, item, "")
 		if err != nil {
 			return err
 		}
