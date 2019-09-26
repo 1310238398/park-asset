@@ -30,5 +30,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewHotel, dig.As(new(bll.IHotel)))
 	container.Provide(internal.NewApartment, dig.As(new(bll.IApartment)))
 	container.Provide(internal.NewAgriculturalMarket, dig.As(new(bll.IAgriculturalMarket)))
+	container.Provide(internal.NewCarChanger, dig.As(new(bll.ICarChanger)))
 	return nil
 }
