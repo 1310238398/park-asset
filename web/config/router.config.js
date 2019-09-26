@@ -8,6 +8,11 @@ export default [
     ],
   },
   {
+    path: '/datadashboad',
+    component: '../layouts/ModalLayout',
+    routes: [{ path: '/datadashboad', component: './DataDashboad/DataDashboad' }],
+  },
+  {
     path: '/',
     component: '../layouts/AdminLayout',
     routes: [
@@ -72,13 +77,16 @@ export default [
         ],
       },
       {
-        path: 'assetssituation',
+        path: 'datadashboad',
         routes: [
           {
-            path: '/assetssituation/assetssituationlist',
-            component: './AssetsSituation/AssetsSituation',
+            path: '/datadashboad',
+            component: './DataDashboad/DataDashboad',
           },
         ],
+      },
+      {
+        path: '',
       },
     ],
   },
