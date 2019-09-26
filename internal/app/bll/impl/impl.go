@@ -26,5 +26,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewFile, dig.As(new(bll.IFile)))
 	container.Provide(internal.NewProject, dig.As(new(bll.IProject)))
 	container.Provide(internal.NewOfficeBuilding, dig.As(new(bll.IOfficeBuilding)))
+	container.Provide(internal.NewShop, dig.As(new(bll.IShop)))
 	return nil
 }
