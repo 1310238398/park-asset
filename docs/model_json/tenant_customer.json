@@ -1,6 +1,6 @@
 {
-  "struct_name": "AssetHistory",
-  "comment": "资产历史管理",
+  "struct_name": "TenantCustomer",
+  "comment": "租户信息管理",
   "fields": [
     {
       "struct_field_name": "RecordID",

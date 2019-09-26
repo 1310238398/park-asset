@@ -159,10 +159,10 @@
 			<column name="advance_payment" type="int" jt="4" >
 				<comment><![CDATA[提前付款天数]]></comment>
 			</column>
-			<column name="lease_start_date" type="date" jt="91" >
+			<column name="lease_start" type="date" jt="91" >
 				<comment><![CDATA[租赁开始日期]]></comment>
 			</column>
-			<column name="lease_end_date" type="date" jt="91" >
+			<column name="lease_end" type="date" jt="91" >
 				<comment><![CDATA[租赁结束日期]]></comment>
 			</column>
 			<column name="is_rent_free" type="int" jt="4" >
@@ -171,7 +171,7 @@
 			<column name="rent_free_start" type="date" jt="91" >
 				<comment><![CDATA[免租期开启日期]]></comment>
 			</column>
-			<column name="rent_free_deadline" type="date" jt="91" >
+			<column name="rent_free_end" type="date" jt="91" >
 				<comment><![CDATA[免租截止日期]]></comment>
 			</column>
 			<column name="signing_date" type="date" jt="91" >
@@ -513,7 +513,7 @@
 				<column name="record_id" />
 			</index>
 		</table>
-		<table name="pa_rent_details" >
+		<table name="pa_rent_detail" >
 			<comment><![CDATA[租金明细]]></comment>
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
 			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
@@ -527,13 +527,13 @@
 				<comment><![CDATA[资产历史ID]]></comment>
 			</column>
 			<column name="status" type="int" length="1" jt="4" >
-				<comment><![CDATA[合同状态: 1未交费 2已缴费]]></comment>
+				<comment><![CDATA[缴费状态: 1未交费 2已缴费]]></comment>
 			</column>
-			<column name="payment_start_date" type="date" jt="91" >
+			<column name="payment_start" type="date" jt="91" >
 				<comment><![CDATA[缴费开始日期]]></comment>
 			</column>
-			<column name="payment_end_date" type="date" jt="91" >
-				<comment><![CDATA[缴费截止日期]]></comment>
+			<column name="payment_end" type="date" jt="91" >
+				<comment><![CDATA[缴费结束日期]]></comment>
 			</column>
 			<column name="payment_amount" type="int" jt="4" >
 				<comment><![CDATA[缴费金额]]></comment>
@@ -839,15 +839,15 @@
 		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1184" />
 		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="864" />
 		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1456" />
-		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1376" y="704" />
 		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1376" y="432" />
-		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1088" y="112" />
-		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1376" y="112" />
-		<entity schema="parkassets" name="pa_rent_details" color="E6CCFF" x="1648" y="544" />
-		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1648" y="96" />
 		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="80" />
 		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1040" y="528" />
 		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="784" y="544" />
+		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1088" y="112" />
+		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1376" y="112" />
+		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1648" y="96" />
+		<entity schema="parkassets" name="pa_rent_detail" color="E6CCFF" x="1648" y="544" />
+		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1376" y="704" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
@@ -870,7 +870,7 @@
 			<entity schema="parkassets" name="pa_asset_history" />
 			<entity schema="parkassets" name="pa_withdrawal" />
 			<entity schema="parkassets" name="pa_contract" />
-			<entity schema="parkassets" name="pa_rent_details" />
+			<entity schema="parkassets" name="pa_rent_detail" />
 			<entity schema="parkassets" name="pa_asset_rent_payment" />
 		</group>
 	</layout>
