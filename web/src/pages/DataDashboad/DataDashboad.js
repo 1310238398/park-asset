@@ -3,6 +3,8 @@ import { Statistic } from 'antd';
 import { connect } from 'dva';
 import topBg from '../../assets/topBg@2x.png';
 import DataCompanyShow from './DataCompanyShow';
+import JTCWJB from './JTCWJB';
+import YYZB from './YYZB';
 import styles from './DataDashboad.less';
 
 @connect(({ dataDashboad, loading }) => ({
@@ -52,7 +54,9 @@ class DataDashboad extends PureComponent {
               <div className={styles.leftTopOneTitle}>
                 <span>集团资产收入占比</span>
               </div>
-              <div className={styles.leftTopOneChart}>显示图表---饼图</div>
+              <div className={styles.leftTopOneChart}>
+                <JTCWJB height={300} />
+              </div>
             </div>
             <div className={styles.leftTopTwo}>
               <div className={styles.leftTopTwoTitle}>
@@ -161,6 +165,10 @@ class DataDashboad extends PureComponent {
                   <p className={styles.jiduData}>337万</p>
                   <p className={styles.jidu}>本季度待收</p>
                 </div>
+              </div>
+
+              <div className={styles.leftRightOneChart}>
+                <YYZB />
               </div>
             </div>
           </div>

@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Modal } from 'antd';
 import { connect } from 'dva';
+import JTCWJB from './JTCWJB';
+import YYZB from './YYZB';
 import styles from './DataDashboad.less';
 
 @connect(({ dataDashboad, loading }) => ({
@@ -56,7 +58,9 @@ class DataCompanyShow extends PureComponent {
             </div>
             <div className={styles.fenlei}>
               <div className={styles.assetProTitle}>资产分类收入占比</div>
-              <div className={styles.leftTopOneChart}>显示图表---饼图</div>
+              <div className={styles.leftTopOneChart}>
+                <JTCWJB height={260} />
+              </div>
             </div>
           </div>
           <div className={styles.winRight}>
@@ -79,6 +83,9 @@ class DataCompanyShow extends PureComponent {
                   <span className={styles.jiduData}>337万</span>
                   <p className={styles.jidu}>本季度待收</p>
                 </div>
+              </div>
+              <div className={styles.leftRightOneChart}>
+                <YYZB />
               </div>
             </div>
           </div>
