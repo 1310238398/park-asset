@@ -2,11 +2,15 @@ package schema
 
 // Asset 资产管理
 type Asset struct {
-	RecordID  string `json:"record_id" swaggo:"false,记录ID"`
-	ProjectID string `json:"project_id" binding:"required" swaggo:"true,项目ID"`
-	AssetType int    `json:"asset_type" binding:"required" swaggo:"true,资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商"`
-	HistoryID string `json:"history_id" swaggo:"false,历史记录ID"`
-	Creator   string `json:"creator" swaggo:"false,创建者"`
+	RecordID     string `json:"record_id" swaggo:"false,记录ID"`
+	ProjectID    string `json:"project_id" binding:"required" swaggo:"true,项目ID"`
+	AssetType    int    `json:"asset_type" binding:"required" swaggo:"true,资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商"`
+	HistoryID    string `json:"history_id" swaggo:"false,历史记录ID"`
+	Name         string `json:"name" binding:"required" swaggo:"true,资产名称"`
+	BuildingArea int    `json:"building_area" swaggo:"false,建筑面积"`
+	RentArea     int    `json:"rent_area" swaggo:"false,计租面积"`
+	RentStatus   int    `json:"rent_status" swaggo:"false,出租状态:1未租 2锁定 3已租"`
+	Creator      string `json:"creator" swaggo:"false,创建者"`
 }
 
 // AssetQueryParam 查询条件

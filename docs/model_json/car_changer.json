@@ -1,0 +1,69 @@
+{
+  "struct_name": "CarChanger",
+  "comment": "车改商管理",
+  "fields": [
+    {
+      "struct_field_name": "RecordID",
+      "comment": "记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "ProjectID",
+      "comment": "项目ID",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "Name",
+      "comment": "车位号",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;index;"
+    },
+    {
+      "struct_field_name": "BuildingArea",
+      "comment": "建筑面积",
+      "struct_field_required": false,
+      "struct_field_type": "int",
+      "gorm_options": ""
+    },
+    {
+      "struct_field_name": "RentArea",
+      "comment": "计租面积",
+      "struct_field_required": false,
+      "struct_field_type": "int",
+      "gorm_options": ""
+    },
+    {
+      "struct_field_name": "RentStatus",
+      "comment": "出租状态:1未租 2锁定 3已租",
+      "struct_field_required": false,
+      "struct_field_type": "int",
+      "gorm_options": ""
+    },
+    {
+      "struct_field_name": "ParentID",
+      "comment": "父级ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "36;index;"
+    },
+    {
+      "struct_field_name": "ParentPath",
+      "comment": "父级路径",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "518;index;"
+    },
+    {
+      "struct_field_name": "Creator",
+      "comment": "创建者",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    }
+  ]
+}

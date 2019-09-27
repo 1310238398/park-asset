@@ -1,0 +1,104 @@
+{
+  "struct_name": "TenantCustomer",
+  "comment": "租户信息管理",
+  "fields": [
+    {
+      "struct_field_name": "RecordID",
+      "comment": "记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "HistoryID",
+      "comment": "历史ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "TenantType",
+      "comment": "租户类型:1企业 2个人",
+      "struct_field_required": false,
+      "struct_field_type": "int",
+      "gorm_options": "index;"
+    },
+    {
+      "struct_field_name": "Name",
+      "comment": "名称",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;index;"
+    },
+    {
+      "struct_field_name": "ContactName",
+      "comment": "联系人姓名",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "ContactTel",
+      "comment": "联系人手机号",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "ContactEmail",
+      "comment": "联系人邮箱",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "ContactAddress",
+      "comment": "联系人地址",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:512;"
+    },
+    {
+      "struct_field_name": "BusinessLicense",
+      "comment": "营业执照编号",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "Category",
+      "comment": "行业分类",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:50;"
+    },
+    {
+      "struct_field_name": "Invoice",
+      "comment": "发票抬头",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "TaxNumber",
+      "comment": "开票税号",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:100;"
+    },
+    {
+      "struct_field_name": "BankAccount",
+      "comment": "开户行及账号",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;"
+    },
+    {
+      "struct_field_name": "Creator",
+      "comment": "创建者",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    }
+  ]
+}
