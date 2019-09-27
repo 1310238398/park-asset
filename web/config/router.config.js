@@ -90,7 +90,13 @@ export default [
         ],
       },
       {
-        path: '',
+        path: 'massif',
+        routes: [
+          {
+            path: '/massif/massiflist',
+            component: './MassifManage/MassifList',
+          },
+        ],
       },
     ],
   },

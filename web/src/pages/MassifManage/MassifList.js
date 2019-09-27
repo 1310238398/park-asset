@@ -1,19 +1,17 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Select } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
-import ProjectManageCard from './ProjectManageCard';
-import DicShow from '@/components/DictionaryNew/DicShow';
-import DicSelect from '@/components/DictionaryNew/DicSelect';
-import styles from './ProjectManage.less';
+import MassifCard from './MassifCard';
+import styles from './Massif.less';
 
 @connect(state => ({
-  projectManage: state.projectManage,
-  loading: state.loading.models.projectManage,
+  massif: state.massif,
+  loading: state.loading.models.MassifList,
 }))
 @Form.create()
-class ProjectManageList extends PureComponent {
+class MassifList extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -21,12 +19,12 @@ class ProjectManageList extends PureComponent {
 
   componentDidMount() {
     this.dispatch({
-      type: 'projectManage/fetch',
+      type: 'massif/fetch',
       search: {},
       pagination: {},
     });
     this.dispatch({
-      type: 'projectManage/queryCompany',
+      type: 'massif/queryCompany',
     });
   }
 
@@ -45,7 +43,7 @@ class ProjectManageList extends PureComponent {
 
   handleAddClick = () => {
     this.dispatch({
-      type: 'projectManage/loadForm',
+      type: 'massif/loadForm',
       payload: {
         type: 'A',
       },
@@ -54,7 +52,7 @@ class ProjectManageList extends PureComponent {
 
   handleEditClick = item => {
     this.dispatch({
-      type: 'projectManage/loadForm',
+      type: 'massif/loadForm',
       payload: {
         type: 'E',
         id: item.record_id,
@@ -81,7 +79,7 @@ class ProjectManageList extends PureComponent {
 
   handleTableChange = pagination => {
     this.dispatch({
-      type: 'projectManage/fetch',
+      type: 'massif/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
@@ -95,7 +93,7 @@ class ProjectManageList extends PureComponent {
     form.resetFields();
 
     this.dispatch({
-      type: 'projectManage/fetch',
+      type: 'massif/fetch',
       search: {},
       pagination: {},
     });
@@ -118,7 +116,7 @@ class ProjectManageList extends PureComponent {
         formData.asset_type = '';
       }
       this.dispatch({
-        type: 'projectManage/fetch',
+        type: 'massif/fetch',
         search: formData,
         pagination: {},
       });
@@ -128,7 +126,7 @@ class ProjectManageList extends PureComponent {
 
   handleDataFormSubmit = data => {
     this.dispatch({
-      type: 'projectManage/submit',
+      type: 'massif/submit',
       payload: data,
     });
     this.clearSelectRows();
@@ -136,21 +134,21 @@ class ProjectManageList extends PureComponent {
 
   handleDataFormCancel = () => {
     this.dispatch({
-      type: 'projectManage/changeFormVisible',
+      type: 'massif/changeFormVisible',
       payload: false,
     });
   };
 
   handleItemDisableClick = item => {
     this.dispatch({
-      type: 'projectManage/changeStatus',
+      type: 'massif/changeStatus',
       payload: { record_id: item.record_id, status: 2 },
     });
   };
 
   handleItemEnableClick = item => {
     this.dispatch({
-      type: 'projectManage/changeStatus',
+      type: 'massif/changeStatus',
       payload: { record_id: item.record_id, status: 1 },
     });
   };
@@ -158,81 +156,34 @@ class ProjectManageList extends PureComponent {
   // 跳转写字楼
   onItemDetailClick = item => {
     this.dispatch({
-      type: 'projectManage/redirectBuilings',
+      type: 'massif/redirectBuilings',
       payload: item,
     });
   };
 
   handleDelOKClick(id) {
     this.dispatch({
-      type: 'projectManage/del',
+      type: 'massif/del',
       payload: { record_id: id },
     });
     this.clearSelectRows();
   }
 
   renderDataForm() {
-    return (
-      <ProjectManageCard
-        onCancel={this.handleDataFormCancel}
-        onSubmit={this.handleDataFormSubmit}
-      />
-    );
+    return <MassifCard onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />;
   }
 
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
-      projectManage: { companyList },
     } = this.props;
 
     return (
       <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
         <Row gutter={16}>
           <Col md={6} sm={24}>
-            <Form.Item label="项目名称">
+            <Form.Item label="地块名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={24}>
-            <Form.Item label="资产类型">
-              {getFieldDecorator('asset_type')(
-                <DicSelect
-                  vmode="sting"
-                  pcode="pa$#atype"
-                  selectProps={{ mode: 'multiple', placeholder: '请选择' }}
-                />
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col md={6} sm={24}>
-            <Form.Item label="所属公司">
-              {getFieldDecorator('org_id')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {companyList &&
-                    companyList.map(item => (
-                      <Select.Option key={item.record_id} value={item.record_id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                </Select>
-              )}
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={24}>
-            <Form.Item label="所属地块">
-              {getFieldDecorator('plot_id')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {companyList &&
-                    companyList.map(item => (
-                      <Select.Option key={item.record_id} value={item.record_id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                </Select>
-              )}
             </Form.Item>
           </Col>
           <Col md={6} sm={24}>
@@ -255,7 +206,7 @@ class ProjectManageList extends PureComponent {
   render() {
     const {
       loading,
-      projectManage: {
+      massif: {
         data: { list, pagination },
       },
     } = this.props;
@@ -264,7 +215,7 @@ class ProjectManageList extends PureComponent {
 
     const columns = [
       {
-        title: '项目图片',
+        title: '地块图片',
         dataIndex: 'photo',
         width: 100,
         render: value => {
@@ -272,27 +223,24 @@ class ProjectManageList extends PureComponent {
         },
       },
       {
-        title: '项目名称',
+        title: '地块名称',
         dataIndex: 'name',
         width: 200,
       },
       {
-        title: '所属公司',
-        dataIndex: 'org_name',
-        width: 150,
-      },
-      {
-        title: '项目地址',
+        title: '地块地址',
         dataIndex: 'address',
         width: 150,
       },
       {
-        title: '项目资产类型',
-        dataIndex: 'asset_type',
+        title: '地块经纬度',
+        dataIndex: 'location',
         width: 150,
-        render: value => {
-          return <DicShow pcode="pa$#atype" code={value.split(',')} />;
-        },
+      },
+      {
+        title: '备注',
+        dataIndex: 'memo',
+        width: 150,
       },
     ];
 
@@ -304,12 +252,12 @@ class ProjectManageList extends PureComponent {
     };
 
     const breadcrumbList = [
-      { title: '项目管理' },
-      { title: '项目管理', href: '/project/projectmanage' },
+      { title: '地块管理' },
+      { title: '地块管理管理', href: '/massif/massif' },
     ];
 
     return (
-      <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}>
+      <PageHeaderLayout title="地块管理" breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
@@ -335,27 +283,9 @@ class ProjectManageList extends PureComponent {
                 >
                   删除
                 </PButton>,
-                // selectedRows[0].status === 2 && (
-                //   <PButton
-                //     key="enable"
-                //     code="enable"
-                //     icon="check"
-                //     onClick={() => this.handleItemEnableClick(selectedRows[0])}
-                //   >
-                //     启用
-                //   </PButton>
-                // ),
-                // selectedRows[0].status === 1 && (
-                //   <PButton
-                //     key="disable"
-                //     code="disable"
-                //     icon="stop"
-                //     type="danger"
-                //     onClick={() => this.handleItemDisableClick(selectedRows[0])}
-                //   >
-                //     禁用
-                //   </PButton>
-                // ),
+                <PButton key="see" code="see" onClick={() => this.handleSeeClick(selectedRows[0])}>
+                  查看
+                </PButton>,
               ]}
             </div>
             <div>
@@ -388,4 +318,4 @@ class ProjectManageList extends PureComponent {
   }
 }
 
-export default ProjectManageList;
+export default MassifList;

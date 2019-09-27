@@ -24,9 +24,12 @@ class DataDashboad extends PureComponent {
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'center',
+          position: 'relative',
+          top: '0.68vh',
+          left: '3.44vw',
         }}
       >
-        <Select className="darkSelect" dropdownClassName="darkDropdown" defaultValue="2019">
+        <Select className="darkSelect" dropdownClassName={styles.darkDropdown} defaultValue="2019">
           <Select.Option value="2019">2019</Select.Option>
           <Select.Option value="2018">2018</Select.Option>
           <Select.Option value="2017">2017</Select.Option>
@@ -63,8 +66,9 @@ class DataDashboad extends PureComponent {
         <div>
           <img src={topBg} className={styles.top} alt="" />
         </div>
-        <div>{this.getYearSelect()}</div>
+
         <div className={styles.topCenter}>
+          <div>{this.getYearSelect()}</div>
           <span>济南高新控股集团资产运营数据看板</span>
         </div>
         <div className={styles.middleCenter}>
