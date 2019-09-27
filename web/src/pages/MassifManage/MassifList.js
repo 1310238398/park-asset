@@ -4,6 +4,8 @@ import { Row, Col, Card, Form, Input, Button, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import MassifCard from './MassifCard';
+import MassifShow from './MassifShow';
+
 import styles from './Massif.less';
 
 @connect(state => ({
@@ -55,6 +57,16 @@ class MassifList extends PureComponent {
       type: 'massif/loadForm',
       payload: {
         type: 'E',
+        id: item.record_id,
+      },
+    });
+  };
+
+  handleSeeClick = item => {
+    this.dispatch({
+      type: 'massif/loadForm',
+      payload: {
+        type: 'S',
         id: item.record_id,
       },
     });
@@ -170,7 +182,18 @@ class MassifList extends PureComponent {
   }
 
   renderDataForm() {
-    return <MassifCard onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />;
+    const {
+      massif: { formType },
+    } = this.props;
+
+    if (formType !== 'S') {
+      return (
+        <MassifCard onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />
+      );
+    } else {
+      return <MassifShow onCancel={this.handleDataFormCancel} />;
+    }
+    return <React.Fragment></React.Fragment>;
   }
 
   renderSearchForm() {

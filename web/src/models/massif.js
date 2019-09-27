@@ -13,6 +13,7 @@ export default {
     submitting: false,
     formTitle: '',
     formID: '',
+    formType: '',
     formVisible: false,
     formData: {},
     companyList: [],
@@ -85,6 +86,22 @@ export default {
           put({
             type: 'saveFormTitle',
             payload: '编辑地块',
+          }),
+          put({
+            type: 'saveFormID',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchForm',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitle',
+            payload: '查看地块详情',
           }),
           put({
             type: 'saveFormID',
