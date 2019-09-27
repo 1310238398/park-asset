@@ -63,6 +63,7 @@ type Config struct {
 	Sqlite3         Sqlite3     `toml:"sqlite3"`
 	Upload          Upload      `toml:"upload"`
 	Minio           Minio       `toml:"minio"`
+	AMap            AMap        `toml:"amap"`
 }
 
 // Log 日志配置参数
@@ -214,4 +215,9 @@ type Minio struct {
 	Addr      string `toml:"addr"`
 	AssessKey string `toml:"assess_key"`
 	SecretKey string `toml:"secret_key"`
+}
+
+// AMap 高德地图配置参数
+type AMap struct {
+	Key string `toml:"key"`
 }
