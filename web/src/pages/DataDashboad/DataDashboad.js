@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Statistic } from 'antd';
+import { Statistic, Select } from 'antd';
 import { connect } from 'dva';
 import topBg from '../../assets/topBg@2x.png';
 import DataCompanyShow from './DataCompanyShow';
@@ -15,6 +15,24 @@ class DataDashboad extends PureComponent {
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
+  };
+
+  getYearSelect = () => {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+        }}
+      >
+        <Select className="darkSelect" dropdownClassName="darkDropdown" defaultValue="2019">
+          <Select.Option value="2019">2019</Select.Option>
+          <Select.Option value="2018">2018</Select.Option>
+          <Select.Option value="2017">2017</Select.Option>
+        </Select>
+      </div>
+    );
   };
 
   // 显示弹窗-子公司信息
@@ -45,6 +63,7 @@ class DataDashboad extends PureComponent {
         <div>
           <img src={topBg} className={styles.top} alt="" />
         </div>
+        <div>{this.getYearSelect()}</div>
         <div className={styles.topCenter}>
           <span>济南高新控股集团资产运营数据看板</span>
         </div>
