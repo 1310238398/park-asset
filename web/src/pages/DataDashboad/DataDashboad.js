@@ -1,9 +1,42 @@
 import React, { PureComponent } from 'react';
-// import { connect } from 'dva';
+import { Statistic } from 'antd';
+import { connect } from 'dva';
 import topBg from '../../assets/topBg@2x.png';
+import DataCompanyShow from './DataCompanyShow';
 import styles from './DataDashboad.less';
 
+@connect(({ dataDashboad, loading }) => ({
+  dataDashboad,
+  loading: loading.models.dataDashboad,
+}))
 class DataDashboad extends PureComponent {
+  dispatch = action => {
+    const { dispatch } = this.props;
+    dispatch(action);
+  };
+
+  // 显示弹窗-子公司信息
+  showCompany = item => {
+    this.dispatch({
+      type: 'dataDashboad/LoadCompangShow',
+      payload: {
+        id: item.record_id,
+      },
+    });
+  };
+
+  handleFormCancel = () => {
+    this.dispatch({
+      type: 'dataDashboad/changeShowCompany',
+      payload: false,
+    });
+  };
+
+  // 监听显示弹窗
+  renderDataCompanyShow() {
+    return <DataCompanyShow onCancel={this.handleFormCancel} />;
+  }
+
   render() {
     return (
       <div className={styles.main}>
@@ -49,15 +82,61 @@ class DataDashboad extends PureComponent {
           </div>
 
           <div className={styles.YearLinr}>
-            <div>年度计划收入</div>
-            <div>中间显示济南市地图</div>
-            <div className={styles.proData}>
-              <span>项目总数</span>
-              <span>建筑总面积</span>
-              <span>已出租面积</span>
-              <span>未出租面积</span>
-              <span>项目总数</span>
-              <span>租金收缴率</span>
+            <div className={styles.yearPlan}>
+              <div className={styles.yearPlanLeft}>
+                <div className={styles.yearYse}>
+                  <div className={styles.yearSY}>年度计划收入&nbsp;&nbsp;(亿)</div>
+                  <div>
+                    <Statistic
+                      title=""
+                      value={112893}
+                      precision={2}
+                      valueStyle={{ color: '#439AFF' }}
+                    />
+                  </div>
+                </div>
+                <div className={styles.yearYse}>
+                  <div className={styles.yearSY}>年度实际收入&nbsp;&nbsp;(亿)</div>
+                  <div>
+                    <Statistic
+                      title=""
+                      value={112893}
+                      precision={2}
+                      valueStyle={{ color: '#439AFF' }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className={styles.mapData}>显示地图数据-田总区域</div>
+            </div>
+
+            <div>
+              <div className={styles.proData}>
+                <div className={styles.proDatatest}>
+                  <span>项目总数</span>
+                  <span className={styles.proDatal}>5</span>
+                </div>
+                <div className={styles.proDatatest}>
+                  <span>建筑总面积</span>
+                  <span className={styles.proDatal}>16.39万</span>
+                </div>
+                <div className={styles.proDatatest}>
+                  <span>已出租面积</span>
+                  <span className={styles.proDatal}>2388㎡</span>
+                </div>
+                <div className={styles.proDatatest}>
+                  <span>未出租面积</span>
+                  <span className={styles.proDatal}>2388㎡</span>
+                </div>
+                <div className={styles.proDatatest}>
+                  <span>出租率</span>
+                  <span className={styles.proDatal}>78.2%</span>
+                </div>
+                <div className={styles.proDatatest}>
+                  <span>租金收缴率</span>
+                  <span className={styles.proDatal}>91.23%</span>
+                </div>
+              </div>
             </div>
           </div>
           <div>
@@ -76,18 +155,21 @@ class DataDashboad extends PureComponent {
                 </div>
                 <div className={styles.dourF}>
                   <p className={styles.jiduData}>89%</p>
-                  <p className={styles.jidu}>本月收费率</p>
+                  <p className={styles.jidu}>本季度收费率</p>
                 </div>
                 <div className={styles.dourF}>
                   <p className={styles.jiduData}>337万</p>
-                  <p className={styles.jidu}>本月待收</p>
+                  <p className={styles.jidu}>本季度待收</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div className={styles.pageBottm}>
-          <div className={styles.companyLinst}>
+          <div
+            className={styles.companyLinst}
+            onClick={() => this.showCompany({ record_id: '86e1df49-c1cb-4a11-a9d2-967586425b20' })}
+          >
             <p className={styles.companyName}>济南东拓置业有限公司</p>
             <img src={topBg} className={styles.companyImg} alt="" />
             <p className={styles.companyPlan}>年入收入计划 123345万元</p>
@@ -103,6 +185,7 @@ class DataDashboad extends PureComponent {
             <p className={styles.companyPlan}>年入收入计划 123345万元</p>
           </div>
         </div>
+        {this.renderDataCompanyShow()}
       </div>
     );
   }

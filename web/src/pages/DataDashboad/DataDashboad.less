@@ -16,11 +16,10 @@
 }
 
 .top {
-  min-width: 1024px;
   position: absolute;
-  z-index: 9;
   width: 100%;
   display: flex;
+  height: 98.7vh;
 }
 .topCenter {
   position: relative;
@@ -69,7 +68,6 @@
 }
 .leftTopOneTitle {
   font-size: 1.85vh; // 20/1080*100
-  font-family: PingFang SC;
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
   margin-left: 6.39vw; // 142/1920*100
@@ -77,7 +75,6 @@
 }
 .leftTopTwoTitle {
   font-size: 1.85vh; // 20/1080*100
-  font-family: PingFang SC;
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
   margin-left: 6.39vw; // 142/1920*100
@@ -85,7 +82,6 @@
 }
 .rightTopOneTitle {
   font-size: 1.85vh; // 20/1080*100
-  font-family: PingFang SC;
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
   margin-left: 8.45vw; // 142/1920*100
@@ -110,11 +106,14 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  background: linear-gradient(270deg, rgba(30, 90, 193, 0.34) 0%, rgba(48, 101, 245, 0.6) 100%);
-  opacity: 0.36;
+  background: linear-gradient(270deg, rgba(30, 90, 193, 0.34) 0%, rgba(48, 101, 245, 0.36) 100%);
+  // opacity: 0.36;
   height: 4.17vh; // 45/1080*100
   line-height: 4.17vh;
-  color: rgba(255, 255, 255, 1);
+  span {
+    color: rgba(255, 255, 255, 1);
+    font-size: 1.48vh; // 16/1080*100
+  }
 }
 .LineAreaData {
   display: flex;
@@ -152,6 +151,7 @@
 .companyLinst {
   padding-left: 2.47vw; //47/1920*100
   padding-top: 3.24vh; // 35/1080*100
+  cursor: pointer;
 }
 .companyImg {
   width: 5.26vw; // 101/1920*100
@@ -196,9 +196,89 @@
   font-size: 1.48vh; // 16/1080*100
   font-weight: 400;
   color: rgba(255, 255, 255, 1);
-  position: absolute;
+}
+.proDatal {
+  margin-top: 5px;
+  font-size: 2.22vh; // 24/1080*100
+  font-weight: 500;
+  color: rgba(122, 183, 255, 1);
 }
 .YearLinr {
   width: 100%;
   position: relative;
+}
+.proDatatest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.yearPlan {
+  display: flex;
+  height: 88%;
+}
+.yearYse {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.02vh;
+  align-items: center;
+}
+.yearSY {
+  font-size: 2.04vh; // 22/1080*100
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  margin-bottom: 4px;
+}
+.yearPlanLeft {
+  padding: 8.64vh 2.08vw 1.85vh 3.64vw;
+}
+.mapData {
+  color: rgba(255, 255, 255, 1);
+  border: 1px solid;
+}
+// 弹窗样式
+.FloorContentWin {
+  display: flex;
+  flex-flow: row;
+}
+.leftContWin {
+  display: flex;
+  flex-flow: column;
+}
+.profile {
+  background-image: url('/assets/zichangaikuangbg@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 23.65vw; // 454/1920*100
+  height: 26.61vh; // 309/1080*100
+}
+.assetProTitle {
+  color: rgba(255, 255, 255, 1);
+  font-size: 1.67vh; // 18/1080*100
+  padding-top: 13px;
+  padding-left: 15px;
+}
+.fenlei {
+  margin-top: 2.5vh; // 27/1080*100
+  background-image: url('/assets/zichanfenlei@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 23.7vw; // 455/1920*100
+  height: 34.59vh; // 352/1080*100
+}
+.winRight {
+  margin-left: 1.85vw;
+}
+.winRightSR {
+  background-image: url('/assets/compangshouru@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 23.7vw; // 455/1920*100
+  height: 63.98vh; // 691/1080*100
+}
+.companyNameTop {
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  position: relative;
+  top: -5.56vh;
+  font-size: 1.67vh; // 18/1080*100
 }
