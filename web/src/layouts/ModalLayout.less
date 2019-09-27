@@ -1,0 +1,73 @@
+.scoller::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: #f5f5f5;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+.scoller::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+/*定义滑块 内阴影+圆角*/
+.scoller::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #aaa;
+}
+
+.darkModal {
+  :global {
+    .ant-modal-close-x:hover {
+      color: #ffcc44;
+      // zoom: 1.2;
+    }
+
+    .ant-modal-close-x {
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+    }
+
+    .ant-modal-title {
+      color: #fff;
+    }
+
+    .ant-modal-body {
+      padding: 0px;
+    }
+
+    .ant-modal-header,
+    .ant-modal-body,
+    .ant-modal-footer {
+      background-color: #08132a;
+      border-bottom: 0px;
+      border-top: 0px;
+    }
+
+    .ant-modal-body {
+      border-radius: 10px;
+    }
+
+    .ant-modal-content {
+      background-image: url(/assets/main_bg.png);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 50%;
+      height: 100vh;
+    }
+
+    .park .ant-card-body {
+      padding-top: 0px;
+    }
+
+    .ant-modal-close {
+      position: absolute;
+      top: 34px;
+      right: 34px;
+    }
+  }
+}

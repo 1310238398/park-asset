@@ -7,6 +7,7 @@ import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import Debounce from 'lodash-decorators/debounce';
 import GlobalFooter from '@/components/GlobalFooter';
+import { routerRedux } from 'dva/router';
 import CopyRight from '@/components/CopyRight';
 import UpdatePasswordDialog from '@/components/UpdatePasswordDialog';
 import styles from './AdminLayout.less';
@@ -152,6 +153,15 @@ class AdminLayout extends React.PureComponent {
     this.setState({ updatePwdVisible: false });
   };
 
+  handlCockpit = url => {
+    this.dispatch(routerRedux.push(url));
+  };
+
+  dispatch = action => {
+    const { dispatch } = this.props;
+    dispatch(action);
+  };
+
   renderNavMenuItems(menusData) {
     if (!menusData) {
       return [];
@@ -289,6 +299,21 @@ class AdminLayout extends React.PureComponent {
               onClick={this.onToggleClick}
             />
             <div className={styles.right}>
+              <div
+                title="驾驶舱"
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  paddingBottom: 20,
+                  marginRight: 15,
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  this.handlCockpit('/datadashboad');
+                }}
+              >
+                数据展示
+              </div>
               {user.user_name ? (
                 <Dropdown overlay={menu}>
                   <span className={`${styles.action} ${styles.account}`}>

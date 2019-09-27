@@ -1,0 +1,294 @@
+.main {
+  min-height: 100vh;
+  //   background-color: #061327;
+  background-image: url('/assets/bgDb.png');
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, 100% 100%;
+  background-position: 0, 50%;
+  overflow: hidden;
+  :global {
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+}
+
+.top {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  height: 98.7vh;
+}
+.topCenter {
+  position: relative;
+  margin-top: 2.91vh; // 20/1080*100
+  flex: 0 0 44.79vw; // 860/1920*100
+  height: 6.48vh; // 70/1080*100
+  display: flex;
+  :global {
+    span {
+      height: 100%;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.77vh; // 30/1080*100
+      font-weight: 400;
+      color: rgba(0, 180, 255, 1);
+      line-height: 20px;
+    }
+  }
+}
+// .mianCenter{
+//   margin-left: 2.81vw;
+//   margin-right: 2.81vw;
+// }
+.middleCenter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.7vh;
+  position: absolute;
+  width: 100%;
+}
+.leftTopOne {
+  background-image: url('/assets/leftTopone@2x.png');
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, 100% 100%;
+  width: 19.16vw; // 368/1920*100
+  height: 41.66vh; // 450/1080*100
+  margin-left: 2.81vw; // 54/1920*100
+  margin-bottom: 0.92vh;
+}
+.leftTopTwo {
+  background-image: url('/assets/yunying@2x.png');
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, 100% 100%;
+  width: 19.16vw; // 368/1920*100
+  height: 21.45vh; // 316/1080*100
+  margin-left: 2.81vw; // 54/1920*100
+  margin-bottom: 0.92vh;
+}
+.leftTopOneTitle {
+  font-size: 1.85vh; // 20/1080*100
+  font-weight: 500;
+  color: rgba(255, 255, 255, 1);
+  margin-left: 6.39vw; // 142/1920*100
+  padding-top: 1.89vh; // 16/1080*100
+}
+.leftTopTwoTitle {
+  font-size: 1.85vh; // 20/1080*100
+  font-weight: 500;
+  color: rgba(255, 255, 255, 1);
+  margin-left: 6.39vw; // 142/1920*100
+  padding-top: 0.56vh; // 16/1080*100
+}
+.rightTopOneTitle {
+  font-size: 1.85vh; // 20/1080*100
+  font-weight: 500;
+  color: rgba(255, 255, 255, 1);
+  margin-left: 8.45vw; // 142/1920*100
+  padding-top: 0.89vh; // 16/1080*100
+}
+.leftTopOneChart {
+  margin-left: 1.9vw;
+  padding-top: 1.68vh;
+}
+.leftTopOneRight {
+  background-image: url('/assets/jiankong@2x.png');
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, 100% 100%;
+  width: 23.54vw; // 452/1920*100
+  height: 64.26vh; // 694/1080*100
+  margin-right: 2.81vw; // 54/1920*100
+}
+.leftRightOneChart {
+  // margin-left: 1.9vw;
+  padding-top: 1.68vh;
+}
+
+.leftLineArea {
+  margin-top: 2.31vh; // 25/1080*100
+}
+.LineArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background: linear-gradient(270deg, rgba(30, 90, 193, 0.34) 0%, rgba(48, 101, 245, 0.36) 100%);
+  // opacity: 0.36;
+  height: 4.17vh; // 45/1080*100
+  line-height: 4.17vh;
+  span {
+    color: rgba(255, 255, 255, 1);
+    font-size: 1.48vh; // 16/1080*100
+  }
+}
+.LineAreaData {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  height: 4.17vh; // 45/1080*100
+  line-height: 4.17vh;
+  color: rgba(255, 255, 255, 1);
+  flex-grow: 3;
+}
+.lineAreaq {
+  flex: 1;
+  text-align: center;
+  color: #7ab7ff;
+  font-size: 1.48vh; // 16/1080*100
+}
+.pageBottm {
+  position: absolute;
+  margin-left: 2.81vw;
+  margin-right: 2.81vw; // 54/1920*100
+  background-image: url('/assets/childcompanybg@2x.png');
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, 100% 100%;
+  width: 94.45vw; // 1819/1920*100
+  height: 21.11vh; // 228/1080*100
+  bottom: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+.companyName {
+  font-size: 1.66vh; // 18/1080*100
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+}
+.companyLinst {
+  padding-left: 2.47vw; //47/1920*100
+  padding-top: 3.24vh; // 35/1080*100
+  cursor: pointer;
+}
+.companyImg {
+  width: 5.26vw; // 101/1920*100
+  height: 9.35vh; // 101/1080*100
+  padding-top: 2.41vh; // 26/1080*100
+  padding-bottom: 0.89vh; // 17/1920*100
+}
+.companyPlan {
+  color: #7ab7ff;
+  font-size: 1.31vh; // 14/1080*100
+}
+.finalC {
+  display: flex;
+  margin: 2.61vh 1.51vw 1.61vh 1.61vw;
+  justify-content: space-around;
+}
+.dourF {
+  background: rgba(67, 154, 255, 0);
+  border: 1px solid rgba(67, 154, 255, 1);
+  opacity: 0.39;
+  border-radius: 4px;
+  width: 4.74vw; // 91/1920*100
+  height: 7.04vh; // 76/1920*100
+  text-align: center;
+  padding-top: 1.04vh;
+
+  //   padding:2.04vh 2.03vw 1.31vh 1.09vw; // 22 39 14 21
+}
+.jidu {
+  font-size: 1.11vh; // 12/1080*100
+  font-weight: 300;
+  color: rgba(255, 255, 255, 1);
+}
+.jiduData {
+  font-size: 1.67vh; // 18/1080*100
+  font-weight: 600;
+  color: #439aff;
+}
+.proData {
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.48vh; // 16/1080*100
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+}
+.proDatal {
+  margin-top: 5px;
+  font-size: 2.22vh; // 24/1080*100
+  font-weight: 500;
+  color: rgba(122, 183, 255, 1);
+}
+.YearLinr {
+  width: 100%;
+  position: relative;
+}
+.proDatatest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.yearPlan {
+  display: flex;
+  height: 88%;
+}
+.yearYse {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.02vh;
+  align-items: center;
+}
+.yearSY {
+  font-size: 2.04vh; // 22/1080*100
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  margin-bottom: 4px;
+}
+.yearPlanLeft {
+  padding: 8.64vh 2.08vw 1.85vh 3.64vw;
+}
+.mapData {
+  color: rgba(255, 255, 255, 1);
+  border: 1px solid;
+}
+// 弹窗样式
+.FloorContentWin {
+  display: flex;
+  flex-flow: row;
+}
+.leftContWin {
+  display: flex;
+  flex-flow: column;
+}
+.profile {
+  background-image: url('/assets/zichangaikuangbg@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 23.65vw; // 454/1920*100
+  height: 26.61vh; // 309/1080*100
+}
+.assetProTitle {
+  color: rgba(255, 255, 255, 1);
+  font-size: 1.67vh; // 18/1080*100
+  padding-top: 13px;
+  padding-left: 15px;
+}
+.fenlei {
+  margin-top: 2.5vh; // 27/1080*100
+  background-image: url('/assets/zichanfenlei@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 23.7vw; // 455/1920*100
+  height: 34.59vh; // 352/1080*100
+  overflow: hidden;
+}
+.winRight {
+  margin-left: 1.85vw;
+}
+.winRightSR {
+  background-image: url('/assets/compangshouru@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 23.7vw; // 455/1920*100
+  height: 63.98vh; // 691/1080*100
+}
+.companyNameTop {
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  position: relative;
+  top: -5.56vh;
+  font-size: 1.67vh; // 18/1080*100
+}

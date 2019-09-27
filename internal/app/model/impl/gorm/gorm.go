@@ -31,6 +31,18 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.Project),
 		new(entity.OfficeBuilding),
 		new(entity.Asset),
+		new(entity.AssetHistory),
+		new(entity.TenantCustomer),
+		new(entity.Withdrawal),
+		new(entity.Contract),
+		new(entity.RentDetail),
+		new(entity.AssetRentPayment),
+		new(entity.Shop),
+		new(entity.Hotel),
+		new(entity.Apartment),
+		new(entity.AgriculturalMarket),
+		new(entity.CarChanger),
+		new(entity.FactoryBuilding),
 	).Error
 }
 
@@ -52,5 +64,17 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewProject, dig.As(new(model.IProject)))
 	container.Provide(imodel.NewOfficeBuilding, dig.As(new(model.IOfficeBuilding)))
 	container.Provide(imodel.NewAsset, dig.As(new(model.IAsset)))
+	container.Provide(imodel.NewAssetHistory, dig.As(new(model.IAssetHistory)))
+	container.Provide(imodel.NewTenantCustomer, dig.As(new(model.ITenantCustomer)))
+	container.Provide(imodel.NewWithdrawal, dig.As(new(model.IWithdrawal)))
+	container.Provide(imodel.NewContract, dig.As(new(model.IContract)))
+	container.Provide(imodel.NewRentDetail, dig.As(new(model.IRentDetail)))
+	container.Provide(imodel.NewAssetRentPayment, dig.As(new(model.IAssetRentPayment)))
+	container.Provide(imodel.NewShop, dig.As(new(model.IShop)))
+	container.Provide(imodel.NewHotel, dig.As(new(model.IHotel)))
+	container.Provide(imodel.NewApartment, dig.As(new(model.IApartment)))
+	container.Provide(imodel.NewAgriculturalMarket, dig.As(new(model.IAgriculturalMarket)))
+	container.Provide(imodel.NewCarChanger, dig.As(new(model.ICarChanger)))
+	container.Provide(imodel.NewFactoryBuilding, dig.As(new(model.IFactoryBuilding)))
 	return nil
 }

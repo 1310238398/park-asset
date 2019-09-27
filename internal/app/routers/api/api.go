@@ -31,6 +31,12 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cFile *ctl.File,
 		cProject *ctl.Project,
 		cOfficeBuilding *ctl.OfficeBuilding,
+		cShop *ctl.Shop,
+		cHotel *ctl.Hotel,
+		cApartment *ctl.Apartment,
+		cAgriculturalMarket *ctl.AgriculturalMarket,
+		cCarChanger *ctl.CarChanger,
+		cFactoryBuilding *ctl.FactoryBuilding,
 	) error {
 
 		g := app.Group("/api")
@@ -145,6 +151,48 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.POST("/office_buildings", cOfficeBuilding.Create)
 			v1.PUT("/office_buildings/:id", cOfficeBuilding.Update)
 			v1.DELETE("/office_buildings/:id", cOfficeBuilding.Delete)
+
+			// 注册/api/v1/shops
+			v1.GET("/shops", cShop.Query)
+			v1.GET("/shops/:id", cShop.Get)
+			v1.POST("/shops", cShop.Create)
+			v1.PUT("/shops/:id", cShop.Update)
+			v1.DELETE("/shops/:id", cShop.Delete)
+
+			// 注册/api/v1/hotels
+			v1.GET("/hotels", cHotel.Query)
+			v1.GET("/hotels/:id", cHotel.Get)
+			v1.POST("/hotels", cHotel.Create)
+			v1.PUT("/hotels/:id", cHotel.Update)
+			v1.DELETE("/hotels/:id", cHotel.Delete)
+
+			// 注册/api/v1/apartments
+			v1.GET("/apartments", cApartment.Query)
+			v1.GET("/apartments/:id", cApartment.Get)
+			v1.POST("/apartments", cApartment.Create)
+			v1.PUT("/apartments/:id", cApartment.Update)
+			v1.DELETE("/apartments/:id", cApartment.Delete)
+
+			// 注册/api/v1/agricultural_markets
+			v1.GET("/agricultural_markets", cAgriculturalMarket.Query)
+			v1.GET("/agricultural_markets/:id", cAgriculturalMarket.Get)
+			v1.POST("/agricultural_markets", cAgriculturalMarket.Create)
+			v1.PUT("/agricultural_markets/:id", cAgriculturalMarket.Update)
+			v1.DELETE("/agricultural_markets/:id", cAgriculturalMarket.Delete)
+
+			// 注册/api/v1/car_changers
+			v1.GET("/car_changers", cCarChanger.Query)
+			v1.GET("/car_changers/:id", cCarChanger.Get)
+			v1.POST("/car_changers", cCarChanger.Create)
+			v1.PUT("/car_changers/:id", cCarChanger.Update)
+			v1.DELETE("/car_changers/:id", cCarChanger.Delete)
+
+			// 注册/api/v1/factory_buildings
+			v1.GET("/factory_buildings", cFactoryBuilding.Query)
+			v1.GET("/factory_buildings/:id", cFactoryBuilding.Get)
+			v1.POST("/factory_buildings", cFactoryBuilding.Create)
+			v1.PUT("/factory_buildings/:id", cFactoryBuilding.Update)
+			v1.DELETE("/factory_buildings/:id", cFactoryBuilding.Delete)
 		}
 
 		return nil
