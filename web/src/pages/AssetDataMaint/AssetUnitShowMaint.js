@@ -16,25 +16,16 @@ const { Description } = DescriptionList;
 //  企业入驻的模态对话框组件。
 class AssetUnitShowMaint extends PureComponent {
   //  默认的组件挂载时的初始化。
-  componentDidMount() {
-    const { id, type } = this.props;
-    this.dispatch({
-      type: 'assetDatamaint/loadForm',
-      payload: {
-        id,
-        type,
-      },
-    });
-  }
-
-  onModalCancelClick = () => {
-    // const { callback } = this.props;
-    this.dispatch({
-      type: 'assetDatamaint/changeFormVisible',
-      payload: false,
-    });
-    // callback();
-  };
+  // componentDidMount() {
+  //   const { id, type } = this.props;
+  //   this.dispatch({
+  //     type: 'assetDatamaint/loadForm',
+  //     payload: {
+  //       id,
+  //       type,
+  //     },
+  //   });
+  // }
 
   // 判断数值
   statusValue = value => {
@@ -218,6 +209,7 @@ class AssetUnitShowMaint extends PureComponent {
   render() {
     const {
       assetDatamaint: { formVisibleUnit, submitting },
+      onCancel,
     } = this.props;
 
     return (
@@ -228,9 +220,9 @@ class AssetUnitShowMaint extends PureComponent {
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
-        onCancel={this.onModalCancelClick}
+        onCancel={onCancel}
         footer={[
-          <Button key="back" onClick={this.onModalCancelClick}>
+          <Button key="back" onClick={onCancel}>
             关闭
           </Button>,
         ]}

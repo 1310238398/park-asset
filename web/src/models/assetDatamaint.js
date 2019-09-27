@@ -423,9 +423,9 @@ export default {
       let response;
       if (formType === 'E') {
         params.record_id = yield select(state => state.assetDatamaint.formID);
-        response = yield call(assetDatamaintService.update, params);
+        response = yield call(assetDatamaintService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.create, params);
+        response = yield call(assetDatamaintService.createBuild, params);
       }
 
       yield put({
@@ -441,7 +441,7 @@ export default {
         });
         // TODO 查询单元列表
         yield put({
-          type: 'fetch',
+          type: 'fetchUnit',
         });
       }
     },
@@ -454,6 +454,7 @@ export default {
             recordID: payload.record_id,
             projectID: payload.project_id,
             type: payload.asset_type,
+            currentName: payload.name,
           },
         })
       );
@@ -602,7 +603,7 @@ export default {
         });
         // TODO 查询单元列表
         yield put({
-          type: 'fetch',
+          type: 'fetchUnit',
         });
       }
     },
@@ -684,7 +685,7 @@ export default {
     },
 
     // 查询楼层列表
-    *fetchFloor({ search, pagination, select }, { call, put }) {
+    *fetchFloor({ search, pagination }, { call, put, select }) {
       let params = {
         q: 'page',
       };
@@ -732,7 +733,7 @@ export default {
 
     *LoadFloor({ payload }, { put }) {
       yield put({
-        type: 'changeFormVisibleUnit',
+        type: 'changeFormVisibleFloor',
         payload: true,
       });
 
@@ -806,9 +807,9 @@ export default {
       let response;
       if (formType === 'E') {
         params.record_id = yield select(state => state.assetDatamaint.formID);
-        response = yield call(assetDatamaintService.update, params);
+        response = yield call(assetDatamaintService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.create, params);
+        response = yield call(assetDatamaintService.createBuild, params);
       }
 
       yield put({
@@ -824,7 +825,7 @@ export default {
         });
         // TODO 查询楼栋列表
         yield put({
-          type: 'fetch',
+          type: 'fetchFloor',
         });
       }
     },

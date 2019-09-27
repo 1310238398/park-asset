@@ -69,6 +69,10 @@ export default [
             path: '/assetdatamaint/assetfloormaint',
             component: './AssetDataMaint/AssetFloorMaint',
           },
+          {
+            path: '/assetdatamaint/assetsearch',
+            component: './AssetDataMaint/AssetSearch/AssetSearch',
+          },
         ],
       },
       {
