@@ -51,6 +51,9 @@ func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, op
 		}
 		db = db.Where(strings.Join(q, " OR "))
 	}
+	if v := params.PlotID; len(v) > 0 {
+		db = db.Where("plot_id =?", v)
+	}
 
 	db = db.Order("id DESC")
 

@@ -9,24 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// NewProject 创建项目管理控制器
-func NewProject(bProject bll.IProject, bOrganization bll.IOrganization) *Project {
-	return &Project{
-		ProjectBll:      bProject,
-		OrganizationBll: bOrganization,
+// NewPlot 创建地块管理控制器
+func NewPlot(bPlot bll.IPlot) *Plot {
+	return &Plot{
+		PlotBll: bPlot,
 	}
 }
 
-// Project 项目管理
-// @Name Project
-// @Description 项目管理控制器
-type Project struct {
-	ProjectBll      bll.IProject
-	OrganizationBll bll.IOrganization
+// Plot 地块管理
+// @Name Plot
+// @Description 地块管理控制器
+type Plot struct {
+	PlotBll bll.IPlot
 }
 
 // Query 查询数据
-func (a *Project) Query(c *gin.Context) {
+func (a *Plot) Query(c *gin.Context) {
 	switch c.Query("q") {
 	case "page":
 		a.QueryPage(c)
@@ -40,33 +38,17 @@ func (a *Project) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
-// @Param name query string false "项目名称（模糊查询）"
-// @Param org_id query string false "所属子公司"
-// @Param plot_id query string false "所属地块"
-// @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Param name query string false "名称（模糊查询）"
+// @Success 200 []schema.Plot "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/projects?q=page
-func (a *Project) QueryPage(c *gin.Context) {
-	var params schema.ProjectQueryParam
+// @Router GET /api/v1/plots?q=page
+func (a *Plot) QueryPage(c *gin.Context) {
+	var params schema.PlotQueryParam
 	params.LikeName = c.Query("name")
-	params.PlotID = c.Query("plot_id")
 
-	if v := c.Query("org_id"); v != "" {
-		params.OrgIDs = []string{v}
-	} else {
-		if !ginplus.CheckIsRootUser(c) {
-			result, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
-			if err != nil {
-				ginplus.ResError(c, err)
-				return
-			}
-			params.OrgIDs = result.Data.ToRecordIDs()
-		}
-	}
-
-	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{
+	result, err := a.PlotBll.Query(ginplus.NewContext(c), params, schema.PlotQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
 	if err != nil {
@@ -81,13 +63,13 @@ func (a *Project) QueryPage(c *gin.Context) {
 // @Summary 查询指定数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 schema.Project
+// @Success 200 schema.Plot
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/projects/{id}
-func (a *Project) Get(c *gin.Context) {
-	item, err := a.ProjectBll.Get(ginplus.NewContext(c), c.Param("id"))
+// @Router GET /api/v1/plots/{id}
+func (a *Plot) Get(c *gin.Context) {
+	item, err := a.PlotBll.Get(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -98,21 +80,21 @@ func (a *Project) Get(c *gin.Context) {
 // Create 创建数据
 // @Summary 创建数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param body body schema.Project true
-// @Success 200 schema.Project
+// @Param body body schema.Plot true
+// @Success 200 schema.Plot
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router POST /api/v1/projects
-func (a *Project) Create(c *gin.Context) {
-	var item schema.Project
+// @Router POST /api/v1/plots
+func (a *Plot) Create(c *gin.Context) {
+	var item schema.Plot
 	if err := ginplus.ParseJSON(c, &item); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
 	item.Creator = ginplus.GetUserID(c)
-	nitem, err := a.ProjectBll.Create(ginplus.NewContext(c), item)
+	nitem, err := a.PlotBll.Create(ginplus.NewContext(c), item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -124,20 +106,20 @@ func (a *Project) Create(c *gin.Context) {
 // @Summary 更新数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Param body body schema.Project true
-// @Success 200 schema.Project
+// @Param body body schema.Plot true
+// @Success 200 schema.Plot
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/projects/{id}
-func (a *Project) Update(c *gin.Context) {
-	var item schema.Project
+// @Router PUT /api/v1/plots/{id}
+func (a *Plot) Update(c *gin.Context) {
+	var item schema.Plot
 	if err := ginplus.ParseJSON(c, &item); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	nitem, err := a.ProjectBll.Update(ginplus.NewContext(c), c.Param("id"), item)
+	nitem, err := a.PlotBll.Update(ginplus.NewContext(c), c.Param("id"), item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -152,9 +134,9 @@ func (a *Project) Update(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router DELETE /api/v1/projects/{id}
-func (a *Project) Delete(c *gin.Context) {
-	err := a.ProjectBll.Delete(ginplus.NewContext(c), c.Param("id"))
+// @Router DELETE /api/v1/plots/{id}
+func (a *Plot) Delete(c *gin.Context) {
+	err := a.PlotBll.Delete(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
