@@ -17,6 +17,7 @@ export default {
     formVisible: false,
     formData: {},
     companyList: [],
+    poltList: [],
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -161,6 +162,17 @@ export default {
         payload: result,
       });
     },
+    *queryPlotList(_, { call, put }) {
+      const params = {
+        q: 'list',
+      };
+      const response = yield call(projectManageService.PoltList, params);
+      const result = response.list ? response.list : [];
+      yield put({
+        type: 'savePolt',
+        payload: result,
+      });
+    },
     *redirectBuilings({ payload }, { put }) {
       yield put(
         routerRedux.push({
@@ -203,6 +215,9 @@ export default {
     },
     saveDataCompany(state, { payload }) {
       return { ...state, companyList: payload };
+    },
+    savePolt(state, { payload }) {
+      return { ...state, poltList: payload };
     },
   },
 };

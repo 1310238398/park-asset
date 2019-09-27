@@ -46,3 +46,7 @@ export async function disable(params) {
 export async function companySecond(params) {
   return request(`/v1/organizations?${stringify(params)}`);
 }
+
+export async function PoltList(params) {
+  return request(`/v1/plots?${stringify(params)}`);
+}
