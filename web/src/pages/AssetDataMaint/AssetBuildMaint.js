@@ -134,6 +134,7 @@ class AssetBuildMaint extends PureComponent {
 
   // 查看单元
   handleSeeClick = () => {
+    const { onProjectId } = this.props;
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -144,8 +145,17 @@ class AssetBuildMaint extends PureComponent {
       payload: {
         type: 'S',
         id: item.record_id,
+        inProjectID: onProjectId,
       },
     });
+  };
+
+  handleFormBuildShow = () => {
+    this.dispatch({
+      type: 'assetDatamaint/changeFormVisibleBuild',
+      payload: false,
+    });
+    this.clearSelectRows();
   };
 
   clearSelectRows = () => {
@@ -231,7 +241,7 @@ class AssetBuildMaint extends PureComponent {
       );
     }
     if (formTypeBuild === 'S') {
-      return <AssetBuildShowMaint onCancel={this.handleFormCancel} />;
+      return <AssetBuildShowMaint onCancel={this.handleFormBuildShow} />;
     }
     return <React.Fragment></React.Fragment>;
   }

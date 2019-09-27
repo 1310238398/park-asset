@@ -5,6 +5,7 @@ import DescriptionList from '@/components/DescriptionList';
 import CustomInfoShow from './CustomInfo/CustomInfoShow';
 import AgreementInfoShow from './CustomInfo/AgreementInfoShow';
 import styles from './AssetsBuildInfo.less';
+import DicShow from '@/components/DictionaryNew/DicShow';
 
 const { Description } = DescriptionList;
 @connect(state => ({
@@ -15,24 +16,23 @@ const { Description } = DescriptionList;
 //  企业入驻的模态对话框组件。
 class AssetUnitShowMaint extends PureComponent {
   //  默认的组件挂载时的初始化。
-  componentDidMount() {
-    const { id, type } = this.props;
-    this.dispatch({
-      type: 'assetDatamaint/loadForm',
-      payload: {
-        id,
-        type,
-      },
-    });
-  }
+  // componentDidMount() {
+  //   const { id, type } = this.props;
+  //   this.dispatch({
+  //     type: 'assetDatamaint/loadForm',
+  //     payload: {
+  //       id,
+  //       type,
+  //     },
+  //   });
+  // }
 
-  onModalCancelClick = () => {
-    // const { callback } = this.props;
-    this.dispatch({
-      type: 'assetDatamaint/changeFormVisible',
-      payload: false,
-    });
-    // callback();
+  // 判断数值
+  statusValue = value => {
+    if (value && value !== 0) {
+      return (value / 100).toString();
+    }
+    return '';
   };
 
   statusRender = status => {
@@ -78,7 +78,7 @@ class AssetUnitShowMaint extends PureComponent {
 
   renderFirstView = () => {
     const {
-      assetDatamaint: { formData },
+      assetDatamaint: { formDataBuild, proData },
     } = this.props;
     const { TabPane } = Tabs;
     const operations = (
@@ -148,25 +148,36 @@ class AssetUnitShowMaint extends PureComponent {
        
             </div>
           </div> */}
-          <p>A3-5</p>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="园区">{formData.phone}</Description>
-              <Description term="楼栋">{formData.representative}</Description>
-              <Description term="出租规模">{formData.applicant_name}</Description>
+              <Description term="园区">{proData.name}</Description>
+              <Description term="楼栋">{formDataBuild.name}</Description>
+              <Description term="出租规模">
+                <DicShow pcode="pa$#build$#scale" code={[formDataBuild.is_all_rent]} />
+              </Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
             <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="单元数">{formData.applicant_tel}</Description>
-              <Description term="楼层数">{formData.representative}</Description>
-              <Description term="装修情况">{formData.applicant_name}</Description>
+              <Description term="单元数">
+                {formDataBuild.unit_num ? formDataBuild.unit_num.toString() : '0'}
+              </Description>
+              <Description term="楼层数">
+                {formDataBuild.layer_num ? formDataBuild.layer_num.toString() : '0'}
+              </Description>
+              <Description term="装修情况">
+                <DicShow pcode="pa$#build$#decora" code={[formDataBuild.decoration]} />
+              </Description>
             </DescriptionList>
           </div>
           <div className={styles.form} style={{ marginTop: 25 }}>
-            <DescriptionList title="" size="large" col={3} style={{ marginBottom: 32 }}>
-              <Description term="建筑面积（㎡）">{formData.applicant_tel}</Description>
-              <Description term="计租面积（㎡）">{formData.representative}</Description>
+            <DescriptionList title="" size="large" col={2} style={{ marginBottom: 32 }}>
+              <Description term="建筑面积（㎡）">
+                {this.statusValue(formDataBuild.building_area)}
+              </Description>
+              <Description term="计租面积（㎡）">
+                {this.statusValue(formDataBuild.rent_area)}
+              </Description>
             </DescriptionList>
           </div>
         </Card>
@@ -198,6 +209,7 @@ class AssetUnitShowMaint extends PureComponent {
   render() {
     const {
       assetDatamaint: { formVisibleUnit, submitting },
+      onCancel,
     } = this.props;
 
     return (
@@ -208,9 +220,9 @@ class AssetUnitShowMaint extends PureComponent {
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
-        onCancel={this.onModalCancelClick}
+        onCancel={onCancel}
         footer={[
-          <Button key="back" onClick={this.onModalCancelClick}>
+          <Button key="back" onClick={onCancel}>
             关闭
           </Button>,
         ]}

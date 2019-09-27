@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Form, Row, Col, Table, Modal } from 'antd';
+import { Card, Form, Row, Col, Table, Modal, Tag } from 'antd';
 import PButton from '@/components/PermButton';
 import AssetUnitEditMaint from './AssetUnitEditMaint';
 import AssetUnitShowMaint from './AssetUnitShowMaint';
@@ -190,6 +190,17 @@ class AssetUnitMaint extends PureComponent {
     return <span>{this.statusValue(value.rent_area)}</span>;
   };
 
+  //  未租1	锁定2	已租3
+  getRentStatus = value => {
+    if (value.rent_status === 3) {
+      return '已租';
+    }
+    if (value.rent_status === 2) {
+      return '锁定';
+    }
+    return '出租中';
+  };
+
   handleDelOKClick(id) {
     this.dispatch({
       type: 'assetDatamaint/del',
@@ -314,7 +325,12 @@ class AssetUnitMaint extends PureComponent {
       <div>
         <Card>
           <div>
-            <p>{formDataBuild.name}</p>
+            <Row>
+              <Col span={4}>{formDataBuild.name}</Col>
+              <Col span={4}>
+                <Tag color="#2db7f5">{this.getRentStatus(formDataBuild)}</Tag>
+              </Col>
+            </Row>
             <Row type="flex" justify="start">
               <Col span={4}>单元数：{formDataBuild.unit_num}</Col>
               <Col span={4}>楼层数：{formDataBuild.layer_num}</Col>
