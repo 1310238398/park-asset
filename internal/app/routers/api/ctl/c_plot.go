@@ -28,6 +28,8 @@ func (a *Plot) Query(c *gin.Context) {
 	switch c.Query("q") {
 	case "page":
 		a.QueryPage(c)
+	case "list":
+		a.QueryList(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -57,6 +59,26 @@ func (a *Plot) QueryPage(c *gin.Context) {
 	}
 
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询列表数据
+// @Summary 查询列表数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Success 200 []schema.Plot "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/plots?q=list
+func (a *Plot) QueryList(c *gin.Context) {
+	var params schema.PlotQueryParam
+
+	result, err := a.PlotBll.Query(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, result.Data)
 }
 
 // Get 查询指定数据
