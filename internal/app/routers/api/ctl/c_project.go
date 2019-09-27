@@ -5,7 +5,6 @@ import (
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,7 +42,7 @@ func (a *Project) Query(c *gin.Context) {
 // @Param pageSize query int true "分页大小" 10
 // @Param name query string false "项目名称（模糊查询）"
 // @Param org_id query string false "所属子公司"
-// @Param asset_type query string false "资产类型（多个以逗号分隔）"
+// @Param plot_id query string false "所属地块"
 // @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -52,10 +51,7 @@ func (a *Project) Query(c *gin.Context) {
 func (a *Project) QueryPage(c *gin.Context) {
 	var params schema.ProjectQueryParam
 	params.LikeName = c.Query("name")
-
-	if v := c.Query("asset_type"); v != "" {
-		params.AssetTypes = strings.Split(v, ",")
-	}
+	params.PlotID = c.Query("plot_id")
 
 	if v := c.Query("org_id"); v != "" {
 		params.OrgIDs = []string{v}

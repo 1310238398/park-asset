@@ -19,6 +19,8 @@ type Project struct {
 	Creator       string `json:"creator" swaggo:"false,创建者"`
 	OrgID         string `json:"org_id" binding:"required" swaggo:"false,所属子公司"`
 	OrgName       string `json:"org_name" swaggo:"false,所属子公司名称"`
+	PlotID        string `json:"plot_id" swaggo:"false,所属地块"`
+	PlotName      string `json:"plot_name" swaggo:"false,所属地块名称"`
 }
 
 // ProjectQueryParam 查询条件
@@ -26,6 +28,7 @@ type ProjectQueryParam struct {
 	LikeName   string   // 项目名称(模糊查询)
 	Name       string   // 项目名称
 	OrgIDs     []string // 子公司列表
+	PlotID     string   // 所属地块
 	AssetTypes []string // 资产类型列表
 }
 
@@ -69,6 +72,38 @@ func (a Projects) FillOrgData(m map[string]*Organization) Projects {
 	for i, item := range a {
 		if v, ok := m[item.OrgID]; ok {
 			a[i].OrgName = v.Name
+		}
+	}
+
+	return a
+}
+
+// ToPlotIDs 转换为地块ID列表
+func (a Projects) ToPlotIDs() []string {
+	var plotIDs []string
+
+	for _, item := range a {
+		exists := false
+		for _, plotID := range plotIDs {
+			if plotID == item.PlotID {
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
+			plotIDs = append(plotIDs, item.PlotID)
+		}
+	}
+
+	return plotIDs
+}
+
+// FillPlotData 填充地块数据
+func (a Projects) FillPlotData(m map[string]*Plot) Projects {
+	for i, item := range a {
+		if v, ok := m[item.PlotID]; ok {
+			a[i].PlotName = v.Name
 		}
 	}
 
