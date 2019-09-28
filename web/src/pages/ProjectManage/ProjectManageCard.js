@@ -78,7 +78,7 @@ class ProjectManageCard extends PureComponent {
 
   render() {
     const {
-      projectManage: { formTitle, formVisible, formData, submitting, companyList },
+      projectManage: { formTitle, formVisible, formData, submitting, companyList, poltList },
       form: { getFieldDecorator },
       onCancel,
     } = this.props;
@@ -91,14 +91,14 @@ class ProjectManageCard extends PureComponent {
         span: 18,
       },
     };
-    const formItemLayout2 = {
-      labelCol: {
-        span: 3,
-      },
-      wrapperCol: {
-        span: 21,
-      },
-    };
+    // const formItemLayout2 = {
+    //   labelCol: {
+    //     span: 3,
+    //   },
+    //   wrapperCol: {
+    //     span: 21,
+    //   },
+    // };
 
     return (
       <Modal
@@ -153,8 +153,8 @@ class ProjectManageCard extends PureComponent {
             </Col>
           </Row>
           <Row>
-            <Col span={24}>
-              <Form.Item {...formItemLayout2} label="项目地址">
+            <Col span={12}>
+              <Form.Item {...formItemLayout} label="项目地址">
                 {getFieldDecorator('address', {
                   initialValue: formData.address,
                   rules: [
@@ -164,6 +164,28 @@ class ProjectManageCard extends PureComponent {
                     },
                   ],
                 })(<Input placeholder="请输入项目地址" />)}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item {...formItemLayout} label="所属地块">
+                {getFieldDecorator('plot_id', {
+                  initialValue: formData.plot_id,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择',
+                    },
+                  ],
+                })(
+                  <Select placeholder="请选择" style={{ width: '100%' }}>
+                    {poltList &&
+                      poltList.map(item => (
+                        <Select.Option key={item.record_id} value={item.record_id}>
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                )}
               </Form.Item>
             </Col>
           </Row>
@@ -249,7 +271,7 @@ class ProjectManageCard extends PureComponent {
                       message: '请选择',
                     },
                   ],
-                })(<PicturesWall num={1}  listType="picture-card" />)}
+                })(<PicturesWall num={1} listType="picture-card" />)}
               </Form.Item>
             </Col>
           </Row>

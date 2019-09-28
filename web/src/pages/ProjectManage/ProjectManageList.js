@@ -28,6 +28,9 @@ class ProjectManageList extends PureComponent {
     this.dispatch({
       type: 'projectManage/queryCompany',
     });
+    this.dispatch({
+      type: 'projectManage/queryPlotList',
+    });
   }
 
   clearSelectRows = () => {
@@ -183,7 +186,7 @@ class ProjectManageList extends PureComponent {
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
-      projectManage: { companyList },
+      projectManage: { companyList, poltList },
     } = this.props;
 
     return (
@@ -225,8 +228,8 @@ class ProjectManageList extends PureComponent {
             <Form.Item label="所属地块">
               {getFieldDecorator('plot_id')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {companyList &&
-                    companyList.map(item => (
+                  {poltList &&
+                    poltList.map(item => (
                       <Select.Option key={item.record_id} value={item.record_id}>
                         {item.name}
                       </Select.Option>
@@ -281,6 +284,7 @@ class ProjectManageList extends PureComponent {
         dataIndex: 'org_name',
         width: 150,
       },
+      { title: '所属地块', dataIndex: 'plot_name', width: 150 },
       {
         title: '项目地址',
         dataIndex: 'address',
