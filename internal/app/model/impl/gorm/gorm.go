@@ -78,5 +78,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewCarChanger, dig.As(new(model.ICarChanger)))
 	container.Provide(imodel.NewFactoryBuilding, dig.As(new(model.IFactoryBuilding)))
 	container.Provide(imodel.NewPlot, dig.As(new(model.IPlot)))
+	container.Provide(imodel.NewStatistic, dig.As(new(model.IStatistic)))
 	return nil
 }
