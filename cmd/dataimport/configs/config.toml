@@ -1,3 +1,6 @@
+# 数据存储(支持：gorm)
+store = "gorm"
+
 # gorm配置
 [gorm]
 # 是否开启调试模式
