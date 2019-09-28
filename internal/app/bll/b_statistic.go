@@ -8,14 +8,6 @@ import (
 
 // IStatistic 统计查询业务逻辑接口
 type IStatistic interface {
-	// 查询数据
-	Query(ctx context.Context, params schema.StatisticQueryParam, opts ...schema.StatisticQueryOptions) (*schema.StatisticQueryResult, error)
-	// 查询指定数据
-	Get(ctx context.Context, recordID string, opts ...schema.StatisticQueryOptions) (*schema.Statistic, error)
-	// 创建数据
-	Create(ctx context.Context, item schema.Statistic) (*schema.Statistic, error)
-	// 更新数据
-	Update(ctx context.Context, recordID string, item schema.Statistic) (*schema.Statistic, error)
-	// 删除数据
-	Delete(ctx context.Context, recordID string) error
+	// 查询项目统计数据
+	QueryProject(ctx context.Context, params schema.ProjectStatisticQueryParam, opts ...schema.ProjectStatisticQueryOptions) (*schema.ProjectStatisticQueryResult, error)
 }
