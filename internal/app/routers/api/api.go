@@ -187,6 +187,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.GET("/car_changers/:id", cCarChanger.Get)
 			v1.POST("/car_changers", cCarChanger.Create)
 			v1.PUT("/car_changers/:id", cCarChanger.Update)
+
 			v1.DELETE("/car_changers/:id", cCarChanger.Delete)
 
 			// 注册/api/v1/factory_buildings

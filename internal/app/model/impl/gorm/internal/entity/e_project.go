@@ -39,6 +39,7 @@ func (a SchemaProject) ToProject() *Project {
 		Creator:           &a.Creator,
 		OrgID:             &a.OrgID,
 		PlotID:            &a.PlotID,
+		IsAllRent:         &a.IsAllRent,
 	}
 
 	return item
@@ -68,6 +69,7 @@ type Project struct {
 	Creator           *string `gorm:"column:creator;size:36;index;"`     // 创建者
 	OrgID             *string `gorm:"column:org_id;size:36;index;"`      // 所属子公司
 	PlotID            *string `gorm:"column:plot_id;size:36;index;"`     // 所属地块
+	IsAllRent         *int    `gorm:"column:is_all_rent;index;"`         // 是否整租:(1是 2否)
 }
 
 func (a Project) String() string {
@@ -99,6 +101,7 @@ func (a Project) ToSchemaProject() *schema.Project {
 		Creator:       *a.Creator,
 		OrgID:         *a.OrgID,
 		PlotID:        *a.PlotID,
+		IsAllRent:     *a.IsAllRent,
 	}
 	return item
 }
