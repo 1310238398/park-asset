@@ -81,3 +81,18 @@ type OperationalIndicatorStatistic struct {
 	EnterpriseNum                  int `json:"enterprise_num" swaggo:"false,入住企业总数"`
 	MerchantNum                    int `json:"merchant_num" swaggo:"false,入住商家总数"`
 }
+
+// OverviewStatisticQueryParam 概览查询参数
+type OverviewStatisticQueryParam struct {
+	Year int
+}
+
+// OverviewStatistic 概览统计项
+type OverviewStatistic struct {
+	AnnualPlanIncome   int `json:"annual_plan_income" swaggo:"false,年度计划收入"`
+	AnnualActualIncome int `json:"annual_actual_income" swaggo:"false,年度实际收入"`
+	ProjectNum         int `json:"project_num" swaggo:"false,项目总数"`
+	BuildingArea       int `json:"building_area" swaggo:"false,建筑总面积"`
+	RentArea           int `json:"rent_area" swaggo:"false,建筑计租总面积"`
+	RentedArea         int `json:"rented_area" swaggo:"false,建筑已租面积"`
+}

@@ -208,6 +208,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.GET("/statistics/project/export", cStatistic.ExportProject)
 			v1.GET("/statistics/income_classification", cStatistic.QueryIncomeClassification)
 			v1.GET("/statistics/operational_indicator", cStatistic.QueryOperationalIndicator)
+			v1.GET("/statistics/overview", cStatistic.QueryOverview)
 		}
 
 		return nil

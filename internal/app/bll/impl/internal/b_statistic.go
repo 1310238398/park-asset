@@ -64,31 +64,31 @@ func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema
 	var items []*schema.IncomeClassificationStatistic
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "写字楼",
-		ActualAmount:  100000000,
+		ActualAmount:  10000000000,
 	})
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "商铺",
-		ActualAmount:  90000000,
+		ActualAmount:  9000000000,
 	})
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "酒店",
-		ActualAmount:  50000000,
+		ActualAmount:  5000000000,
 	})
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "公寓",
-		ActualAmount:  40000000,
+		ActualAmount:  4000000000,
 	})
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "农贸市场",
-		ActualAmount:  30000000,
+		ActualAmount:  3000000000,
 	})
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "车改商",
-		ActualAmount:  20000000,
+		ActualAmount:  2000000000,
 	})
 	items = append(items, &schema.IncomeClassificationStatistic{
 		AssetTypeName: "厂房",
-		ActualAmount:  70000000,
+		ActualAmount:  7000000000,
 	})
 
 	return items, nil
@@ -98,11 +98,25 @@ func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema
 func (a *Statistic) QueryOperationalIndicator(ctx context.Context, params schema.OperationalIndicatorStatisticQueryParam) (*schema.OperationalIndicatorStatistic, error) {
 	item := &schema.OperationalIndicatorStatistic{
 		ContractNum:                    30000,
-		ThisMonthAddContractNum:        100,
+		ThisMonthAddContractNum:        1000,
 		ThisMonthWithdrawalContractNum: 200,
 		ThisMonthRenewContractNum:      300,
-		EnterpriseNum:                  1500,
+		EnterpriseNum:                  5000,
 		MerchantNum:                    3000,
+	}
+
+	return item, nil
+}
+
+// QueryOverview 查询概览统计
+func (a *Statistic) QueryOverview(ctx context.Context, params schema.OverviewStatisticQueryParam) (*schema.OverviewStatistic, error) {
+	item := &schema.OverviewStatistic{
+		AnnualPlanIncome:   100 * 10000 * 10000 * 100,
+		AnnualActualIncome: 90 * 10000 * 10000 * 100,
+		ProjectNum:         500,
+		BuildingArea:       100 * 10000 * 100,
+		RentArea:           95 * 10000 * 100,
+		RentedArea:         80 * 10000 * 100,
 	}
 
 	return item, nil
