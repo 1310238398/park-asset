@@ -219,4 +219,4 @@ identify = "ASSETS"
 key = "631d996a7a3c4c603ac7e04738f8fd6e"
 
 [excel_export]
-project = "s/assets/tpl/project.xlsx"
+project_tpl = "s/assetsexporttpl/project_export.xlsx"

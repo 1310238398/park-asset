@@ -1,7 +1,11 @@
 package internal
 
 import (
+	"bytes"
 	"context"
+	"gxt-park-assets/internal/app/config"
+	"gxt-park-assets/pkg/minio"
+	"io"
 
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/schema"
@@ -40,4 +44,17 @@ func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStati
 		},
 	}
 	return result, nil
+}
+
+// ExportProject 导出项目资产数据
+func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStatisticQueryParam) (*bytes.Buffer, error) {
+	obj, err := minio.GetClient().Get(ctx, config.GetGlobalConfig().ExcelExport.ProjectTpl)
+	if err != nil {
+		return nil, err
+	}
+
+	buf := new(bytes.Buffer)
+	io.Copy(buf, obj)
+
+	return buf, nil
 }

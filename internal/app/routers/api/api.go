@@ -206,6 +206,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 
 			// 注册/api/v1/statistics
 			v1.GET("/statistics/project", cStatistic.QueryProject)
+			v1.GET("/statistics/project/export", cStatistic.ExportProject)
 		}
 
 		return nil

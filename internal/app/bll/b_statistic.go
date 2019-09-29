@@ -1,6 +1,7 @@
 package bll
 
 import (
+	"bytes"
 	"context"
 
 	"gxt-park-assets/internal/app/schema"
@@ -10,4 +11,6 @@ import (
 type IStatistic interface {
 	// 查询项目统计数据
 	QueryProject(ctx context.Context, params schema.ProjectStatisticQueryParam, opts ...schema.ProjectStatisticQueryOptions) (*schema.ProjectStatisticQueryResult, error)
+	// 导出项目资产数据
+	ExportProject(ctx context.Context, params schema.ProjectStatisticQueryParam) (*bytes.Buffer, error)
 }
