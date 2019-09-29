@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const router = 'projects';
+const router = 'plots';
 
 export async function query(params) {
   return request(`/v1/${router}?${stringify(params)}`);
@@ -45,8 +45,4 @@ export async function disable(params) {
 
 export async function companySecond(params) {
   return request(`/v1/organizations?${stringify(params)}`);
-}
-
-export async function PoltList(params) {
-  return request(`/v1/plots?${stringify(params)}`);
 }

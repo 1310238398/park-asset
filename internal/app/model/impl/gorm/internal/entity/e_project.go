@@ -38,6 +38,7 @@ func (a SchemaProject) ToProject() *Project {
 		Memo:              &a.Memo,
 		Creator:           &a.Creator,
 		OrgID:             &a.OrgID,
+		PlotID:            &a.PlotID,
 	}
 
 	return item
@@ -66,6 +67,7 @@ type Project struct {
 	Memo              *string `gorm:"column:memo;size:1024;"`            // 备注
 	Creator           *string `gorm:"column:creator;size:36;index;"`     // 创建者
 	OrgID             *string `gorm:"column:org_id;size:36;index;"`      // 所属子公司
+	PlotID            *string `gorm:"column:plot_id;size:36;index;"`     // 所属地块
 }
 
 func (a Project) String() string {
@@ -96,6 +98,7 @@ func (a Project) ToSchemaProject() *schema.Project {
 		Memo:          *a.Memo,
 		Creator:       *a.Creator,
 		OrgID:         *a.OrgID,
+		PlotID:        *a.PlotID,
 	}
 	return item
 }

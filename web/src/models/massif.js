@@ -1,9 +1,8 @@
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-import * as projectManageService from '@/services/projectManage';
+import * as massifService from '@/services/massifManage';
 
 export default {
-  namespace: 'projectManage',
+  namespace: 'massif',
   state: {
     search: {},
     pagination: {},
@@ -14,10 +13,10 @@ export default {
     submitting: false,
     formTitle: '',
     formID: '',
+    formType: '',
     formVisible: false,
     formData: {},
     companyList: [],
-    poltList: [],
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
@@ -32,7 +31,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.projectManage.search);
+        const s = yield select(state => state.massif.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -45,13 +44,13 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.projectManage.pagination);
+        const p = yield select(state => state.massif.pagination);
         if (p) {
           params = { ...params, ...p };
         }
       }
 
-      const response = yield call(projectManageService.query, params);
+      const response = yield call(massifService.query, params);
       yield put({
         type: 'saveData',
         payload: response,
@@ -70,7 +69,7 @@ export default {
         }),
         put({
           type: 'saveFormTitle',
-          payload: '新建项目',
+          payload: '新建地块',
         }),
         put({
           type: 'saveFormID',
@@ -86,7 +85,23 @@ export default {
         yield [
           put({
             type: 'saveFormTitle',
-            payload: '编辑项目',
+            payload: '编辑地块',
+          }),
+          put({
+            type: 'saveFormID',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchForm',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitle',
+            payload: '查看地块详情',
           }),
           put({
             type: 'saveFormID',
@@ -100,7 +115,7 @@ export default {
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(projectManageService.get, payload);
+      const response = yield call(massifService.get, payload);
       if (response && response.asset_type) {
         response.asset_type = response.asset_type.split(',');
       }
@@ -118,14 +133,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.projectManage.formType);
+      const formType = yield select(state => state.massif.formType);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.projectManage.formID);
-        response = yield call(projectManageService.update, params);
+        params.record_id = yield select(state => state.massif.formID);
+        response = yield call(massifService.update, params);
       } else {
-        response = yield call(projectManageService.create, params);
+        response = yield call(massifService.create, params);
       }
 
       yield put({
@@ -145,7 +160,7 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(projectManageService.del, payload);
+      const response = yield call(massifService.del, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
@@ -155,34 +170,12 @@ export default {
       const params = {
         q: 'company',
       };
-      const response = yield call(projectManageService.companySecond, params);
+      const response = yield call(massifService.companySecond, params);
       const result = response.list ? response.list : [];
       yield put({
         type: 'saveDataCompany',
         payload: result,
       });
-    },
-    *queryPlotList(_, { call, put }) {
-      const params = {
-        q: 'list',
-      };
-      const response = yield call(projectManageService.PoltList, params);
-      const result = response.list ? response.list : [];
-      yield put({
-        type: 'savePolt',
-        payload: result,
-      });
-    },
-    *redirectBuilings({ payload }, { put }) {
-      yield put(
-        routerRedux.push({
-          pathname: '/assetdatamaint/assetdatamaintlist',
-          query: {
-            recordID: payload.record_id,
-            type: payload.asset_type,
-          },
-        })
-      );
     },
   },
   reducers: {
@@ -215,9 +208,6 @@ export default {
     },
     saveDataCompany(state, { payload }) {
       return { ...state, companyList: payload };
-    },
-    savePolt(state, { payload }) {
-      return { ...state, poltList: payload };
     },
   },
 };

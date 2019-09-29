@@ -659,6 +659,42 @@
 				<column name="sequence" />
 			</index>
 		</table>
+		<table name="pa_plot" >
+			<comment><![CDATA[地块管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="name" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[地块名称]]></comment>
+			</column>
+			<column name="location" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[位置(经纬度以英文逗号分隔)]]></comment>
+			</column>
+			<column name="address" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[地址]]></comment>
+			</column>
+			<column name="photo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[照片]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<index name="pk_pa_menu_18" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_18" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_name_4" unique="NORMAL" >
+				<column name="name" />
+			</index>
+			<index name="idx_pa_menu_record_id_18" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+		</table>
 		<table name="pa_project" >
 			<comment><![CDATA[项目管理]]></comment>
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -717,6 +753,9 @@
 			<column name="org_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[项目所属子公司]]></comment>
 			</column>
+			<column name="plot_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[所属地块]]></comment>
+			</column>
 			<index name="pk_pa_menu_3" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -735,6 +774,9 @@
 			<index name="idx_pa_menu_record_id_3" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
+			<fk name="fk_pa_project_pa_plot" virtual="y" to_schema="parkassets" to_table="pa_plot" >
+				<fk_column name="plot_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_rent_detail" >
 			<comment><![CDATA[租金明细]]></comment>
@@ -1096,31 +1138,32 @@
 	</schema>
 	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
 		<comment><![CDATA[资产管理]]></comment>
-		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="464" />
-		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="640" />
-		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="544" y="688" />
-		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="480" />
-		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="304" y="768" />
-		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="304" y="480" />
-		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1232" />
-		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1232" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="912" />
-		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1504" />
-		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1376" y="160" />
-		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1648" y="144" />
-		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1088" y="160" />
-		<entity schema="parkassets" name="pa_rent_detail" color="E6CCFF" x="1648" y="592" />
-		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1040" y="576" />
-		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="80" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="784" y="560" />
-		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1392" y="688" />
-		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1376" y="432" />
-		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1024" y="992" />
-		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1248" y="992" />
-		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="784" y="1280" />
-		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1024" y="1280" />
-		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="784" y="992" />
-		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1248" y="1280" />
+		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="656" />
+		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="832" />
+		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="544" y="880" />
+		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="672" />
+		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="304" y="960" />
+		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="304" y="672" />
+		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1424" />
+		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1424" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="1104" />
+		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1696" />
+		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1376" y="352" />
+		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1648" y="336" />
+		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1376" y="624" />
+		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1024" y="1184" />
+		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1248" y="1184" />
+		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="784" y="1472" />
+		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1024" y="1472" />
+		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1248" y="1472" />
+		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1088" y="352" />
+		<entity schema="parkassets" name="pa_rent_detail" color="E6CCFF" x="1648" y="784" />
+		<entity schema="parkassets" name="pa_plot" color="E6CCFF" x="1072" y="80" />
+		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="272" />
+		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="784" y="1184" />
+		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="784" y="752" />
+		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1392" y="880" />
+		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1040" y="768" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
@@ -1151,6 +1194,7 @@
 			<entity schema="parkassets" name="pa_agricultural_market" />
 			<entity schema="parkassets" name="pa_car_changer" />
 			<entity schema="parkassets" name="pa_factory_building" />
+			<entity schema="parkassets" name="pa_plot" />
 		</group>
 	</layout>
 </project>

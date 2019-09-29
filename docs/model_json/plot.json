@@ -1,0 +1,55 @@
+{
+  "struct_name": "Plot",
+  "comment": "地块管理",
+  "fields": [
+    {
+      "struct_field_name": "RecordID",
+      "comment": "记录ID",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    },
+    {
+      "struct_field_name": "Name",
+      "comment": "地块名称",
+      "struct_field_required": true,
+      "struct_field_type": "string",
+      "gorm_options": "size:200;index;"
+    },
+    {
+      "struct_field_name": "Location",
+      "comment": "位置(经纬度以逗号分隔)",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Address",
+      "comment": "地址",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Photo",
+      "comment": "照片(JSON)",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:2048;"
+    },
+    {
+      "struct_field_name": "Memo",
+      "comment": "备注",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:1024;"
+    },
+    {
+      "struct_field_name": "Creator",
+      "comment": "创建者",
+      "struct_field_required": false,
+      "struct_field_type": "string",
+      "gorm_options": "size:36;index;"
+    }
+  ]
+}

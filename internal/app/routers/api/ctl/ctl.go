@@ -28,5 +28,7 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewAgriculturalMarket)
 	container.Provide(NewCarChanger)
 	container.Provide(NewFactoryBuilding)
+	container.Provide(NewPlot)
+	container.Provide(NewStatistic)
 	return nil
 }
