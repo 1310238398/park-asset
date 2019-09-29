@@ -113,6 +113,7 @@ func (a *Statistic) ExportProject(c *gin.Context) {
 // @Summary 查询资产各分类收入
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param year query int true "年份"
+// @Param org_id query string false "组织ID"
 // @Success 200 []schema.IncomeClassificationStatistic
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -121,6 +122,7 @@ func (a *Statistic) ExportProject(c *gin.Context) {
 func (a *Statistic) QueryIncomeClassification(c *gin.Context) {
 	var params schema.IncomeClassificationStatisticQueryParam
 	params.Year = util.S(c.Query("year")).DefaultInt(0)
+	params.OrgID = c.Query("org_id")
 
 	items, err := a.StatisticBll.QueryIncomeClassification(ginplus.NewContext(c), params)
 	if err != nil {
@@ -157,6 +159,7 @@ func (a *Statistic) QueryOperationalIndicator(c *gin.Context) {
 // @Summary 查询概览统计数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param year query int true "年份"
+// @Param org_id query string false "组织ID"
 // @Success 200 schema.OverviewStatistic
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -165,6 +168,7 @@ func (a *Statistic) QueryOperationalIndicator(c *gin.Context) {
 func (a *Statistic) QueryOverview(c *gin.Context) {
 	var params schema.OverviewStatisticQueryParam
 	params.Year = util.S(c.Query("year")).DefaultInt(0)
+	params.OrgID = c.Query("org_id")
 
 	item, err := a.StatisticBll.QueryOverview(ginplus.NewContext(c), params)
 	if err != nil {
@@ -217,6 +221,28 @@ func (a *Statistic) QueryFinanciallIndicator(c *gin.Context) {
 	params.OrgID = c.Query("org_id")
 
 	items, err := a.StatisticBll.QueryFinanciallIndicator(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, items)
+}
+
+// QueryCompany 查询子公司统计
+// @Summary 查询子公司统计
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param year query int true "年份"
+// @Success 200 []schema.CompanyStatistic
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/statistics/company
+func (a *Statistic) QueryCompany(c *gin.Context) {
+	var params schema.CompanyStatisticQueryParam
+	params.Year = util.S(c.Query("year")).DefaultInt(0)
+
+	items, err := a.StatisticBll.QueryCompany(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return

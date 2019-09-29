@@ -12,15 +12,20 @@ import (
 )
 
 // NewStatistic 创建统计查询
-func NewStatistic(mStatistic model.IStatistic) *Statistic {
+func NewStatistic(
+	mStatistic model.IStatistic,
+	mOrganization model.IOrganization,
+) *Statistic {
 	return &Statistic{
-		StatisticModel: mStatistic,
+		StatisticModel:    mStatistic,
+		OrganizationModel: mOrganization,
 	}
 }
 
 // Statistic 统计查询业务逻辑
 type Statistic struct {
-	StatisticModel model.IStatistic
+	StatisticModel    model.IStatistic
+	OrganizationModel model.IOrganization
 }
 
 // QueryProject 查询项目统计数据
@@ -175,5 +180,28 @@ func (a *Statistic) QueryFinanciallIndicator(ctx context.Context, params schema.
 		Quarter:     4,
 		Amount:      1500 * 10000 * 100,
 	})
+	return items, nil
+}
+
+// QueryCompany 子公司统计
+func (a *Statistic) QueryCompany(ctx context.Context, params schema.CompanyStatisticQueryParam) ([]*schema.CompanyStatistic, error) {
+	var items []*schema.CompanyStatistic
+
+	orgResult, err := a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{
+		OrgType: 2,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, item := range orgResult.Data {
+		items = append(items, &schema.CompanyStatistic{
+			OrgID:        item.RecordID,
+			OrgName:      item.Name,
+			PlanIncome:   1000 * 10000 * 100,
+			ActualIncome: 900 * 10000 * 100,
+		})
+	}
+
 	return items, nil
 }
