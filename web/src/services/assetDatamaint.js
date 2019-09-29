@@ -65,3 +65,10 @@ export async function createBuild(params) {
     body: params,
   });
 }
+
+// 删除单元和楼层
+export async function delBuild(params) {
+  return request(`/v1/${buildingsRouter}/${params.record_id}`, {
+    method: 'DELETE',
+  });
+}

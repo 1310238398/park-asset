@@ -64,6 +64,7 @@ type Config struct {
 	Upload          Upload      `toml:"upload"`
 	Minio           Minio       `toml:"minio"`
 	AMap            AMap        `toml:"amap"`
+	ExcelExport     ExcelExport `toml:"excel_export"`
 }
 
 // Log 日志配置参数
@@ -220,4 +221,9 @@ type Minio struct {
 // AMap 高德地图配置参数
 type AMap struct {
 	Key string `toml:"key"`
+}
+
+// ExcelExport excel导出配置参数
+type ExcelExport struct {
+	ProjectTpl string `toml:"project_tpl"`
 }

@@ -195,12 +195,13 @@ class AssetsSituationList extends PureComponent {
 
     const breadcrumbList = [
       { title: '资产管理' },
-      { title: '资产管理', href: '/assetssituation/assetssituationlist' },
+      { title: '资产管理', href: '/assetssituation/assetssituation' },
     ];
 
     return (
       <PageHeaderLayout title="资产管理" breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
+          <div>ddd</div>
           <div className={styles.tableList}>
             <div>
               <Table

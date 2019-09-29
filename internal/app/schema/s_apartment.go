@@ -5,6 +5,7 @@ type Apartment struct {
 	RecordID     string `json:"record_id" swaggo:"false,记录ID"`
 	ProjectID    string `json:"project_id" binding:"required" swaggo:"true,项目ID"`
 	Name         string `json:"name" binding:"required" swaggo:"true,建筑名称"`
+	IsAllRent    int    `json:"is_all_rent" binding:"required" swaggo:"true,是否全部出租:(1是 2否)"`
 	BuildingType int    `json:"building_type" binding:"required" swaggo:"true,建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌"`
 	BuildingArea int    `json:"building_area" swaggo:"false,建筑面积"`
 	RentArea     int    `json:"rent_area" swaggo:"false,计租面积"`

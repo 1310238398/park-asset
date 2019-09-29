@@ -6,8 +6,7 @@ Package api 生成swagger文档
 使用方式：
 
 	go get -u -v github.com/teambition/swaggo
-	swaggo -s ./internal/app/routers/api/swagger.go -p . -o ./internal/app/swagger
-*/
+	swaggo -s ./internal/app/routers/api/swagger.go -p . -o ./internal/app/swagger*/
 package api
 
 import (
@@ -19,7 +18,7 @@ import (
 // @Title GinAdmin
 // @Description RBAC scaffolding based on GIN + GORM + CASBIN.
 // @Schemes http,https
-// @Host 192.168.1.152:10088
+// @Host 192.168.250.57:10088
 // @BasePath /
 // @Name LyricTian
 // @Contact tiannianshou@gmail.com

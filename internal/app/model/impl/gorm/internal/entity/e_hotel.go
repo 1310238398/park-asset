@@ -20,6 +20,7 @@ func (a SchemaHotel) ToHotel() *Hotel {
 		RecordID:     &a.RecordID,
 		ProjectID:    &a.ProjectID,
 		Name:         &a.Name,
+		IsAllRent:    &a.IsAllRent,
 		BuildingType: &a.BuildingType,
 		BuildingArea: &a.BuildingArea,
 		RentArea:     &a.RentArea,
@@ -37,6 +38,7 @@ type Hotel struct {
 	RecordID     *string `gorm:"column:record_id;size:36;index;"`  // 记录ID
 	ProjectID    *string `gorm:"column:project_id;size:36;index;"` // 项目ID
 	Name         *string `gorm:"column:name;size:200;index;"`      // 建筑名称
+	IsAllRent    *int    `gorm:"column:is_all_rent;index;"`        // 是否全部出租:(1是 2否)
 	BuildingType *int    `gorm:"column:building_type;index;"`      // 建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌
 	BuildingArea *int    `gorm:"column:building_area;"`            // 建筑面积
 	RentArea     *int    `gorm:"column:rent_area;"`                // 计租面积
@@ -61,6 +63,7 @@ func (a Hotel) ToSchemaHotel() *schema.Hotel {
 		RecordID:     *a.RecordID,
 		ProjectID:    *a.ProjectID,
 		Name:         *a.Name,
+		IsAllRent:    *a.IsAllRent,
 		BuildingType: *a.BuildingType,
 		BuildingArea: *a.BuildingArea,
 		RentArea:     *a.RentArea,

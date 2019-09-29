@@ -24,7 +24,6 @@ class AssetFloorEditMaint extends PureComponent {
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
-
         formData.project_id = proData.record_id;
         formData.parent_id = formDataFloor.record_id;
         formData.building_type = 3;
@@ -39,13 +38,11 @@ class AssetFloorEditMaint extends PureComponent {
           this.custom.current.validateFields((errCut, valuesCut) => {
             if (!errCut) {
               formData = { formData, ...valuesCut };
-              // console.log(formData)
             }
           });
           this.agreement.current.validateFields((errAgre, valuesAgre) => {
             if (!errAgre) {
               formData = { formData, ...valuesAgre };
-              // console.log(formData)
             }
           });
         }

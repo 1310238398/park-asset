@@ -76,6 +76,9 @@
 			<column name="parent_path" type="varchar" length="518" jt="12" >
 				<comment><![CDATA[父级路径]]></comment>
 			</column>
+			<column name="is_all_rent" type="int" jt="4" >
+				<comment><![CDATA[是否全部出租（1是 2否）]]></comment>
+			</column>
 			<index name="pk_pa_menu_14" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -100,9 +103,6 @@
 			<column name="asset_type" type="int" jt="4" >
 				<comment><![CDATA[资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商]]></comment>
 			</column>
-			<column name="history_id" type="varchar" length="36" jt="12" >
-				<comment><![CDATA[历史记录ID]]></comment>
-			</column>
 			<column name="name" type="varchar" length="200" jt="12" >
 				<comment><![CDATA[资产名称]]></comment>
 			</column>
@@ -114,6 +114,9 @@
 			</column>
 			<column name="rent_status" type="int" length="1" jt="4" >
 				<comment><![CDATA[出租状态:1未租 2锁定 3已租]]></comment>
+			</column>
+			<column name="group_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[所属资产组]]></comment>
 			</column>
 			<index name="pk_pa_menu_4" unique="PRIMARY_KEY" >
 				<column name="id" />
@@ -127,8 +130,32 @@
 			<fk name="fk_pa_assets_pa_project" virtual="y" to_schema="parkassets" to_table="pa_project" >
 				<fk_column name="project_id" pk="record_id" />
 			</fk>
-			<fk name="fk_pa_assets_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_asset_history" >
-				<fk_column name="history_id" pk="record_id" />
+			<fk name="fk_pa_asset_pa_asset_group" virtual="y" to_schema="parkassets" to_table="pa_asset_group" >
+				<fk_column name="group_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pa_asset_group" >
+			<comment><![CDATA[资产组管理]]></comment>
+			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="updated_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
+			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
+			<column name="asset_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[资产ID]]></comment>
+			</column>
+			<index name="pk_pa_menu_19" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pa_menu_deleted_at_19" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_pa_menu_record_id_19" unique="NORMAL" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pa_asset_group_pa_asset" virtual="y" to_schema="parkassets" to_table="pa_asset" >
+				<fk_column name="asset_id" pk="record_id" />
 			</fk>
 		</table>
 		<table name="pa_asset_history" >
@@ -139,8 +166,8 @@
 			<column name="deleted_at" type="timestamp" length="19" decimal="0" jt="93" />
 			<column name="creator" type="varchar" length="36" decimal="0" jt="12" />
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
-			<column name="asset_id" type="varchar" length="36" jt="12" >
-				<comment><![CDATA[资产ID]]></comment>
+			<column name="group_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[资产组ID]]></comment>
 			</column>
 			<column name="status" type="int" length="1" jt="4" >
 				<comment><![CDATA[1:未租
@@ -149,6 +176,9 @@
 4:退租
 5:作废
 6:续签]]></comment>
+			</column>
+			<column name="change_date" type="date" length="1" jt="91" >
+				<comment><![CDATA[状态变更日期]]></comment>
 			</column>
 			<column name="reason" type="varchar" length="1024" jt="12" >
 				<comment><![CDATA[原因]]></comment>
@@ -171,8 +201,8 @@
 			<index name="idx_pa_menu_record_id_7" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_assets_history_pa_assets" virtual="y" to_schema="parkassets" to_table="pa_asset" >
-				<fk_column name="asset_id" pk="record_id" />
+			<fk name="fk_pa_asset_history_pa_asset_group" virtual="y" to_schema="parkassets" to_table="pa_asset_group" >
+				<fk_column name="group_id" pk="record_id" />
 			</fk>
 		</table>
 		<table name="pa_asset_rent_payment" >
@@ -185,8 +215,8 @@
 				<comment><![CDATA[创建者]]></comment>
 			</column>
 			<column name="record_id" type="varchar" length="36" decimal="0" jt="12" />
-			<column name="asset_id" type="varchar" length="36" jt="12" >
-				<comment><![CDATA[资产ID]]></comment>
+			<column name="group_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[资产组ID]]></comment>
 			</column>
 			<column name="payment_year" type="int" jt="4" >
 				<comment><![CDATA[缴费年]]></comment>
@@ -218,8 +248,8 @@
 			<index name="idx_pa_menu_record_id_11" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_assets_rent_payment_pa_assets" virtual="y" to_schema="parkassets" to_table="pa_asset" >
-				<fk_column name="asset_id" pk="record_id" />
+			<fk name="fk_pa_asset_rent_payment_pa_asset_group" virtual="y" to_schema="parkassets" to_table="pa_asset_group" >
+				<fk_column name="group_id" pk="record_id" />
 			</fk>
 		</table>
 		<table name="pa_car_changer" >
@@ -434,6 +464,9 @@
 			<column name="name" type="varchar" length="200" jt="12" >
 				<comment><![CDATA[名称]]></comment>
 			</column>
+			<column name="is_all_rent" type="int" jt="4" >
+				<comment><![CDATA[是否全部出租（1是 2否）]]></comment>
+			</column>
 			<column name="building_type" type="int" length="50" jt="4" >
 				<comment><![CDATA[建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌]]></comment>
 			</column>
@@ -615,9 +648,6 @@
 			<index name="idx_pa_menu_record_id_5" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_office_building_pa_assets" virtual="y" to_schema="parkassets" to_table="pa_asset" >
-				<fk_column name="record_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_organization" >
 			<comment><![CDATA[组织机构管理]]></comment>
@@ -756,6 +786,9 @@
 			<column name="plot_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[所属地块]]></comment>
 			</column>
+			<column name="is_all_rent" type="int" jt="4" >
+				<comment><![CDATA[是否整租（1是 2否）]]></comment>
+			</column>
 			<index name="pk_pa_menu_3" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -776,6 +809,9 @@
 			</index>
 			<fk name="fk_pa_project_pa_plot" virtual="y" to_schema="parkassets" to_table="pa_plot" >
 				<fk_column name="plot_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pa_project_pa_organization" virtual="y" to_schema="parkassets" to_table="pa_organization" >
+				<fk_column name="org_id" pk="record_id" />
 			</fk>
 		</table>
 		<table name="pa_rent_detail" >
@@ -1064,6 +1100,9 @@
 			<index name="idx_pa_user_user_name" unique="NORMAL" >
 				<column name="user_name" />
 			</index>
+			<fk name="fk_pa_user_pa_organization" virtual="y" to_schema="parkassets" to_table="pa_organization" >
+				<fk_column name="org_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_user_role" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -1138,32 +1177,33 @@
 	</schema>
 	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
 		<comment><![CDATA[资产管理]]></comment>
-		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="656" />
-		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="832" />
-		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="544" y="880" />
-		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="672" />
-		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="304" y="960" />
-		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="304" y="672" />
-		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1424" />
-		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1424" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="544" y="1104" />
-		<entity schema="parkassets" name="pa_organization" color="FFE6CC" x="48" y="1696" />
-		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1376" y="352" />
-		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1648" y="336" />
-		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1040" y="768" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="784" y="752" />
-		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1392" y="880" />
-		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1376" y="624" />
-		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1024" y="1184" />
-		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1248" y="1184" />
-		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="784" y="1472" />
-		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1024" y="1472" />
-		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="784" y="1184" />
-		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1248" y="1472" />
-		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1088" y="352" />
-		<entity schema="parkassets" name="pa_rent_detail" color="E6CCFF" x="1648" y="784" />
-		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="784" y="272" />
-		<entity schema="parkassets" name="pa_plot" color="E6CCFF" x="1072" y="80" />
+		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="48" y="768" />
+		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="48" y="944" />
+		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="528" y="992" />
+		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="528" y="784" />
+		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="288" y="1072" />
+		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="784" />
+		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1552" />
+		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1552" />
+		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="848" y="1584" />
+		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1088" y="1584" />
+		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1312" y="1584" />
+		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="848" y="1296" />
+		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1072" y="1280" />
+		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1280" y="1280" />
+		<entity schema="parkassets" name="pa_plot" color="E6CCFF" x="832" y="80" />
+		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1424" y="368" />
+		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1712" y="368" />
+		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1936" y="368" />
+		<entity schema="parkassets" name="pa_rent_detail" color="E6CCFF" x="1952" y="800" />
+		<entity schema="parkassets" name="pa_organization" color="C4E0F9" x="512" y="1216" />
+		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="224" y="1232" />
+		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="832" y="880" />
+		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="832" y="352" />
+		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1072" y="480" />
+		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1312" y="976" />
+		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1600" y="768" />
+		<entity schema="parkassets" name="pa_asset_group" color="E6CCFF" x="1312" y="768" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
@@ -1172,29 +1212,30 @@
 			<entity schema="parkassets" name="pa_role_menu" />
 			<entity schema="parkassets" name="pa_user" />
 			<entity schema="parkassets" name="pa_user_role" />
+			<entity schema="parkassets" name="pa_organization" />
 		</group>
 		<group name="基础数据模块" color="FFE6CC" >
 			<entity schema="parkassets" name="pa_dictionary" />
 			<entity schema="parkassets" name="pa_system_parameter" />
-			<entity schema="parkassets" name="pa_organization" />
 		</group>
 		<group name="资产管理" color="E6CCFF" >
-			<entity schema="parkassets" name="pa_project" />
-			<entity schema="parkassets" name="pa_asset" />
-			<entity schema="parkassets" name="pa_office_building" />
-			<entity schema="parkassets" name="pa_tenant_customer" />
-			<entity schema="parkassets" name="pa_asset_history" />
-			<entity schema="parkassets" name="pa_withdrawal" />
-			<entity schema="parkassets" name="pa_contract" />
-			<entity schema="parkassets" name="pa_rent_detail" />
-			<entity schema="parkassets" name="pa_asset_rent_payment" />
-			<entity schema="parkassets" name="pa_shop" />
-			<entity schema="parkassets" name="pa_hotel" />
-			<entity schema="parkassets" name="pa_apartment" />
 			<entity schema="parkassets" name="pa_agricultural_market" />
+			<entity schema="parkassets" name="pa_apartment" />
+			<entity schema="parkassets" name="pa_asset" />
+			<entity schema="parkassets" name="pa_asset_group" />
+			<entity schema="parkassets" name="pa_asset_history" />
+			<entity schema="parkassets" name="pa_asset_rent_payment" />
 			<entity schema="parkassets" name="pa_car_changer" />
+			<entity schema="parkassets" name="pa_contract" />
 			<entity schema="parkassets" name="pa_factory_building" />
+			<entity schema="parkassets" name="pa_hotel" />
+			<entity schema="parkassets" name="pa_office_building" />
 			<entity schema="parkassets" name="pa_plot" />
+			<entity schema="parkassets" name="pa_project" />
+			<entity schema="parkassets" name="pa_rent_detail" />
+			<entity schema="parkassets" name="pa_shop" />
+			<entity schema="parkassets" name="pa_tenant_customer" />
+			<entity schema="parkassets" name="pa_withdrawal" />
 		</group>
 	</layout>
 </project>

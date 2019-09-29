@@ -10,10 +10,15 @@ import (
 )
 
 // NewProject 创建项目管理
-func NewProject(mProject model.IProject, mOrganization model.IOrganization) *Project {
+func NewProject(
+	mProject model.IProject,
+	mOrganization model.IOrganization,
+	mPlot model.IPlot,
+) *Project {
 	return &Project{
 		ProjectModel:      mProject,
 		OrganizationModel: mOrganization,
+		PlotModel:         mPlot,
 	}
 }
 
@@ -21,6 +26,7 @@ func NewProject(mProject model.IProject, mOrganization model.IOrganization) *Pro
 type Project struct {
 	ProjectModel      model.IProject
 	OrganizationModel model.IOrganization
+	PlotModel         model.IPlot
 }
 
 // Query 查询数据
@@ -39,6 +45,17 @@ func (a *Project) Query(ctx context.Context, params schema.ProjectQueryParam, op
 			return nil, err
 		}
 		result.Data.FillOrgData(orgResult.Data.ToMap())
+	}
+
+	plotIDs := result.Data.ToPlotIDs()
+	if len(plotIDs) > 0 {
+		plotResult, err := a.PlotModel.Query(ctx, schema.PlotQueryParam{
+			RecordIDs: plotIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+		result.Data.FillPlotData(plotResult.Data.ToMap())
 	}
 
 	return result, nil

@@ -4,6 +4,7 @@ import (
 	"context"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/gormplus"
+	"time"
 )
 
 // GetAssetHistoryDB 资产历史管理
@@ -18,8 +19,9 @@ type SchemaAssetHistory schema.AssetHistory
 func (a SchemaAssetHistory) ToAssetHistory() *AssetHistory {
 	item := &AssetHistory{
 		RecordID:    &a.RecordID,
-		AssetID:     &a.AssetID,
+		GroupID:     &a.GroupID,
 		Status:      &a.Status,
+		ChangeDate:  &a.ChangeDate,
 		Reason:      &a.Reason,
 		Source:      &a.Source,
 		Operator:    &a.Operator,
@@ -32,14 +34,15 @@ func (a SchemaAssetHistory) ToAssetHistory() *AssetHistory {
 // AssetHistory 资产历史管理实体
 type AssetHistory struct {
 	Model
-	RecordID    *string `gorm:"column:record_id;size:36;index;"` // 记录ID
-	AssetID     *string `gorm:"column:asset_id;size:36;index;"`  // 资产ID
-	Status      *int    `gorm:"column:status;index;"`            // 状态：1:未租 2:锁定 3:已租 4:退租 5:作废 6:续签
-	Reason      *string `gorm:"column:reason;size:1024;"`        // 原因
-	Source      *int    `gorm:"column:source;index;"`            // 数据来源：1录入 2导入
-	Operator    *string `gorm:"column:operator;size:50"`         // 操作人
-	OperatorTel *string `gorm:"column:operator_tel;size:50"`     // 操作人手机号
-	Creator     *string `gorm:"column:creator;size:36;index;"`   // 创建者
+	RecordID    *string    `gorm:"column:record_id;size:36;index;"` // 记录ID
+	GroupID     *string    `gorm:"column:group_id;size:36;index;"`  // 资产组ID
+	Status      *int       `gorm:"column:status;index;"`            // 状态：1:未租 2:锁定 3:已租 4:退租 5:作废 6:续签
+	ChangeDate  *time.Time `gorm:"column:change_date;index;"`       // 状态变更日期
+	Reason      *string    `gorm:"column:reason;size:1024;"`        // 原因
+	Source      *int       `gorm:"column:source;index;"`            // 数据来源：1录入 2导入
+	Operator    *string    `gorm:"column:operator;size:50"`         // 操作人
+	OperatorTel *string    `gorm:"column:operator_tel;size:50"`     // 操作人手机号
+	Creator     *string    `gorm:"column:creator;size:36;index;"`   // 创建者
 }
 
 func (a AssetHistory) String() string {
@@ -55,8 +58,9 @@ func (a AssetHistory) TableName() string {
 func (a AssetHistory) ToSchemaAssetHistory() *schema.AssetHistory {
 	item := &schema.AssetHistory{
 		RecordID:    *a.RecordID,
-		AssetID:     *a.AssetID,
+		GroupID:     *a.GroupID,
 		Status:      *a.Status,
+		ChangeDate:  *a.ChangeDate,
 		Reason:      *a.Reason,
 		Source:      *a.Source,
 		Operator:    *a.Operator,

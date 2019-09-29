@@ -18,7 +18,7 @@ type SchemaAssetRentPayment schema.AssetRentPayment
 func (a SchemaAssetRentPayment) ToAssetRentPayment() *AssetRentPayment {
 	item := &AssetRentPayment{
 		RecordID:       &a.RecordID,
-		AssetID:        &a.AssetID,
+		GroupID:        &a.GroupID,
 		PaymentYear:    &a.PaymentYear,
 		PaymentMonth:   &a.PaymentMonth,
 		PaymentDay:     &a.PaymentDay,
@@ -35,7 +35,7 @@ func (a SchemaAssetRentPayment) ToAssetRentPayment() *AssetRentPayment {
 type AssetRentPayment struct {
 	Model
 	RecordID       *string `gorm:"column:record_id;size:36;index;"` // 记录ID
-	AssetID        *string `gorm:"column:asset_id;size:36;index;"`  // 资产ID
+	GroupID        *string `gorm:"column:group_id;size:36;index;"`  // 资产组ID
 	PaymentYear    *int    `gorm:"column:payment_year;index;"`      // 缴费年
 	PaymentMonth   *int    `gorm:"column:payment_month;index;"`     // 缴费月
 	PaymentDay     *int    `gorm:"column:payment_day;index;"`       // 缴费日
@@ -59,7 +59,7 @@ func (a AssetRentPayment) TableName() string {
 func (a AssetRentPayment) ToSchemaAssetRentPayment() *schema.AssetRentPayment {
 	item := &schema.AssetRentPayment{
 		RecordID:       *a.RecordID,
-		AssetID:        *a.AssetID,
+		GroupID:        *a.GroupID,
 		PaymentYear:    *a.PaymentYear,
 		PaymentMonth:   *a.PaymentMonth,
 		PaymentDay:     *a.PaymentDay,

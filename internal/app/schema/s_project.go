@@ -21,6 +21,7 @@ type Project struct {
 	OrgName       string `json:"org_name" swaggo:"false,所属子公司名称"`
 	PlotID        string `json:"plot_id" swaggo:"false,所属地块"`
 	PlotName      string `json:"plot_name" swaggo:"false,所属地块名称"`
+	IsAllRent     int    `json:"is_all_rent" binding:"required" swaggo:"true,是否整租:(1是 2否)"`
 }
 
 // ProjectQueryParam 查询条件

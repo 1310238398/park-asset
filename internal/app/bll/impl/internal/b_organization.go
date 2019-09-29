@@ -42,6 +42,15 @@ func (a *Organization) QueryCompany(ctx context.Context, userID string) (*schema
 		return nil, nil
 	}
 
+	orgItem, err := a.OrganizationModel.Get(ctx, result.Data[0].OrgID)
+	if err != nil {
+		return nil, err
+	} else if orgItem == nil {
+		return nil, nil
+	} else if orgItem.OrgType == 1 {
+		return a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{OrgType: 2})
+	}
+
 	return a.OrganizationModel.Query(ctx, schema.OrganizationQueryParam{
 		RecordIDs: result.Data.ToOrgIDs(),
 		OrgType:   2,

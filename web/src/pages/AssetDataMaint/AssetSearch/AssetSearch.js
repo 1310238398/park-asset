@@ -208,11 +208,6 @@ class AssetSearch extends PureComponent {
         width: 200,
       },
       {
-        title: '是否整栋出租',
-        dataIndex: 'memo',
-        width: 100,
-      },
-      {
         title: '出租状态',
         dataIndex: 'memo',
         width: 100,
