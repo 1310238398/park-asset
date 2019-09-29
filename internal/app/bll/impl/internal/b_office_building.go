@@ -110,7 +110,7 @@ func (a *OfficeBuilding) createWithParentItem(ctx context.Context, pitem schema.
 		return nil, err
 	}
 
-	err = a.createAsset(ctx, item, "")
+	err = a.createAsset(ctx, item)
 	if err != nil {
 		return nil, err
 	}
@@ -119,13 +119,12 @@ func (a *OfficeBuilding) createWithParentItem(ctx context.Context, pitem schema.
 }
 
 // 创建资产数据
-func (a *OfficeBuilding) createAsset(ctx context.Context, item schema.OfficeBuilding, historyID string) error {
+func (a *OfficeBuilding) createAsset(ctx context.Context, item schema.OfficeBuilding) error {
 	return a.AssetModel.Create(ctx, schema.Asset{
 		RecordID:     item.RecordID,
 		ProjectID:    item.ProjectID,
 		AssetType:    1,
 		Creator:      item.Creator,
-		HistoryID:    historyID,
 		Name:         item.Name,
 		BuildingArea: item.BuildingArea,
 		RentArea:     item.RentArea,
@@ -152,7 +151,7 @@ func (a *OfficeBuilding) Create(ctx context.Context, item schema.OfficeBuilding)
 			return err
 		}
 
-		err = a.createAsset(ctx, item, "")
+		err = a.createAsset(ctx, item)
 		if err != nil {
 			return err
 		}

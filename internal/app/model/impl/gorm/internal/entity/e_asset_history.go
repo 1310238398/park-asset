@@ -19,7 +19,7 @@ type SchemaAssetHistory schema.AssetHistory
 func (a SchemaAssetHistory) ToAssetHistory() *AssetHistory {
 	item := &AssetHistory{
 		RecordID:    &a.RecordID,
-		AssetID:     &a.AssetID,
+		GroupID:     &a.GroupID,
 		Status:      &a.Status,
 		ChangeDate:  &a.ChangeDate,
 		Reason:      &a.Reason,
@@ -35,7 +35,7 @@ func (a SchemaAssetHistory) ToAssetHistory() *AssetHistory {
 type AssetHistory struct {
 	Model
 	RecordID    *string    `gorm:"column:record_id;size:36;index;"` // 记录ID
-	AssetID     *string    `gorm:"column:asset_id;size:36;index;"`  // 资产ID
+	GroupID     *string    `gorm:"column:group_id;size:36;index;"`  // 资产组ID
 	Status      *int       `gorm:"column:status;index;"`            // 状态：1:未租 2:锁定 3:已租 4:退租 5:作废 6:续签
 	ChangeDate  *time.Time `gorm:"column:change_date;index;"`       // 状态变更日期
 	Reason      *string    `gorm:"column:reason;size:1024;"`        // 原因
@@ -58,7 +58,7 @@ func (a AssetHistory) TableName() string {
 func (a AssetHistory) ToSchemaAssetHistory() *schema.AssetHistory {
 	item := &schema.AssetHistory{
 		RecordID:    *a.RecordID,
-		AssetID:     *a.AssetID,
+		GroupID:     *a.GroupID,
 		Status:      *a.Status,
 		ChangeDate:  *a.ChangeDate,
 		Reason:      *a.Reason,

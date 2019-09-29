@@ -5,7 +5,7 @@ import "time"
 // AssetHistory 资产历史管理
 type AssetHistory struct {
 	RecordID    string    `json:"record_id" swaggo:"false,记录ID"`
-	AssetID     string    `json:"asset_id" swaggo:"false,资产ID"`
+	GroupID     string    `json:"group_id" swaggo:"false,资产组ID"`
 	Status      int       `json:"status" swaggo:"false,状态：1:未租 2:锁定 3:已租 4:退租 5:作废 6:续签"`
 	ChangeDate  time.Time `json:"change_date" swaggo:"false,状态变更日期"`
 	Reason      string    `json:"reason" swaggo:"false,原因"`

@@ -3,7 +3,7 @@ package schema
 // AssetRentPayment 资产租金缴费明细
 type AssetRentPayment struct {
 	RecordID       string `json:"record_id" swaggo:"false,记录ID"`
-	AssetID        string `json:"asset_id" swaggo:"false,资产ID"`
+	GroupID        string `json:"group_id" swaggo:"false,资产组ID"`
 	PaymentYear    int    `json:"payment_year" swaggo:"false,缴费年"`
 	PaymentMonth   int    `json:"payment_month" swaggo:"false,缴费月"`
 	PaymentDay     int    `json:"payment_day" swaggo:"false,缴费日"`
