@@ -93,3 +93,17 @@ func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema
 
 	return items, nil
 }
+
+// QueryOperationalIndicator 查询运营指标
+func (a *Statistic) QueryOperationalIndicator(ctx context.Context, params schema.OperationalIndicatorStatisticQueryParam) (*schema.OperationalIndicatorStatistic, error) {
+	item := &schema.OperationalIndicatorStatistic{
+		ContractNum:                    30000,
+		ThisMonthAddContractNum:        100,
+		ThisMonthWithdrawalContractNum: 200,
+		ThisMonthRenewContractNum:      300,
+		EnterpriseNum:                  1500,
+		MerchantNum:                    3000,
+	}
+
+	return item, nil
+}

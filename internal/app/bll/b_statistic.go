@@ -15,4 +15,6 @@ type IStatistic interface {
 	ExportProject(ctx context.Context, params schema.ProjectStatisticQueryParam) (*bytes.Buffer, error)
 	// 查询各分类收入
 	QueryIncomeClassification(ctx context.Context, params schema.IncomeClassificationStatisticQueryParam) ([]*schema.IncomeClassificationStatistic, error)
+	// 查询运营指标
+	QueryOperationalIndicator(ctx context.Context, params schema.OperationalIndicatorStatisticQueryParam) (*schema.OperationalIndicatorStatistic, error)
 }

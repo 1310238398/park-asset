@@ -130,3 +130,25 @@ func (a *Statistic) QueryIncomeClassification(c *gin.Context) {
 
 	ginplus.ResList(c, items)
 }
+
+// QueryOperationalIndicator 查询资产各分类收入
+// @Summary 查询资产各分类收入
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param year query int true "年份"
+// @Success 200 schema.OperationalIndicatorStatistic
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/statistics/operational_indicator
+func (a *Statistic) QueryOperationalIndicator(c *gin.Context) {
+	var params schema.OperationalIndicatorStatisticQueryParam
+	params.Year = util.S(c.Query("year")).DefaultInt(0)
+
+	item, err := a.StatisticBll.QueryOperationalIndicator(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResSuccess(c, item)
+}

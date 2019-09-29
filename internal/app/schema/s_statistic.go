@@ -66,3 +66,18 @@ type IncomeClassificationStatistic struct {
 	AssetTypeName string `json:"asset_type_name" swaggo:"false,资产类型名称"`
 	ActualAmount  int    `json:"actual_amount" swaggo:"false,实收金额"`
 }
+
+// OperationalIndicatorStatisticQueryParam 运营指标查询参数
+type OperationalIndicatorStatisticQueryParam struct {
+	Year int
+}
+
+// OperationalIndicatorStatistic 运营指标统计项
+type OperationalIndicatorStatistic struct {
+	ContractNum                    int `json:"contract_num" swaggo:"false,合同数"`
+	ThisMonthAddContractNum        int `json:"this_month_add_contract_num" swaggo:"false,本月新签合同数"`
+	ThisMonthWithdrawalContractNum int `json:"this_month_withdrawal_contract_num" swaggo:"false,本月退租合同数"`
+	ThisMonthRenewContractNum      int `json:"this_month_renew_contract_num" swaggo:"false,本月续签合同数"`
+	EnterpriseNum                  int `json:"enterprise_num" swaggo:"false,入住企业总数"`
+	MerchantNum                    int `json:"merchant_num" swaggo:"false,入住商家总数"`
+}
