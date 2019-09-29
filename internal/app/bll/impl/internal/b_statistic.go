@@ -121,3 +121,59 @@ func (a *Statistic) QueryOverview(ctx context.Context, params schema.OverviewSta
 
 	return item, nil
 }
+
+// QueryQuarterFinanciallIndicator 季度财务指标统计
+func (a *Statistic) QueryQuarterFinanciallIndicator(ctx context.Context, params schema.QuarterFinanciallIndicatorStatisticQueryParam) (*schema.QuarterFinanciallIndicatorStatistic, error) {
+	item := &schema.QuarterFinanciallIndicatorStatistic{
+		PlanIncome:   1000 * 10000 * 100,
+		ActualIncome: 900 * 10000 * 100,
+	}
+
+	return item, nil
+}
+
+// QueryFinanciallIndicator 财务指标统计
+func (a *Statistic) QueryFinanciallIndicator(ctx context.Context, params schema.FinanciallIndicatorStatisticQueryParam) ([]*schema.FinanciallIndicatorStatistic, error) {
+	var items []*schema.FinanciallIndicatorStatistic
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 1,
+		Quarter:     1,
+		Amount:      1000 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 1,
+		Quarter:     2,
+		Amount:      2000 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 1,
+		Quarter:     3,
+		Amount:      3000 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 1,
+		Quarter:     4,
+		Amount:      4000 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 2,
+		Quarter:     1,
+		Amount:      600 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 2,
+		Quarter:     2,
+		Amount:      900 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 2,
+		Quarter:     3,
+		Amount:      1000 * 10000 * 100,
+	})
+	items = append(items, &schema.FinanciallIndicatorStatistic{
+		PaymentType: 2,
+		Quarter:     4,
+		Amount:      1500 * 10000 * 100,
+	})
+	return items, nil
+}

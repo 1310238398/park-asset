@@ -174,3 +174,53 @@ func (a *Statistic) QueryOverview(c *gin.Context) {
 
 	ginplus.ResSuccess(c, item)
 }
+
+// QueryQuarterFinanciallIndicator 查询季度财务指标统计
+// @Summary 查询季度财务指标统计
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param year query int true "年份"
+// @Param quarter query int true "季度"
+// @Param org_id query string false "组织ID"
+// @Success 200 schema.QuarterFinanciallIndicatorStatistic
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/statistics/quarter_financiall_indicator
+func (a *Statistic) QueryQuarterFinanciallIndicator(c *gin.Context) {
+	var params schema.QuarterFinanciallIndicatorStatisticQueryParam
+	params.Year = util.S(c.Query("year")).DefaultInt(0)
+	params.Quarter = util.S(c.Query("quarter")).DefaultInt(0)
+	params.OrgID = c.Query("org_id")
+
+	item, err := a.StatisticBll.QueryQuarterFinanciallIndicator(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResSuccess(c, item)
+}
+
+// QueryFinanciallIndicator 查询财务指标统计
+// @Summary 查询财务指标统计
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param year query int true "年份"
+// @Param org_id query string false "组织ID"
+// @Success 200 []schema.FinanciallIndicatorStatistic
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/statistics/financiall_indicator
+func (a *Statistic) QueryFinanciallIndicator(c *gin.Context) {
+	var params schema.FinanciallIndicatorStatisticQueryParam
+	params.Year = util.S(c.Query("year")).DefaultInt(0)
+	params.OrgID = c.Query("org_id")
+
+	items, err := a.StatisticBll.QueryFinanciallIndicator(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, items)
+}

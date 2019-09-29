@@ -209,6 +209,8 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.GET("/statistics/income_classification", cStatistic.QueryIncomeClassification)
 			v1.GET("/statistics/operational_indicator", cStatistic.QueryOperationalIndicator)
 			v1.GET("/statistics/overview", cStatistic.QueryOverview)
+			v1.GET("/statistics/quarter_financiall_indicator", cStatistic.QueryQuarterFinanciallIndicator)
+			v1.GET("/statistics/financiall_indicator", cStatistic.QueryFinanciallIndicator)
 		}
 
 		return nil

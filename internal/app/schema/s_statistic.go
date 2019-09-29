@@ -58,7 +58,8 @@ type ProjectStatisticQueryResult struct {
 
 // IncomeClassificationStatisticQueryParam 收入分类占比查询参数
 type IncomeClassificationStatisticQueryParam struct {
-	Year int
+	Year  int
+	OrgID string
 }
 
 // IncomeClassificationStatistic 收入分类占比统计项
@@ -84,7 +85,8 @@ type OperationalIndicatorStatistic struct {
 
 // OverviewStatisticQueryParam 概览查询参数
 type OverviewStatisticQueryParam struct {
-	Year int
+	Year  int
+	OrgID string
 }
 
 // OverviewStatistic 概览统计项
@@ -95,4 +97,43 @@ type OverviewStatistic struct {
 	BuildingArea       int `json:"building_area" swaggo:"false,建筑总面积"`
 	RentArea           int `json:"rent_area" swaggo:"false,建筑计租总面积"`
 	RentedArea         int `json:"rented_area" swaggo:"false,建筑已租面积"`
+}
+
+// QuarterFinanciallIndicatorStatisticQueryParam 季度财务指标查询参数
+type QuarterFinanciallIndicatorStatisticQueryParam struct {
+	Year    int
+	Quarter int
+	OrgID   string
+}
+
+// QuarterFinanciallIndicatorStatistic 季度财务指标统计项
+type QuarterFinanciallIndicatorStatistic struct {
+	PlanIncome   int `json:"plan_income" swaggo:"false,计划收入"`
+	ActualIncome int `json:"actual_income" swaggo:"false,实际收入"`
+}
+
+// FinanciallIndicatorStatisticQueryParam 财务指标查询参数
+type FinanciallIndicatorStatisticQueryParam struct {
+	Year  int
+	OrgID string
+}
+
+// FinanciallIndicatorStatistic 财务指标统计项
+type FinanciallIndicatorStatistic struct {
+	PaymentType int `json:"payment_type" swaggo:"false,缴费类型：1应收 2实收"`
+	Quarter     int `json:"quarter" swaggo:"false,季度"`
+	Amount      int `json:"amount" swaggo:"false,金额"`
+}
+
+// CompanyStatisticQueryParam 子公司查询参数
+type CompanyStatisticQueryParam struct {
+	Year int
+}
+
+// CompanyStatistic 子公司统计项
+type CompanyStatistic struct {
+	OrgID        string `json:"org_id" swaggo:"false,公司ID"`
+	OrgName      string `json:"org_name" swaggo:"false,公司名称"`
+	PlanIncome   int    `json:"plan_income" swaggo:"false,计划收入"`
+	ActualIncome int    `json:"actual_income" swaggo:"false,实际收入"`
 }
