@@ -34,6 +34,9 @@ ol {
 
 .ant-modal.lightModal {
   :global {
+    .ant-modal {
+      top: 50px !important;
+    }
     .ant-modal-title {
       color: #ffc400;
     }
@@ -73,8 +76,8 @@ ol {
   color: #78b4fb;
   :global {
     .ant-select-selection {
-      background-color: #0c1830;
-      border: 1px solid #0c1830;
+      background-color: transparent !important;
+      border: 0px solid #0c1830 !important;
       border-radius: 30px;
       height: 10px;
     }
@@ -97,6 +100,14 @@ ol {
       // display: block;
       // padding-top: 5px;
       // padding-left: 10px;
+    }
+    .ant-select-dropdown-menu-item {
+      padding: 5px 5px !important;
+    }
+    .ant-select-focused.ant-select-selection,
+    .ant-select-selection:focus,
+    .ant-select-selection:active {
+      border-color: none !important;
     }
   }
 }
