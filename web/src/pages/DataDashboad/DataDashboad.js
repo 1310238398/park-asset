@@ -20,12 +20,27 @@ class DataDashboad extends PureComponent {
     year: '2019',
     name: '',
   };
+
+  constructor(props) {
+    super(props);
+  }
+
   componentDidMount() {
+    this.loadMap();
+
     this.dispatch({
       type: 'dataDashboad/queryCompanyList',
       params: { year: this.state.year },
     });
   }
+
+  loadMap = () => {
+    var map = new window.AMap.Map('mainMap', {
+      center: [117.000923, 36.675807],
+      zoom: 14,
+      mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
+    });
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -126,7 +141,9 @@ class DataDashboad extends PureComponent {
             <div className={styles.yearPlan}>
               <NDJHSR params={{ year }} />
             </div>
-            <div className={styles.mapData}>显示地图数据-田总区域</div>
+            <div className={styles.mapData}>
+              <div id="mainMap" style={{ width: '100%', height: '100%' }}></div>
+            </div>
             <div>
               <XMGK params={{ year }} />
             </div>
