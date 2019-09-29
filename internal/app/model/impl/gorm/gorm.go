@@ -44,6 +44,7 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.CarChanger),
 		new(entity.FactoryBuilding),
 		new(entity.Plot),
+		new(entity.AssetGroup),
 	).Error
 }
 
@@ -79,5 +80,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewFactoryBuilding, dig.As(new(model.IFactoryBuilding)))
 	container.Provide(imodel.NewPlot, dig.As(new(model.IPlot)))
 	container.Provide(imodel.NewStatistic, dig.As(new(model.IStatistic)))
+	container.Provide(imodel.NewAssetGroup, dig.As(new(model.IAssetGroup)))
 	return nil
 }
