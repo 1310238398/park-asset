@@ -15,23 +15,23 @@ export default {
           type: 'changeShowCompany',
           payload: true,
         }),
-        put({
-          type: 'fetchFormCompany',
-          payload: { record_id: payload.id, year: payload.year },
-        }),
+        // put({
+        //   type: 'fetchFormCompany',
+        //   payload: { record_id: payload.id, year: payload.year },
+        // }),
         put({
           type: 'saveCompanyID',
           payload: payload.id,
         }),
       ];
     },
-    *fetchFormCompany({ payload }, { call, put }) {
-      const response = yield call(dataDashboadService.queryCompanyOne, payload);
-      yield put({
-        type: 'saveFormDataCompany',
-        payload: response,
-      });
-    },
+    // *fetchFormCompany({ payload }, { call, put }) {
+    //   const response = yield call(dataDashboadService.queryCompanyOne, payload);
+    //   yield put({
+    //     type: 'saveFormDataCompany',
+    //     payload: response,
+    //   });
+    // },
 
     // 查询子公司列表
     *queryCompanyList({ payload }, { call, put }) {

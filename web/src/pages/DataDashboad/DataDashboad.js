@@ -176,18 +176,18 @@ class DataDashboad extends PureComponent {
                     }}
                     percent={v.actual_income / v.plan_income}
                     showInfo
-                    className="cirleDb"
-                    width="6.26vw"
-                    height="6.53vh"
-                    format={percent => (
-                      <span style={{ color: '#fff', fontSize: 12 }}>
+                    width="8vh"
+                    format={() => (
+                      <span style={{ color: '#fff', fontSize: 9 }}>
                         已完成
                         <br />
-                        {v.actual_income / 10000} 万元
+                        {(v.actual_income / (10000 * 100)).toFixed(0)} 万元
                       </span>
                     )}
                   />
-                  <p className={styles.companyPlan}>年入收入计划 {v.plan_income / 10000}万元</p>
+                  <p className={styles.companyPlan}>
+                    年入收入计划 {v.plan_income / (10000 * 100)}万元
+                  </p>
                 </div>
               );
             })}

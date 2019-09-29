@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Statistic } from 'antd';
 import { connect } from 'dva';
 import { queryQuarterFinanciall } from '@/services/dataDashboad';
+import { formatNumber } from '@/utils/utils';
 import styles from './DataDashboad.less';
 
 @connect(({ dataDashboad, loading }) => ({
@@ -12,16 +13,18 @@ class CWZBJK extends PureComponent {
   state = {
     actual_income: 0, //年度实际收入
     plan_income: 0, // 年度计划收入
+    sf_rate: 0,
+    ds_income: 0,
   };
   componentDidMount() {
     const { params } = this.props;
     queryQuarterFinanciall(params).then(data => {
-      if (data.actual_incomeactual_income !== 0) {
-        this.setState({ actual_income: data.actual_income / 10000 });
-      }
-      if (data.plan_income !== 0) {
-        this.setState({ plan_income: data.plan_income / 10000 });
-      }
+      this.setState({
+        actual_income: formatNumber(data.actual_income, 100 * 10000, 2),
+        plan_income: formatNumber(data.plan_income, 100 * 10000, 2),
+        sf_rate: formatNumber((data.actual_income / data.plan_income) * 100, 0, 2),
+        ds_income: formatNumber(data.plan_income - data.actual_income, 100 * 10000, 2),
+      });
     });
   }
 
@@ -31,7 +34,7 @@ class CWZBJK extends PureComponent {
   };
 
   render() {
-    const { actual_income, plan_income } = this.state;
+    const { actual_income, plan_income, sf_rate, ds_income } = this.state;
     return (
       <div className={styles.finalC}>
         <div className={styles.dourF}>
@@ -43,11 +46,11 @@ class CWZBJK extends PureComponent {
           <p className={styles.jidu}>本季度实收</p>
         </div>
         <div className={styles.dourF}>
-          <p className={styles.jiduData}>{((actual_income / plan_income) * 100).toFixed(2)}%</p>
+          <p className={styles.jiduData}>{sf_rate}%</p>
           <p className={styles.jidu}>本季度收费率</p>
         </div>
         <div className={styles.dourF}>
-          <p className={styles.jiduData}>{plan_income - actual_income}万</p>
+          <p className={styles.jiduData}>{ds_income}万</p>
           <p className={styles.jidu}>本季度未收</p>
         </div>
       </div>

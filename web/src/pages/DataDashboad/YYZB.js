@@ -28,7 +28,7 @@ class YYZB extends React.Component {
         result = data.list.map(item => {
           return {
             quarter: this.renderState(item.quarter),
-            count: item.amount / 10000,
+            count: item.amount / (10000 * 100),
             type: item.payment_type === 1 ? '应收' : '实收',
           };
         });

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Statistic } from 'antd';
 import { connect } from 'dva';
 import { queryOverview } from '@/services/dataDashboad';
+import { formatNumber } from '@/utils/utils';
 import styles from './DataDashboad.less';
 
 @connect(({ dataDashboad, loading }) => ({
@@ -16,12 +17,10 @@ class NDJHSR extends PureComponent {
   componentDidMount() {
     const { params } = this.props;
     queryOverview(params).then(data => {
-      if (data.annual_actual_income !== 0) {
-        this.setState({ annual_actual_income: data.annual_actual_income / 100000000 });
-      }
-      if (data.annual_plan_income !== 0) {
-        this.setState({ annual_plan_income: data.annual_plan_income / 100000000 });
-      }
+      this.setState({
+        annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 * 10000, 2),
+        annual_plan_income: formatNumber(data.annual_plan_income, 100 * 10000 * 10000, 2),
+      });
     });
   }
 

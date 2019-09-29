@@ -49,3 +49,25 @@ export function checkPhoneNum(_, value, callback) {
   }
   callback();
 }
+
+// 格式化数值
+export function formatNumber(v, b, f) {
+  const formatDot = function(v) {
+    const s = v.toString();
+    if (s.indexOf('.') > -1) {
+      const ss = s.split('.');
+      if (ss[1].length > 2) {
+        return v.toFixed(2);
+      }
+    }
+    return s;
+  };
+
+  if (v === 0) {
+    return 0;
+  } else if (b > 0) {
+    return formatDot(v / b);
+  }
+
+  return formatDot(v);
+}
