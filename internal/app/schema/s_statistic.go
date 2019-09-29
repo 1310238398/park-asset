@@ -55,3 +55,14 @@ type ProjectStatisticQueryResult struct {
 	Data       []*ProjectStatistic
 	PageResult *PaginationResult
 }
+
+// IncomeClassificationStatisticQueryParam 收入分类占比查询参数
+type IncomeClassificationStatisticQueryParam struct {
+	Year int
+}
+
+// IncomeClassificationStatistic 收入分类占比统计项
+type IncomeClassificationStatistic struct {
+	AssetTypeName string `json:"asset_type_name" swaggo:"false,资产类型名称"`
+	ActualAmount  int    `json:"actual_amount" swaggo:"false,实收金额"`
+}

@@ -58,3 +58,38 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 
 	return buf, nil
 }
+
+// QueryIncomeClassification 查询各分类收入
+func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema.IncomeClassificationStatisticQueryParam) ([]*schema.IncomeClassificationStatistic, error) {
+	var items []*schema.IncomeClassificationStatistic
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "写字楼",
+		ActualAmount:  100000000,
+	})
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "商铺",
+		ActualAmount:  90000000,
+	})
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "酒店",
+		ActualAmount:  50000000,
+	})
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "公寓",
+		ActualAmount:  40000000,
+	})
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "农贸市场",
+		ActualAmount:  30000000,
+	})
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "车改商",
+		ActualAmount:  20000000,
+	})
+	items = append(items, &schema.IncomeClassificationStatistic{
+		AssetTypeName: "厂房",
+		ActualAmount:  70000000,
+	})
+
+	return items, nil
+}
