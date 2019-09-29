@@ -445,6 +445,13 @@ export default {
         });
       }
     },
+    *delUnit({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.delBuild, payload);
+      if (response.status === 'OK') {
+        message.success('删除成功');
+        yield put({ type: 'fetchUnit' });
+      }
+    },
     // 楼层部分数据
     *floorRoute({ payload }, { put }) {
       yield put(
@@ -802,11 +809,11 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.assetDatamaint.formType);
+      const formType = yield select(state => state.assetDatamaint.formTypeFloor);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formID);
+        params.record_id = yield select(state => state.assetDatamaint.formIDFloor);
         response = yield call(assetDatamaintService.updateBuild, params);
       } else {
         response = yield call(assetDatamaintService.createBuild, params);
@@ -827,6 +834,15 @@ export default {
         yield put({
           type: 'fetchFloor',
         });
+      }
+    },
+
+    // 删除楼层
+    *delFloor({ payload }, { call, put }) {
+      const response = yield call(assetDatamaintService.delBuild, payload);
+      if (response.status === 'OK') {
+        message.success('删除成功');
+        yield put({ type: 'fetchFloor' });
       }
     },
   },

@@ -203,7 +203,7 @@ class AssetUnitMaint extends PureComponent {
 
   handleDelOKClick(id) {
     this.dispatch({
-      type: 'assetDatamaint/del',
+      type: 'assetDatamaint/delUnit',
       payload: { record_id: id },
     });
     this.clearSelectRows();

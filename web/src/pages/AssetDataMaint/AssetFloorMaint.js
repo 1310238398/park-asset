@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Card, Form, Row, Col, Table, Modal, Tag } from 'antd';
 import PButton from '@/components/PermButton';
 import AssetFloorEditMaint from './AssetFloor/AssetFloorEditMaint';
-import AssetUnitShowMaint from './AssetUnitShowMaint';
+import AssetFloorShowMaint from './AssetFloor/AssetFloorShowMaint';
 import styles from './AssetDataMaint.less';
 
 @connect(state => ({
@@ -202,7 +202,7 @@ class AssetFloorMaint extends PureComponent {
 
   handleDelOKClick(id) {
     this.dispatch({
-      type: 'assetDatamaint/del',
+      type: 'assetDatamaint/delFloor',
       payload: { record_id: id },
     });
     this.clearSelectRows();
@@ -226,7 +226,7 @@ class AssetFloorMaint extends PureComponent {
       );
     }
     if (formTypeFloor === 'S') {
-      return <AssetUnitShowMaint onCancel={this.handleFormCancel} />;
+      return <AssetFloorShowMaint onCancel={this.handleFormCancel} />;
     }
     return <React.Fragment></React.Fragment>;
   }
@@ -247,7 +247,7 @@ class AssetFloorMaint extends PureComponent {
         width: 100,
       },
       {
-        title: '出租规模',
+        title: '是否整租',
         dataIndex: 'is_all_rent',
         width: 150,
         render: val => {
@@ -255,9 +255,9 @@ class AssetFloorMaint extends PureComponent {
             return '';
           }
           if (val === 1) {
-            return '整层';
+            return '是';
           }
-          return '非整层';
+          return '否';
         },
       },
       {

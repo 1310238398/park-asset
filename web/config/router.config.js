@@ -81,6 +81,15 @@ export default [
         ],
       },
       {
+        path: 'assetssituation',
+        routes: [
+          {
+            path: '/assetssituation/assetssituation',
+            component: './AssetsSituation/AssetsSituationList',
+          },
+        ],
+      },
+      {
         path: 'datadashboad',
         routes: [
           {
