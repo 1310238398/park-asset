@@ -44,7 +44,7 @@ class DataCompanyShow extends PureComponent {
             <div className={styles.fenlei}>
               <div className={styles.assetProTitle}>资产分类收入占比</div>
               <div className={styles.leftTopOneChart}>
-                <JTCWJB height={260} params={{ year: year, org_id: org_id }} />
+                <JTCWJB height={250} params={{ year: year, org_id: org_id }} />
               </div>
             </div>
           </div>

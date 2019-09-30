@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import { Statistic, Select, Progress } from 'antd';
 import { connect } from 'dva';
 import topBg from '../../assets/topBg@2x.png';
+import pointIMG from '../../assets/ponint.png';
+import lineCompany from '../../../public/assets/companyFG@2x.png';
 import DataCompanyShow from './DataCompanyShow';
 import JTCWJB from './JTCWJB';
 import YYZB from './YYZB';
@@ -9,11 +11,13 @@ import JTYYZB from './JTYYZB';
 import NDJHSR from './NDJHSR';
 import XMGK from './XMGK';
 import CWZBJK from './CWZBJK';
+import ChilrenWC from './ChilrenWC';
 import styles from './DataDashboad.less';
 
-@connect(({ dataDashboad, loading }) => ({
-  dataDashboad,
-  loading: loading.models.dataDashboad,
+@connect(state => ({
+  dataDashboad: state.dataDashboad,
+  projectManage: state.projectManage,
+  loading: state.loading.models.dataDashboad,
 }))
 class DataDashboad extends PureComponent {
   state = {
@@ -25,21 +29,49 @@ class DataDashboad extends PureComponent {
     super(props);
   }
 
-  componentDidMount() {
-    this.loadMap();
+  async componentDidMount() {
+    await this.dispatch({
+      type: 'projectManage/queryPlotList',
+    });
 
     this.dispatch({
       type: 'dataDashboad/queryCompanyList',
       params: { year: this.state.year },
     });
+    await this.loadMap();
   }
 
   loadMap = () => {
+    const {
+      projectManage: { poltList },
+    } = this.props;
+    console.log(poltList);
     var map = new window.AMap.Map('mainMap', {
       center: [117.000923, 36.675807],
       zoom: 14,
       mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
     });
+
+    var markers = []; //province见Demo引用的JS文件
+    for (var i = 0; i < poltList.length; i += 1) {
+      var marker;
+
+      var icon = new AMap.Icon({
+        // image: 'https://vdata.amap.com/icons/b18/1/2.png',
+        image: pointIMG,
+        size: new AMap.Size(38, 38),
+        // imageSize: new AMap.Size(38, 38),
+        imageOffset: new AMap.Pixel(-3, -3),
+      });
+      marker = new AMap.Marker({
+        icon: icon,
+        position: poltList[i].location.split(','),
+        offset: new AMap.Pixel(-12, -12),
+        zIndex: 101,
+        title: poltList[i].name,
+        map: map,
+      });
+    }
   };
 
   dispatch = action => {
@@ -123,7 +155,7 @@ class DataDashboad extends PureComponent {
         </div>
         <div className={styles.topCenter}>
           <div>{this.getYearSelect()}</div>
-          <span>济南高新控股集团资产运营数据看板</span>
+          <span className={styles.topMiddleTitle}>济南高新控股集团资产运营数据看板</span>
         </div>
         <div className={styles.middleCenter}>
           <div>
@@ -163,18 +195,17 @@ class DataDashboad extends PureComponent {
         <div className={styles.pageBottm}>
           {companyList &&
             companyList.map(v => {
-              return (
+              return [
                 <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
                   <p className={styles.companyName}>{v.org_name}</p>
-                  {/* <img src={topBg} className={styles.companyImg} alt="" /> */}
-                  {/* <ChilrenWC /> */}
+                  {/* <ChilrenWC data ={[v]}/> */}
                   <Progress
                     type="circle"
                     strokeColor={{
                       '0%': '#162A61',
                       '100%': '#0088CE',
                     }}
-                    percent={v.actual_income / v.plan_income}
+                    percent={(v.actual_income / v.plan_income) * 100}
                     showInfo
                     width="8vh"
                     format={() => (
@@ -186,10 +217,13 @@ class DataDashboad extends PureComponent {
                     )}
                   />
                   <p className={styles.companyPlan}>
-                    年入收入计划 {v.plan_income / (10000 * 100)}万元
+                    年收入计划 {v.plan_income / (10000 * 100)}万元
                   </p>
-                </div>
-              );
+                </div>,
+                <div className={styles.lineC}>
+                  <img src={lineCompany} className={styles.lineCompany} alt="" />
+                </div>,
+              ];
             })}
         </div>
         {this.renderDataCompanyShow()}

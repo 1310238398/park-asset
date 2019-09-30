@@ -10,12 +10,12 @@ import {
   Legend,
   // View,
   Guide,
-  // Shape,
+  Shape,
   // Facet,
   // Util,
 } from 'bizcharts';
 import DataSet from '@antv/data-set';
-
+const { Html, Arc, Line } = Guide;
 class ChilrenWC extends PureComponent {
   state = {
     data: [
@@ -31,8 +31,8 @@ class ChilrenWC extends PureComponent {
   };
   render() {
     const { Html } = Guide;
-    // const { data } = this.props;
-    const { data } = this.state;
+    const { data } = this.props;
+    //const { data } = this.state;
     const { DataView } = DataSet;
     const dv = new DataView();
     dv.source(data).transform({
@@ -49,49 +49,100 @@ class ChilrenWC extends PureComponent {
         },
       },
     };
+
+    Shape.registerShape('point', 'pointer', {
+      drawShape(cfg, group) {
+        let point = cfg.points[0]; // 获取第一个标记点
+        point = this.parsePoint(point);
+        const center = this.parsePoint({
+          // 获取极坐标系下画布中心点
+          x: 0,
+          y: 0,
+        });
+        // 绘制指针
+        group.addShape('line', {
+          attrs: {
+            x1: center.x,
+            y1: center.y,
+            x2: point.x,
+            y2: point.y - 20,
+            stroke: cfg.color,
+            lineWidth: 0,
+            lineCap: 'round',
+          },
+        });
+        return group.addShape('circle', {
+          attrs: {
+            x: center.x,
+            y: center.y,
+            r: 12,
+            stroke: cfg.color,
+            lineWidth: 0,
+            fill: '#0f1a38',
+          },
+        });
+      },
+    });
     return (
-      <Chart height={140} data={dv} scale={cols} forceFit>
-        <Coord type="theta" radius={0.3} innerRadius={0.8} />
-        <Axis name="percent" />
-        <Legend
-          position="right"
-          offsetY={-40}
-          offsetX={-10}
-          textStyle={{
-            fill: '#fff', // 文本的颜色
-            fontSize: '14', // 文本大小
+      <Chart height={100} data={data} scale={cols} padding={[0, 0, 0, 0]} forceFit>
+        <Coord
+          type="polar"
+          startAngle={(-9 / 8) * Math.PI}
+          endAngle={(1 / 8) * Math.PI}
+          radius={0.75}
+        />
+        <Axis
+          name="actual_income"
+          zIndex={2}
+          line={null}
+          label={{
+            offset: 0,
+            textStyle: {
+              fontSize: 24,
+              fill: '#0f1a38',
+              textAlign: 'center',
+            },
           }}
-          // itemWidth = {30}
         />
-        <Tooltip
-          showTitle={false}
-          itemTpl='<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
-        />
+        <Axis name="1" visible={false} />
         <Guide>
+          <Arc
+            zIndex={0}
+            start={[0, 1]}
+            end={[1, 1]}
+            style={{
+              // 底灰色
+              stroke: '#2931F1',
+              lineWidth: 18,
+              opacity: 0.09,
+            }}
+          />
+          <Arc
+            zIndex={1}
+            start={[0, 1]}
+            end={[data[0].actual_income, 1]}
+            style={{
+              // 底灰色
+              stroke: '#AB71E9',
+              lineWidth: 18,
+            }}
+          />
           <Html
-            position={['50%', '50%']}
-            html='<div style="color:#8c8c8c;font-size:1.16em;text-align: center;width: 10em;">主机<br><span>共</span><span style="color:#262626;font-size:2.5em">200</span>人</div>'
-            alignX="middle"
-            alignY="middle"
+            position={['50%', '95%']}
+            html={() =>
+              `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">已完成</p><p style="font-size: 10px;color: #fff;margin: 0;">${data[0]
+                .actual_income /
+                (10000 * 100)}万元</p></div>`
+            }
           />
         </Guide>
         <Geom
-          type="intervalStack"
-          position="percent"
-          color={['item', ['#162A61', '#0088CE']]}
-          tooltip={[
-            'item*count',
-            (k, v) => {
-              return {
-                name: k,
-                value: `${v}(万元)`,
-              };
-            },
-          ]}
-          style={{
-            lineWidth: 1,
-            stroke: '#fff',
-          }}
+          type="point"
+          position="actual_income*1"
+          shape="pointer"
+          color="#0f1a38"
+          active={false}
+          style={{ stroke: '#0f1a38', lineWidth: 0 }}
         />
       </Chart>
     );

@@ -35,7 +35,7 @@ class NDJHSR extends PureComponent {
       <div className={styles.yearPlanLeft}>
         <div className={styles.yearYse}>
           <div className={styles.yearSY}>年度计划收入&nbsp;&nbsp;(亿)</div>
-          <div>
+          <div className={styles.ndjhPlan}>
             <Statistic
               title=""
               value={annual_plan_income}
@@ -46,7 +46,7 @@ class NDJHSR extends PureComponent {
         </div>
         <div className={styles.yearYse}>
           <div className={styles.yearSY}>年度实际收入&nbsp;&nbsp;(亿)</div>
-          <div>
+          <div className={styles.ndjhPlan}>
             <Statistic
               title=""
               value={annual_actual_income}

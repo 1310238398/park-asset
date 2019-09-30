@@ -53,7 +53,10 @@ class JTCWJB extends React.Component {
         <Geom
           type="intervalStack"
           position="percent"
-          color={['item', ['#2B8AFF', '#6B12CC', '#B72DFF', '#2FCEA3', '#FFE361', '#FFAB61']]}
+          color={[
+            'item',
+            ['#2B8AFF', '#6B12CC', '#B72DFF', '#2FCEA3', '#FFE361', '#FFAB61', '#fb5050'],
+          ]}
           tooltip={[
             'item*percent',
             (item, percent) => {
