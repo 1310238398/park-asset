@@ -94,6 +94,7 @@
 .leftTopOneChart {
   margin-left: 1.9vw;
   padding-top: 1.68vh;
+  overflow: hidden;
 }
 .leftTopOneRight {
   background-image: url('/assets/jiankong@2x.png');
@@ -106,6 +107,7 @@
 .leftRightOneChart {
   // margin-left: 1.9vw;
   padding-top: 1.68vh;
+  overflow: hidden;
 }
 
 .leftLineArea {
@@ -156,11 +158,16 @@
   font-size: 1.66vh; // 18/1080*100
   font-weight: 400;
   color: rgba(255, 255, 255, 1);
+  margin-bottom: 3px;
+  overflow: hidden; /*超出部分隐藏*/
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+  white-space: nowrap; /*规定段落中的文本不进行换行 */
 }
 .companyLinst {
   padding-left: 2.47vw; //47/1920*100
   padding-top: 3.24vh; // 35/1080*100
   cursor: pointer;
+  width: 8.33vw;
 }
 .companyImg {
   width: 5.26vw; // 101/1920*100
@@ -171,6 +178,7 @@
 .companyPlan {
   color: #7ab7ff;
   font-size: 1.31vh; // 14/1080*100
+  margin-top: 3px;
 }
 .finalC {
   display: flex;
@@ -223,7 +231,7 @@
 }
 .yearPlan {
   display: flex;
-  height: 88%;
+  // height: 88%;
 }
 .yearYse {
   display: flex;
@@ -238,11 +246,17 @@
   margin-bottom: 4px;
 }
 .yearPlanLeft {
-  padding: 8.64vh 2.08vw 1.85vh 3.64vw;
+  padding: 5.64vh 2.08vw 1.85vh 3.64vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
 }
 .mapData {
   color: rgba(255, 255, 255, 1);
-  border: 1px solid;
+  height: 60%;
+  overflow: hidden;
+  padding: 5px 15px;
 }
 // 弹窗样式
 .FloorContentWin {
@@ -295,4 +309,9 @@
 .darkDropdown {
   color: #78b4fb;
   background-color: #78b4fb;
+  :global {
+    .ant-select-dropdown-menu-item {
+      padding: 5px 5px !important;
+    }
+  }
 }
