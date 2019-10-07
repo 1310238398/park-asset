@@ -1227,13 +1227,13 @@
 		<entity schema="parkassets" name="pa_organization" color="C4E0F9" x="512" y="1232" />
 		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="224" y="1248" />
 		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1600" y="768" />
-		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="832" y="352" />
 		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="832" y="880" />
-		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1056" y="432" />
-		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1296" y="992" />
 		<entity schema="parkassets" name="pa_asset_group" color="E6CCFF" x="1296" y="768" />
+		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1056" y="432" />
 		<entity schema="parkassets" name="pa_asset_group_detail" color="E6CCFF" x="1056" y="768" />
 		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="1936" y="368" />
+		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1296" y="992" />
+		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="832" y="352" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />
