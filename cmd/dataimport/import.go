@@ -6,6 +6,7 @@ import (
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/util"
+	"strings"
 )
 
 // 执行数据导入
@@ -105,6 +106,24 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 		CustomerContactTel:     dcItem.GetValue(row, "CustomerContactTel"),
 		CustomerContactEmail:   dcItem.GetValue(row, "CustomerContactEmail"),
 		CustomerContactAddress: dcItem.GetValue(row, "CustomerContactAddress"),
+	}
+
+	// 处理合同租赁起止日期
+	if item.LeaseEnd == "" &&
+		item.LeaseStart != "" &&
+		strings.Index(item.LeaseStart, "-") > -1 {
+		ss := strings.Split(item.LeaseStart, "-")
+		item.LeaseStart = ss[0]
+		item.LeaseEnd = ss[1]
+	}
+
+	// 处理免租期起止日期
+	if item.RentFreeEnd == "" &&
+		item.RentFreeStart != "" &&
+		strings.Index(item.RentFreeStart, "-") > -1 {
+		ss := strings.Split(item.RentFreeStart, "-")
+		item.RentFreeStart = ss[0]
+		item.RentFreeEnd = ss[1]
 	}
 
 	quarterIdxes := dcItem.GetIndexes("Quarter")
