@@ -126,7 +126,11 @@ func (a *DataConfigItem) GetIndex(key string) int {
 func (a *DataConfigItem) GetValue(data []string, key string) string {
 	m := a.ToMapItem()
 	if v, ok := m[key]; ok && len(v) > 0 {
-		return data[v[0]]
+		val := data[v[0]]
+		if val == "无" {
+			val = ""
+		}
+		return val
 	}
 	return ""
 }
