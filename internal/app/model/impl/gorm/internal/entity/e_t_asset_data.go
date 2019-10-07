@@ -186,11 +186,11 @@ func (a TAssetData) ToSchemaTAssetData() *schema.TAssetData {
 	return item
 }
 
-// TAssetData 资产数据列表
-type TAssetData []*TAssetData
+// TAssetDatas 资产数据列表
+type TAssetDatas []*TAssetData
 
 // ToSchemaTAssetData 转换为资产数据对象列表
-func (a TAssetData) ToSchemaTAssetData() []*schema.TAssetData {
+func (a TAssetDatas) ToSchemaTAssetData() []*schema.TAssetData {
 	list := make([]*schema.TAssetData, len(a))
 	for i, item := range a {
 		list[i] = item.ToSchemaTAssetData()

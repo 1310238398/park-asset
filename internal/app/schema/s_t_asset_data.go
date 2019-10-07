@@ -63,9 +63,6 @@ type TAssetDataQueryOptions struct {
 
 // TAssetDataQueryResult 查询结果
 type TAssetDataQueryResult struct {
-	Data       TAssetData
+	Data       []*TAssetData
 	PageResult *PaginationResult
 }
-
-// TAssetData 资产数据列表
-type TAssetData []*TAssetData
