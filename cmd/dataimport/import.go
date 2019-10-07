@@ -13,16 +13,40 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 	var err error
 	container.Invoke(func(mTAssetData model.ITAssetData, mTrans model.ITrans) {
 		err = execTrans(context.Background(), mTrans, func(ctx context.Context) error {
+			var preItem schema.TAssetData
+
 			for i, row := range excelData[dcItem.SheetIndex] {
 				if i < dcItem.RowStartIndex || len(row) < dcItem.MaxIndex {
 					continue
 				}
+
 				item := getDataItem(dcItem, row)
+				if item.ProjectName == "" {
+					item.ProjectName = preItem.ProjectName
+				}
+				if item.AssetName == "" {
+					item.AssetName = preItem.AssetName
+				}
+				if item.BuildingName == "" {
+					item.BuildingName = preItem.BuildingName
+				}
+				if item.UnitName == "" {
+					item.UnitName = preItem.UnitName
+				}
+				if item.LayerName == "" {
+					item.LayerName = preItem.LayerName
+				}
+				if item.HouseName == "" {
+					item.HouseName = preItem.HouseName
+				}
+
 				err := mTAssetData.Create(ctx, item)
 				if err != nil {
 					return err
 				}
+				preItem = item
 			}
+
 			return nil
 		})
 	})
