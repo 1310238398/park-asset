@@ -17,9 +17,11 @@ type SchemaAssetGroup schema.AssetGroup
 // ToAssetGroup 转换为资产组管理实体
 func (a SchemaAssetGroup) ToAssetGroup() *AssetGroup {
 	item := &AssetGroup{
-		RecordID: &a.RecordID,
-		AssetID:  &a.AssetID,
-		Creator:  &a.Creator,
+		RecordID:     &a.RecordID,
+		BuildingArea: &a.BuildingArea,
+		RentArea:     &a.RentArea,
+		RentStatus:   &a.RentStatus,
+		Creator:      &a.Creator,
 	}
 	return item
 }
@@ -27,9 +29,11 @@ func (a SchemaAssetGroup) ToAssetGroup() *AssetGroup {
 // AssetGroup 资产组管理实体
 type AssetGroup struct {
 	Model
-	RecordID *string `gorm:"column:record_id;size:36;index;"` // 记录ID
-	AssetID  *string `gorm:"column:asset_id;size:36;index;"`  // 资产ID
-	Creator  *string `gorm:"column:creator;size:36;index;"`   // 创建者
+	RecordID     *string `gorm:"column:record_id;size:36;index;"` // 记录ID
+	BuildingArea *int    `gorm:"column:building_area;"`           // 建筑面积
+	RentArea     *int    `gorm:"column:rent_area;"`               // 计租面积
+	RentStatus   *int    `gorm:"column:rent_status;index;"`       // 出租状态:1未租 2锁定 3已租
+	Creator      *string `gorm:"column:creator;size:36;index;"`   // 创建者
 }
 
 func (a AssetGroup) String() string {
@@ -44,9 +48,11 @@ func (a AssetGroup) TableName() string {
 // ToSchemaAssetGroup 转换为资产组管理对象
 func (a AssetGroup) ToSchemaAssetGroup() *schema.AssetGroup {
 	item := &schema.AssetGroup{
-		RecordID: *a.RecordID,
-		AssetID:  *a.AssetID,
-		Creator:  *a.Creator,
+		RecordID:     *a.RecordID,
+		BuildingArea: *a.BuildingArea,
+		RentArea:     *a.RentArea,
+		RentStatus:   *a.RentStatus,
+		Creator:      *a.Creator,
 	}
 	return item
 }
