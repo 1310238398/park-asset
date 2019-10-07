@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gxt-park-assets/internal/app"
 	"gxt-park-assets/internal/app/config"
+	"log"
 	"os"
 	"strings"
 
@@ -33,7 +34,7 @@ func main() {
 		panic("无效的配置文件")
 	}
 
-	fmt.Println("读取excel数据...")
+	log.Println("读取excel数据...")
 	excelData, err := parseExcel(dataFile)
 	handleError(err)
 
@@ -41,7 +42,7 @@ func main() {
 	handleError(err)
 
 	container = dig.New()
-	fmt.Println("建立数据库连接...")
+	log.Println("建立数据库连接...")
 	callback, err := app.InitStore(container)
 	handleError(err)
 	if callback != nil {
@@ -51,12 +52,12 @@ func main() {
 	dataCfg, err := parseDataConfigItems(dataConfigFile)
 	handleError(err)
 
-	fmt.Printf("开始执行数据导入，子公司:[%s]，资产类型:[%d],工作表:[%d]...\n", dataCfg.CompanyName, dataCfg.AssetType, dataCfg.SheetIndex)
+	log.Printf("开始执行数据导入，子公司:[%s]，资产类型:[%d],工作表:[%d]...\n", dataCfg.CompanyName, dataCfg.AssetType, dataCfg.SheetIndex)
 
 	err = execImport(dataCfg, excelData)
 	handleError(err)
 
-	fmt.Println("数据导入完成")
+	log.Println("数据导入完成")
 }
 
 func handleError(err error) {
@@ -67,10 +68,12 @@ func handleError(err error) {
 
 // DataConfigItem 数据配置项
 type DataConfigItem struct {
-	CompanyName string `json:"company_name"`
-	AssetType   int    `json:"asset_type"`
-	SheetIndex  int    `json:"sheet_index"`
-	Items       []struct {
+	CompanyName   string `json:"company_name"`
+	AssetType     int    `json:"asset_type"`
+	SheetIndex    int    `json:"sheet_index"`
+	RowStartIndex int    `json:"row_start_index"`
+	MaxIndex      int    `json:"max_index"`
+	Items         []struct {
 		Key   string `json:"key"`
 		Index string `json:"index"`
 	}
@@ -84,9 +87,9 @@ func (a *DataConfigItem) ConvToIndexes(c string) []int {
 
 	var idx []int
 	midx := make(map[string]int)
-	for i := 'A'; i <= 'Z'; i++ {
-		midx[fmt.Sprintf("%c", i)] = int(i)
-		midx[fmt.Sprintf("A%c", i)] = 26 + int(i)
+	for i := 0; i < 26; i++ {
+		midx[fmt.Sprintf("%c", i+'A')] = i
+		midx[fmt.Sprintf("A%c", i+'A')] = 26 + i
 	}
 
 	if strings.Index(c, "-") > -1 {
@@ -117,6 +120,15 @@ func (a *DataConfigItem) GetIndex(key string) int {
 		return v[0]
 	}
 	return 0
+}
+
+// GetValue 获取值
+func (a *DataConfigItem) GetValue(data []string, key string) string {
+	m := a.ToMapItem()
+	if v, ok := m[key]; ok && len(v) > 0 {
+		return data[v[0]]
+	}
+	return ""
 }
 
 // GetIndexes 获取键索引

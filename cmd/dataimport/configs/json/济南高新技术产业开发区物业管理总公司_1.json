@@ -2,6 +2,8 @@
   "company_name": "济南高新技术产业开发区物业管理总公司",
   "asset_type": 1,
   "sheet_index": 1,
+  "row_start_index": 4,
+  "max_index": 45,
   "items": [
     {
       "key": "ProjectName",

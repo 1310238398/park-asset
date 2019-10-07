@@ -13,7 +13,10 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 	var err error
 	container.Invoke(func(mTAssetData model.ITAssetData, mTrans model.ITrans) {
 		err = execTrans(context.Background(), mTrans, func(ctx context.Context) error {
-			for _, row := range excelData[dcItem.SheetIndex] {
+			for i, row := range excelData[dcItem.SheetIndex] {
+				if i < dcItem.RowStartIndex || len(row) < dcItem.MaxIndex {
+					continue
+				}
 				item := getDataItem(dcItem, row)
 				err := mTAssetData.Create(ctx, item)
 				if err != nil {
@@ -49,35 +52,35 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 		RecordID:               util.MustUUID(),
 		OrgName:                dcItem.CompanyName,
 		AssetType:              dcItem.AssetType,
-		ProjectName:            row[dcItem.GetIndex("ProjectName")],
-		AssetName:              row[dcItem.GetIndex("AssetName")],
-		BuildingName:           row[dcItem.GetIndex("BuildingName")],
-		UnitName:               row[dcItem.GetIndex("UnitName")],
-		LayerName:              row[dcItem.GetIndex("LayerName")],
-		HouseName:              row[dcItem.GetIndex("HouseName")],
-		Business:               row[dcItem.GetIndex("Business")],
-		BuildingArea:           row[dcItem.GetIndex("BuildingArea")],
-		RentArea:               row[dcItem.GetIndex("RentArea")],
-		SigningStatus:          row[dcItem.GetIndex("SigningStatus")],
-		Code:                   row[dcItem.GetIndex("Code")],
-		LeaseStart:             row[dcItem.GetIndex("LeaseStart")],
-		LeaseEnd:               row[dcItem.GetIndex("LeaseEnd")],
-		Period:                 row[dcItem.GetIndex("Period")],
-		DayRent:                row[dcItem.GetIndex("DayRent")],
-		MonthRent:              row[dcItem.GetIndex("MonthRent")],
-		PaymentCycle:           row[dcItem.GetIndex("PaymentCycle")],
-		AdvancePayment:         row[dcItem.GetIndex("AdvancePayment")],
-		RentFreeStart:          row[dcItem.GetIndex("RentFreeStart")],
-		RentFreeEnd:            row[dcItem.GetIndex("RentFreeEnd")],
-		DepositDueAmount:       row[dcItem.GetIndex("DepositDueAmount")],
-		DepositActualAmount:    row[dcItem.GetIndex("DepositActualAmount")],
-		SigningDate:            row[dcItem.GetIndex("SigningDate")],
-		CustomerTenantType:     row[dcItem.GetIndex("CustomerTenantType")],
-		CustomerName:           row[dcItem.GetIndex("CustomerName")],
-		CustomerContactName:    row[dcItem.GetIndex("CustomerContactName")],
-		CustomerContactTel:     row[dcItem.GetIndex("CustomerContactTel")],
-		CustomerContactEmail:   row[dcItem.GetIndex("CustomerContactEmail")],
-		CustomerContactAddress: row[dcItem.GetIndex("CustomerContactAddress")],
+		ProjectName:            dcItem.GetValue(row, "ProjectName"),
+		AssetName:              dcItem.GetValue(row, "AssetName"),
+		BuildingName:           dcItem.GetValue(row, "BuildingName"),
+		UnitName:               dcItem.GetValue(row, "UnitName"),
+		LayerName:              dcItem.GetValue(row, "LayerName"),
+		HouseName:              dcItem.GetValue(row, "HouseName"),
+		Business:               dcItem.GetValue(row, "Business"),
+		BuildingArea:           dcItem.GetValue(row, "BuildingArea"),
+		RentArea:               dcItem.GetValue(row, "RentArea"),
+		SigningStatus:          dcItem.GetValue(row, "SigningStatus"),
+		Code:                   dcItem.GetValue(row, "Code"),
+		LeaseStart:             dcItem.GetValue(row, "LeaseStart"),
+		LeaseEnd:               dcItem.GetValue(row, "LeaseEnd"),
+		Period:                 dcItem.GetValue(row, "Period"),
+		DayRent:                dcItem.GetValue(row, "DayRent"),
+		MonthRent:              dcItem.GetValue(row, "MonthRent"),
+		PaymentCycle:           dcItem.GetValue(row, "PaymentCycle"),
+		AdvancePayment:         dcItem.GetValue(row, "AdvancePayment"),
+		RentFreeStart:          dcItem.GetValue(row, "RentFreeStart"),
+		RentFreeEnd:            dcItem.GetValue(row, "RentFreeEnd"),
+		DepositDueAmount:       dcItem.GetValue(row, "DepositDueAmount"),
+		DepositActualAmount:    dcItem.GetValue(row, "DepositActualAmount"),
+		SigningDate:            dcItem.GetValue(row, "SigningDate"),
+		CustomerTenantType:     dcItem.GetValue(row, "CustomerTenantType"),
+		CustomerName:           dcItem.GetValue(row, "CustomerName"),
+		CustomerContactName:    dcItem.GetValue(row, "CustomerContactName"),
+		CustomerContactTel:     dcItem.GetValue(row, "CustomerContactTel"),
+		CustomerContactEmail:   dcItem.GetValue(row, "CustomerContactEmail"),
+		CustomerContactAddress: dcItem.GetValue(row, "CustomerContactAddress"),
 	}
 
 	quarterIdxes := dcItem.GetIndexes("Quarter")
