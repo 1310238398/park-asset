@@ -102,10 +102,15 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 		SigningDate:            dcItem.GetValue(row, "SigningDate"),
 		CustomerTenantType:     dcItem.GetValue(row, "CustomerTenantType"),
 		CustomerName:           dcItem.GetValue(row, "CustomerName"),
+		CustomerBrandName:      dcItem.GetValue(row, "CustomerBrandName"),
 		CustomerContactName:    dcItem.GetValue(row, "CustomerContactName"),
 		CustomerContactTel:     dcItem.GetValue(row, "CustomerContactTel"),
 		CustomerContactEmail:   dcItem.GetValue(row, "CustomerContactEmail"),
 		CustomerContactAddress: dcItem.GetValue(row, "CustomerContactAddress"),
+		QuarterY2019:           dcItem.GetValue(row, "QuarterY2019"),
+		QuarterS2019:           dcItem.GetValue(row, "QuarterS2019"),
+		QuarterY2020:           dcItem.GetValue(row, "QuarterY2020"),
+		QuarterS2020:           dcItem.GetValue(row, "QuarterS2020"),
 	}
 
 	// 处理合同租赁起止日期
@@ -127,22 +132,24 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 	}
 
 	quarterIdxes := dcItem.GetIndexes("Quarter")
-	item.QuarterY201901 = row[quarterIdxes[0]]
-	item.QuarterS201901 = row[quarterIdxes[1]]
-	item.QuarterY201902 = row[quarterIdxes[2]]
-	item.QuarterS201902 = row[quarterIdxes[3]]
-	item.QuarterY201903 = row[quarterIdxes[4]]
-	item.QuarterS201903 = row[quarterIdxes[5]]
-	item.QuarterY201904 = row[quarterIdxes[6]]
-	item.QuarterS201904 = row[quarterIdxes[7]]
-	item.QuarterY202001 = row[quarterIdxes[8]]
-	item.QuarterS202001 = row[quarterIdxes[9]]
-	item.QuarterY202002 = row[quarterIdxes[10]]
-	item.QuarterS202002 = row[quarterIdxes[11]]
-	item.QuarterY202003 = row[quarterIdxes[12]]
-	item.QuarterS202003 = row[quarterIdxes[13]]
-	item.QuarterY202004 = row[quarterIdxes[14]]
-	item.QuarterS202004 = row[quarterIdxes[15]]
+	if len(quarterIdxes) > 0 {
+		item.QuarterY201901 = row[quarterIdxes[0]]
+		item.QuarterS201901 = row[quarterIdxes[1]]
+		item.QuarterY201902 = row[quarterIdxes[2]]
+		item.QuarterS201902 = row[quarterIdxes[3]]
+		item.QuarterY201903 = row[quarterIdxes[4]]
+		item.QuarterS201903 = row[quarterIdxes[5]]
+		item.QuarterY201904 = row[quarterIdxes[6]]
+		item.QuarterS201904 = row[quarterIdxes[7]]
+		item.QuarterY202001 = row[quarterIdxes[8]]
+		item.QuarterS202001 = row[quarterIdxes[9]]
+		item.QuarterY202002 = row[quarterIdxes[10]]
+		item.QuarterS202002 = row[quarterIdxes[11]]
+		item.QuarterY202003 = row[quarterIdxes[12]]
+		item.QuarterS202003 = row[quarterIdxes[13]]
+		item.QuarterY202004 = row[quarterIdxes[14]]
+		item.QuarterS202004 = row[quarterIdxes[15]]
+	}
 
 	return item
 }

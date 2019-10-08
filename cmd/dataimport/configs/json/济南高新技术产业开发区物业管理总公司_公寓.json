@@ -118,11 +118,11 @@
       "index": "AQ"
     },
     {
-      "key": "CustomerContactEmail",
+      "key": "CustomerContactAddress",
       "index": "AR"
     },
     {
-      "key": "CustomerContactAddress",
+      "key": "CustomerContactEmail",
       "index": "AS"
     }
   ]

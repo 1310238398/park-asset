@@ -36,6 +36,8 @@ type TAssetData struct {
 	QuarterS201903         string `json:"quarter_s201903" swaggo:"false,三季度实收"`
 	QuarterY201904         string `json:"quarter_y201904" swaggo:"false,四季度应收"`
 	QuarterS201904         string `json:"quarter_s201904" swaggo:"false,四季度实收"`
+	QuarterY2019           string `json:"quarter_y2019" swaggo:"false,2019应收"`
+	QuarterS2019           string `json:"quarter_s2019" swaggo:"false,2019实收"`
 	QuarterY202001         string `json:"quarter_y202001" swaggo:"false,一季度应收"`
 	QuarterS202001         string `json:"quarter_s202001" swaggo:"false,一季度实收"`
 	QuarterY202002         string `json:"quarter_y202002" swaggo:"false,二季度应收"`
@@ -44,8 +46,11 @@ type TAssetData struct {
 	QuarterS202003         string `json:"quarter_s202003" swaggo:"false,三季度实收"`
 	QuarterY202004         string `json:"quarter_y202004" swaggo:"false,四季度应收"`
 	QuarterS202004         string `json:"quarter_s202004" swaggo:"false,四季度实收"`
+	QuarterY2020           string `json:"quarter_y2020" swaggo:"false,2020应收"`
+	QuarterS2020           string `json:"quarter_s2020" swaggo:"false,2020实收"`
 	CustomerTenantType     string `json:"customer_tenant_type" swaggo:"false,租户类型"`
 	CustomerName           string `json:"customer_name" swaggo:"false,客户名称"`
+	CustomerBrandName      string `json:"customer_brand_name" swaggo:"false,客户品牌名称"`
 	CustomerContactName    string `json:"customer_contact_name" swaggo:"false,联系人姓名"`
 	CustomerContactTel     string `json:"customer_contact_tel" swaggo:"false,联系人手机号"`
 	CustomerContactEmail   string `json:"customer_contact_email" swaggo:"false,联系人邮箱"`
