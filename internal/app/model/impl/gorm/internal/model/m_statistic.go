@@ -22,7 +22,8 @@ type Statistic struct {
 
 // QueryProject 查询项目统计数据
 func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStatisticQueryParam, opts ...schema.ProjectStatisticQueryOptions) (*schema.ProjectStatisticQueryResult, error) {
-	db := entity.GetTAssetDataDB(ctx, a.db).DB
+	db := a.db.Table(entity.TAssetData{}.TableName())
+
 	if v := params.LikeOrgName; v != "" {
 		db = db.Where("org_name LIKE ?", "%"+v+"%")
 	}
