@@ -6,6 +6,7 @@ import (
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/util"
+	"strings"
 )
 
 // 执行数据导入
@@ -13,16 +14,40 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 	var err error
 	container.Invoke(func(mTAssetData model.ITAssetData, mTrans model.ITrans) {
 		err = execTrans(context.Background(), mTrans, func(ctx context.Context) error {
+			var preItem schema.TAssetData
+
 			for i, row := range excelData[dcItem.SheetIndex] {
 				if i < dcItem.RowStartIndex || len(row) < dcItem.MaxIndex {
 					continue
 				}
+
 				item := getDataItem(dcItem, row)
+				if item.ProjectName == "" {
+					item.ProjectName = preItem.ProjectName
+				}
+				if item.AssetName == "" {
+					item.AssetName = preItem.AssetName
+				}
+				if item.BuildingName == "" {
+					item.BuildingName = preItem.BuildingName
+				}
+				if item.UnitName == "" {
+					item.UnitName = preItem.UnitName
+				}
+				if item.LayerName == "" {
+					item.LayerName = preItem.LayerName
+				}
+				if item.HouseName == "" {
+					item.HouseName = preItem.HouseName
+				}
+
 				err := mTAssetData.Create(ctx, item)
 				if err != nil {
 					return err
 				}
+				preItem = item
 			}
+
 			return nil
 		})
 	})
@@ -81,6 +106,24 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 		CustomerContactTel:     dcItem.GetValue(row, "CustomerContactTel"),
 		CustomerContactEmail:   dcItem.GetValue(row, "CustomerContactEmail"),
 		CustomerContactAddress: dcItem.GetValue(row, "CustomerContactAddress"),
+	}
+
+	// 处理合同租赁起止日期
+	if item.LeaseEnd == "" &&
+		item.LeaseStart != "" &&
+		strings.Index(item.LeaseStart, "-") > -1 {
+		ss := strings.Split(item.LeaseStart, "-")
+		item.LeaseStart = ss[0]
+		item.LeaseEnd = ss[1]
+	}
+
+	// 处理免租期起止日期
+	if item.RentFreeEnd == "" &&
+		item.RentFreeStart != "" &&
+		strings.Index(item.RentFreeStart, "-") > -1 {
+		ss := strings.Split(item.RentFreeStart, "-")
+		item.RentFreeStart = ss[0]
+		item.RentFreeEnd = ss[1]
 	}
 
 	quarterIdxes := dcItem.GetIndexes("Quarter")

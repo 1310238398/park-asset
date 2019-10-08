@@ -4,6 +4,7 @@ import (
 	"context"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/gormplus"
+	"gxt-park-assets/pkg/util"
 )
 
 // GetTAssetDataDB 资产数据
@@ -29,6 +30,8 @@ func (a SchemaTAssetData) ToTAssetData() *TAssetData {
 		Business:               &a.Business,
 		BuildingArea:           &a.BuildingArea,
 		RentArea:               &a.RentArea,
+		BuildingAreaValue:      util.ConvStringToFloatInt(a.BuildingArea, 100),
+		RentAreaValue:          util.ConvStringToFloatInt(a.RentArea, 100),
 		SigningStatus:          &a.SigningStatus,
 		Code:                   &a.Code,
 		LeaseStart:             &a.LeaseStart,
@@ -59,6 +62,22 @@ func (a SchemaTAssetData) ToTAssetData() *TAssetData {
 		QuarterS202003:         &a.QuarterS202003,
 		QuarterY202004:         &a.QuarterY202004,
 		QuarterS202004:         &a.QuarterS202004,
+		QuarterY201901Value:    util.ConvStringToFloatInt(a.QuarterY201901, 100),
+		QuarterS201901Value:    util.ConvStringToFloatInt(a.QuarterS201901, 100),
+		QuarterY201902Value:    util.ConvStringToFloatInt(a.QuarterY201902, 100),
+		QuarterS201902Value:    util.ConvStringToFloatInt(a.QuarterS201902, 100),
+		QuarterY201903Value:    util.ConvStringToFloatInt(a.QuarterY201903, 100),
+		QuarterS201903Value:    util.ConvStringToFloatInt(a.QuarterS201903, 100),
+		QuarterY201904Value:    util.ConvStringToFloatInt(a.QuarterY201904, 100),
+		QuarterS201904Value:    util.ConvStringToFloatInt(a.QuarterS201904, 100),
+		QuarterY202001Value:    util.ConvStringToFloatInt(a.QuarterY202001, 100),
+		QuarterS202001Value:    util.ConvStringToFloatInt(a.QuarterS202001, 100),
+		QuarterY202002Value:    util.ConvStringToFloatInt(a.QuarterY202002, 100),
+		QuarterS202002Value:    util.ConvStringToFloatInt(a.QuarterS202002, 100),
+		QuarterY202003Value:    util.ConvStringToFloatInt(a.QuarterY202003, 100),
+		QuarterS202003Value:    util.ConvStringToFloatInt(a.QuarterS202003, 100),
+		QuarterY202004Value:    util.ConvStringToFloatInt(a.QuarterY202004, 100),
+		QuarterS202004Value:    util.ConvStringToFloatInt(a.QuarterS202004, 100),
 		CustomerTenantType:     &a.CustomerTenantType,
 		CustomerName:           &a.CustomerName,
 		CustomerContactName:    &a.CustomerContactName,
@@ -84,6 +103,8 @@ type TAssetData struct {
 	Business               *string `gorm:"column:business;size:100;"`                 // 业态
 	BuildingArea           *string `gorm:"column:building_area;size:100;"`            // 建筑面积
 	RentArea               *string `gorm:"column:rent_area;size:100;"`                // 计租面积
+	BuildingAreaValue      *int    `gorm:"column:building_area_value;"`               // 建筑面积
+	RentAreaValue          *int    `gorm:"column:rent_area_value;"`                   // 计租面积
 	SigningStatus          *string `gorm:"column:signing_status;size:100;"`           // 签约情况
 	Code                   *string `gorm:"column:code;size:100;"`                     // 合同编号
 	LeaseStart             *string `gorm:"column:lease_start;size:100;"`              // 租赁开始日期
@@ -114,6 +135,22 @@ type TAssetData struct {
 	QuarterS202003         *string `gorm:"column:quarter_s202003;size:100;"`          // 三季度实收
 	QuarterY202004         *string `gorm:"column:quarter_y202004;size:100;"`          // 四季度应收
 	QuarterS202004         *string `gorm:"column:quarter_s202004;size:100;"`          // 四季度实收
+	QuarterY201901Value    *int    `gorm:"column:quarter_y201901_value;"`             // 一季度应收
+	QuarterS201901Value    *int    `gorm:"column:quarter_s201901_value;"`             // 一季度实收
+	QuarterY201902Value    *int    `gorm:"column:quarter_y201902_value;"`             // 二季度应收
+	QuarterS201902Value    *int    `gorm:"column:quarter_s201902_value;"`             // 二季度实收
+	QuarterY201903Value    *int    `gorm:"column:quarter_y201903_value;"`             // 三季度应收
+	QuarterS201903Value    *int    `gorm:"column:quarter_s201903_value;"`             // 三季度实收
+	QuarterY201904Value    *int    `gorm:"column:quarter_y201904_value;"`             // 四季度应收
+	QuarterS201904Value    *int    `gorm:"column:quarter_s201904_value;"`             // 四季度实收
+	QuarterY202001Value    *int    `gorm:"column:quarter_y202001_value;"`             // 一季度应收
+	QuarterS202001Value    *int    `gorm:"column:quarter_s202001_value;"`             // 一季度实收
+	QuarterY202002Value    *int    `gorm:"column:quarter_y202002_value;"`             // 二季度应收
+	QuarterS202002Value    *int    `gorm:"column:quarter_s202002_value;"`             // 二季度实收
+	QuarterY202003Value    *int    `gorm:"column:quarter_y202003_value;"`             // 三季度应收
+	QuarterS202003Value    *int    `gorm:"column:quarter_s202003_value;"`             // 三季度实收
+	QuarterY202004Value    *int    `gorm:"column:quarter_y202004_value;"`             // 四季度应收
+	QuarterS202004Value    *int    `gorm:"column:quarter_s202004_value;"`             // 四季度实收
 	CustomerTenantType     *string `gorm:"column:customer_tenant_type;size:100;"`     // 租户类型
 	CustomerName           *string `gorm:"column:customer_name;size:100;"`            // 客户名称
 	CustomerContactName    *string `gorm:"column:customer_contact_name;size:100;"`    // 联系人姓名
