@@ -59,6 +59,9 @@ type TAssetData struct {
 
 // TAssetDataQueryParam 查询条件
 type TAssetDataQueryParam struct {
+	LikeOrgName     string // 组织名称
+	LikeProjectName string // 项目名称
+	AssetType       int    // 资产类型
 }
 
 // TAssetDataQueryOptions 查询可选参数项

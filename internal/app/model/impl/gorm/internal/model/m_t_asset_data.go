@@ -30,8 +30,16 @@ func (a *TAssetData) getQueryOption(opts ...schema.TAssetDataQueryOptions) schem
 // Query 查询数据
 func (a *TAssetData) Query(ctx context.Context, params schema.TAssetDataQueryParam, opts ...schema.TAssetDataQueryOptions) (*schema.TAssetDataQueryResult, error) {
 	db := entity.GetTAssetDataDB(ctx, a.db).DB
-
-	db = db.Order("id DESC")
+	if v := params.LikeOrgName; v != "" {
+		db = db.Where("org_name LIKE ?", "%"+v+"%")
+	}
+	if v := params.LikeProjectName; v != "" {
+		db = db.Where("project_name LIKE ?", "%"+v+"%")
+	}
+	if v := params.AssetType; v != 0 {
+		db = db.Where("asset_type=?", v)
+	}
+	db = db.Order("org_name,project_name,asset_type")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.TAssetDatas

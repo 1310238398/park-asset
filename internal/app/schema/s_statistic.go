@@ -58,8 +58,9 @@ type ProjectStatisticQueryResult struct {
 
 // IncomeClassificationStatisticQueryParam 收入分类占比查询参数
 type IncomeClassificationStatisticQueryParam struct {
-	Year  int
-	OrgID string
+	Year    int
+	OrgID   string
+	OrgName string
 }
 
 // IncomeClassificationStatistic 收入分类占比统计项

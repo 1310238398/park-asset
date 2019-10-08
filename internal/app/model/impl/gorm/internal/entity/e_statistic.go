@@ -1,61 +1,42 @@
 package entity
 
 import (
-	"context"
 	"gxt-park-assets/internal/app/schema"
-	"gxt-park-assets/pkg/gormplus"
 )
 
-// GetStatisticDB 统计查询
-func GetStatisticDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Statistic{})
+// ProjectStatistic 项目统计查询实体
+type ProjectStatistic struct {
+	OrgName       string `gorm:"column:org_name;"`
+	ProjectName   string `gorm:"column:project_name;"`
+	AssetType     int    `gorm:"column:asset_type;"`
+	RentArea      int    `gorm:"column:rent_area;"`
+	RentedArea    int    `gorm:"column:rented_area;"`
+	PaymentAmount int    `gorm:"column:payment_amount;"`
+	ActualAmount  int    `gorm:"column:actual_amount;"`
 }
 
-// SchemaStatistic 统计查询
-type SchemaStatistic schema.Statistic
-
-// ToStatistic 转换为统计查询实体
-func (a SchemaStatistic) ToStatistic() *Statistic {
-	item := &Statistic{
-		RecordID: &a.RecordID,
-		Creator:  &a.Creator,
+// ToSchemaProjectStatistic 转换为项目统计查询对象
+func (a ProjectStatistic) ToSchemaProjectStatistic() *schema.ProjectStatistic {
+	item := &schema.ProjectStatistic{
+		OrgName:       a.OrgName,
+		ProjectName:   a.ProjectName,
+		AssetType:     a.AssetType,
+		RentArea:      a.RentArea,
+		RentedArea:    a.RentedArea,
+		PaymentAmount: a.PaymentAmount,
+		ActualAmount:  a.ActualAmount,
 	}
 	return item
 }
 
-// Statistic 统计查询实体
-type Statistic struct {
-	Model
-	RecordID *string `gorm:"column:record_id;size:36;index;"` // 记录ID
-	Creator  *string `gorm:"column:creator;size:36;index;"`   // 创建者
-}
+// ProjectStatistics 项目统计查询列表
+type ProjectStatistics []*ProjectStatistic
 
-func (a Statistic) String() string {
-	return toString(a)
-}
-
-// TableName 表名
-func (a Statistic) TableName() string {
-	return a.Model.TableName("statistic")
-}
-
-// ToSchemaStatistic 转换为统计查询对象
-func (a Statistic) ToSchemaStatistic() *schema.Statistic {
-	item := &schema.Statistic{
-		RecordID: *a.RecordID,
-		Creator:  *a.Creator,
-	}
-	return item
-}
-
-// Statistics 统计查询列表
-type Statistics []*Statistic
-
-// ToSchemaStatistics 转换为统计查询对象列表
-func (a Statistics) ToSchemaStatistics() []*schema.Statistic {
-	list := make([]*schema.Statistic, len(a))
+// ToSchemaProjectStatistics 转换为统计查询对象列表
+func (a ProjectStatistics) ToSchemaProjectStatistics() []*schema.ProjectStatistic {
+	list := make([]*schema.ProjectStatistic, len(a))
 	for i, item := range a {
-		list[i] = item.ToSchemaStatistic()
+		list[i] = item.ToSchemaProjectStatistic()
 	}
 	return list
 }
