@@ -2,45 +2,30 @@ import React from 'react';
 import { Chart, Geom, Axis, Tooltip, Coord, Label, Legend } from 'bizcharts';
 import DataSet from '@antv/data-set';
 
+import { queryClasstify } from '@/services/dataDashboad';
+
 class JTCWJB extends React.Component {
   state = {
-    data: [
-      {
-        item: '企业员工车辆',
-        count: 40,
-      },
-      {
-        item: '来访车辆',
-        count: 21,
-      },
-      {
-        item: '公务车辆',
-        count: 17,
-      },
-      {
-        item: '其他',
-        count: 13,
-      },
-    ],
+    data: [],
   };
 
   componentDidMount() {
-    // getMockData('d_car_income_count').then(data => {
-    //   let list = data || [];
-    //   list = list.map(v => {
-    //     return {
-    //       ...v,
-    //       count: parseFloat(v.count, 10),
-    //     };
-    //   });
-    //   this.setState({ data: list });
-    // });
+    const { params } = this.props;
+    queryClasstify(params).then(data => {
+      let result = [];
+      if (data && data.list) {
+        result = data.list.map(item => {
+          return { item: item.asset_type_name, count: item.actual_amount / 100 };
+        });
+      }
+      this.setState({ data: result });
+    });
   }
 
   render() {
     const { height } = this.props;
-    const { DataView } = DataSet;
     const { data } = this.state;
+    const { DataView } = DataSet;
     const dv = new DataView();
     dv.source(data).transform({
       type: 'percent',
@@ -57,10 +42,10 @@ class JTCWJB extends React.Component {
       },
     };
     return (
-      <Chart height={height} data={dv} scale={cols} padding={[0, 90, 30, 50]} forceFit>
+      <Chart height={height} data={dv} scale={cols} padding={[0, 50, 80, 50]} forceFit>
         <Coord type="theta" radius={0.75} />
         <Axis name="percent" />
-        <Legend position="bottom" offsetY={-30} />
+        <Legend position="bottom" offsetY={-20} />
         <Tooltip
           showTitle={false}
           itemTpl='<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
@@ -68,7 +53,10 @@ class JTCWJB extends React.Component {
         <Geom
           type="intervalStack"
           position="percent"
-          color={['item', ['#2B8AFF', '#6B12CC', '#B72DFF', '#2FCEA3', '#FFE361', '#FFAB61']]}
+          color={[
+            'item',
+            ['#2B8AFF', '#6B12CC', '#B72DFF', '#2FCEA3', '#FFE361', '#FFAB61', '#fb5050'],
+          ]}
           tooltip={[
             'item*percent',
             (item, percent) => {
@@ -85,18 +73,12 @@ class JTCWJB extends React.Component {
           }}
         >
           <Label
-            content={[
-              'item*percent',
-              (v1, v2) => {
-                return `${v1}(${(v2 * 100).toFixed(2)}%)`;
-              },
-            ]}
+            content="percent"
+            formatter={(val, item) => {
+              return item.point.item + ': ' + val;
+            }}
             textStyle={{
-              rotate: 0,
-              textAlign: 'center',
-              shadowBlur: 2,
               fill: '#fff',
-              shadowColor: 'rgba(0, 0, 0, .45)',
             }}
           />
         </Geom>

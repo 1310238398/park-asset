@@ -11,6 +11,8 @@
       margin: 0;
       padding: 0;
       list-style: none;
+      text-align: center;
+      vertical-align: middle;
     }
   }
 }
@@ -27,19 +29,17 @@
   flex: 0 0 44.79vw; // 860/1920*100
   height: 6.48vh; // 70/1080*100
   display: flex;
-  :global {
-    span {
-      height: 100%;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 2.77vh; // 30/1080*100
-      font-weight: 400;
-      color: rgba(0, 180, 255, 1);
-      line-height: 20px;
-    }
-  }
+}
+.topMiddleTitle {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.77vh; // 30/1080*100
+  font-weight: 600;
+  color: rgba(0, 180, 255, 1);
+  padding-right: 50px;
 }
 // .mianCenter{
 //   margin-left: 2.81vw;
@@ -60,6 +60,7 @@
   height: 41.66vh; // 450/1080*100
   margin-left: 2.81vw; // 54/1920*100
   margin-bottom: 0.92vh;
+  overflow: hidden;
 }
 .leftTopTwo {
   background-image: url('/assets/yunying@2x.png');
@@ -74,26 +75,27 @@
   font-size: 1.85vh; // 20/1080*100
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
-  margin-left: 6.39vw; // 142/1920*100
+  // margin-left: 6.39vw; // 142/1920*100
   padding-top: 1.89vh; // 16/1080*100
 }
 .leftTopTwoTitle {
   font-size: 1.85vh; // 20/1080*100
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
-  margin-left: 6.39vw; // 142/1920*100
+  // margin-left: 6.39vw; // 142/1920*100
   padding-top: 0.56vh; // 16/1080*100
 }
 .rightTopOneTitle {
   font-size: 1.85vh; // 20/1080*100
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
-  margin-left: 8.45vw; // 142/1920*100
-  padding-top: 0.89vh; // 16/1080*100
+  // margin-left: 8.45vw; // 142/1920*100
+  padding-top: 0.59vh; // 16/1080*100
 }
 .leftTopOneChart {
   margin-left: 1.9vw;
   padding-top: 1.68vh;
+  overflow: hidden;
 }
 .leftTopOneRight {
   background-image: url('/assets/jiankong@2x.png');
@@ -102,10 +104,12 @@
   width: 23.54vw; // 452/1920*100
   height: 64.26vh; // 694/1080*100
   margin-right: 2.81vw; // 54/1920*100
+  overflow: hidden;
 }
 .leftRightOneChart {
   // margin-left: 1.9vw;
   padding-top: 1.68vh;
+  overflow: hidden;
 }
 
 .leftLineArea {
@@ -120,7 +124,15 @@
   height: 4.17vh; // 45/1080*100
   line-height: 4.17vh;
   span {
-    color: rgba(255, 255, 255, 1);
+    //color: rgba(255, 255, 255, 1);
+    background: linear-gradient(
+      174deg,
+      rgba(96, 190, 248, 0.58) 0%,
+      rgba(104, 216, 254, 0) 99.5849609375%,
+      rgba(47, 137, 229, 0) 100%
+    );
+    background-clip: text;
+    color: transparent;
     font-size: 1.48vh; // 16/1080*100
   }
 }
@@ -156,11 +168,17 @@
   font-size: 1.66vh; // 18/1080*100
   font-weight: 400;
   color: rgba(255, 255, 255, 1);
+  // margin-bottom: 3px;
+  overflow: hidden; /*超出部分隐藏*/
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+  white-space: nowrap; /*规定段落中的文本不进行换行 */
 }
 .companyLinst {
-  padding-left: 2.47vw; //47/1920*100
-  padding-top: 3.24vh; // 35/1080*100
+  // padding-left: 2.47vw; //47/1920*100
+  // padding-right: 2.47vw; //47/1920*100
+  padding-top: 1.24vh; // 35/1080*100
   cursor: pointer;
+  width: 8.33vw;
 }
 .companyImg {
   width: 5.26vw; // 101/1920*100
@@ -171,6 +189,7 @@
 .companyPlan {
   color: #7ab7ff;
   font-size: 1.31vh; // 14/1080*100
+  // margin-top: 3px;
 }
 .finalC {
   display: flex;
@@ -223,7 +242,7 @@
 }
 .yearPlan {
   display: flex;
-  height: 88%;
+  // height: 88%;
 }
 .yearYse {
   display: flex;
@@ -238,11 +257,31 @@
   margin-bottom: 4px;
 }
 .yearPlanLeft {
-  padding: 8.64vh 2.08vw 1.85vh 3.64vw;
+  padding: 5.64vh 2.08vw 1.85vh 3.64vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
 }
 .mapData {
   color: rgba(255, 255, 255, 1);
-  border: 1px solid;
+  height: 60%;
+  overflow: hidden;
+  padding: 5px 15px;
+}
+.lineCompany {
+  height: 21.11vh;
+  padding-top: 3.24vh;
+}
+.lineC:last-child {
+  display: none;
+}
+.ndjhPlan {
+  background-image: url('/assets/jipan@2x.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 13.65vw;
+  height: 6.57vh;
 }
 // 弹窗样式
 .FloorContentWin {
@@ -295,4 +334,9 @@
 .darkDropdown {
   color: #78b4fb;
   background-color: #78b4fb;
+  :global {
+    .ant-select-dropdown-menu-item {
+      padding: 5px 5px !important;
+    }
+  }
 }

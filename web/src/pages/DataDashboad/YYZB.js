@@ -14,54 +14,93 @@ import {
   Facet,
   Util,
 } from 'bizcharts';
-
+import { queryFinanciall } from '@/services/dataDashboad';
 class YYZB extends React.Component {
+  state = {
+    data: [],
+  };
+
+  componentDidMount() {
+    const { params } = this.props;
+    queryFinanciall(params).then(data => {
+      let result = [];
+      if (data && data.list) {
+        result = data.list.map(item => {
+          return {
+            quarter: this.renderState(item.quarter),
+            count: item.amount / (10000 * 100),
+            type: item.payment_type === 1 ? '应收' : '实收',
+          };
+        });
+      }
+      this.setState({ data: result });
+    });
+  }
+
+  renderState(quarter) {
+    switch (quarter) {
+      case 1:
+        return '第一季度';
+      case 2:
+        return '第二季度';
+      case 3:
+        return '第三季度';
+      case 4:
+        return '第四季度';
+      default:
+        return '';
+    }
+  }
+
   render() {
-    const data = [
-      {
-        month: '第一季度',
-        city: '应收',
-        temperature: 3,
-      },
-      {
-        month: '第二季度',
-        city: '应收',
-        temperature: 3.9,
-      },
-      {
-        month: '第二季度',
-        city: '已收',
-        temperature: 3.9,
-      },
-      {
-        month: '第三季度',
-        city: '应收',
-        temperature: 6.9,
-      },
-      {
-        month: '第三季度',
-        city: '已收',
-        temperature: 6.9,
-      },
-      {
-        month: '第四季度',
-        city: '已收',
-        temperature: 4.2,
-      },
-      {
-        month: '第四季度',
-        city: '应收',
-        temperature: 4.2,
-      },
-    ];
+    // const data = [
+    //   {
+    //     month: '第一季度',
+    //     city: '应收',
+    //     temperature: 3,
+    //   },
+    //   {
+    //     month: '第二季度',
+    //     city: '应收',
+    //     temperature: 3.9,
+    //   },
+    //   {
+    //     month: '第二季度',
+    //     city: '已收',
+    //     temperature: 3.9,
+    //   },
+    //   {
+    //     month: '第三季度',
+    //     city: '应收',
+    //     temperature: 6.9,
+    //   },
+    //   {
+    //     month: '第三季度',
+    //     city: '已收',
+    //     temperature: 6.9,
+    //   },
+    //   {
+    //     month: '第四季度',
+    //     city: '已收',
+    //     temperature: 4.2,
+    //   },
+    //   {
+    //     month: '第四季度',
+    //     city: '应收',
+    //     temperature: 4.2,
+    //   },
+    // ];
     const cols = {
       month: {
         range: [0, 1],
       },
     };
+
+    const { height } = this.props;
+    const { data } = this.state;
     return (
       <div>
-        <Chart height={400} data={data} scale={cols} forceFit padding={[10, 50, 110, 50]}>
+        <Chart height={height} data={data} scale={cols} forceFit padding={[10, 50, 110, 50]}>
           <Legend
             label={{
               textStyle: {
@@ -70,7 +109,7 @@ class YYZB extends React.Component {
             }}
           />
           <Axis
-            name="month"
+            name="quarter"
             label={{
               textStyle: {
                 fill: '#fff',
@@ -78,7 +117,7 @@ class YYZB extends React.Component {
             }}
           />
           <Axis
-            name="temperature"
+            name="count"
             // label={{
             //   formatter: val => `${val}万元`
             // }}
@@ -95,10 +134,10 @@ class YYZB extends React.Component {
           />
           <Geom
             type="area"
-            position="month*temperature"
+            position="quarter*count"
             size={2}
             color={[
-              'city',
+              'type',
               [
                 'l (45) 0:rgba(67,154,255,1) 1:rgba(67,154,255,0.2)',
                 'l (45) 0:rgba(233,60,167,0.2) 1:rgba(233,60,167,1)',
@@ -106,7 +145,7 @@ class YYZB extends React.Component {
             ]}
             shape={'smooth'}
             tooltip={[
-              'city*temperature',
+              'type*count',
               (k, v) => {
                 return {
                   name: k,

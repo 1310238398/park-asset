@@ -1,20 +1,86 @@
 import React, { PureComponent } from 'react';
-import { Statistic, Select } from 'antd';
+import { Statistic, Select, Progress } from 'antd';
 import { connect } from 'dva';
 import topBg from '../../assets/topBg@2x.png';
+import pointIMG from '../../assets/ponint.png';
+import lineCompany from '../../../public/assets/companyFG@2x.png';
 import DataCompanyShow from './DataCompanyShow';
 import JTCWJB from './JTCWJB';
 import YYZB from './YYZB';
+import JTYYZB from './JTYYZB';
+import NDJHSR from './NDJHSR';
+import XMGK from './XMGK';
+import CWZBJK from './CWZBJK';
+import ChilrenWC from './ChilrenWC';
 import styles from './DataDashboad.less';
 
-@connect(({ dataDashboad, loading }) => ({
-  dataDashboad,
-  loading: loading.models.dataDashboad,
+@connect(state => ({
+  dataDashboad: state.dataDashboad,
+  projectManage: state.projectManage,
+  loading: state.loading.models.dataDashboad,
 }))
 class DataDashboad extends PureComponent {
+  state = {
+    year: '2019',
+    name: '',
+  };
+
+  constructor(props) {
+    super(props);
+  }
+
+  async componentDidMount() {
+    await this.dispatch({
+      type: 'projectManage/queryPlotList',
+    });
+
+    this.dispatch({
+      type: 'dataDashboad/queryCompanyList',
+      params: { year: this.state.year },
+    });
+    await this.loadMap();
+  }
+
+  loadMap = () => {
+    const {
+      projectManage: { poltList },
+    } = this.props;
+    console.log(poltList);
+    var map = new window.AMap.Map('mainMap', {
+      center: [117.000923, 36.675807],
+      zoom: 14,
+      mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
+    });
+
+    var markers = []; //province见Demo引用的JS文件
+    for (var i = 0; i < poltList.length; i += 1) {
+      var marker;
+
+      var icon = new AMap.Icon({
+        // image: 'https://vdata.amap.com/icons/b18/1/2.png',
+        image: pointIMG,
+        size: new AMap.Size(38, 38),
+        // imageSize: new AMap.Size(38, 38),
+        imageOffset: new AMap.Pixel(-3, -3),
+      });
+      marker = new AMap.Marker({
+        icon: icon,
+        position: poltList[i].location.split(','),
+        offset: new AMap.Pixel(-12, -12),
+        zIndex: 101,
+        title: poltList[i].name,
+        map: map,
+      });
+    }
+  };
+
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
+  };
+
+  handleChange = e => {
+    this.setState({ year: e });
   };
 
   getYearSelect = () => {
@@ -25,14 +91,18 @@ class DataDashboad extends PureComponent {
           justifyContent: 'flex-start',
           alignItems: 'center',
           position: 'relative',
-          top: '0.68vh',
+          // top: '0.68vh',
           left: '3.44vw',
         }}
       >
-        <Select className="darkSelect" dropdownClassName={styles.darkDropdown} defaultValue="2019">
+        <Select
+          className="darkSelect"
+          dropdownClassName={styles.darkDropdown}
+          defaultValue="2019"
+          onChange={e => this.handleChange(e)}
+        >
           <Select.Option value="2019">2019</Select.Option>
-          <Select.Option value="2018">2018</Select.Option>
-          <Select.Option value="2017">2017</Select.Option>
+          <Select.Option value="2020">2020</Select.Option>
         </Select>
       </div>
     );
@@ -43,9 +113,11 @@ class DataDashboad extends PureComponent {
     this.dispatch({
       type: 'dataDashboad/LoadCompangShow',
       payload: {
-        id: item.record_id,
+        id: item.org_id,
+        year: this.state.year,
       },
     });
+    this.setState({ name: item.org_name });
   };
 
   handleFormCancel = () => {
@@ -57,19 +129,33 @@ class DataDashboad extends PureComponent {
 
   // 监听显示弹窗
   renderDataCompanyShow() {
-    return <DataCompanyShow onCancel={this.handleFormCancel} />;
+    const {
+      dataDashboad: { comPanyId },
+    } = this.props;
+    return (
+      <DataCompanyShow
+        onCancel={this.handleFormCancel}
+        org_id={comPanyId}
+        year={this.state.year}
+        title={this.state.name}
+      />
+    );
   }
 
   render() {
+    const { year } = this.state;
+    const {
+      dataDashboad: { companyList },
+    } = this.props;
+
     return (
       <div className={styles.main}>
         <div>
           <img src={topBg} className={styles.top} alt="" />
         </div>
-
         <div className={styles.topCenter}>
           <div>{this.getYearSelect()}</div>
-          <span>济南高新控股集团资产运营数据看板</span>
+          <span className={styles.topMiddleTitle}>济南高新控股集团资产运营数据看板</span>
         </div>
         <div className={styles.middleCenter}>
           <div>
@@ -78,92 +164,20 @@ class DataDashboad extends PureComponent {
                 <span>集团资产收入占比</span>
               </div>
               <div className={styles.leftTopOneChart}>
-                <JTCWJB height={300} />
+                <JTCWJB height={280} params={{ year }} />
               </div>
             </div>
-            <div className={styles.leftTopTwo}>
-              <div className={styles.leftTopTwoTitle}>
-                <span>集团运营指标</span>
-              </div>
-              <div className={styles.leftLineArea}>
-                <div className={styles.LineArea}>
-                  <span>执行合同数</span> <span>本月新签合同</span> <span>本月退租合同款</span>
-                </div>
-                <div className={styles.LineAreaData}>
-                  <span className={styles.lineAreaq}>121829份</span>
-                  <span className={styles.lineAreaq}>1034</span>
-                  <span className={styles.lineAreaq}>4</span>
-                </div>
-              </div>
-              <div className={styles.leftLineAreaTwo}>
-                <div className={styles.LineArea}>
-                  <span>本月续租合同数</span> <span>入驻企业总数</span> <span>入驻商家总数</span>
-                </div>
-                <div className={styles.LineAreaData}>
-                  <span className={styles.lineAreaq}>12</span>
-                  <span className={styles.lineAreaq}>91%</span>
-                  <span className={styles.lineAreaq}>10444</span>
-                </div>
-              </div>
-            </div>
+            <JTYYZB params={{ year }} />
           </div>
-
           <div className={styles.YearLinr}>
             <div className={styles.yearPlan}>
-              <div className={styles.yearPlanLeft}>
-                <div className={styles.yearYse}>
-                  <div className={styles.yearSY}>年度计划收入&nbsp;&nbsp;(亿)</div>
-                  <div>
-                    <Statistic
-                      title=""
-                      value={112893}
-                      precision={2}
-                      valueStyle={{ color: '#439AFF' }}
-                    />
-                  </div>
-                </div>
-                <div className={styles.yearYse}>
-                  <div className={styles.yearSY}>年度实际收入&nbsp;&nbsp;(亿)</div>
-                  <div>
-                    <Statistic
-                      title=""
-                      value={112893}
-                      precision={2}
-                      valueStyle={{ color: '#439AFF' }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className={styles.mapData}>显示地图数据-田总区域</div>
+              <NDJHSR params={{ year }} />
             </div>
-
+            <div className={styles.mapData}>
+              <div id="mainMap" style={{ width: '100%', height: '100%' }}></div>
+            </div>
             <div>
-              <div className={styles.proData}>
-                <div className={styles.proDatatest}>
-                  <span>项目总数</span>
-                  <span className={styles.proDatal}>5</span>
-                </div>
-                <div className={styles.proDatatest}>
-                  <span>建筑总面积</span>
-                  <span className={styles.proDatal}>16.39万</span>
-                </div>
-                <div className={styles.proDatatest}>
-                  <span>已出租面积</span>
-                  <span className={styles.proDatal}>2388㎡</span>
-                </div>
-                <div className={styles.proDatatest}>
-                  <span>未出租面积</span>
-                  <span className={styles.proDatal}>2388㎡</span>
-                </div>
-                <div className={styles.proDatatest}>
-                  <span>出租率</span>
-                  <span className={styles.proDatal}>78.2%</span>
-                </div>
-                <div className={styles.proDatatest}>
-                  <span>租金收缴率</span>
-                  <span className={styles.proDatal}>91.23%</span>
-                </div>
-              </div>
+              <XMGK params={{ year }} />
             </div>
           </div>
           <div>
@@ -171,50 +185,46 @@ class DataDashboad extends PureComponent {
               <div className={styles.rightTopOneTitle}>
                 <span>集团财务指标监控</span>
               </div>
-              <div className={styles.finalC}>
-                <div className={styles.dourF}>
-                  <p className={styles.jiduData}>337万</p>
-                  <p className={styles.jidu}>本季度应收</p>
-                </div>
-                <div className={styles.dourF}>
-                  <p className={styles.jiduData}>337.2万</p>
-                  <p className={styles.jidu}>本季度实收</p>
-                </div>
-                <div className={styles.dourF}>
-                  <p className={styles.jiduData}>89%</p>
-                  <p className={styles.jidu}>本季度收费率</p>
-                </div>
-                <div className={styles.dourF}>
-                  <p className={styles.jiduData}>337万</p>
-                  <p className={styles.jidu}>本季度待收</p>
-                </div>
-              </div>
-
+              <CWZBJK params={{ year }} />
               <div className={styles.leftRightOneChart}>
-                <YYZB />
+                <YYZB height={350} params={{ year }} />
               </div>
             </div>
           </div>
         </div>
         <div className={styles.pageBottm}>
-          <div
-            className={styles.companyLinst}
-            onClick={() => this.showCompany({ record_id: '86e1df49-c1cb-4a11-a9d2-967586425b20' })}
-          >
-            <p className={styles.companyName}>济南东拓置业有限公司</p>
-            <img src={topBg} className={styles.companyImg} alt="" />
-            <p className={styles.companyPlan}>年入收入计划 123345万元</p>
-          </div>
-          <div className={styles.companyLinst}>
-            <p className={styles.companyName}>济南东拓置业有限公司</p>
-            <img src={topBg} className={styles.companyImg} alt="" />
-            <p className={styles.companyPlan}>年入收入计划 123345万元</p>
-          </div>
-          <div className={styles.companyLinst}>
-            <p className={styles.companyName}>济南东拓置业有限公司</p>
-            <img src={topBg} className={styles.companyImg} alt="" />
-            <p className={styles.companyPlan}>年入收入计划 123345万元</p>
-          </div>
+          {companyList &&
+            companyList.map(v => {
+              return [
+                <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
+                  <p className={styles.companyName}>{v.org_name}</p>
+                  {/* <ChilrenWC data ={[v]}/> */}
+                  <Progress
+                    type="circle"
+                    strokeColor={{
+                      '0%': '#162A61',
+                      '100%': '#0088CE',
+                    }}
+                    percent={(v.actual_income / v.plan_income) * 100}
+                    showInfo
+                    width="8vh"
+                    format={() => (
+                      <span style={{ color: '#fff', fontSize: 9 }}>
+                        已完成
+                        <br />
+                        {(v.actual_income / (10000 * 100)).toFixed(0)} 万元
+                      </span>
+                    )}
+                  />
+                  <p className={styles.companyPlan}>
+                    年收入计划 {v.plan_income / (10000 * 100)}万元
+                  </p>
+                </div>,
+                <div className={styles.lineC}>
+                  <img src={lineCompany} className={styles.lineCompany} alt="" />
+                </div>,
+              ];
+            })}
         </div>
         {this.renderDataCompanyShow()}
       </div>

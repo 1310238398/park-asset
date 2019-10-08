@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Modal, Row, Col, Select } from 'antd';
+import { Form, Input, Modal, Row, Col, Select, Radio } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 // import GetLocation from './GetLocation';
@@ -83,6 +83,7 @@ class ProjectManageCard extends PureComponent {
       onCancel,
     } = this.props;
 
+    const RadioGroup = Radio.Group;
     const formItemLayout = {
       labelCol: {
         span: 6,
@@ -261,6 +262,25 @@ class ProjectManageCard extends PureComponent {
             </Col>
           </Row>
           <Row>
+            <Col span={12}>
+              <Form.Item {...formItemLayout} label="是否整租">
+                {getFieldDecorator('is_all_rent', {
+                  initialValue: formData.is_all_rent ? formData.is_all_rent : 2,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择',
+                    },
+                  ],
+                })(
+                  <RadioGroup>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={2}>否</Radio>
+                  </RadioGroup>
+                )}
+              </Form.Item>
+            </Col>
+
             <Col span={12}>
               <Form.Item {...formItemLayout} label="项目照片">
                 {getFieldDecorator('photo', {
