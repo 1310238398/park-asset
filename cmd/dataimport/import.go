@@ -133,23 +133,33 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 
 	quarterIdxes := dcItem.GetIndexes("Quarter")
 	if len(quarterIdxes) > 0 {
-		item.QuarterY201901 = row[quarterIdxes[0]]
-		item.QuarterS201901 = row[quarterIdxes[1]]
-		item.QuarterY201902 = row[quarterIdxes[2]]
-		item.QuarterS201902 = row[quarterIdxes[3]]
-		item.QuarterY201903 = row[quarterIdxes[4]]
-		item.QuarterS201903 = row[quarterIdxes[5]]
-		item.QuarterY201904 = row[quarterIdxes[6]]
-		item.QuarterS201904 = row[quarterIdxes[7]]
-		item.QuarterY202001 = row[quarterIdxes[8]]
-		item.QuarterS202001 = row[quarterIdxes[9]]
-		item.QuarterY202002 = row[quarterIdxes[10]]
-		item.QuarterS202002 = row[quarterIdxes[11]]
-		item.QuarterY202003 = row[quarterIdxes[12]]
-		item.QuarterS202003 = row[quarterIdxes[13]]
-		item.QuarterY202004 = row[quarterIdxes[14]]
-		item.QuarterS202004 = row[quarterIdxes[15]]
+		item.QuarterY201901 = formatMoney(row[quarterIdxes[0]])
+		item.QuarterS201901 = formatMoney(row[quarterIdxes[1]])
+		item.QuarterY201902 = formatMoney(row[quarterIdxes[2]])
+		item.QuarterS201902 = formatMoney(row[quarterIdxes[3]])
+		item.QuarterY201903 = formatMoney(row[quarterIdxes[4]])
+		item.QuarterS201903 = formatMoney(row[quarterIdxes[5]])
+		item.QuarterY201904 = formatMoney(row[quarterIdxes[6]])
+		item.QuarterS201904 = formatMoney(row[quarterIdxes[7]])
+		item.QuarterY202001 = formatMoney(row[quarterIdxes[8]])
+		item.QuarterS202001 = formatMoney(row[quarterIdxes[9]])
+		item.QuarterY202002 = formatMoney(row[quarterIdxes[10]])
+		item.QuarterS202002 = formatMoney(row[quarterIdxes[11]])
+		item.QuarterY202003 = formatMoney(row[quarterIdxes[12]])
+		item.QuarterS202003 = formatMoney(row[quarterIdxes[13]])
+		item.QuarterY202004 = formatMoney(row[quarterIdxes[14]])
+		item.QuarterS202004 = formatMoney(row[quarterIdxes[15]])
 	}
 
 	return item
+}
+
+// 格式化金额
+func formatMoney(s string) string {
+	if s == "无" {
+		return ""
+	} else if strings.HasSuffix(s, "万") {
+		s = strings.TrimSuffix(s, "万") + "0000"
+	}
+	return s
 }
