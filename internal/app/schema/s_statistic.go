@@ -100,7 +100,8 @@ func (a *IncomeClassificationStatisticQueryResult) FillAssetTypeName() *IncomeCl
 
 // OperationalIndicatorStatisticQueryParam 运营指标查询参数
 type OperationalIndicatorStatisticQueryParam struct {
-	Year int
+	Year  int
+	OrgID string
 }
 
 // OperationalIndicatorStatistic 运营指标统计项
@@ -115,9 +116,8 @@ type OperationalIndicatorStatistic struct {
 
 // OverviewStatisticQueryParam 概览查询参数
 type OverviewStatisticQueryParam struct {
-	Year    int
-	OrgID   string
-	OrgName string
+	Year  int
+	OrgID string
 }
 
 // OverviewStatistic 概览统计项

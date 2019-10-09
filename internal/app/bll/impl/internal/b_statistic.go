@@ -77,13 +77,43 @@ func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema
 // QueryOperationalIndicator 查询运营指标
 func (a *Statistic) QueryOperationalIndicator(ctx context.Context, params schema.OperationalIndicatorStatisticQueryParam) (*schema.OperationalIndicatorStatistic, error) {
 	item := &schema.OperationalIndicatorStatistic{
-		ContractNum:                    30000,
-		ThisMonthAddContractNum:        1000,
-		ThisMonthWithdrawalContractNum: 200,
-		ThisMonthRenewContractNum:      300,
-		EnterpriseNum:                  5000,
-		MerchantNum:                    3000,
+		ThisMonthAddContractNum:        0,
+		ThisMonthWithdrawalContractNum: 0,
+		ThisMonthRenewContractNum:      0,
 	}
+
+	var orgName string
+	if v := params.OrgID; v != "" {
+		name, err := a.getOrgName(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		orgName = name
+	}
+
+	contractNum, err := a.StatisticModel.GetContractNum(ctx, schema.GetContractNumQueryParam{
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	item.ContractNum = contractNum
+
+	enterpriseNum, err := a.StatisticModel.GetEnterpriseNum(ctx, schema.GetEnterpriseNumQueryParam{
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	item.EnterpriseNum = enterpriseNum
+
+	merchantNum, err := a.StatisticModel.GetMerchantNum(ctx, schema.GetMerchantNumQueryParam{
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	item.MerchantNum = merchantNum
 
 	return item, nil
 }
@@ -91,12 +121,45 @@ func (a *Statistic) QueryOperationalIndicator(ctx context.Context, params schema
 // QueryOverview 查询概览统计
 func (a *Statistic) QueryOverview(ctx context.Context, params schema.OverviewStatisticQueryParam) (*schema.OverviewStatistic, error) {
 	item := &schema.OverviewStatistic{
-		AnnualPlanIncome:   100 * 10000 * 10000 * 100,
-		AnnualActualIncome: 90 * 10000 * 10000 * 100,
-		ProjectNum:         500,
-		BuildingArea:       100 * 10000 * 100,
-		RentArea:           95 * 10000 * 100,
-		RentedArea:         80 * 10000 * 100,
+		BuildingArea: 0,
+	}
+
+	var orgName string
+	if v := params.OrgID; v != "" {
+		name, err := a.getOrgName(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		orgName = name
+	}
+
+	projectNum, err := a.StatisticModel.GetProjectNum(ctx, schema.GetProjectNumQueryParam{
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	item.ProjectNum = projectNum
+
+	income, err := a.StatisticModel.GetIncome(ctx, schema.GetIncomeStatisticQueryParam{
+		Year:    params.Year,
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	} else if income != nil {
+		item.AnnualPlanIncome = income.PlanIncome
+		item.AnnualActualIncome = income.ActualIncome
+	}
+
+	area, err := a.StatisticModel.GetArea(ctx, schema.GetAreaStatisticQueryParam{
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	} else if area != nil {
+		item.RentArea = area.RentArea
+		item.RentedArea = area.RentedArea
 	}
 
 	return item, nil
@@ -104,9 +167,27 @@ func (a *Statistic) QueryOverview(ctx context.Context, params schema.OverviewSta
 
 // QueryQuarterFinanciallIndicator 季度财务指标统计
 func (a *Statistic) QueryQuarterFinanciallIndicator(ctx context.Context, params schema.QuarterFinanciallIndicatorStatisticQueryParam) (*schema.QuarterFinanciallIndicatorStatistic, error) {
-	item := &schema.QuarterFinanciallIndicatorStatistic{
-		PlanIncome:   1000 * 10000 * 100,
-		ActualIncome: 900 * 10000 * 100,
+	item := &schema.QuarterFinanciallIndicatorStatistic{}
+
+	var orgName string
+	if v := params.OrgID; v != "" {
+		name, err := a.getOrgName(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		orgName = name
+	}
+
+	income, err := a.StatisticModel.GetIncome(ctx, schema.GetIncomeStatisticQueryParam{
+		Year:    params.Year,
+		Quarter: params.Quarter,
+		OrgName: orgName,
+	})
+	if err != nil {
+		return nil, err
+	} else if income != nil {
+		item.PlanIncome = income.PlanIncome
+		item.ActualIncome = income.ActualIncome
 	}
 
 	return item, nil
@@ -115,46 +196,38 @@ func (a *Statistic) QueryQuarterFinanciallIndicator(ctx context.Context, params 
 // QueryFinanciallIndicator 财务指标统计
 func (a *Statistic) QueryFinanciallIndicator(ctx context.Context, params schema.FinanciallIndicatorStatisticQueryParam) ([]*schema.FinanciallIndicatorStatistic, error) {
 	var items []*schema.FinanciallIndicatorStatistic
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 1,
-		Quarter:     1,
-		Amount:      1000 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 1,
-		Quarter:     2,
-		Amount:      2000 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 1,
-		Quarter:     3,
-		Amount:      3000 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 1,
-		Quarter:     4,
-		Amount:      4000 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 2,
-		Quarter:     1,
-		Amount:      600 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 2,
-		Quarter:     2,
-		Amount:      900 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 2,
-		Quarter:     3,
-		Amount:      1000 * 10000 * 100,
-	})
-	items = append(items, &schema.FinanciallIndicatorStatistic{
-		PaymentType: 2,
-		Quarter:     4,
-		Amount:      1500 * 10000 * 100,
-	})
+
+	var orgName string
+	if v := params.OrgID; v != "" {
+		name, err := a.getOrgName(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		orgName = name
+	}
+
+	for i := 1; i <= 4; i++ {
+		income, err := a.StatisticModel.GetIncome(ctx, schema.GetIncomeStatisticQueryParam{
+			Year:    params.Year,
+			Quarter: i,
+			OrgName: orgName,
+		})
+		if err != nil {
+			return nil, err
+		} else if income != nil {
+			items = append(items, &schema.FinanciallIndicatorStatistic{
+				PaymentType: 1,
+				Quarter:     i,
+				Amount:      income.PlanIncome,
+			})
+			items = append(items, &schema.FinanciallIndicatorStatistic{
+				PaymentType: 2,
+				Quarter:     i,
+				Amount:      income.ActualIncome,
+			})
+		}
+	}
+
 	return items, nil
 }
 
@@ -170,12 +243,23 @@ func (a *Statistic) QueryCompany(ctx context.Context, params schema.CompanyStati
 	}
 
 	for _, item := range orgResult.Data {
-		items = append(items, &schema.CompanyStatistic{
-			OrgID:        item.RecordID,
-			OrgName:      item.Name,
-			PlanIncome:   1000 * 10000 * 100,
-			ActualIncome: 900 * 10000 * 100,
+		sitem := &schema.CompanyStatistic{
+			OrgID:   item.RecordID,
+			OrgName: item.Name,
+		}
+
+		income, err := a.StatisticModel.GetIncome(ctx, schema.GetIncomeStatisticQueryParam{
+			Year:    params.Year,
+			OrgName: item.Name,
 		})
+		if err != nil {
+			return nil, err
+		} else if income != nil {
+			sitem.PlanIncome = income.PlanIncome
+			sitem.ActualIncome = income.ActualIncome
+		}
+
+		items = append(items, sitem)
 	}
 
 	return items, nil
