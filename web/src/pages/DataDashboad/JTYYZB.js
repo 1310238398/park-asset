@@ -18,8 +18,19 @@ class JTYYZB extends PureComponent {
       this_month_withdrawal_contract_num: 0, // 本月退租合同数
     },
   };
+
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryOperational(params).then(data => {
       this.setState({ data: data });
     });

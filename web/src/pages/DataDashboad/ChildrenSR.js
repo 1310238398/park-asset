@@ -16,18 +16,31 @@ class ChildrenSR extends PureComponent {
     sf_rate: 0, // 收费率
     ds_income: 0, // 代收
   };
+
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.org_id !== prevProps.params.org_id) {
+      this.fetchData(params);
+    }
+  }
 
+  fetchData = params => {
     queryQuarterFinanciall(params).then(data => {
       this.setState({
         actual_income: formatNumber(data.actual_income, 100 * 10000, 2),
         plan_income: formatNumber(data.plan_income, 100 * 10000, 2),
-        sf_rate: data.plan_income>0?formatNumber((data.actual_income / data.plan_income) * 100, 0, 2):0,
+        sf_rate:
+          data.plan_income > 0
+            ? formatNumber((data.actual_income / data.plan_income) * 100, 0, 2)
+            : 0,
         ds_income: formatNumber(data.plan_income - data.actual_income, 100 * 10000, 2),
       });
     });
-  }
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;

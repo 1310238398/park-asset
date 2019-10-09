@@ -24,6 +24,16 @@ class XMGK extends PureComponent {
 
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryOverview(params).then(data => {
       this.setState({
         annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 * 10000, 2),
@@ -36,7 +46,7 @@ class XMGK extends PureComponent {
         project_num: data.project_num,
       });
     });
-  }
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;

@@ -22,6 +22,9 @@ class JTCWJB extends React.Component {
     if (params.year !== prevProps.params.year) {
       this.fetchData(params);
     }
+    if(params.org_id&&params.org_id !== prevProps.params.org_id){
+      this.fetchData(params);
+    }
   }
 
   fetchData = params => {

@@ -14,6 +14,7 @@ import CWZBJK from './CWZBJK';
 import ChilrenWC from './ChilrenWC';
 import styles from './DataDashboad.less';
 import { PoltList } from '@/services/projectManage';
+import { formatNumber } from '@/utils/utils';
 
 @connect(state => ({
   dataDashboad: state.dataDashboad,
@@ -229,7 +230,7 @@ class DataDashboad extends PureComponent {
                     )}
                   /> */}
                   <p className={styles.companyPlan}>
-                    年收入计划 {(v.plan_income / (10000 * 100)).toFixed(2)}万元
+                    年收入计划 {formatNumber(v.plan_income,100 * 10000,2)}万元
                   </p>
                 </div>,
                 <div className={styles.lineC}>

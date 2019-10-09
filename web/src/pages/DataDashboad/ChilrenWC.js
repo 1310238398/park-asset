@@ -16,6 +16,7 @@ import {
 } from 'bizcharts';
 import DataSet from '@antv/data-set';
 const { Html, Arc, Line } = Guide;
+import { formatNumber } from '@/utils/utils';
 class ChilrenWC extends PureComponent {
   state = {
     data: [
@@ -130,9 +131,9 @@ class ChilrenWC extends PureComponent {
           <Html
             position={['50%', '95%']}
             html={() =>
-              `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">已完成</p><p style="font-size: 10px;color: #fff;margin: 0;">${(data[0]
-                .actual_income /
-                (10000 * 100)).toFixed(2)}万元</p></div>`
+              `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">已完成</p><p style="font-size: 10px;color: #fff;margin: 0;">${
+                formatNumber(data[0].actual_income,100 * 10000,2)}
+                万元</p></div>`
             }
           />
         </Guide>
