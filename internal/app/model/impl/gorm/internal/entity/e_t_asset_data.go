@@ -148,26 +148,26 @@ type TAssetData struct {
 	QuarterS202004         *string `gorm:"column:quarter_s202004;size:100;"`          // 四季度实收
 	QuarterY2020           *string `gorm:"column:quarter_y2020;size:100;"`            // 2020应收
 	QuarterS2020           *string `gorm:"column:quarter_s2020;size:100;"`            // 2020实收
-	QuarterY201901Value    *int    `gorm:"column:quarter_y201901_value;"`             // 一季度应收
-	QuarterS201901Value    *int    `gorm:"column:quarter_s201901_value;"`             // 一季度实收
-	QuarterY201902Value    *int    `gorm:"column:quarter_y201902_value;"`             // 二季度应收
-	QuarterS201902Value    *int    `gorm:"column:quarter_s201902_value;"`             // 二季度实收
-	QuarterY201903Value    *int    `gorm:"column:quarter_y201903_value;"`             // 三季度应收
-	QuarterS201903Value    *int    `gorm:"column:quarter_s201903_value;"`             // 三季度实收
-	QuarterY201904Value    *int    `gorm:"column:quarter_y201904_value;"`             // 四季度应收
-	QuarterS201904Value    *int    `gorm:"column:quarter_s201904_value;"`             // 四季度实收
-	QuarterY2019Value      *int    `gorm:"column:quarter_y2019_value;"`               // 2019应收
-	QuarterS2019Value      *int    `gorm:"column:quarter_s2019_value;"`               // 2019实收
-	QuarterY202001Value    *int    `gorm:"column:quarter_y202001_value;"`             // 一季度应收
-	QuarterS202001Value    *int    `gorm:"column:quarter_s202001_value;"`             // 一季度实收
-	QuarterY202002Value    *int    `gorm:"column:quarter_y202002_value;"`             // 二季度应收
-	QuarterS202002Value    *int    `gorm:"column:quarter_s202002_value;"`             // 二季度实收
-	QuarterY202003Value    *int    `gorm:"column:quarter_y202003_value;"`             // 三季度应收
-	QuarterS202003Value    *int    `gorm:"column:quarter_s202003_value;"`             // 三季度实收
-	QuarterY202004Value    *int    `gorm:"column:quarter_y202004_value;"`             // 四季度应收
-	QuarterS202004Value    *int    `gorm:"column:quarter_s202004_value;"`             // 四季度实收
-	QuarterY2020Value      *int    `gorm:"column:quarter_y2020_value;"`               // 2020应收
-	QuarterS2020Value      *int    `gorm:"column:quarter_s2020_value;"`               // 2020实收
+	QuarterY201901Value    *int    `gorm:"column:quarter_y201901_value;type:bigint;"` // 一季度应收
+	QuarterS201901Value    *int    `gorm:"column:quarter_s201901_value;type:bigint;"` // 一季度实收
+	QuarterY201902Value    *int    `gorm:"column:quarter_y201902_value;type:bigint;"` // 二季度应收
+	QuarterS201902Value    *int    `gorm:"column:quarter_s201902_value;type:bigint;"` // 二季度实收
+	QuarterY201903Value    *int    `gorm:"column:quarter_y201903_value;type:bigint;"` // 三季度应收
+	QuarterS201903Value    *int    `gorm:"column:quarter_s201903_value;type:bigint;"` // 三季度实收
+	QuarterY201904Value    *int    `gorm:"column:quarter_y201904_value;type:bigint;"` // 四季度应收
+	QuarterS201904Value    *int    `gorm:"column:quarter_s201904_value;type:bigint;"` // 四季度实收
+	QuarterY2019Value      *int    `gorm:"column:quarter_y2019_value;type:bigint;"`   // 2019应收
+	QuarterS2019Value      *int    `gorm:"column:quarter_s2019_value;type:bigint;"`   // 2019实收
+	QuarterY202001Value    *int    `gorm:"column:quarter_y202001_value;type:bigint;"` // 一季度应收
+	QuarterS202001Value    *int    `gorm:"column:quarter_s202001_value;type:bigint;"` // 一季度实收
+	QuarterY202002Value    *int    `gorm:"column:quarter_y202002_value;type:bigint;"` // 二季度应收
+	QuarterS202002Value    *int    `gorm:"column:quarter_s202002_value;type:bigint;"` // 二季度实收
+	QuarterY202003Value    *int    `gorm:"column:quarter_y202003_value;type:bigint;"` // 三季度应收
+	QuarterS202003Value    *int    `gorm:"column:quarter_s202003_value;type:bigint;"` // 三季度实收
+	QuarterY202004Value    *int    `gorm:"column:quarter_y202004_value;type:bigint;"` // 四季度应收
+	QuarterS202004Value    *int    `gorm:"column:quarter_s202004_value;type:bigint;"` // 四季度实收
+	QuarterY2020Value      *int    `gorm:"column:quarter_y2020_value;type:bigint;"`   // 2020应收
+	QuarterS2020Value      *int    `gorm:"column:quarter_s2020_value;type:bigint;"`   // 2020实收
 	CustomerTenantType     *string `gorm:"column:customer_tenant_type;size:100;"`     // 租户类型
 	CustomerName           *string `gorm:"column:customer_name;size:100;"`            // 客户名称
 	CustomerBrandName      *string `gorm:"column:customer_brand_name;size:100;"`      // 客户品牌名称
