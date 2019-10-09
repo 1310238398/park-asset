@@ -1,0 +1,17 @@
+{
+  "company_name": "济南高新临空经济区园区开发有限公司",
+  "asset_type": 4,
+  "sheet_index": 1,
+  "row_start_index": 4,
+  "max_index": 45,
+  "items": [
+    {
+      "key": "ProjectName",
+      "index": "B"
+    },
+    {
+      "key": "SigningStatus",
+      "index": "F"
+    }
+  ]
+}

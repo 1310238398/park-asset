@@ -8,6 +8,7 @@ import (
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/internal/app/model/impl/gorm"
 	"gxt-park-assets/pkg/gormplus"
+
 	"go.uber.org/dig"
 )
 
@@ -28,10 +29,10 @@ func InitStore(container *dig.Container) (func(), error) {
 		}
 
 		gorm.SetTablePrefix(cfg.Gorm.TablePrefix)
-		err = gorm.AutoMigrate(db)
-		if err != nil {
-			return nil, err
-		}
+		// err = gorm.AutoMigrate(db)
+		// if err != nil {
+		// 	return nil, err
+		// }
 
 		// 注入DB
 		container.Provide(func() *gormplus.DB {
