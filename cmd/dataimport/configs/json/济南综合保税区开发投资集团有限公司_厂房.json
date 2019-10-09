@@ -1,0 +1,134 @@
+{
+    "company_name": "济南综合保税区开发投资集团有限公司",
+    "asset_type": 3,
+    "sheet_index": 2,
+    "row_start_index": 4,
+    "max_index": 45,
+    "items": [
+      {
+        "key": "ProjectName",
+        "index": "B"
+      },
+      {
+        "key": "AssetName",
+        "index": "C"
+      },
+      {
+        "key": "BuildingName",
+        "index": ""
+      },
+      {
+        "key": "UnitName",
+        "index": ""
+      },
+      {
+        "key": "LayerName",
+        "index": ""
+      },
+      {
+        "key": "HouseName",
+        "index": ""
+      },
+      {
+        "key": "Business",
+        "index": ""
+      },
+      {
+        "key": "BuildingArea",
+        "index": "D"
+      },
+      {
+        "key": "RentArea",
+        "index": "E"
+      },
+      {
+        "key": "SigningStatus",
+        "index": "F"
+      },
+      {
+        "key": "Code",
+        "index": ""
+      },
+      {
+        "key": "LeaseStart",
+        "index": "H"
+      },
+      {
+        "key": "LeaseEnd",
+        "index": "I"
+      },
+      {
+        "key": "Period",
+        "index": "J"
+      },
+      {
+        "key": "DayRent",
+        "index": "K"
+      },
+      {
+        "key": "MonthRent",
+        "index": "L"
+      },
+      {
+        "key": "PaymentCycle",
+        "index": "M"
+      },
+      {
+        "key": "AdvancePayment",
+        "index": "N"
+      },
+      {
+        "key": "RentFreeStart",
+        "index": "O"
+      },
+      {
+        "key": "RentFreeEnd",
+        "index": "P"
+      },
+      {
+        "key": "DepositDueAmount",
+        "index": "Q"
+      },
+      {
+        "key": "DepositActualAmount",
+        "index": "R"
+      },
+      {
+        "key": "SigningDate",
+        "index": "S"
+      },
+      {
+        "key": "Quarter",
+        "index": "T-AI"
+      },
+      {
+        "key": "CustomerTenantType",
+        "index": "AJ"
+      },
+      {
+        "key": "CustomerName",
+        "index": "AK"
+      },
+      {
+        "key": "CustomerBrandName",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactName",
+        "index": "AL"
+      },
+      {
+        "key": "CustomerContactTel",
+        "index": "AM"
+      },
+      {
+        "key": "CustomerContactAddress",
+        "index": "AN"
+      },
+      {
+        "key": "CustomerContactEmail",
+        "index": "AO"
+      }
+    ]
+  }
+  
