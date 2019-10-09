@@ -40,6 +40,12 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 				if item.HouseName == "" {
 					item.HouseName = preItem.HouseName
 				}
+				if item.SigningStatus == "" {
+					item.SigningStatus = preItem.SigningStatus
+				}
+				if item.Code == "" {
+					item.Code = preItem.Code
+				}
 
 				err := mTAssetData.Create(ctx, item)
 				if err != nil {

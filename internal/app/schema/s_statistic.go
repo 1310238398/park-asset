@@ -106,27 +106,28 @@ type OperationalIndicatorStatisticQueryParam struct {
 // OperationalIndicatorStatistic 运营指标统计项
 type OperationalIndicatorStatistic struct {
 	ContractNum                    int `json:"contract_num" swaggo:"false,合同数"`
+	EnterpriseNum                  int `json:"enterprise_num" swaggo:"false,入住企业总数"`
+	MerchantNum                    int `json:"merchant_num" swaggo:"false,入住商家总数"`
 	ThisMonthAddContractNum        int `json:"this_month_add_contract_num" swaggo:"false,本月新签合同数"`
 	ThisMonthWithdrawalContractNum int `json:"this_month_withdrawal_contract_num" swaggo:"false,本月退租合同数"`
 	ThisMonthRenewContractNum      int `json:"this_month_renew_contract_num" swaggo:"false,本月续签合同数"`
-	EnterpriseNum                  int `json:"enterprise_num" swaggo:"false,入住企业总数"`
-	MerchantNum                    int `json:"merchant_num" swaggo:"false,入住商家总数"`
 }
 
 // OverviewStatisticQueryParam 概览查询参数
 type OverviewStatisticQueryParam struct {
-	Year  int
-	OrgID string
+	Year    int
+	OrgID   string
+	OrgName string
 }
 
 // OverviewStatistic 概览统计项
 type OverviewStatistic struct {
 	AnnualPlanIncome   int `json:"annual_plan_income" swaggo:"false,年度计划收入"`
 	AnnualActualIncome int `json:"annual_actual_income" swaggo:"false,年度实际收入"`
-	ProjectNum         int `json:"project_num" swaggo:"false,项目总数"`
 	BuildingArea       int `json:"building_area" swaggo:"false,建筑总面积"`
 	RentArea           int `json:"rent_area" swaggo:"false,建筑计租总面积"`
 	RentedArea         int `json:"rented_area" swaggo:"false,建筑已租面积"`
+	ProjectNum         int `json:"project_num" swaggo:"false,项目总数"`
 }
 
 // QuarterFinanciallIndicatorStatisticQueryParam 季度财务指标查询参数
@@ -166,4 +167,48 @@ type CompanyStatistic struct {
 	OrgName      string `json:"org_name" swaggo:"false,公司名称"`
 	PlanIncome   int    `json:"plan_income" swaggo:"false,计划收入"`
 	ActualIncome int    `json:"actual_income" swaggo:"false,实际收入"`
+}
+
+// GetContractNumQueryParam 获取合同数查询参数
+type GetContractNumQueryParam struct {
+	OrgName string
+}
+
+// GetEnterpriseNumQueryParam 获取企业数查询参数
+type GetEnterpriseNumQueryParam struct {
+	OrgName string
+}
+
+// GetMerchantNumQueryParam 获取商家数查询参数
+type GetMerchantNumQueryParam struct {
+	OrgName string
+}
+
+// GetProjectNumQueryParam 获取项目数查询参数
+type GetProjectNumQueryParam struct {
+	OrgName string
+}
+
+// GetIncomeQueryParam 获取收入查询参数
+type GetIncomeQueryParam struct {
+	Year    int
+	Quarter int
+	OrgName string
+}
+
+// GetIncomeQueryResult 获取收入查询结果
+type GetIncomeQueryResult struct {
+	PlanIncome   int `json:"plan_income" swaggo:"false,计划收入"`
+	ActualIncome int `json:"actual_income" swaggo:"false,实际收入"`
+}
+
+// GetAreaQueryParam 获取面积查询参数
+type GetAreaQueryParam struct {
+	OrgName string
+}
+
+// GetAreaQueryResult 获取面积查询结果
+type GetAreaQueryResult struct {
+	RentArea   int `json:"rent_area" swaggo:"false,建筑计租总面积"`
+	RentedArea int `json:"rented_area" swaggo:"false,建筑已租面积"`
 }

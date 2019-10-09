@@ -135,3 +135,87 @@ func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema
 
 	return qr, nil
 }
+
+// GetContractNum 获取合同数
+func (a *Statistic) GetContractNum(ctx context.Context, params schema.GetContractNumQueryParam) (int, error) {
+	var values []interface{}
+	subSQL := fmt.Sprintf("SELECT COUNT(*) AS count FROM %s WHERE deleted_at is null AND signing_status='已租'", entity.TAssetData{}.TableName())
+	if v := params.OrgName; v != "" {
+		subSQL += " and org_name=?"
+		values = append(values, v)
+	}
+	subSQL += " GROUP BY code"
+
+	var result struct {
+		Count int `grom:"column:count"`
+	}
+	sql := fmt.Sprintf("SELECT SUM(1) AS count FROM (%s) AS a WHERE count>0", subSQL)
+	db := a.db.Raw(sql, values...).Scan(&result)
+	if err := db.Error; err != nil {
+		return 0, err
+	}
+
+	return result.Count, nil
+}
+
+// GetEnterpriseNum 获取企业数
+func (a *Statistic) GetEnterpriseNum(ctx context.Context, params schema.GetEnterpriseNumQueryParam) (int, error) {
+	db := a.db.Table(entity.TAssetData{}.TableName())
+
+	if v := params.OrgName; v != "" {
+		db = db.Where("org_name=?", v)
+	}
+
+	db = db.Where("asset_type!=2")
+	db = db.Where("customer_tenant_type='企业'")
+
+	var count int
+	db = db.Count(&count)
+	if err := db.Error; err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+// GetMerchantNum 获取商家数
+func (a *Statistic) GetMerchantNum(ctx context.Context, params schema.GetMerchantNumQueryParam) (int, error) {
+	db := a.db.Table(entity.TAssetData{}.TableName())
+
+	if v := params.OrgName; v != "" {
+		db = db.Where("org_name=?", v)
+	}
+
+	db = db.Where("asset_type=2")
+	db = db.Where("signing_status='已租'")
+
+	var count int
+	db = db.Count(&count)
+	if err := db.Error; err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+// GetProjectNum 获取项目数
+func (a *Statistic) GetProjectNum(ctx context.Context, params schema.GetProjectNumQueryParam) (int, error) {
+	var values []interface{}
+	subSQL := fmt.Sprintf("SELECT COUNT(*) AS count FROM %s WHERE deleted_at is null AND project_name!=''", entity.TAssetData{}.TableName())
+	if v := params.OrgName; v != "" {
+		subSQL += " and org_name=?"
+		values = append(values, v)
+	}
+	subSQL += " GROUP BY project_name"
+
+	var result struct {
+		Count int `grom:"column:count"`
+	}
+	sql := fmt.Sprintf("SELECT SUM(1) AS count FROM (%s) AS a WHERE count>0", subSQL)
+	db := a.db.Raw(sql, values...).Scan(&result)
+	if err := db.Error; err != nil {
+		return 0, err
+	}
+
+	return result.Count, nil
+}
