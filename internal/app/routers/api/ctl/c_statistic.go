@@ -137,6 +137,7 @@ func (a *Statistic) QueryIncomeClassification(c *gin.Context) {
 // @Summary 查询运营指标
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param year query int true "年份"
+// @Param org_id query string false "组织ID"
 // @Success 200 schema.OperationalIndicatorStatistic
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -145,6 +146,7 @@ func (a *Statistic) QueryIncomeClassification(c *gin.Context) {
 func (a *Statistic) QueryOperationalIndicator(c *gin.Context) {
 	var params schema.OperationalIndicatorStatisticQueryParam
 	params.Year = util.S(c.Query("year")).DefaultInt(0)
+	params.OrgID = c.Query("org_id")
 
 	item, err := a.StatisticBll.QueryOperationalIndicator(ginplus.NewContext(c), params)
 	if err != nil {
