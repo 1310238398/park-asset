@@ -37,6 +37,16 @@ func ConvStringToFloatInt(s string, b int) *int {
 	return &v
 }
 
+// FormatNumberString 格式化数字字符串
+func FormatNumberString(s string, f int) string {
+	if i := strings.Index(s, "."); i > -1 {
+		if len(s[i:]) > f+1 {
+			return s[:i+f+1]
+		}
+	}
+	return s
+}
+
 // ContentDisposition implements a simple version of https://tools.ietf.org/html/rfc2183
 // Use mime.ParseMediaType to parse Content-Disposition header.
 func ContentDisposition(fileName, dispositionType string) (header string) {
