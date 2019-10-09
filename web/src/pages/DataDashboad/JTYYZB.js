@@ -48,22 +48,22 @@ class JTYYZB extends PureComponent {
         </div>
         <div className={styles.leftLineArea}>
           <div className={styles.LineArea}>
-            <span>执行合同数</span> <span>本月新签合同</span> <span>本月退租合同数</span>
+            <span>执行合同数</span>   <span>入驻企业总数</span> <span>入驻商家总数</span>
           </div>
           <div className={styles.LineAreaData}>
             <span className={styles.lineAreaq}>{contract_num}份</span>
-            <span className={styles.lineAreaq}>{this_month_add_contract_num}</span>
-            <span className={styles.lineAreaq}>{this_month_withdrawal_contract_num}</span>
+            <span className={styles.lineAreaq}>{enterprise_num}</span>
+            <span className={styles.lineAreaq}>{merchant_num}</span>
           </div>
         </div>
         <div className={styles.leftLineAreaTwo}>
           <div className={styles.LineArea}>
-            <span>本月续租合同数</span> <span>入驻企业总数</span> <span>入驻商家总数</span>
+            <span>本月续租合同数</span> <span>本月新签合同</span> <span>本月退租合同数</span>
           </div>
           <div className={styles.LineAreaData}>
             <span className={styles.lineAreaq}>{this_month_renew_contract_num}</span>
-            <span className={styles.lineAreaq}>{enterprise_num}</span>
-            <span className={styles.lineAreaq}>{merchant_num}</span>
+            <span className={styles.lineAreaq}>{this_month_add_contract_num}</span>
+            <span className={styles.lineAreaq}>{this_month_withdrawal_contract_num}</span>
           </div>
         </div>
       </div>

@@ -23,6 +23,7 @@ class DataCompanyShow extends PureComponent {
       org_id,
       year,
       title,
+      quarter,
     } = this.props;
     return (
       <Modal
@@ -51,7 +52,7 @@ class DataCompanyShow extends PureComponent {
           <div className={styles.winRight}>
             <div className={styles.winRightSR}>
               <div className={styles.assetProTitle}>收入情况</div>
-              <ChildrenSR params={{ year: year, org_id: org_id }} />
+              <ChildrenSR params={{ year: year, org_id: org_id,quarter:quarter}} />
               <div className={styles.leftRightOneChart}>
                 <YYZB height={280} params={{ year: year, org_id: org_id }} />
               </div>

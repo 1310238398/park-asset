@@ -7,6 +7,7 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import styles from '../AssetDataMaint.less';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import PButton from '@/components/PermButton';
+import DicShow from '@/components/DictionaryNew/DicShow';
 
 @connect(state => ({
   statistic: state.statistic,
@@ -126,6 +127,17 @@ class AssetSearch extends PureComponent {
     });
   };
 
+  handleTableChange = pagination => {
+    this.props.dispatch({
+      type: 'statistic/fetch',
+      search: { rent_cycle: this.getCurYear() },
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
+    });
+  };
+
   renderSearchForm() {
     const { Option } = Select;
     const {
@@ -227,6 +239,12 @@ class AssetSearch extends PureComponent {
         title: '资产类型',
         dataIndex: 'asset_type',
         width: 100,
+        render: val => {
+          if (val === 0) {
+            return '';
+          }
+          return <DicShow pcode="pa$#atype" code={[val]} />;
+        },
       },
       {
         title: '项目名称',
@@ -315,7 +333,7 @@ class AssetSearch extends PureComponent {
                 dataSource={list}
                 columns={columns}
                 pagination={paginationProps}
-                // onChange={this.handleTableChange}
+                onChange={this.handleTableChange}
                 size="small"
               />
             </div>

@@ -13,39 +13,49 @@ import XMGK from './XMGK';
 import CWZBJK from './CWZBJK';
 import ChilrenWC from './ChilrenWC';
 import styles from './DataDashboad.less';
+import { PoltList } from '@/services/projectManage';
 
 @connect(state => ({
   dataDashboad: state.dataDashboad,
-  projectManage: state.projectManage,
   loading: state.loading.models.dataDashboad,
 }))
 class DataDashboad extends PureComponent {
   state = {
     year: '2019',
     name: '',
+    quarter: 1,
   };
 
   constructor(props) {
     super(props);
   }
 
-  async componentDidMount() {
-    await this.dispatch({
-      type: 'projectManage/queryPlotList',
-    });
+  componentWillMount() {
+    this.getQuarterByMonth();
+  }
 
+  componentDidMount() {
+    PoltList({ q: 'list' }).then(data => {
+      this.loadMap(data.list || []);
+    });
+    this.queryCompanyListBtom();
+  }
+  getQuarterByMonth() {
+    var today = new Date();
+    var month = today.getMonth() + 1; //getMonth返回0-11
+    if (month >= 1 && month <= 3) return this.setState({ quarter: 1 });
+    if (month >= 4 && month <= 6) return this.setState({ quarter: 2 });
+    if (month >= 7 && month <= 9) return this.setState({ quarter: 3 });
+    if (month >= 10 && month <= 12) return this.setState({ quarter: 4 });
+  }
+  queryCompanyListBtom() {
     this.dispatch({
       type: 'dataDashboad/queryCompanyList',
       params: { year: this.state.year },
     });
-    await this.loadMap();
   }
 
-  loadMap = () => {
-    const {
-      projectManage: { poltList },
-    } = this.props;
-    console.log(poltList);
+  loadMap = data => {
     var map = new window.AMap.Map('mainMap', {
       center: [117.000923, 36.675807],
       zoom: 14,
@@ -53,7 +63,7 @@ class DataDashboad extends PureComponent {
     });
 
     var markers = []; //province见Demo引用的JS文件
-    for (var i = 0; i < poltList.length; i += 1) {
+    for (var i = 0; i < data.length; i += 1) {
       var marker;
 
       var icon = new AMap.Icon({
@@ -65,10 +75,10 @@ class DataDashboad extends PureComponent {
       });
       marker = new AMap.Marker({
         icon: icon,
-        position: poltList[i].location.split(','),
+        position: data[i].location.split(','),
         offset: new AMap.Pixel(-12, -12),
         zIndex: 101,
-        title: poltList[i].name,
+        title: data[i].name,
         map: map,
       });
     }
@@ -80,7 +90,7 @@ class DataDashboad extends PureComponent {
   };
 
   handleChange = e => {
-    this.setState({ year: e });
+    this.setState({ year: e },()=>{this.queryCompanyListBtom()});
   };
 
   getYearSelect = () => {
@@ -91,7 +101,7 @@ class DataDashboad extends PureComponent {
           justifyContent: 'flex-start',
           alignItems: 'center',
           position: 'relative',
-          // top: '0.68vh',
+          top: '0.68vh',
           left: '3.44vw',
         }}
       >
@@ -137,13 +147,14 @@ class DataDashboad extends PureComponent {
         onCancel={this.handleFormCancel}
         org_id={comPanyId}
         year={this.state.year}
+        quarter={this.state.quarter}
         title={this.state.name}
       />
     );
   }
 
   render() {
-    const { year } = this.state;
+    const { year, quarter } = this.state;
     const {
       dataDashboad: { companyList },
     } = this.props;
@@ -187,7 +198,7 @@ class DataDashboad extends PureComponent {
               </div>
               <CWZBJK params={{ year }} />
               <div className={styles.leftRightOneChart}>
-                <YYZB height={350} params={{ year }} />
+                <YYZB height={350} params={{ year, quarter }} />
               </div>
             </div>
           </div>

@@ -20,6 +20,7 @@ class YYZB extends React.Component {
     data: [],
   };
 
+
   componentDidMount() {
     const { params } = this.props;
     queryFinanciall(params).then(data => {
