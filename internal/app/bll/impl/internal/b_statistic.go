@@ -6,6 +6,7 @@ import (
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/pkg/minio"
+	"gxt-park-assets/pkg/util"
 	"io"
 
 	"github.com/tealeg/xlsx"
@@ -122,8 +123,8 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 			row.AddCell().SetString(item.AssetName)
 		}
 
-		row.AddCell().SetString(item.BuildingArea)
-		row.AddCell().SetString(item.RentArea)
+		row.AddCell().SetString(util.FormatNumberString(item.BuildingArea, 2))
+		row.AddCell().SetString(util.FormatNumberString(item.RentArea, 2))
 		row.AddCell().SetString(item.SigningStatus)
 		row.AddCell().SetString(item.Code)
 		row.AddCell().SetString(item.LeaseStart)
@@ -193,23 +194,23 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 		}
 
 		if rentCycle[0] == 2019 {
-			row.AddCell().SetString(item.QuarterY201901)
-			row.AddCell().SetString(item.QuarterS201901)
-			row.AddCell().SetString(item.QuarterY201902)
-			row.AddCell().SetString(item.QuarterS201902)
-			row.AddCell().SetString(item.QuarterY201903)
-			row.AddCell().SetString(item.QuarterS201903)
-			row.AddCell().SetString(item.QuarterY201904)
-			row.AddCell().SetString(item.QuarterS201904)
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY201901, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS201901, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY201902, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS201902, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY201903, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS201903, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY201904, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS201904, 2))
 		} else {
-			row.AddCell().SetString(item.QuarterY202001)
-			row.AddCell().SetString(item.QuarterS202001)
-			row.AddCell().SetString(item.QuarterY202002)
-			row.AddCell().SetString(item.QuarterS202002)
-			row.AddCell().SetString(item.QuarterY202003)
-			row.AddCell().SetString(item.QuarterS202003)
-			row.AddCell().SetString(item.QuarterY202004)
-			row.AddCell().SetString(item.QuarterS202004)
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY202001, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS202001, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY202002, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS202002, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY202003, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS202003, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterY202004, 2))
+			row.AddCell().SetString(util.FormatNumberString(item.QuarterS202004, 2))
 		}
 
 		preItem = item
