@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"context"
 	"gxt-park-assets/internal/app/config"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/pkg/minio"
 	"io"
+
+	"github.com/tealeg/xlsx"
 
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/schema"
@@ -15,10 +18,12 @@ import (
 func NewStatistic(
 	mStatistic model.IStatistic,
 	mOrganization model.IOrganization,
+	mTAssetData model.ITAssetData,
 ) *Statistic {
 	return &Statistic{
 		StatisticModel:    mStatistic,
 		OrganizationModel: mOrganization,
+		TAssetDataModel:   mTAssetData,
 	}
 }
 
@@ -26,6 +31,7 @@ func NewStatistic(
 type Statistic struct {
 	StatisticModel    model.IStatistic
 	OrganizationModel model.IOrganization
+	TAssetDataModel   model.ITAssetData
 }
 
 // QueryProject 查询项目统计数据
@@ -35,6 +41,15 @@ func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStati
 
 // ExportProject 导出项目资产数据
 func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStatisticQueryParam) (*bytes.Buffer, error) {
+	result, err := a.TAssetDataModel.Query(ctx, schema.TAssetDataQueryParam{
+		LikeOrgName:     params.LikeOrgName,
+		LikeProjectName: params.LikeProjectName,
+		AssetType:       params.AssetType,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	obj, err := minio.GetClient().Get(ctx, config.GetGlobalConfig().ExcelExport.ProjectTpl)
 	if err != nil {
 		return nil, err
@@ -43,7 +58,170 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 	buf := new(bytes.Buffer)
 	io.Copy(buf, obj)
 
-	return buf, nil
+	f, err := xlsx.OpenBinary(buf.Bytes())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	var preItem *schema.TAssetData
+	for _, item := range result.Data {
+		if item.AssetType < 1 || item.AssetType > 7 {
+			continue
+		}
+
+		// 同一份合同只导出一次
+		if preItem != nil && preItem.Code == item.Code {
+			continue
+		}
+
+		var row *xlsx.Row
+		switch item.AssetType {
+		case 1:
+			row = f.Sheets[0].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.BuildingName)
+			row.AddCell().SetString(item.UnitName)
+			row.AddCell().SetString(item.LayerName)
+			row.AddCell().SetString(item.HouseName)
+		case 2:
+			row = f.Sheets[1].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.AssetName)
+		case 3:
+			row = f.Sheets[6].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.AssetName)
+		case 4:
+			row = f.Sheets[3].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.BuildingName)
+			row.AddCell().SetString(item.UnitName)
+			row.AddCell().SetString(item.LayerName)
+			row.AddCell().SetString(item.HouseName)
+		case 5:
+			row = f.Sheets[2].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.BuildingName)
+			row.AddCell().SetString(item.UnitName)
+			row.AddCell().SetString(item.LayerName)
+			row.AddCell().SetString(item.HouseName)
+		case 6:
+			row = f.Sheets[4].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.AssetName)
+		case 7:
+			row = f.Sheets[5].AddRow()
+			row.AddCell().SetString(item.OrgName)
+			row.AddCell().SetString(item.ProjectName)
+			row.AddCell().SetString(item.AssetName)
+		}
+
+		row.AddCell().SetString(item.BuildingArea)
+		row.AddCell().SetString(item.RentArea)
+		row.AddCell().SetString(item.SigningStatus)
+		row.AddCell().SetString(item.Code)
+		row.AddCell().SetString(item.LeaseStart)
+		row.AddCell().SetString(item.LeaseEnd)
+		row.AddCell().SetString(item.Period)
+		row.AddCell().SetString(item.DayRent)
+		row.AddCell().SetString(item.MonthRent)
+		row.AddCell().SetString(item.PaymentCycle)
+		row.AddCell().SetString(item.AdvancePayment)
+		row.AddCell().SetString(item.RentFreeStart + "-" + item.RentFreeEnd)
+		row.AddCell().SetString(item.DepositDueAmount)
+		row.AddCell().SetString(item.DepositActualAmount)
+		row.AddCell().SetString(item.SigningDate)
+		row.AddCell().SetString(item.CustomerName)
+		row.AddCell().SetString(item.CustomerContactName)
+		row.AddCell().SetString(item.CustomerContactTel)
+		row.AddCell().SetString(item.CustomerContactAddress)
+		row.AddCell().SetString(item.CustomerContactEmail)
+
+		rentCycle := params.RentCycle
+		if len(rentCycle) == 0 {
+			continue
+		}
+
+		if len(rentCycle) > 1 {
+			citem := *item
+
+			item.QuarterY201901 = "0"
+			item.QuarterS201901 = "0"
+			item.QuarterY201902 = "0"
+			item.QuarterS201902 = "0"
+			item.QuarterY201903 = "0"
+			item.QuarterS201903 = "0"
+			item.QuarterY201904 = "0"
+			item.QuarterS201904 = "0"
+
+			item.QuarterY202001 = "0"
+			item.QuarterS202001 = "0"
+			item.QuarterY202002 = "0"
+			item.QuarterS202002 = "0"
+			item.QuarterY202003 = "0"
+			item.QuarterS202003 = "0"
+			item.QuarterY202004 = "0"
+			item.QuarterS202004 = "0"
+			switch rentCycle[1] {
+			case 1:
+				item.QuarterY201901 = citem.QuarterY201901
+				item.QuarterS201901 = citem.QuarterS201901
+				item.QuarterY202001 = citem.QuarterY202001
+				item.QuarterS202001 = citem.QuarterS202001
+			case 2:
+				item.QuarterY201902 = citem.QuarterY201902
+				item.QuarterS201902 = citem.QuarterS201902
+				item.QuarterY202002 = citem.QuarterY202002
+				item.QuarterS202002 = citem.QuarterS202002
+			case 3:
+				item.QuarterY201903 = citem.QuarterY201903
+				item.QuarterS201903 = citem.QuarterS201903
+				item.QuarterY202003 = citem.QuarterY202003
+				item.QuarterS202003 = citem.QuarterS202003
+			case 4:
+				item.QuarterY201904 = citem.QuarterY201904
+				item.QuarterS201904 = citem.QuarterS201904
+				item.QuarterY202004 = citem.QuarterY202004
+				item.QuarterS202004 = citem.QuarterS202004
+			}
+		}
+
+		if rentCycle[0] == 2019 {
+			row.AddCell().SetString(item.QuarterY201901)
+			row.AddCell().SetString(item.QuarterS201901)
+			row.AddCell().SetString(item.QuarterY201902)
+			row.AddCell().SetString(item.QuarterS201902)
+			row.AddCell().SetString(item.QuarterY201903)
+			row.AddCell().SetString(item.QuarterS201903)
+			row.AddCell().SetString(item.QuarterY201904)
+			row.AddCell().SetString(item.QuarterS201904)
+		} else {
+			row.AddCell().SetString(item.QuarterY202001)
+			row.AddCell().SetString(item.QuarterS202001)
+			row.AddCell().SetString(item.QuarterY202002)
+			row.AddCell().SetString(item.QuarterS202002)
+			row.AddCell().SetString(item.QuarterY202003)
+			row.AddCell().SetString(item.QuarterS202003)
+			row.AddCell().SetString(item.QuarterY202004)
+			row.AddCell().SetString(item.QuarterS202004)
+		}
+
+		preItem = item
+	}
+
+	nbuf := new(bytes.Buffer)
+	err = f.Write(nbuf)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return nbuf, nil
 }
 
 func (a *Statistic) getOrgName(ctx context.Context, orgID string) (string, error) {
