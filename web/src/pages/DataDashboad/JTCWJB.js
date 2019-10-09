@@ -58,10 +58,10 @@ class JTCWJB extends React.Component {
       },
     };
     return (
-      <Chart height={height} data={dv} scale={cols} padding={[0, 50, 80, 50]} forceFit>
+      <Chart height={height} data={dv} scale={cols} padding={[30, 50, 30, 50]} forceFit>
         <Coord type="theta" radius={0.75} />
         <Axis name="percent" />
-        <Legend position="bottom" offsetY={-20} />
+        <Legend position="bottom" offsetY={-5} />
         <Tooltip
           showTitle={false}
           itemTpl='<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
