@@ -129,6 +129,8 @@ func (a *OfficeBuilding) createAsset(ctx context.Context, item schema.OfficeBuil
 		BuildingArea: item.BuildingArea,
 		RentArea:     item.RentArea,
 		RentStatus:   item.RentStatus,
+		ParentID:     item.ParentID,
+		ParentPath:   item.ParentPath,
 	})
 }
 

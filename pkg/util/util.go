@@ -20,6 +20,23 @@ func CalcBitValueByString(s string) *int {
 	return &val
 }
 
+// ConvStringToFloatInt 转换字符串为浮点数的整数（b为需要乘的基数）
+func ConvStringToFloatInt(s string, b int) *int {
+	var v int
+	f, err := S(s).Float64()
+	if err != nil {
+		return &v
+	}
+
+	if b > 0 {
+		v = int(f * float64(b))
+	} else {
+		v = int(f)
+	}
+
+	return &v
+}
+
 // ContentDisposition implements a simple version of https://tools.ietf.org/html/rfc2183
 // Use mime.ParseMediaType to parse Content-Disposition header.
 func ContentDisposition(fileName, dispositionType string) (header string) {

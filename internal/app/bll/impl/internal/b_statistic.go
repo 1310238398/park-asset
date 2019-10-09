@@ -30,25 +30,7 @@ type Statistic struct {
 
 // QueryProject 查询项目统计数据
 func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStatisticQueryParam, opts ...schema.ProjectStatisticQueryOptions) (*schema.ProjectStatisticQueryResult, error) {
-	var items []*schema.ProjectStatistic
-	items = append(items, &schema.ProjectStatistic{
-		OrgID:         "",
-		OrgName:       "智慧谷置业公司",
-		ProjectID:     "",
-		ProjectName:   "汉峪金谷",
-		AssetType:     1,
-		RentArea:      100000000,
-		RentedArea:    90000000,
-		PaymentAmount: 100000000,
-		ActualAmount:  90000000,
-	})
-	result := &schema.ProjectStatisticQueryResult{
-		Data: items,
-		PageResult: &schema.PaginationResult{
-			Total: 1,
-		},
-	}
-	return result, nil
+	return a.StatisticModel.QueryProject(ctx, params, opts...)
 }
 
 // ExportProject 导出项目资产数据

@@ -49,13 +49,13 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'http://127.0.0.1:10088/',
-      // target: 'http://192.168.250.57:10088/',
+      // target: 'http://127.0.0.1:10088/',
+      target: 'http://192.168.250.57:10088/',
       changeOrigin: true,
     },
     '/s/': {
-      target: 'http://127.0.0.1:10088/',
-      // target: 'http://192.168.250.57:10088/',
+      // target: 'http://127.0.0.1:10088/',
+      target: 'http://192.168.250.57:10088/',
       changeOrigin: true,
     },
   },

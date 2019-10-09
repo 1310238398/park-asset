@@ -1,0 +1,129 @@
+{
+  "company_name": "济南高新技术产业开发区物业管理总公司",
+  "asset_type": 4,
+  "sheet_index": 2,
+  "row_start_index": 4,
+  "max_index": 45,
+  "items": [
+    {
+      "key": "ProjectName",
+      "index": "B"
+    },
+    {
+      "key": "AssetName",
+      "index": ""
+    },
+    {
+      "key": "BuildingName",
+      "index": "C"
+    },
+    {
+      "key": "UnitName",
+      "index": "D"
+    },
+    {
+      "key": "LayerName",
+      "index": "E"
+    },
+    {
+      "key": "HouseName",
+      "index": "F"
+    },
+    {
+      "key": "Business",
+      "index": ""
+    },
+    {
+      "key": "BuildingArea",
+      "index": "G"
+    },
+    {
+      "key": "RentArea",
+      "index": "H"
+    },
+    {
+      "key": "SigningStatus",
+      "index": "I"
+    },
+    {
+      "key": "Code",
+      "index": "J"
+    },
+    {
+      "key": "LeaseStart",
+      "index": "K"
+    },
+    {
+      "key": "LeaseEnd",
+      "index": "L"
+    },
+    {
+      "key": "Period",
+      "index": "M"
+    },
+    {
+      "key": "DayRent",
+      "index": "N   "
+    },
+    {
+      "key": "MonthRent",
+      "index": "O"
+    },
+    {
+      "key": "PaymentCycle",
+      "index": "P"
+    },
+    {
+      "key": "AdvancePayment",
+      "index": "Q"
+    },
+    {
+      "key": "RentFreeStart",
+      "index": "R"
+    },
+    {
+      "key": "RentFreeEnd",
+      "index": "S"
+    },
+    {
+      "key": "DepositDueAmount",
+      "index": "U"
+    },
+    {
+      "key": "DepositActualAmount",
+      "index": "V"
+    },
+    {
+      "key": "SigningDate",
+      "index": "W"
+    },
+    {
+      "key": "Quarter",
+      "index": "X-AM"
+    },
+    {
+      "key": "CustomerTenantType",
+      "index": "AN"
+    },
+    {
+      "key": "CustomerName",
+      "index": "AO"
+    },
+    {
+      "key": "CustomerContactName",
+      "index": "AP"
+    },
+    {
+      "key": "CustomerContactTel",
+      "index": "AQ"
+    },
+    {
+      "key": "CustomerContactAddress",
+      "index": "AR"
+    },
+    {
+      "key": "CustomerContactEmail",
+      "index": "AS"
+    }
+  ]
+}

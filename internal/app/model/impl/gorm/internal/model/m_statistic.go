@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
@@ -19,73 +20,63 @@ type Statistic struct {
 	db *gormplus.DB
 }
 
-func (a *Statistic) getQueryOption(opts ...schema.StatisticQueryOptions) schema.StatisticQueryOptions {
-	var opt schema.StatisticQueryOptions
+// QueryProject 查询项目统计数据
+func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStatisticQueryParam, opts ...schema.ProjectStatisticQueryOptions) (*schema.ProjectStatisticQueryResult, error) {
+	db := a.db.Table(entity.TAssetData{}.TableName())
+
+	if v := params.LikeOrgName; v != "" {
+		db = db.Where("org_name LIKE ?", "%"+v+"%")
+	}
+	if v := params.LikeProjectName; v != "" {
+		db = db.Where("project_name LIKE ?", "%"+v+"%")
+	}
+	if v := params.AssetType; v != 0 {
+		db = db.Where("asset_type=?", v)
+	}
+
+	selQuery := "org_name,project_name,asset_type"
+	selQuery += ",SUM(rent_area_value)'rent_area'"
+	selQuery += ",SUM(case signing_status when '已租' then rent_area_value ELSE 0 END)'rented_area'"
+
+	payment := "quarter_y201901_value+quarter_y201902_value+quarter_y201903_value+quarter_y201904_value+quarter_y2019_value+quarter_y202001_value+quarter_y202002_value+quarter_y202003_value+quarter_y202004_value+quarter_y2020_value"
+	actual := "quarter_s201901_value+quarter_s201902_value+quarter_s201903_value+quarter_s201904_value+quarter_s2019_value+quarter_s202001_value+quarter_s202002_value+quarter_s202003_value+quarter_s202004_value+quarter_s2020_value"
+	if v := params.RentCycle; len(v) > 0 {
+		if len(v) == 1 {
+			if v[0] == 2019 {
+				payment = "quarter_y201901_value+quarter_y201902_value+quarter_y201903_value+quarter_y201904_value+quarter_y2019_value"
+				actual = "quarter_s201901_value+quarter_s201902_value+quarter_s201903_value+quarter_s201904_value+quarter_s2019_value"
+			} else {
+				payment = "quarter_y202001_value+quarter_y202002_value+quarter_y202003_value+quarter_y202004_value+quarter_y2020_value"
+				actual = "quarter_s202001_value+quarter_s202002_value+quarter_s202003_value+quarter_s202004_value+quarter_s2020_value"
+			}
+		} else {
+			payment = fmt.Sprintf("quarter_y%d0%d_value", v[0], v[1])
+			actual = fmt.Sprintf("quarter_s%d0%d_value", v[0], v[1])
+		}
+	}
+
+	selQuery += fmt.Sprintf(",SUM(%s)'payment_amount'", payment)
+	selQuery += fmt.Sprintf(",SUM(%s)'actual_amount'", actual)
+
+	db = db.Select(selQuery)
+	db = db.Group("org_name,project_name,asset_type")
+	db = db.Order("org_name,project_name,asset_type")
+
+	var opt schema.ProjectStatisticQueryOptions
 	if len(opts) > 0 {
 		opt = opts[0]
 	}
-	return opt
-}
 
-// Query 查询数据
-func (a *Statistic) Query(ctx context.Context, params schema.StatisticQueryParam, opts ...schema.StatisticQueryOptions) (*schema.StatisticQueryResult, error) {
-	db := entity.GetStatisticDB(ctx, a.db).DB
-
-	db = db.Order("id DESC")
-
-	opt := a.getQueryOption(opts...)
-	var list entity.Statistics
+	var list entity.ProjectStatistics
 	pr, err := WrapPageQuery(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	qr := &schema.StatisticQueryResult{
+
+	qr := &schema.ProjectStatisticQueryResult{
 		PageResult: pr,
-		Data:       list.ToSchemaStatistics(),
+		Data:       list.ToSchemaProjectStatistics(),
 	}
 
 	return qr, nil
-}
-
-// Get 查询指定数据
-func (a *Statistic) Get(ctx context.Context, recordID string, opts ...schema.StatisticQueryOptions) (*schema.Statistic, error) {
-	db := entity.GetStatisticDB(ctx, a.db).Where("record_id=?", recordID)
-	var item entity.Statistic
-	ok, err := a.db.FindOne(db, &item)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	} else if !ok {
-		return nil, nil
-	}
-
-	return item.ToSchemaStatistic(), nil
-}
-
-// Create 创建数据
-func (a *Statistic) Create(ctx context.Context, item schema.Statistic) error {
-	Statistic := entity.SchemaStatistic(item).ToStatistic()
-	result := entity.GetStatisticDB(ctx, a.db).Create(Statistic)
-	if err := result.Error; err != nil {
-		return errors.WithStack(err)
-	}
-	return nil
-}
-
-// Update 更新数据
-func (a *Statistic) Update(ctx context.Context, recordID string, item schema.Statistic) error {
-	Statistic := entity.SchemaStatistic(item).ToStatistic()
-	result := entity.GetStatisticDB(ctx, a.db).Where("record_id=?", recordID).Omit("record_id", "creator").Updates(Statistic)
-	if err := result.Error; err != nil {
-		return errors.WithStack(err)
-	}
-	return nil
-}
-
-// Delete 删除数据
-func (a *Statistic) Delete(ctx context.Context, recordID string) error {
-	result := entity.GetStatisticDB(ctx, a.db).Where("record_id=?", recordID).Delete(entity.Statistic{})
-	if err := result.Error; err != nil {
-		return errors.WithStack(err)
-	}
-	return nil
 }

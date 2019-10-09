@@ -10,7 +10,8 @@ type Asset struct {
 	RentArea     int    `json:"rent_area" swaggo:"false,计租面积"`
 	RentStatus   int    `json:"rent_status" swaggo:"false,出租状态:1未租 2锁定 3已租"`
 	Creator      string `json:"creator" swaggo:"false,创建者"`
-	GroupID      string `json:"group_id" swaggo:"false,资产组ID"`
+	ParentID     string `json:"parent_id" swaggo:"false,父级ID"`
+	ParentPath   string `json:"parent_path" swaggo:"false,父级路径"`
 }
 
 // AssetQueryParam 查询条件

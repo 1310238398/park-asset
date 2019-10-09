@@ -54,9 +54,8 @@ func (a *Menu) QueryPage(c *gin.Context) {
 		LikeName: c.Query("name"),
 	}
 
-	if v := c.Query("parent_id"); v != "" {
-		params.ParentID = &v
-	}
+	parentID := c.Query("parent_id")
+	params.ParentID = &parentID
 
 	if v := c.Query("hidden"); v != "" {
 		if hidden := util.S(v).DefaultInt(0); hidden > -1 {
