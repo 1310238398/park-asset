@@ -40,3 +40,30 @@ func (a ProjectStatistics) ToSchemaProjectStatistics() []*schema.ProjectStatisti
 	}
 	return list
 }
+
+// IncomeClassificationStatistic 收入分类占比统计查询实体
+type IncomeClassificationStatistic struct {
+	AssetType    int `gorm:"column:asset_type;"`
+	ActualAmount int `gorm:"column:actual_amount;"`
+}
+
+// ToSchemaIncomeClassificationStatistic 转换为收入分类占比统计查询对象
+func (a IncomeClassificationStatistic) ToSchemaIncomeClassificationStatistic() *schema.IncomeClassificationStatistic {
+	item := &schema.IncomeClassificationStatistic{
+		AssetType:    a.AssetType,
+		ActualAmount: a.ActualAmount,
+	}
+	return item
+}
+
+// IncomeClassificationStatistics 收入分类占比统计查询列表
+type IncomeClassificationStatistics []*IncomeClassificationStatistic
+
+// ToSchemaIncomeClassificationStatistics 转换为统计查询对象列表
+func (a IncomeClassificationStatistics) ToSchemaIncomeClassificationStatistics() []*schema.IncomeClassificationStatistic {
+	list := make([]*schema.IncomeClassificationStatistic, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaIncomeClassificationStatistic()
+	}
+	return list
+}

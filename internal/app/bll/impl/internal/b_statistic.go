@@ -46,39 +46,32 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 	return buf, nil
 }
 
+func (a *Statistic) getOrgName(ctx context.Context, orgID string) (string, error) {
+	item, err := a.OrganizationModel.Get(ctx, orgID)
+	if err != nil {
+		return "", err
+	} else if item == nil {
+		return "", nil
+	}
+	return item.Name, nil
+}
+
 // QueryIncomeClassification 查询各分类收入
 func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema.IncomeClassificationStatisticQueryParam) ([]*schema.IncomeClassificationStatistic, error) {
-	var items []*schema.IncomeClassificationStatistic
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "写字楼",
-		ActualAmount:  10000000000,
-	})
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "商铺",
-		ActualAmount:  9000000000,
-	})
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "酒店",
-		ActualAmount:  5000000000,
-	})
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "公寓",
-		ActualAmount:  4000000000,
-	})
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "农贸市场",
-		ActualAmount:  3000000000,
-	})
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "车改商",
-		ActualAmount:  2000000000,
-	})
-	items = append(items, &schema.IncomeClassificationStatistic{
-		AssetTypeName: "厂房",
-		ActualAmount:  7000000000,
-	})
+	if params.OrgID != "" {
+		orgName, err := a.getOrgName(ctx, params.OrgID)
+		if err != nil {
+			return nil, err
+		}
+		params.OrgName = orgName
+	}
 
-	return items, nil
+	result, err := a.StatisticModel.QueryIncomeClassification(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	result.FillAssetTypeName()
+	return result.Data, nil
 }
 
 // QueryOperationalIndicator 查询运营指标
