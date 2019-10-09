@@ -90,7 +90,9 @@ class DataDashboad extends PureComponent {
   };
 
   handleChange = e => {
-    this.setState({ year: e },()=>{this.queryCompanyListBtom()});
+    this.setState({ year: e }, () => {
+      this.queryCompanyListBtom();
+    });
   };
 
   getYearSelect = () => {
