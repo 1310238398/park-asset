@@ -59,7 +59,7 @@ class DataDashboad extends PureComponent {
 
   loadMap = data => {
     var map = new window.AMap.Map('mainMap', {
-      center: [117.000923, 36.675807],
+      center: [117.145376,36.664318],
       zoom: 14,
       mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
     });
