@@ -198,8 +198,8 @@ class DataDashboad extends PureComponent {
               return [
                 <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
                   <p className={styles.companyName}>{v.org_name}</p>
-                  {/* <ChilrenWC data ={[v]}/> */}
-                  <Progress
+                  <ChilrenWC data={[v]} />
+                  {/* <Progress
                     type="circle"
                     strokeColor={{
                       '0%': '#162A61',
@@ -215,7 +215,7 @@ class DataDashboad extends PureComponent {
                         {(v.actual_income / (10000 * 100)).toFixed(0)} 万元
                       </span>
                     )}
-                  />
+                  /> */}
                   <p className={styles.companyPlan}>
                     年收入计划 {v.plan_income / (10000 * 100)}万元
                   </p>
