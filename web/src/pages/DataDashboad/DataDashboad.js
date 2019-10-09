@@ -24,6 +24,7 @@ class DataDashboad extends PureComponent {
     year: '2019',
     name: '',
     quarter: 1,
+    org_id:'',
   };
 
   constructor(props) {
@@ -128,6 +129,7 @@ class DataDashboad extends PureComponent {
       },
     });
     this.setState({ name: item.org_name });
+    this.setState({org_id:item.org_id})
   };
 
   handleFormCancel = () => {
@@ -139,13 +141,10 @@ class DataDashboad extends PureComponent {
 
   // 监听显示弹窗
   renderDataCompanyShow() {
-    const {
-      dataDashboad: { comPanyId },
-    } = this.props;
     return (
       <DataCompanyShow
         onCancel={this.handleFormCancel}
-        org_id={comPanyId}
+        org_id={this.state.org_id}
         year={this.state.year}
         quarter={this.state.quarter}
         title={this.state.name}
@@ -228,7 +227,7 @@ class DataDashboad extends PureComponent {
                     )}
                   /> */}
                   <p className={styles.companyPlan}>
-                    年收入计划 {v.plan_income / (10000 * 100)}万元
+                    年收入计划 {(v.plan_income / (10000 * 100)).toFixed(2)}万元
                   </p>
                 </div>,
                 <div className={styles.lineC}>

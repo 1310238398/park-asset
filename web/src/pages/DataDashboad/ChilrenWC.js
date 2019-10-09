@@ -130,9 +130,9 @@ class ChilrenWC extends PureComponent {
           <Html
             position={['50%', '95%']}
             html={() =>
-              `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">已完成</p><p style="font-size: 10px;color: #fff;margin: 0;">${data[0]
+              `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">已完成</p><p style="font-size: 10px;color: #fff;margin: 0;">${(data[0]
                 .actual_income /
-                (10000 * 100)}万元</p></div>`
+                (10000 * 100)).toFixed(2)}万元</p></div>`
             }
           />
         </Guide>

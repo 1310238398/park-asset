@@ -10,6 +10,7 @@ class JTCWJB extends React.Component {
   };
 
   componentDidMount() {
+    
     const { params } = this.props;
     queryClasstify(params).then(data => {
       let result = [];

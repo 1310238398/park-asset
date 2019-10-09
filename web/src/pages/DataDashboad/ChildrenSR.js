@@ -18,11 +18,12 @@ class ChildrenSR extends PureComponent {
   };
   componentDidMount() {
     const { params } = this.props;
+
     queryQuarterFinanciall(params).then(data => {
       this.setState({
         actual_income: formatNumber(data.actual_income, 100 * 10000, 2),
         plan_income: formatNumber(data.plan_income, 100 * 10000, 2),
-        sf_rate: formatNumber((data.actual_income / data.plan_income) * 100, 0, 2),
+        sf_rate: data.plan_income>0?formatNumber((data.actual_income / data.plan_income) * 100, 0, 2):0,
         ds_income: formatNumber(data.plan_income - data.actual_income, 100 * 10000, 2),
       });
     });
