@@ -15,28 +15,41 @@ import {
   Util,
 } from 'bizcharts';
 import { queryFinanciall } from '@/services/dataDashboad';
+import { formatNumber } from '@/utils/utils';
 class YYZB extends React.Component {
   state = {
     data: [],
   };
 
-
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+    if(params.org_id&&params.org_id !== prevProps.params.org_id){
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryFinanciall(params).then(data => {
       let result = [];
       if (data && data.list) {
         result = data.list.map(item => {
           return {
             quarter: this.renderState(item.quarter),
-            count: item.amount / (10000 * 100),
+            count: formatNumber(item.amount,10000 * 100,2),
             type: item.payment_type === 1 ? '应收' : '实收',
           };
         });
       }
       this.setState({ data: result });
     });
-  }
+  };
 
   renderState(quarter) {
     switch (quarter) {

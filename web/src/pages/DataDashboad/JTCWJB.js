@@ -12,6 +12,7 @@ class JTCWJB extends React.Component {
   };
 
   componentDidMount() {
+    
     const { params } = this.props;
     this.fetchData(params);
   }
@@ -19,6 +20,9 @@ class JTCWJB extends React.Component {
   componentDidUpdate(prevProps) {
     const { params } = this.props;
     if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+    if(params.org_id&&params.org_id !== prevProps.params.org_id){
       this.fetchData(params);
     }
   }

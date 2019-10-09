@@ -45,16 +45,24 @@ class DataCompanyShow extends PureComponent {
             <div className={styles.fenlei}>
               <div className={styles.assetProTitle}>资产分类收入占比</div>
               <div className={styles.leftTopOneChart}>
-                <JTCWJB height={250} params={{ year: year, org_id: org_id }} />
+                <JTCWJB
+                  height={((34.59 - 1.2 - 2.68) / 100) * window.innerHeight - 50}
+                  params={{ year: year, org_id: org_id }}
+                />
               </div>
             </div>
           </div>
           <div className={styles.winRight}>
             <div className={styles.winRightSR}>
               <div className={styles.assetProTitle}>收入情况</div>
-              <ChildrenSR params={{ year: year, org_id: org_id,quarter:quarter}} />
+              <ChildrenSR params={{ year: year, org_id: org_id, quarter: quarter }} />
               <div className={styles.leftRightOneChart}>
-                <YYZB height={280} params={{ year: year, org_id: org_id }} />
+                <YYZB
+                  height={
+                    ((63.98 - 1.2 - 2.61 - 7.04 - 1.61 - 1.68) / 100) * window.innerHeight - 50
+                  }
+                  params={{ year: year, org_id: org_id }}
+                />
               </div>
             </div>
           </div>

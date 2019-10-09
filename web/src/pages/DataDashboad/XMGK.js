@@ -24,6 +24,16 @@ class XMGK extends PureComponent {
 
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryOverview(params).then(data => {
       this.setState({
         annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 * 10000, 2),
@@ -36,7 +46,7 @@ class XMGK extends PureComponent {
         project_num: data.project_num,
       });
     });
-  }
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -61,10 +71,10 @@ class XMGK extends PureComponent {
           <span>项目总数</span>
           <span className={styles.proDatal}>{project_num}</span>
         </div>
-        <div className={styles.proDatatest}>
+        {/* <div className={styles.proDatatest}>
           <span>建筑总面积</span>
           <span className={styles.proDatal}>{building_area}万㎡</span>
-        </div>
+        </div> */}
         <div className={styles.proDatatest}>
           <span>已出租面积</span>
           <span className={styles.proDatal}>{rented_area}万㎡</span>

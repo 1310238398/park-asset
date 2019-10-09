@@ -16,8 +16,19 @@ class CWZBJK extends PureComponent {
     sf_rate: 0,
     ds_income: 0,
   };
+
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryQuarterFinanciall(params).then(data => {
       this.setState({
         actual_income: formatNumber(data.actual_income, 100 * 10000, 2),

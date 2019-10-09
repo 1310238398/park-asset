@@ -24,6 +24,16 @@ class ChildrenZB extends PureComponent {
 
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.org_id !== prevProps.params.org_id) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryOverview(params).then(data => {
       this.setState({
         annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 * 10000, 2),
@@ -31,12 +41,12 @@ class ChildrenZB extends PureComponent {
         building_area: formatNumber(data.building_area, 100 * 10000, 2),
         rented_area: formatNumber(data.rented_area, 100 * 10000, 2),
         unrented_area: formatNumber(data.rent_area - data.rented_area, 100 * 10000, 2),
-        cz_rate: formatNumber((data.rented_area / data.rent_area) * 100, 0, 2),
-        sj_rate: formatNumber((data.annual_actual_income / data.annual_plan_income) * 100, 0, 2),
+        cz_rate: data.rent_area>0?formatNumber((data.rented_area / data.rent_area) * 100, 0, 2):0,
+        sj_rate: data.annual_plan_income>0?formatNumber((data.annual_actual_income / data.annual_plan_income) * 100, 0, 2):0,
         project_num: data.project_num,
       });
     });
-  }
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -60,20 +70,19 @@ class ChildrenZB extends PureComponent {
         <div className={styles.assetProTitle}>资产概况</div>
         <div className={styles.leftLineArea} style={{ paddingTop: '1.85vh' }}>
           <div className={styles.LineArea}>
-            <span>项目总数</span> <span>建筑总面积</span> <span>已出租面积</span>
+            <span>项目总数</span> <span>未出租面积</span> <span>已出租面积</span>
           </div>
           <div className={styles.LineAreaData}>
             <span className={styles.lineAreaq}>{project_num}</span>
-            <span className={styles.lineAreaq}>{building_area}万㎡</span>
+            <span className={styles.lineAreaq}>{unrented_area}万㎡</span>
             <span className={styles.lineAreaq}>{rented_area}万㎡</span>
           </div>
         </div>
         <div className={styles.leftLineAreaTwo}>
           <div className={styles.LineArea}>
-            <span>未出租面积</span> <span>出租率</span> <span>租金收缴率</span>
+            <span>出租率</span> <span>租金收缴率</span>
           </div>
           <div className={styles.LineAreaData}>
-            <span className={styles.lineAreaq}>{unrented_area}万㎡</span>
             <span className={styles.lineAreaq}>{cz_rate}%</span>
             <span className={styles.lineAreaq}>{sj_rate}%</span>
           </div>

@@ -14,15 +14,26 @@ class NDJHSR extends PureComponent {
     annual_actual_income: 0, //年度实际收入
     annual_plan_income: 0, // 年度计划收入
   };
+
   componentDidMount() {
     const { params } = this.props;
+    this.fetchData(params);
+  }
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryOverview(params).then(data => {
       this.setState({
         annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 * 10000, 2),
         annual_plan_income: formatNumber(data.annual_plan_income, 100 * 10000 * 10000, 2),
       });
     });
-  }
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
