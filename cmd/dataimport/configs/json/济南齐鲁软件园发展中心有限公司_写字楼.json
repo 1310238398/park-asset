@@ -1,0 +1,130 @@
+{
+    "company_name": "济南齐鲁软件园发展中心有限公司",
+    "asset_type": 1,
+    "sheet_index": 1,
+    "row_start_index": 4,
+    "max_index": 45,
+    "items": [
+      {
+        "key": "ProjectName",
+        "index": "A"
+      },
+      {
+        "key": "AssetName",
+        "index": ""
+      },
+      {
+        "key": "BuildingName",
+        "index": "B"
+      },
+      {
+        "key": "UnitName",
+        "index": ""
+      },
+      {
+        "key": "LayerName",
+        "index": "D"
+      },
+      {
+        "key": "HouseName",
+        "index": "E"
+      },
+      {
+        "key": "Business",
+        "index": ""
+      },
+      {
+        "key": "BuildingArea",
+        "index": "F"
+      },
+      {
+        "key": "RentArea",
+        "index": "G"
+      },
+      {
+        "key": "SigningStatus",
+        "index": "H"
+      },
+      {
+        "key": "Code",
+        "index": "I"
+      },
+      {
+        "key": "LeaseStart",
+        "index": "J"
+      },
+      {
+        "key": "LeaseEnd",
+        "index": "K"
+      },
+      {
+        "key": "Period",
+        "index": "L"
+      },
+      {
+        "key": "DayRent",
+        "index": "M"
+      },
+      {
+        "key": "MonthRent",
+        "index": "N"
+      },
+      {
+        "key": "PaymentCycle",
+        "index": "O"
+      },
+      {
+        "key": "AdvancePayment",
+        "index": "P"
+      },
+      {
+        "key": "RentFreeStart",
+        "index": "Q"
+      },
+      {
+        "key": "RentFreeEnd",
+        "index": "S"
+      },
+      {
+        "key": "DepositDueAmount",
+        "index": "T"
+      },
+      {
+        "key": "DepositActualAmount",
+        "index": "U"
+      },
+      {
+        "key": "SigningDate",
+        "index": "V"
+      },
+      {
+        "key": "Quarter",
+        "index": "W-AL"
+      },
+      {
+        "key": "CustomerTenantType",
+        "index": ""
+      },
+      {
+        "key": "CustomerName",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactName",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactTel",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactAddress",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactEmail",
+        "index": ""
+      }
+    ]
+  }
+  

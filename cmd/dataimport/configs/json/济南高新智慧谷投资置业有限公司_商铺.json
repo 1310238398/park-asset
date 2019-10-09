@@ -1,0 +1,134 @@
+{
+    "company_name": "济南高新智慧谷投资置业有限公司",
+    "asset_type": 2,
+    "sheet_index": 1,
+    "row_start_index": 3,
+    "max_index": 45,
+    "items": [
+      {
+        "key": "ProjectName",
+        "index": "B"
+      },
+      {
+        "key": "AssetName",
+        "index": "C"
+      },
+      {
+        "key": "BuildingName",
+        "index": ""
+      },
+      {
+        "key": "UnitName",
+        "index": ""
+      },
+      {
+        "key": "LayerName",
+        "index": ""
+      },
+      {
+        "key": "HouseName",
+        "index": ""
+      },
+      {
+        "key": "Business",
+        "index": ""
+      },
+      {
+        "key": "BuildingArea",
+        "index": "D"
+      },
+      {
+        "key": "RentArea",
+        "index": "E"
+      },
+      {
+        "key": "SigningStatus",
+        "index": "F"
+      },
+      {
+        "key": "Code",
+        "index": ""
+      },
+      {
+        "key": "LeaseStart",
+        "index": "G"
+      },
+      {
+        "key": "LeaseEnd",
+        "index": "H"
+      },
+      {
+        "key": "Period",
+        "index": "I"
+      },
+      {
+        "key": "DayRent",
+        "index": "J"
+      },
+      {
+        "key": "MonthRent",
+        "index": ""
+      },
+      {
+        "key": "PaymentCycle",
+        "index": "K"
+      },
+      {
+        "key": "AdvancePayment",
+        "index": "L"
+      },
+      {
+        "key": "RentFreeStart",
+        "index": "M"
+      },
+      {
+        "key": "RentFreeEnd",
+        "index": ""
+      },
+      {
+        "key": "DepositDueAmount",
+        "index": "N"
+      },
+      {
+        "key": "DepositActualAmount",
+        "index": ""
+      },
+      {
+        "key": "SigningDate",
+        "index": "O"
+      },
+      {
+        "key": "Quarter",
+        "index": "P-W"
+      },
+      {
+        "key": "CustomerTenantType",
+        "index": ""
+      },
+      {
+        "key": "CustomerName",
+        "index": "X"
+      },
+      {
+        "key": "CustomerBrandName",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactName",
+        "index": "Y"
+      },
+      {
+        "key": "CustomerContactTel",
+        "index": "Z"
+      },
+      {
+        "key": "CustomerContactAddress",
+        "index": ""
+      },
+      {
+        "key": "CustomerContactEmail",
+        "index": ""
+      }
+    ]
+  }
+  
