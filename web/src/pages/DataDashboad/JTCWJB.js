@@ -4,6 +4,8 @@ import DataSet from '@antv/data-set';
 
 import { queryClasstify } from '@/services/dataDashboad';
 
+import { formatNumber } from '@/utils/utils';
+
 class JTCWJB extends React.Component {
   state = {
     data: [],
@@ -12,16 +14,27 @@ class JTCWJB extends React.Component {
   componentDidMount() {
     
     const { params } = this.props;
+    this.fetchData(params);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { params } = this.props;
+    if (params.year !== prevProps.params.year) {
+      this.fetchData(params);
+    }
+  }
+
+  fetchData = params => {
     queryClasstify(params).then(data => {
       let result = [];
       if (data && data.list) {
         result = data.list.map(item => {
-          return { item: item.asset_type_name, count: item.actual_amount / 100 };
+          return { item: item.asset_type_name, count: item.actual_amount };
         });
       }
       this.setState({ data: result });
     });
-  }
+  };
 
   render() {
     const { height } = this.props;
@@ -37,8 +50,7 @@ class JTCWJB extends React.Component {
     const cols = {
       percent: {
         formatter: val => {
-          val = `${(val * 100).toFixed(1)}%`;
-          return val;
+          return `${formatNumber(val * 100, 0, 2)}%`;
         },
       },
     };
@@ -61,10 +73,10 @@ class JTCWJB extends React.Component {
           tooltip={[
             'item*percent',
             (item, percent) => {
-              percent = `${(percent * 100).toFixed(1)}%`;
+              const v = `${formatNumber(percent * 100, 0, 2)}%`;
               return {
                 name: item,
-                value: percent,
+                value: v,
               };
             },
           ]}
@@ -76,7 +88,7 @@ class JTCWJB extends React.Component {
           <Label
             content="percent"
             formatter={(val, item) => {
-              return item.point.item + ': ' + val;
+              return `${item.point.item}: ${val}`;
             }}
             textStyle={{
               fill: '#fff',

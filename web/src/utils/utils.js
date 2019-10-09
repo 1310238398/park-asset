@@ -57,7 +57,7 @@ export function formatNumber(v, b, f) {
     if (s.indexOf('.') > -1) {
       const ss = s.split('.');
       if (ss[1].length > 2) {
-        return v.toFixed(2);
+        return v.toFixed(f);
       }
     }
     return s;
