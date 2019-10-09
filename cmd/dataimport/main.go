@@ -38,6 +38,8 @@ func main() {
 	excelData, err := parseExcel(dataFile)
 	handleError(err)
 
+	// fmt.Println(excelData)
+
 	err = config.LoadGlobalConfig(cfgFile)
 	handleError(err)
 
