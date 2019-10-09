@@ -177,7 +177,10 @@ class DataDashboad extends PureComponent {
                 <span>集团资产收入占比</span>
               </div>
               <div className={styles.leftTopOneChart}>
-                <JTCWJB height={280} params={{ year }} />
+                <JTCWJB
+                  height={((41.66 - 1.32 - 2.68) / 100) * window.innerHeight - 50}
+                  params={{ year }}
+                />
               </div>
             </div>
             <JTYYZB params={{ year }} />

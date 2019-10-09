@@ -51,7 +51,7 @@ func (a *Statistic) getYearActual(y int) string {
 // QueryProject 查询项目统计数据
 func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStatisticQueryParam, opts ...schema.ProjectStatisticQueryOptions) (*schema.ProjectStatisticQueryResult, error) {
 	db := a.db.Table(entity.TAssetData{}.TableName())
-
+	db = db.Where("deleted_at is null")
 	if v := params.LikeOrgName; v != "" {
 		db = db.Where("org_name LIKE ?", "%"+v+"%")
 	}
@@ -107,6 +107,7 @@ func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStati
 // QueryIncomeClassification 查询收入分类占比统计数据
 func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema.IncomeClassificationStatisticQueryParam, opts ...schema.IncomeClassificationStatisticQueryOptions) (*schema.IncomeClassificationStatisticQueryResult, error) {
 	db := a.db.Table(entity.TAssetData{}.TableName())
+	db = db.Where("deleted_at is null")
 
 	if v := params.OrgName; v != "" {
 		db = db.Where("org_name=?", v)
@@ -223,6 +224,7 @@ func (a *Statistic) GetProjectNum(ctx context.Context, params schema.GetProjectN
 // GetIncome 获取收入统计
 func (a *Statistic) GetIncome(ctx context.Context, params schema.GetIncomeStatisticQueryParam) (*schema.GetIncomeStatisticResult, error) {
 	db := a.db.Table(entity.TAssetData{}.TableName())
+	db = db.Where("deleted_at is null")
 
 	if v := params.OrgName; v != "" {
 		db = db.Where("org_name=?", v)
@@ -258,6 +260,7 @@ func (a *Statistic) GetIncome(ctx context.Context, params schema.GetIncomeStatis
 // GetArea 获取面积统计
 func (a *Statistic) GetArea(ctx context.Context, params schema.GetAreaStatisticQueryParam) (*schema.GetAreaStatisticResult, error) {
 	db := a.db.Table(entity.TAssetData{}.TableName())
+	db = db.Where("deleted_at is null")
 
 	if v := params.OrgName; v != "" {
 		db = db.Where("org_name=?", v)
