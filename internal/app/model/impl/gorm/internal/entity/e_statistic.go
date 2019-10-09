@@ -67,3 +67,31 @@ func (a IncomeClassificationStatistics) ToSchemaIncomeClassificationStatistics()
 	}
 	return list
 }
+
+// IncomeStatistic 收入统计
+type IncomeStatistic struct {
+	PaymentAmount int `gorm:"column:payment_amount;"`
+	ActualAmount  int `gorm:"column:actual_amount;"`
+}
+
+// ToSchemaGetIncomeStatisticResult 转换为收入统计对象
+func (a *IncomeStatistic) ToSchemaGetIncomeStatisticResult() *schema.GetIncomeStatisticResult {
+	return &schema.GetIncomeStatisticResult{
+		PlanIncome:   a.PaymentAmount,
+		ActualIncome: a.ActualAmount,
+	}
+}
+
+// AreaStatistic 面积统计
+type AreaStatistic struct {
+	RentArea   int `gorm:"column:rent_area;"`
+	RentedArea int `gorm:"column:rented_area;"`
+}
+
+// ToSchemaGetAreaStatisticResult 转换为面积统计对象
+func (a *AreaStatistic) ToSchemaGetAreaStatisticResult() *schema.GetAreaStatisticResult {
+	return &schema.GetAreaStatisticResult{
+		RentArea:   a.RentArea,
+		RentedArea: a.RentedArea,
+	}
+}

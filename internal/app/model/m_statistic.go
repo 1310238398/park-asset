@@ -20,4 +20,8 @@ type IStatistic interface {
 	GetMerchantNum(ctx context.Context, params schema.GetMerchantNumQueryParam) (int, error)
 	// 获取项目数
 	GetProjectNum(ctx context.Context, params schema.GetProjectNumQueryParam) (int, error)
+	// 获取收入统计
+	GetIncome(ctx context.Context, params schema.GetIncomeStatisticQueryParam) (*schema.GetIncomeStatisticResult, error)
+	// 获取面积统计
+	GetArea(ctx context.Context, params schema.GetAreaStatisticQueryParam) (*schema.GetAreaStatisticResult, error)
 }

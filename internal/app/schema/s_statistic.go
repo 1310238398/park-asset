@@ -189,26 +189,26 @@ type GetProjectNumQueryParam struct {
 	OrgName string
 }
 
-// GetIncomeQueryParam 获取收入查询参数
-type GetIncomeQueryParam struct {
+// GetIncomeStatisticQueryParam 获取收入查询参数
+type GetIncomeStatisticQueryParam struct {
 	Year    int
 	Quarter int
 	OrgName string
 }
 
-// GetIncomeQueryResult 获取收入查询结果
-type GetIncomeQueryResult struct {
+// GetIncomeStatisticResult 获取收入查询结果
+type GetIncomeStatisticResult struct {
 	PlanIncome   int `json:"plan_income" swaggo:"false,计划收入"`
 	ActualIncome int `json:"actual_income" swaggo:"false,实际收入"`
 }
 
-// GetAreaQueryParam 获取面积查询参数
-type GetAreaQueryParam struct {
+// GetAreaStatisticQueryParam 获取面积查询参数
+type GetAreaStatisticQueryParam struct {
 	OrgName string
 }
 
-// GetAreaQueryResult 获取面积查询结果
-type GetAreaQueryResult struct {
+// GetAreaStatisticResult 获取面积查询结果
+type GetAreaStatisticResult struct {
 	RentArea   int `json:"rent_area" swaggo:"false,建筑计租总面积"`
 	RentedArea int `json:"rented_area" swaggo:"false,建筑已租面积"`
 }

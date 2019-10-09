@@ -152,7 +152,7 @@ func (a *Statistic) GetContractNum(ctx context.Context, params schema.GetContrac
 	sql := fmt.Sprintf("SELECT SUM(1) AS count FROM (%s) AS a WHERE count>0", subSQL)
 	db := a.db.Raw(sql, values...).Scan(&result)
 	if err := db.Error; err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 
 	return result.Count, nil
@@ -172,7 +172,7 @@ func (a *Statistic) GetEnterpriseNum(ctx context.Context, params schema.GetEnter
 	var count int
 	db = db.Count(&count)
 	if err := db.Error; err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 
 	return count, nil
@@ -192,7 +192,7 @@ func (a *Statistic) GetMerchantNum(ctx context.Context, params schema.GetMerchan
 	var count int
 	db = db.Count(&count)
 	if err := db.Error; err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 
 	return count, nil
@@ -214,8 +214,67 @@ func (a *Statistic) GetProjectNum(ctx context.Context, params schema.GetProjectN
 	sql := fmt.Sprintf("SELECT SUM(1) AS count FROM (%s) AS a WHERE count>0", subSQL)
 	db := a.db.Raw(sql, values...).Scan(&result)
 	if err := db.Error; err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 
 	return result.Count, nil
+}
+
+// GetIncome 获取收入统计
+func (a *Statistic) GetIncome(ctx context.Context, params schema.GetIncomeStatisticQueryParam) (*schema.GetIncomeStatisticResult, error) {
+	db := a.db.Table(entity.TAssetData{}.TableName())
+
+	if v := params.OrgName; v != "" {
+		db = db.Where("org_name=?", v)
+	}
+
+	payment := a.getAllPayment()
+	actual := a.getAllActual()
+	if y := params.Year; y > 0 {
+		payment = a.getYearPayment(y)
+		actual = a.getYearActual(y)
+		if q := params.Quarter; q > 0 {
+			payment = fmt.Sprintf("quarter_y%d0%d_value", y, q)
+			actual = fmt.Sprintf("quarter_s%d0%d_value", y, q)
+		}
+	}
+
+	var selQuery string
+	selQuery += fmt.Sprintf("SUM(%s)'payment_amount'", payment)
+	selQuery += fmt.Sprintf(",SUM(%s)'actual_amount'", actual)
+	db = db.Select(selQuery)
+
+	var item entity.IncomeStatistic
+	ok, err := a.db.FindOne(db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaGetIncomeStatisticResult(), nil
+}
+
+// GetArea 获取面积统计
+func (a *Statistic) GetArea(ctx context.Context, params schema.GetAreaStatisticQueryParam) (*schema.GetAreaStatisticResult, error) {
+	db := a.db.Table(entity.TAssetData{}.TableName())
+
+	if v := params.OrgName; v != "" {
+		db = db.Where("org_name=?", v)
+	}
+
+	selQuery := "SUM(rent_area_value)'rent_area'"
+	selQuery += ",SUM(case signing_status when '已租' then rent_area_value ELSE 0 END)'rented_area'"
+
+	db = db.Select(selQuery)
+
+	var item entity.AreaStatistic
+	ok, err := a.db.FindOne(db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaGetAreaStatisticResult(), nil
 }
