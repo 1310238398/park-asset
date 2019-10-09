@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Select } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Select,Modal} from 'antd';
 import moment from 'moment';
 import { stringify } from 'qs';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
@@ -118,13 +118,24 @@ class AssetSearch extends PureComponent {
 
   exportHandle = () => {
     const { form } = this.props;
+
     form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return;
       }
       const params = { ...values };
-      window.open(`/api/v1/statistics/project/export?${stringify(params)}`);
+      Modal.confirm({
+        title: `确定要导出此部分数据？`,
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk: this.oncancelHotOKClick.bind(this, params),
+      });
     });
+  };
+
+  oncancelHotOKClick = data => {
+    window.open(`/api/v1/statistics/project/export?${stringify(data)}`);
   };
 
   handleTableChange = pagination => {
