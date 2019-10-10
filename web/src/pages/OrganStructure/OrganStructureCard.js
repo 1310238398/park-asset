@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form, Input, Card, Modal, TreeSelect, InputNumber, Row, Col } from 'antd';
-import DictionaryCascader from '@/components/Dictionary/Cascader';
+import DicSelect from '@/components/DictionaryNew/DicSelect';
+// import DictionaryCascader from '@/components/Dictionary/Cascader';
 
 @connect(({ organStructure }) => ({
   organStructure,
@@ -111,7 +112,16 @@ class OrganStructureCard extends PureComponent {
                         message: '请输入类型',
                       },
                     ],
-                  })(<DictionaryCascader code="pa$#organtype" level="-1" />)}
+                  })(
+                  // <DictionaryCascader code="pa$#organtype" />
+                  <DicSelect
+                  vmode="int"
+                  pcode="pa$#organtype"
+                  selectProps={{ placeholder: '请选择' }}
+                />
+                  )
+                  
+                  }
                 </Form.Item>
               </Col>
             </Row>
