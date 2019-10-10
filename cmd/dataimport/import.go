@@ -23,11 +23,11 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 				}
 
 				item := getDataItem(dcItem, row)
+				if item.ProjectName == "" {
+					item.ProjectName = preItem.ProjectName
+				}
 
 				if !dcItem.UseEmpty {
-					if item.ProjectName == "" {
-						item.ProjectName = preItem.ProjectName
-					}
 					if item.AssetName == "" {
 						item.AssetName = preItem.AssetName
 					}
