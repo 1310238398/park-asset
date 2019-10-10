@@ -222,6 +222,9 @@
   font-size: 1.67vh; // 18/1080*100
   font-weight: 600;
   color: #439aff;
+  overflow: hidden; /*超出部分隐藏*/
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+  white-space: nowrap; /*规定段落中的文本不进行换行 */
 }
 .proData {
   display: flex;
@@ -294,7 +297,7 @@
   padding-top: 0.39vh;
   span {
     font-size: 40px;
-   // color: rgba(67, 154, 255, 1);
+    // color: rgba(67, 154, 255, 1);
     //color: rgba(255,255,255,1);
     //text-shadow: 0px 0px 13px rgba(9, 15, 38, 0.52);
     //background: linear-gradient(0deg,rgba(255,255,255,1) 0%, rgba(67,154,255,1) 100%);

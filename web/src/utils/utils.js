@@ -52,12 +52,12 @@ export function checkPhoneNum(_, value, callback) {
 
 // 格式化数值
 export function formatNumber(v, b, f) {
-  const formatDot = function(v) {
-    const s = v.toString();
+  const formatDot = (vv, ff) => {
+    const s = vv.toString();
     if (s.indexOf('.') > -1) {
       const ss = s.split('.');
       if (ss[1].length > 2) {
-        return v.toFixed(f);
+        return vv.toFixed(ff);
       }
     }
     return s;
@@ -65,9 +65,37 @@ export function formatNumber(v, b, f) {
 
   if (v === 0) {
     return 0;
-  } else if (b > 0) {
-    return formatDot(v / b);
   }
 
-  return formatDot(v);
+  if (b > 0) {
+    return formatDot(v / b, f);
+  }
+
+  return formatDot(v, f);
+}
+
+// 全屏
+export function launchFullscreen(element) {
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullScreen();
+  }
+}
+
+// 退出全屏
+export function exitFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
 }

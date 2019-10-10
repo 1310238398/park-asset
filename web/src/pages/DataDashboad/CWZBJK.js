@@ -11,8 +11,8 @@ import styles from './DataDashboad.less';
 }))
 class CWZBJK extends PureComponent {
   state = {
-    actual_income: 0, //年度实际收入
-    plan_income: 0, // 年度计划收入
+    actual_income: 0,
+    plan_income: 0,
     sf_rate: 0,
     ds_income: 0,
   };
@@ -21,6 +21,7 @@ class CWZBJK extends PureComponent {
     const { params } = this.props;
     this.fetchData(params);
   }
+
   componentDidUpdate(prevProps) {
     const { params } = this.props;
     if (params.year !== prevProps.params.year) {
@@ -37,7 +38,7 @@ class CWZBJK extends PureComponent {
         ds_income: formatNumber(data.plan_income - data.actual_income, 100 * 10000, 2),
       });
     });
-  }
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
