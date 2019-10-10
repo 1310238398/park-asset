@@ -51,11 +51,11 @@ export default ({ data, height }) => {
         <Html
           position={['50%', '90%']}
           html={() =>
-            `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">${formatNumber(
+            `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">${data.plan_income>0?formatNumber(
               (data.actual_income / data.plan_income) * 100,
               0,
               2
-            )}%</p><p style="font-size: 10px;color: #fff;margin: 0;">${formatNumber(
+            ):0}%</p><p style="font-size: 10px;color: #fff;margin: 0;">${formatNumber(
               data.actual_income,
               100*10000,
               2
