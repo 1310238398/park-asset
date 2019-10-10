@@ -40,6 +40,7 @@ class NDJHSR extends PureComponent {
     dispatch(action);
   };
 
+  // #439AFF
   render() {
     const { annual_actual_income, annual_plan_income } = this.state;
     return (
@@ -51,7 +52,8 @@ class NDJHSR extends PureComponent {
               title=""
               value={annual_plan_income}
               precision={2}
-              valueStyle={{ color: '#439AFF' }}
+              valueStyle={{ color: '#FFF'}}
+              className="valDecial"
             />
           </div>
         </div>
@@ -62,7 +64,7 @@ class NDJHSR extends PureComponent {
               title=""
               value={annual_actual_income}
               precision={2}
-              valueStyle={{ color: '#439AFF' }}
+              valueStyle={{ color: '#FFF'}}
             />
           </div>
         </div>
