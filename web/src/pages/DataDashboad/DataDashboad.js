@@ -38,10 +38,6 @@ class DataDashboad extends PureComponent {
       this.loadMap(data.list || []);
     });
     this.queryCompanyListBtom();
-
-    setTimeout(() => {
-      document.documentElement.webkitRequestFullScreen();
-    }, 100);
   }
 
   getQuarterByMonth() {
