@@ -12,6 +12,7 @@ import NDJHSR from './NDJHSR';
 import XMGK from './XMGK';
 import CWZBJK from './CWZBJK';
 import ChilrenWC from './ChilrenWC';
+import IncomeGauge from './IncomeGauge';
 import styles from './DataDashboad.less';
 import { PoltList } from '@/services/projectManage';
 import { formatNumber } from '@/utils/utils';
@@ -59,7 +60,7 @@ class DataDashboad extends PureComponent {
 
   loadMap = data => {
     var map = new window.AMap.Map('mainMap', {
-      center: [117.145376,36.664318],
+      center: [117.145376, 36.664318],
       zoom: 12,
       mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
     });
@@ -219,25 +220,7 @@ class DataDashboad extends PureComponent {
               return [
                 <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
                   <p className={styles.companyName}>{v.org_name}</p>
-                  <ChilrenWC data={[v]} />
-                  {/* <Progress
-                    type="circle"4
-
-                    strokeColor={{
-                      '0%': '#162A61',
-                      '100%': '#0088CE',
-                    }}
-                    percent={(v.actual_income / v.plan_income) * 100}
-                    showInfo
-                    width="8vh"
-                    format={() => (
-                      <span style={{ color: '#fff', fontSize: 9 }}>
-                        已完成
-                        <br />
-                        {(v.actual_income / (10000 * 100)).toFixed(0)} 万元
-                      </span>
-                    )}
-                  /> */}
+                  <IncomeGauge data={v} height={100} />
                   <p className={styles.companyPlan}>
                     年收入计划 {formatNumber(v.plan_income, 100 * 10000, 2)}万元
                   </p>
