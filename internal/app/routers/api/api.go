@@ -48,6 +48,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			a,
 			middleware.AllowMethodAndPathPrefixSkipper(
 				middleware.JoinRouter("GET", "/api/v1/pub/login"),
+				middleware.JoinRouter("GET", "/api/v1/pub/statistics"),
 				middleware.JoinRouter("POST", "/api/v1/pub/login"),
 			),
 		))
@@ -80,6 +81,14 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				pub.PUT("/current/password", cLogin.UpdatePassword)
 				pub.GET("/current/user", cLogin.GetUserInfo)
 				pub.GET("/current/menutree", cLogin.QueryUserMenuTree)
+
+				// 注册/api/v1/pub/statistics
+				pub.GET("/statistics/income_classification", cStatistic.QueryIncomeClassification)
+				pub.GET("/statistics/operational_indicator", cStatistic.QueryOperationalIndicator)
+				pub.GET("/statistics/overview", cStatistic.QueryOverview)
+				pub.GET("/statistics/quarter_financiall_indicator", cStatistic.QueryQuarterFinanciallIndicator)
+				pub.GET("/statistics/financiall_indicator", cStatistic.QueryFinanciallIndicator)
+				pub.GET("/statistics/company", cStatistic.QueryCompany)
 			}
 
 			// 注册/api/v1/demos

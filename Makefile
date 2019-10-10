@@ -1,4 +1,4 @@
-.PHONY: start build
+.PHONY: start build build-linux
 
 NOW = $(shell date -u '+%Y%m%d%I%M%S')
 
@@ -17,6 +17,12 @@ start:
 
 swagger:
 	swaggo -s ./internal/app/routers/api/swagger.go -p . -o ./internal/app/swagger
+
+build-linux:
+	GOOS=linux GOARCH=amd64 go build -ldflags "-w -s" -o $(SERVER_BIN) ./cmd/server
+
+publish: build-linux
+	scp $(SERVER_BIN) root@39.98.250.155:/root/services/gxtparkassets/gxtparkassets2
 
 test:
 	@go test -cover -race ./...
