@@ -1,0 +1,26 @@
+{
+    "company_name": "济南高新智慧谷投资置业有限公司",
+    "asset_type": 1,
+    "sheet_index": 2,
+    "row_start_index": 1,
+    "max_index": 9,
+    "items": [
+      {
+        "key": "ProjectName",
+        "index": "B"
+      },
+      {
+        "key": "QuarterY2019",
+        "index": "G"
+      },
+      {
+        "key": "QuarterS2019",
+        "index": "H"
+      },
+      {
+        "key": "CustomerName",
+        "index": "I"
+      }
+    ]
+  }
+  
