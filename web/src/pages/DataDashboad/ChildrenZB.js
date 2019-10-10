@@ -69,7 +69,7 @@ class ChildrenZB extends PureComponent {
       <div className={styles.profile}>
         <div className={styles.assetProTitle}>资产概况</div>
         <div className={styles.leftLineArea} style={{ paddingTop: '1.85vh' }}>
-          <div className={styles.LineArea}>
+          <div className={styles.LineAreaChirden}>
             <span>项目总数</span> <span>未出租面积</span> <span>已出租面积</span>
           </div>
           <div className={styles.LineAreaData}>
@@ -79,7 +79,7 @@ class ChildrenZB extends PureComponent {
           </div>
         </div>
         <div className={styles.leftLineAreaTwo}>
-          <div className={styles.LineArea}>
+          <div className={styles.LineAreaChirden}>
             <span>出租率</span> <span>租金收缴率</span>
           </div>
           <div className={styles.LineAreaData}>
