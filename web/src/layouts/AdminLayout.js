@@ -299,7 +299,7 @@ class AdminLayout extends React.PureComponent {
               onClick={this.onToggleClick}
             />
             <div className={styles.right}>
-              <div
+              {/* <div
                 title="驾驶舱"
                 style={{
                   display: 'flex',
@@ -313,7 +313,7 @@ class AdminLayout extends React.PureComponent {
                 }}
               >
                 数据展示
-              </div>
+              </div> */}
               {user.user_name ? (
                 <Dropdown overlay={menu}>
                   <span className={`${styles.action} ${styles.account}`}>

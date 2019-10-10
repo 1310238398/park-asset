@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Statistic, Select, Progress } from 'antd';
+import router from 'umi/router';
 import { connect } from 'dva';
 import topBg from '../../assets/topBg@2x.png';
 import pointIMG from '../../assets/ponint.png';
@@ -156,6 +157,10 @@ class DataDashboad extends PureComponent {
     );
   }
 
+  handleLocation = () => {
+    router.push('/');
+  };
+
   render() {
     const { year, quarter } = this.state;
     const {
@@ -169,7 +174,14 @@ class DataDashboad extends PureComponent {
         </div>
         <div className={styles.topCenter}>
           <div>{this.getYearSelect()}</div>
-          <span className={styles.topMiddleTitle}>济南高新控股集团资产运营数据看板</span>
+          <span
+            className={styles.topMiddleTitle}
+            onClick={() => {
+              this.handleLocation();
+            }}
+          >
+            济南高新控股集团资产运营数据看板
+          </span>
         </div>
         <div className={styles.middleCenter}>
           <div>
@@ -220,9 +232,10 @@ class DataDashboad extends PureComponent {
               return [
                 <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
                   <p className={styles.companyName}>{v.org_name}</p>
-                  <IncomeGauge data={v} height={
-                    ((21.11 - 1.24 - 1.66 -1.31) / 100) * window.innerHeight - 50
-                  } />
+                  <IncomeGauge
+                    data={v}
+                    height={((21.11 - 1.24 - 1.66 - 1.31) / 100) * window.innerHeight - 50}
+                  />
                   <p className={styles.companyPlan}>
                     年收入计划 {formatNumber(v.plan_income, 100 * 10000, 2)}万元
                   </p>
