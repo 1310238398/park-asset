@@ -83,6 +83,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				pub.GET("/current/menutree", cLogin.QueryUserMenuTree)
 
 				// 注册/api/v1/pub/statistics
+				pub.GET("/statistics/plots", cPlot.Query)
 				pub.GET("/statistics/income_classification", cStatistic.QueryIncomeClassification)
 				pub.GET("/statistics/operational_indicator", cStatistic.QueryOperationalIndicator)
 				pub.GET("/statistics/overview", cStatistic.QueryOverview)
