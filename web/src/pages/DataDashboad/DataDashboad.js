@@ -56,7 +56,7 @@ class DataDashboad extends PureComponent {
   queryCompanyListBtom() {
     this.dispatch({
       type: 'dataDashboad/queryCompanyList',
-      params: { year: this.state.year },
+      payload: { year: this.state.year },
     });
   }
 
