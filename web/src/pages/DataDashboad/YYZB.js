@@ -30,7 +30,7 @@ class YYZB extends React.Component {
     if (params.year !== prevProps.params.year) {
       this.fetchData(params);
     }
-    if(params.org_id&&params.org_id !== prevProps.params.org_id){
+    if (params.org_id && params.org_id !== prevProps.params.org_id) {
       this.fetchData(params);
     }
   }
@@ -42,7 +42,7 @@ class YYZB extends React.Component {
         result = data.list.map(item => {
           return {
             quarter: this.renderState(item.quarter),
-            count: formatNumber(item.amount,10000 * 100,2),
+            count: parseFloat((item.amount / (10000 * 100)).toFixed(2)),
             type: item.payment_type === 1 ? '应收' : '实收',
           };
         });
@@ -114,7 +114,7 @@ class YYZB extends React.Component {
     const { data } = this.state;
     return (
       <div>
-        <Chart height={height} data={data} scale={cols} forceFit padding={[10, 50, 110, 50]}>
+        <Chart height={height} data={data} scale={cols} forceFit padding={[30, 60, 80, 60]}>
           <Legend
             label={{
               textStyle: {
@@ -132,10 +132,8 @@ class YYZB extends React.Component {
           />
           <Axis
             name="count"
-            // label={{
-            //   formatter: val => `${val}万元`
-            // }}
             label={{
+              formatter: val => `${val}万元`,
               textStyle: {
                 fill: '#fff',
               },

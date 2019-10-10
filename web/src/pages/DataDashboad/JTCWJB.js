@@ -58,7 +58,7 @@ class JTCWJB extends React.Component {
       },
     };
     return (
-      <Chart height={height} data={dv} scale={cols} padding={[30, 50, 30, 50]} forceFit>
+      <Chart height={height} data={dv} scale={cols} padding={[30, 50, 50, 50]} forceFit>
         <Coord type="theta" radius={0.75} />
         <Axis name="percent" />
         <Legend position="bottom" offsetY={-5} />
@@ -74,9 +74,9 @@ class JTCWJB extends React.Component {
             ['#2B8AFF', '#6B12CC', '#B72DFF', '#2FCEA3', '#FFE361', '#FFAB61', '#fb5050'],
           ]}
           tooltip={[
-            'item*percent',
-            (item, percent) => {
-              const v = `${formatNumber(percent * 100, 0, 2)}%`;
+            'item*count',
+            (item, count) => {
+              const v = `${(formatNumber(count, 100*10000, 0, 2))}万元`;
               return {
                 name: item,
                 value: v,

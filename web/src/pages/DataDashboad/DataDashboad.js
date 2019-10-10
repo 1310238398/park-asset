@@ -59,8 +59,8 @@ class DataDashboad extends PureComponent {
 
   loadMap = data => {
     var map = new window.AMap.Map('mainMap', {
-      center: [117.000923, 36.675807],
-      zoom: 14,
+      center: [117.145376,36.664318],
+      zoom: 12,
       mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
     });
 
@@ -205,7 +205,7 @@ class DataDashboad extends PureComponent {
               <div className={styles.leftRightOneChart}>
                 <YYZB
                   height={
-                    ((64.26 - 0.25 - 2.61 - 7.04 - 1.61 - 1.68) / 100) * window.innerHeight - 50
+                    ((64.26 - 0.25 - 3.89 - 7.04 - 1.61 - 1.68) / 100) * window.innerHeight - 50
                   }
                   params={{ year, quarter }}
                 />
@@ -221,7 +221,8 @@ class DataDashboad extends PureComponent {
                   <p className={styles.companyName}>{v.org_name}</p>
                   <ChilrenWC data={[v]} />
                   {/* <Progress
-                    type="circle"
+                    type="circle"4
+
                     strokeColor={{
                       '0%': '#162A61',
                       '100%': '#0088CE',

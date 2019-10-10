@@ -149,6 +149,14 @@ class AssetSearch extends PureComponent {
     });
   };
 
+  // 判断数值
+  statusValueW = value => {
+    if (value && value !== 0) {
+      return (value / (100*10000)).toFixed(2);
+    }
+    return 0;
+  };
+
   renderSearchForm() {
     const { Option } = Select;
     const {
@@ -212,7 +220,7 @@ class AssetSearch extends PureComponent {
               )}
             </Form.Item>
           </Col>
-          <Col span={4} offset={4}>
+          <Col span={4} offset={1}>
             <div style={{ overflow: 'hidden' }}>
               <span style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">
@@ -297,7 +305,7 @@ class AssetSearch extends PureComponent {
         render: item => {
           if (item.rent_area && item.rent_area > 0) {
             if (item.rented_area && item.rented_area > 0) {
-              return <span>{(item.rented_area / item.rent_area).toFixed(2)}</span>;
+              return <span>{((item.rented_area / item.rent_area)*100).toFixed(2)}%</span>;
             }
             return 0;
           }
@@ -308,11 +316,17 @@ class AssetSearch extends PureComponent {
         title: '应收租金（万元）',
         dataIndex: 'payment_amount',
         width: 200,
+        render:val=>{
+          return <span>{this.statusValueW(val)}</span>
+        }
       },
       {
         title: '实收租金（万元）',
         dataIndex: 'actual_amount',
         width: 200,
+        render:val=>{
+          return <span>{this.statusValueW(val)}</span>
+        }
       },
     ];
 
