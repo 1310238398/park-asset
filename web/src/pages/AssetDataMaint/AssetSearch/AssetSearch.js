@@ -8,6 +8,7 @@ import styles from '../AssetDataMaint.less';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
+import store from '../../../utils/store';
 
 @connect(state => ({
   statistic: state.statistic,
@@ -135,7 +136,8 @@ class AssetSearch extends PureComponent {
   };
 
   oncancelHotOKClick = data => {
-    window.open(`/api/v1/statistics/project/export?${stringify(data)}`);
+    const tokenInfo = store.getAccessToken();
+    window.open(`/api/v1/statistics/project/export?${stringify(data)}&token=${tokenInfo.access_token}`);
   };
 
   handleTableChange = pagination => {
