@@ -14,7 +14,7 @@ import XMGK from './XMGK';
 import CWZBJK from './CWZBJK';
 import IncomeGauge from './IncomeGauge';
 import styles from './DataDashboad.less';
-import { PoltList } from '@/services/projectManage';
+import { PoltList } from '@/services/dataDashboad';
 import { formatNumber } from '@/utils/utils';
 
 @connect(state => ({

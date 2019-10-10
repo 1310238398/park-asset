@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-const router = 'statistics';
+const router = 'pub/statistics';
 
 // 查询分类占比
 export async function queryClasstify(params) {
@@ -30,4 +30,9 @@ export async function queryQuarterFinanciall(params) {
 // 查询子公司列表/api/v1/statistics/company
 export async function queryCompanyList(params) {
   return request(`/v1/${router}/company?${stringify(params)}`);
+}
+
+// 查询地块列表
+export async function PoltList(params) {
+  return request(`/v1/${router}/plots?${stringify(params)}`);
 }
