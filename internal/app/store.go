@@ -29,10 +29,12 @@ func InitStore(container *dig.Container) (func(), error) {
 		}
 
 		gorm.SetTablePrefix(cfg.Gorm.TablePrefix)
-		// err = gorm.AutoMigrate(db)
-		// if err != nil {
-		// 	return nil, err
-		// }
+		if cfg.Gorm.AutoMigrate {
+			err = gorm.AutoMigrate(db)
+			if err != nil {
+				return nil, err
+			}
+		}
 
 		// 注入DB
 		container.Provide(func() *gormplus.DB {

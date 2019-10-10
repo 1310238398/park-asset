@@ -161,6 +161,7 @@ type Gorm struct {
 	MaxOpenConns int    `toml:"max_open_conns"`
 	MaxIdleConns int    `toml:"max_idle_conns"`
 	TablePrefix  string `toml:"table_prefix"`
+	AutoMigrate  bool   `toml:"auto_migrate"`
 }
 
 // MySQL mysql配置参数
