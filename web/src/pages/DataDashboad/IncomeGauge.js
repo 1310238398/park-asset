@@ -49,7 +49,7 @@ export default ({ data, height }) => {
           }}
         />
         <Html
-          position={['50%', '95%']}
+          position={['50%', '90%']}
           html={() =>
             `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">${formatNumber(
               (data.actual_income / data.plan_income) * 100,
@@ -64,7 +64,7 @@ export default ({ data, height }) => {
           }
         />
       </Guide>
-      <Geom type="point" position="value*1" shape="pointer" active={false} />
+      <Geom type="point" position="value*1" opacity={0} />
     </Chart>
   );
 };
