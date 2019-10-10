@@ -17,6 +17,7 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 			var preItem schema.TAssetData
 
 			for i, row := range excelData[dcItem.SheetIndex] {
+
 				if i < dcItem.RowStartIndex || len(row) < dcItem.MaxIndex {
 					continue
 				}
@@ -45,6 +46,9 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 				}
 				if item.Code == "" {
 					item.Code = preItem.Code
+				}
+				if item.CustomerName == "" && item.SigningStatus == preItem.SigningStatus {
+					item.CustomerName = preItem.CustomerName
 				}
 
 				err := mTAssetData.Create(ctx, item)
@@ -138,7 +142,7 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 	}
 
 	quarterIdxes := dcItem.GetIndexes("Quarter")
-	if len(quarterIdxes) > 0 {
+	if l := len(quarterIdxes); l > 0 {
 		item.QuarterY201901 = formatMoney(row[quarterIdxes[0]])
 		item.QuarterS201901 = formatMoney(row[quarterIdxes[1]])
 		item.QuarterY201902 = formatMoney(row[quarterIdxes[2]])
@@ -147,14 +151,16 @@ func getDataItem(dcItem *DataConfigItem, row []string) schema.TAssetData {
 		item.QuarterS201903 = formatMoney(row[quarterIdxes[5]])
 		item.QuarterY201904 = formatMoney(row[quarterIdxes[6]])
 		item.QuarterS201904 = formatMoney(row[quarterIdxes[7]])
-		item.QuarterY202001 = formatMoney(row[quarterIdxes[8]])
-		item.QuarterS202001 = formatMoney(row[quarterIdxes[9]])
-		item.QuarterY202002 = formatMoney(row[quarterIdxes[10]])
-		item.QuarterS202002 = formatMoney(row[quarterIdxes[11]])
-		item.QuarterY202003 = formatMoney(row[quarterIdxes[12]])
-		item.QuarterS202003 = formatMoney(row[quarterIdxes[13]])
-		item.QuarterY202004 = formatMoney(row[quarterIdxes[14]])
-		item.QuarterS202004 = formatMoney(row[quarterIdxes[15]])
+		if l > 8 {
+			item.QuarterY202001 = formatMoney(row[quarterIdxes[8]])
+			item.QuarterS202001 = formatMoney(row[quarterIdxes[9]])
+			item.QuarterY202002 = formatMoney(row[quarterIdxes[10]])
+			item.QuarterS202002 = formatMoney(row[quarterIdxes[11]])
+			item.QuarterY202003 = formatMoney(row[quarterIdxes[12]])
+			item.QuarterS202003 = formatMoney(row[quarterIdxes[13]])
+			item.QuarterY202004 = formatMoney(row[quarterIdxes[14]])
+			item.QuarterS202004 = formatMoney(row[quarterIdxes[15]])
+		}
 	}
 
 	return item

@@ -65,6 +65,8 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 	}
 
 	var preItem *schema.TAssetData
+
+LBAssetData:
 	for _, item := range result.Data {
 		if item.AssetType < 1 || item.AssetType > 7 {
 			continue
@@ -78,6 +80,9 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 		var row *xlsx.Row
 		switch item.AssetType {
 		case 1:
+			if item.HouseName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[0].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
@@ -86,16 +91,25 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 			row.AddCell().SetString(item.LayerName)
 			row.AddCell().SetString(item.HouseName)
 		case 2:
+			if item.AssetName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[1].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
 			row.AddCell().SetString(item.AssetName)
 		case 3:
+			if item.AssetName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[6].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
 			row.AddCell().SetString(item.AssetName)
 		case 4:
+			if item.HouseName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[3].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
@@ -104,6 +118,9 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 			row.AddCell().SetString(item.LayerName)
 			row.AddCell().SetString(item.HouseName)
 		case 5:
+			if item.HouseName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[2].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
@@ -112,11 +129,17 @@ func (a *Statistic) ExportProject(ctx context.Context, params schema.ProjectStat
 			row.AddCell().SetString(item.LayerName)
 			row.AddCell().SetString(item.HouseName)
 		case 6:
+			if item.AssetName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[4].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
 			row.AddCell().SetString(item.AssetName)
 		case 7:
+			if item.AssetName == "" {
+				continue LBAssetData
+			}
 			row = f.Sheets[5].AddRow()
 			row.AddCell().SetString(item.OrgName)
 			row.AddCell().SetString(item.ProjectName)
