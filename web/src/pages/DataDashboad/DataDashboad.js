@@ -30,10 +30,6 @@ class DataDashboad extends PureComponent {
     org_id: '',
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
     this.getQuarterByMonth();
   }
@@ -44,6 +40,7 @@ class DataDashboad extends PureComponent {
     });
     this.queryCompanyListBtom();
   }
+
   getQuarterByMonth() {
     var today = new Date();
     var month = today.getMonth() + 1; //getMonth返回0-11
@@ -52,6 +49,7 @@ class DataDashboad extends PureComponent {
     if (month >= 7 && month <= 9) return this.setState({ quarter: 3 });
     if (month >= 10 && month <= 12) return this.setState({ quarter: 4 });
   }
+
   queryCompanyListBtom() {
     this.dispatch({
       type: 'dataDashboad/queryCompanyList',
