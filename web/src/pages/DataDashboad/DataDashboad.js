@@ -220,7 +220,9 @@ class DataDashboad extends PureComponent {
               return [
                 <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
                   <p className={styles.companyName}>{v.org_name}</p>
-                  <IncomeGauge data={v} height={100} />
+                  <IncomeGauge data={v} height={
+                    ((21.11 - 1.24 - 1.66 -1.31) / 100) * window.innerHeight - 50
+                  } />
                   <p className={styles.companyPlan}>
                     年收入计划 {formatNumber(v.plan_income, 100 * 10000, 2)}万元
                   </p>
