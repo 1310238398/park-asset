@@ -30,10 +30,6 @@ class DataDashboad extends PureComponent {
     org_id: '',
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
     this.getQuarterByMonth();
   }
@@ -44,6 +40,7 @@ class DataDashboad extends PureComponent {
     });
     this.queryCompanyListBtom();
   }
+
   getQuarterByMonth() {
     var today = new Date();
     var month = today.getMonth() + 1; //getMonth返回0-11
@@ -52,6 +49,7 @@ class DataDashboad extends PureComponent {
     if (month >= 7 && month <= 9) return this.setState({ quarter: 3 });
     if (month >= 10 && month <= 12) return this.setState({ quarter: 4 });
   }
+
   queryCompanyListBtom() {
     this.dispatch({
       type: 'dataDashboad/queryCompanyList',
@@ -174,14 +172,7 @@ class DataDashboad extends PureComponent {
         </div>
         <div className={styles.topCenter}>
           <div>{this.getYearSelect()}</div>
-          <span
-            className={styles.topMiddleTitle}
-            onClick={() => {
-              this.handleLocation();
-            }}
-          >
-            济南高新控股集团资产运营数据看板
-          </span>
+          <span className={styles.topMiddleTitle}>济南高新控股集团资产运营数据看板</span>
         </div>
         <div className={styles.middleCenter}>
           <div>
@@ -231,10 +222,12 @@ class DataDashboad extends PureComponent {
             companyList.map(v => {
               return [
                 <div className={styles.companyLinst} onClick={() => this.showCompany(v)}>
-                  <p className={styles.companyName}>{v.org_name}</p>
+                  <p className={styles.companyName} title={v.org_name}>
+                    {v.org_name}
+                  </p>
                   <IncomeGauge
                     data={v}
-                    height={((21.11 - 1.24 - 1.66 - 1.31) / 100) * window.innerHeight - 50}
+                    height={((21.11 - 1.24 - 1.66 - 1.31) / 100) * window.innerHeight - 10}
                   />
                   <p className={styles.companyPlan}>
                     年收入计划 {formatNumber(v.plan_income, 100 * 10000, 2)}万元
