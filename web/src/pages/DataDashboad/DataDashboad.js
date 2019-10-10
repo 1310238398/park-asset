@@ -178,7 +178,7 @@ class DataDashboad extends PureComponent {
               </div>
               <div className={styles.leftTopOneChart}>
                 <JTCWJB
-                  height={((41.66 - 1.32 - 2.68) / 100) * window.innerHeight - 50}
+                  height={((41.66 - 1.56 - 2.68) / 100) * window.innerHeight - 50}
                   params={{ year }}
                 />
               </div>

@@ -76,7 +76,7 @@
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
   // margin-left: 6.39vw; // 142/1920*100
-  padding-top: 1.32vh; // 16/1080*100
+  padding-top: 1.56vh; // 16/1080*100
 }
 .leftTopTwoTitle {
   font-size: 1.85vh; // 20/1080*100
@@ -123,7 +123,7 @@
   // opacity: 0.36;
   height: 4.17vh; // 45/1080*100
   line-height: 4.17vh;
-  width:100%;
+  width: 100%;
   overflow: hidden;
   span {
     color: rgba(255, 255, 255, 1);
@@ -226,7 +226,7 @@
   font-size: 1.48vh; // 16/1080*100
   font-weight: 400;
   color: rgba(255, 255, 255, 1);
-  margin-top:0.54vh;
+  margin-top: 0.54vh;
 }
 .proDatal {
   margin-top: 5px;
@@ -255,9 +255,10 @@
 }
 .yearSY {
   font-size: 2.04vh; // 22/1080*100
-  font-weight: 600;
+  font-weight: 800;
   color: rgba(255, 255, 255, 1);
   margin-bottom: 4px;
+  font-size: 18px;
 }
 .yearPlanLeft {
   padding: 5.64vh 2.08vw 1.85vh 3.64vw;
@@ -280,12 +281,24 @@
   display: none;
 }
 .ndjhPlan {
-  background-image: url('/assets/jipan@2x.png');
+  //background-image: url('/assets/jipan@2x.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   width: 13.65vw;
   height: 6.57vh;
   padding-top: 0.39vh;
+  span {
+    font-size: 40px;
+   // color: rgba(67, 154, 255, 1);
+    //color: rgba(255,255,255,1);
+    //text-shadow: 0px 0px 13px rgba(9, 15, 38, 0.52);
+    //background: linear-gradient(0deg,rgba(255,255,255,1) 0%, rgba(67,154,255,1) 100%);
+
+    background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff), to(#439aff));
+    -webkit-background-clip: text; /*必需加前缀 -webkit- 才支持这个text值 */
+    -webkit-text-fill-color: transparent; /*text-fill-color会覆盖color所定义的字体颜色： */
+    font-weight: 600;
+  }
 }
 // 弹窗样式
 .FloorContentWin {
@@ -306,7 +319,7 @@
 .assetProTitle {
   color: rgba(255, 255, 255, 1);
   font-size: 1.67vh; // 18/1080*100
-  padding-top: 10px;
+  padding-top: 12px;
   padding-left: 15px;
 }
 .fenlei {
