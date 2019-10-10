@@ -12,7 +12,6 @@ import JTYYZB from './JTYYZB';
 import NDJHSR from './NDJHSR';
 import XMGK from './XMGK';
 import CWZBJK from './CWZBJK';
-import ChilrenWC from './ChilrenWC';
 import IncomeGauge from './IncomeGauge';
 import styles from './DataDashboad.less';
 import { PoltList } from '@/services/projectManage';
@@ -39,6 +38,10 @@ class DataDashboad extends PureComponent {
       this.loadMap(data.list || []);
     });
     this.queryCompanyListBtom();
+
+    setTimeout(() => {
+      document.documentElement.webkitRequestFullScreen();
+    }, 100);
   }
 
   getQuarterByMonth() {
@@ -59,8 +62,8 @@ class DataDashboad extends PureComponent {
 
   loadMap = data => {
     var map = new window.AMap.Map('mainMap', {
-      center: [117.145376, 36.664318],
-      zoom: 12,
+      center: [116.997777, 36.651474],
+      zoom: 10,
       mapStyle: 'amap://styles/17f9720c805edf05b040364bd845f083',
     });
 
@@ -205,13 +208,13 @@ class DataDashboad extends PureComponent {
               <div className={styles.rightTopOneTitle}>
                 <span>集团财务指标监控</span>
               </div>
-              <CWZBJK params={{ year }} />
+              <CWZBJK params={{ year, quarter }} />
               <div className={styles.leftRightOneChart}>
                 <YYZB
                   height={
                     ((64.26 - 0.25 - 3.89 - 7.04 - 1.61 - 1.68) / 100) * window.innerHeight - 50
                   }
-                  params={{ year, quarter }}
+                  params={{ year }}
                 />
               </div>
             </div>
