@@ -96,14 +96,15 @@ class ChilrenWC extends PureComponent {
           name="actual_income"
           zIndex={2}
           line={null}
-          label={{
-            offset: 0,
-            textStyle: {
-              fontSize: 24,
-              fill: '#0f1a38',
-              textAlign: 'center',
-            },
-          }}
+          visible={false}
+          // label={{
+          //   offset: 0,
+          //   textStyle: {
+          //     fontSize: 24,
+          //     fill: '#0f1a38',
+          //     textAlign: 'center',
+          //   },
+          // }}
         />
         <Axis name="1" visible={false} />
         <Guide>

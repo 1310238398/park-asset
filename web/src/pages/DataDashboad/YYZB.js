@@ -133,7 +133,7 @@ class YYZB extends React.Component {
           <Axis
             name="count"
             label={{
-              formatter: val => `${val}万元`,
+              formatter: val => `${val}万`,
               textStyle: {
                 fill: '#fff',
               },

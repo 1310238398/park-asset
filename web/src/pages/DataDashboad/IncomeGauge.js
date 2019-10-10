@@ -51,16 +51,20 @@ export default ({ data, height }) => {
         <Html
           position={['50%', '95%']}
           html={() =>
-            `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">已完成</p><p style="font-size: 10px;color: #fff;margin: 0;">${formatNumber(
+            `<div style="width:100px;margin-top:-30px;text-align: center;font-size: 9px!important;"><p style="font-size: 9px; color: #fff;margin: 0;">${formatNumber(
+              (data.actual_income / data.plan_income) * 100,
+              0,
+              2
+            )}%</p><p style="font-size: 10px;color: #fff;margin: 0;">${formatNumber(
               data.actual_income,
-              100 * 10000,
+              100*10000,
               2
             )}
                 万元</p></div>`
           }
         />
       </Guide>
-      <Geom type="point" position="value*1" shape="pointer" />
+      <Geom type="point" position="value*1" shape="pointer" active={false} />
     </Chart>
   );
 };

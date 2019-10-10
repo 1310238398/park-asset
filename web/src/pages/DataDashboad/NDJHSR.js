@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import CountUp from 'react-countup';
 import { Statistic } from 'antd';
 import { connect } from 'dva';
 import { queryOverview } from '@/services/dataDashboad';
@@ -29,8 +30,8 @@ class NDJHSR extends PureComponent {
   fetchData = params => {
     queryOverview(params).then(data => {
       this.setState({
-        annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 * 10000, 2),
-        annual_plan_income: formatNumber(data.annual_plan_income, 100 * 10000 * 10000, 2),
+        annual_actual_income: formatNumber(data.annual_actual_income, 100 * 10000 , 2),
+        annual_plan_income: formatNumber(data.annual_plan_income, 100 * 10000 , 2),
       });
     });
   };
@@ -46,26 +47,28 @@ class NDJHSR extends PureComponent {
     return (
       <div className={styles.yearPlanLeft}>
         <div className={styles.yearYse}>
-          <div className={styles.yearSY}>年度计划收入&nbsp;&nbsp;(亿)</div>
+          <div className={styles.yearSY}>年度计划收入&nbsp;&nbsp;(万)</div>
           <div className={styles.ndjhPlan}>
-            <Statistic
+            <span><CountUp delay={2} end={annual_plan_income} decimals={2} /></span>
+            {/* <Statistic
               title=""
               value={annual_plan_income}
               precision={2}
               valueStyle={{ color: '#FFF'}}
               className="valDecial"
-            />
+            /> */}
           </div>
         </div>
         <div className={styles.yearYse}>
-          <div className={styles.yearSY}>年度实际收入&nbsp;&nbsp;(亿)</div>
+          <div className={styles.yearSY}>年度实际收入&nbsp;&nbsp;(万)</div>
           <div className={styles.ndjhPlan}>
-            <Statistic
+          <span><CountUp delay={2} end={annual_actual_income} decimals={2} /></span>
+            {/* <Statistic
               title=""
               value={annual_actual_income}
               precision={2}
               valueStyle={{ color: '#FFF'}}
-            />
+            /> */}
           </div>
         </div>
       </div>
