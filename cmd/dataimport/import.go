@@ -26,29 +26,32 @@ func execImport(dcItem *DataConfigItem, excelData [][][]string) error {
 				if item.ProjectName == "" {
 					item.ProjectName = preItem.ProjectName
 				}
-				if item.AssetName == "" {
-					item.AssetName = preItem.AssetName
-				}
-				if item.BuildingName == "" {
-					item.BuildingName = preItem.BuildingName
-				}
-				if item.UnitName == "" {
-					item.UnitName = preItem.UnitName
-				}
-				if item.LayerName == "" {
-					item.LayerName = preItem.LayerName
-				}
-				if item.HouseName == "" {
-					item.HouseName = preItem.HouseName
-				}
-				if item.SigningStatus == "" {
-					item.SigningStatus = preItem.SigningStatus
-				}
-				if item.Code == "" {
-					item.Code = preItem.Code
-				}
-				if item.CustomerName == "" && item.SigningStatus == preItem.SigningStatus {
-					item.CustomerName = preItem.CustomerName
+
+				if !dcItem.UseEmpty {
+					if item.AssetName == "" {
+						item.AssetName = preItem.AssetName
+					}
+					if item.BuildingName == "" {
+						item.BuildingName = preItem.BuildingName
+					}
+					if item.UnitName == "" {
+						item.UnitName = preItem.UnitName
+					}
+					if item.LayerName == "" {
+						item.LayerName = preItem.LayerName
+					}
+					if item.HouseName == "" {
+						item.HouseName = preItem.HouseName
+					}
+					if item.SigningStatus == "" {
+						item.SigningStatus = preItem.SigningStatus
+					}
+					if item.Code == "" {
+						item.Code = preItem.Code
+					}
+					if item.CustomerName == "" && item.SigningStatus == preItem.SigningStatus {
+						item.CustomerName = preItem.CustomerName
+					}
 				}
 
 				err := mTAssetData.Create(ctx, item)

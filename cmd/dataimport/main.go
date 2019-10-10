@@ -75,6 +75,7 @@ type DataConfigItem struct {
 	SheetIndex    int    `json:"sheet_index"`
 	RowStartIndex int    `json:"row_start_index"`
 	MaxIndex      int    `json:"max_index"`
+	UseEmpty      bool   `json:"use_empty"`
 	Items         []struct {
 		Key   string `json:"key"`
 		Index string `json:"index"`

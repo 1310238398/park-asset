@@ -101,17 +101,17 @@ func (a SchemaTAssetData) ToTAssetData() *TAssetData {
 type TAssetData struct {
 	Model
 	RecordID               *string `gorm:"column:record_id;size:36;index;"`           // 记录ID
-	OrgName                *string `gorm:"column:org_name;size:100;index;"`           // 公司名称
-	ProjectName            *string `gorm:"column:project_name;size:100;index;"`       // 项目名称
+	OrgName                *string `gorm:"column:org_name;size:256;index;"`           // 公司名称
+	ProjectName            *string `gorm:"column:project_name;size:256;index;"`       // 项目名称
 	AssetType              *int    `gorm:"column:asset_type;index;"`                  // 资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商
-	AssetName              *string `gorm:"column:asset_name;size:100;"`               // 资产名称(商铺号、车位号、厂房号、摊位号)
-	BuildingName           *string `gorm:"column:building_name;size:100;"`            // 楼栋名称
-	UnitName               *string `gorm:"column:unit_name;size:100;"`                // 单元名称
-	LayerName              *string `gorm:"column:layer_name;size:100;"`               // 楼层名称
-	HouseName              *string `gorm:"column:house_name;size:100;"`               // 门牌名称
-	Business               *string `gorm:"column:business;size:100;"`                 // 业态
-	BuildingArea           *string `gorm:"column:building_area;size:100;"`            // 建筑面积
-	RentArea               *string `gorm:"column:rent_area;size:100;"`                // 计租面积
+	AssetName              *string `gorm:"column:asset_name;size:256;"`               // 资产名称(商铺号、车位号、厂房号、摊位号)
+	BuildingName           *string `gorm:"column:building_name;size:256;"`            // 楼栋名称
+	UnitName               *string `gorm:"column:unit_name;size:256;"`                // 单元名称
+	LayerName              *string `gorm:"column:layer_name;size:256;"`               // 楼层名称
+	HouseName              *string `gorm:"column:house_name;size:256;"`               // 门牌名称
+	Business               *string `gorm:"column:business;size:256;"`                 // 业态
+	BuildingArea           *string `gorm:"column:building_area;size:256;"`            // 建筑面积
+	RentArea               *string `gorm:"column:rent_area;size:256;"`                // 计租面积
 	BuildingAreaValue      *int    `gorm:"column:building_area_value;"`               // 建筑面积
 	RentAreaValue          *int    `gorm:"column:rent_area_value;"`                   // 计租面积
 	SigningStatus          *string `gorm:"column:signing_status;size:100;"`           // 签约情况
