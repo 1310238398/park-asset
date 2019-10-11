@@ -50,19 +50,19 @@ class CWZBJK extends PureComponent {
     return (
       <div className={styles.finalC}>
         <div className={styles.dourF}>
-          <p className={styles.jiduData}>{plan_income}万</p>
+          <p className={styles.jiduData} title={plan_income+'万'}>{plan_income}万</p>
           <p className={styles.jidu}>本季度应收</p>
         </div>
         <div className={styles.dourF}>
-          <p className={styles.jiduData}>{actual_income}万</p>
+          <p className={styles.jiduData} title={actual_income+'万'}>{actual_income}万</p>
           <p className={styles.jidu}>本季度实收</p>
         </div>
         <div className={styles.dourF}>
-          <p className={styles.jiduData}>{sf_rate}%</p>
+          <p className={styles.jiduData} title={sf_rate+'%'}>{sf_rate}%</p>
           <p className={styles.jidu}>本季度收费率</p>
         </div>
         <div className={styles.dourF}>
-          <p className={styles.jiduData}>{ds_income}万</p>
+          <p className={styles.jiduData} title={ds_income+'万'}>{ds_income}万</p>
           <p className={styles.jidu}>本季度未收</p>
         </div>
       </div>

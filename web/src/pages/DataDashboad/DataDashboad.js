@@ -228,7 +228,7 @@ class DataDashboad extends PureComponent {
                     data={v}
                     height={((21.11 - 1.24 - 1.66 - 1.31) / 100) * window.innerHeight - 10}
                   />
-                  <p className={styles.companyPlan}>
+                  <p className={styles.companyPlan}  title={formatNumber(v.plan_income, 100 * 10000, 2)+'万元'}>
                     年收入计划 {formatNumber(v.plan_income, 100 * 10000, 2)}万元
                   </p>
                 </div>,
