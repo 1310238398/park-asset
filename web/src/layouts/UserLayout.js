@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import GlobalFooter from '@/components/GlobalFooter';
 import CopyRight from '@/components/CopyRight';
 import styles from './UserLayout.less';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo.png';
 
 @connect(state => ({
   global: state.global,
