@@ -15,12 +15,10 @@ import (
 )
 
 // @Version 4.0.0
-// @Title GinAdmin
-// @Description RBAC scaffolding based on GIN + GORM + CASBIN.
+// @Title 资产管理系统
 // @Schemes http,https
-// @Host 192.168.250.57:10088
+// @Host 39.98.250.155:10088
 // @BasePath /
 // @Name LyricTian
-// @Contact tiannianshou@gmail.com
 // @Consumes json
 // @Produces json
