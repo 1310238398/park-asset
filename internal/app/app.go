@@ -4,14 +4,13 @@ import (
 	"context"
 	"os"
 
-	"github.com/LyricTian/fuh"
-
 	"gxt-park-assets/internal/app/bll/impl"
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/pkg/auth"
 	"gxt-park-assets/pkg/logger"
 	"gxt-park-assets/pkg/minio"
 
+	"github.com/LyricTian/fuh"
 	"github.com/casbin/casbin"
 	"go.uber.org/dig"
 )

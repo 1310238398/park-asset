@@ -5,7 +5,6 @@ import (
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
-	"gxt-park-assets/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,6 +51,7 @@ func (a *Project) Query(c *gin.Context) {
 // @Param name query string false "项目名称（模糊查询）"
 // @Param org_id query string false "所属子公司"
 // @Param plot_id query string false "所属地块"
+// @Param asset_type query int false "资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商"
 // @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -75,6 +75,10 @@ func (a *Project) QueryPage(c *gin.Context) {
 		}
 	}
 
+	if v := c.Query("asset_type"); v != "" {
+		params.AssetTypes = []string{v}
+	}
+
 	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
@@ -89,7 +93,6 @@ func (a *Project) QueryPage(c *gin.Context) {
 // QueryList 查询列表数据
 // @Summary 查询列表数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param pageSize query int true "分页大小" 10
 // @Param name query string false "项目名称（模糊查询）"
 // @Success 200 []schema.Project "查询结果：{list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
@@ -97,17 +100,29 @@ func (a *Project) QueryPage(c *gin.Context) {
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/projects?q=list
 func (a *Project) QueryList(c *gin.Context) {
-	var params schema.TAssetDataQueryProjectNameParam
-	params.LikeProjectName = c.Query("name")
-	params.Count = util.S(c.Query("pageSize")).DefaultInt(0)
+	var params schema.ProjectQueryParam
+	params.LikeName = c.Query("name")
 
-	result, err := a.StatisticBll.QueryProjectName(ginplus.NewContext(c), params)
+	if !ginplus.CheckIsRootUser(c) {
+		result, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
+		if err != nil {
+			ginplus.ResError(c, err)
+			return
+		}
+		params.OrgIDs = result.Data.ToRecordIDs()
+	}
+
+	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{
+		PageParam: &schema.PaginationParam{
+			PageSize: 50,
+		},
+	})
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	ginplus.ResList(c, result)
+	ginplus.ResList(c, result.Data)
 }
 
 // Get 查询指定数据

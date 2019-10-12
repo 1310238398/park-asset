@@ -15,7 +15,6 @@ type OfficeBuilding struct {
 	RentArea     int    `json:"rent_area" swaggo:"false,计租面积"`
 	Decoration   int    `json:"decoration" swaggo:"false,装修情况"`
 	RentStatus   int    `json:"rent_status" swaggo:"false,出租状态:1未租 2锁定 3已租"`
-	LockReason   string `json:"lock_reason" swaggo:"false,锁定原因"`
 	ParentID     string `json:"parent_id" swaggo:"false,父级ID"`
 	ParentPath   string `json:"parent_path" swaggo:"false,父级路径"`
 	Creator      string `json:"creator" swaggo:"false,创建者"`

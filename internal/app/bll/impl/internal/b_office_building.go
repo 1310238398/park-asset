@@ -53,9 +53,8 @@ func (a *OfficeBuilding) getUpdate(ctx context.Context, recordID string) (*schem
 
 func (a *OfficeBuilding) checkName(ctx context.Context, item schema.OfficeBuilding) error {
 	result, err := a.OfficeBuildingModel.Query(ctx, schema.OfficeBuildingQueryParam{
-		ProjectID:    item.ProjectID,
-		Name:         item.Name,
-		BuildingType: item.BuildingType,
+		ParentID: item.ParentID,
+		Name:     item.Name,
 	}, schema.OfficeBuildingQueryOptions{
 		PageParam: &schema.PaginationParam{PageSize: -1},
 	})
@@ -210,11 +209,40 @@ func (a *OfficeBuilding) Update(ctx context.Context, recordID string, item schem
 		}
 	}
 
-	item.ParentPath = oldItem.ParentPath
-	err = a.OfficeBuildingModel.Update(ctx, recordID, item)
+	oldAssetItem, err := a.AssetModel.Get(ctx, recordID)
+	if err != nil {
+		return nil, err
+	} else if oldAssetItem == nil {
+		return nil, errors.ErrNotFound
+	}
+
+	err = ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		newItem := *oldItem
+		newItem.Name = item.Name
+		newItem.BuildingArea = item.BuildingArea
+		newItem.RentArea = item.RentArea
+		newItem.Decoration = item.Decoration
+
+		err := a.OfficeBuildingModel.Update(ctx, recordID, newItem)
+		if err != nil {
+			return err
+		}
+
+		newAssetItem := *oldAssetItem
+		newAssetItem.Name = item.Name
+		newAssetItem.BuildingArea = item.BuildingArea
+		newAssetItem.RentArea = item.RentArea
+		err = a.AssetModel.Update(ctx, recordID, newAssetItem)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
+
 	return a.getUpdate(ctx, recordID)
 }
 
