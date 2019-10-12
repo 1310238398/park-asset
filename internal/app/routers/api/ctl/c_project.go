@@ -52,6 +52,7 @@ func (a *Project) Query(c *gin.Context) {
 // @Param name query string false "项目名称（模糊查询）"
 // @Param org_id query string false "所属子公司"
 // @Param plot_id query string false "所属地块"
+// @Param asset_type query int false "资产类型:1：写字楼  2：商铺  3：厂房  4：公寓 5： 酒店  6：农贸市场  7：车改商"
 // @Success 200 []schema.Project "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -73,6 +74,10 @@ func (a *Project) QueryPage(c *gin.Context) {
 			}
 			params.OrgIDs = result.Data.ToRecordIDs()
 		}
+	}
+
+	if v := c.Query("asset_type"); v != "" {
+		params.AssetTypes = []string{v}
 	}
 
 	result, err := a.ProjectBll.Query(ginplus.NewContext(c), params, schema.ProjectQueryOptions{

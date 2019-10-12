@@ -30,7 +30,6 @@ func (a SchemaOfficeBuilding) ToOfficeBuilding() *OfficeBuilding {
 		RentArea:     &a.RentArea,
 		Decoration:   &a.Decoration,
 		RentStatus:   &a.RentStatus,
-		LockReason:   &a.LockReason,
 		ParentID:     &a.ParentID,
 		ParentPath:   &a.ParentPath,
 		Creator:      &a.Creator,
@@ -54,7 +53,6 @@ type OfficeBuilding struct {
 	RentArea     *int    `gorm:"column:rent_area;"`                // 计租面积
 	Decoration   *int    `gorm:"column:decoration;"`               // 装修情况
 	RentStatus   *int    `gorm:"column:rent_status;"`              // 出租状态:1未租 2锁定 3已租
-	LockReason   *string `gorm:"column:lock_reason;size:200;"`     // 锁定原因
 	ParentID     *string `gorm:"column:parent_id;36;index;"`       // 父级ID
 	ParentPath   *string `gorm:"column:parent_path;518;index;"`    // 父级路径
 	Creator      *string `gorm:"column:creator;size:36;index;"`    // 创建者
@@ -85,7 +83,6 @@ func (a OfficeBuilding) ToSchemaOfficeBuilding() *schema.OfficeBuilding {
 		RentArea:     *a.RentArea,
 		Decoration:   *a.Decoration,
 		RentStatus:   *a.RentStatus,
-		LockReason:   *a.LockReason,
 		ParentID:     *a.ParentID,
 		ParentPath:   *a.ParentPath,
 		Creator:      *a.Creator,
