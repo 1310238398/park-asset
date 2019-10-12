@@ -201,7 +201,7 @@ class AssetsSituationList extends PureComponent {
     return (
       <PageHeaderLayout title="资产管理" breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
-          <div>ddd</div>
+          <div></div>
           <div className={styles.tableList}>
             <div>
               <Table

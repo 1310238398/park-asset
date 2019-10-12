@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Select } from 'antd';
-import { queryProList,get } from '../../services/projectManage';
+import { query,get } from '../../services/projectManage';
 
 export default class ProSelect extends PureComponent {
   static defaultProps = {
@@ -53,7 +53,7 @@ export default class ProSelect extends PureComponent {
   };
 
   fetch = name => {
-    queryProList({ name }).then(data => {
+    query({ q: 'list', name }).then(data => {
       if (data) {
         this.setState({ data: data.list });
       } else {
@@ -102,7 +102,7 @@ export default class ProSelect extends PureComponent {
         {this.state.data &&
           this.state.data.map(v => {
             return (
-              <Select.Option  value={v.name} data={v}>
+              <Select.Option  value={v.record_id} data={v}>
                 {v.name}
               </Select.Option>
             );

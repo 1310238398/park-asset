@@ -107,6 +107,16 @@ export default [
           },
         ],
       },
+      // 资产管理-写字楼-2019-10-12 基础数据录入
+      {
+        path:'assettypedata',
+        routes: [
+          {
+            path: '/assettypedata/assetbuilddata',
+            component: './AssetTypeData/AssetBuildData/AssetBuildData',
+          },
+        ],
+      }
     ],
   },
   {
