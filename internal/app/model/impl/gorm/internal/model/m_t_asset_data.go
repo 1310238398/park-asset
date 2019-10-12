@@ -57,7 +57,7 @@ func (a *TAssetData) Query(ctx context.Context, params schema.TAssetDataQueryPar
 
 // QueryProjectName 查询项目名称列表
 func (a *TAssetData) QueryProjectName(ctx context.Context, params schema.TAssetDataQueryProjectNameParam) ([]string, error) {
-	db := a.db.Table(entity.TAssetData{}.TableName())
+	db := entity.GetTAssetDataDB(ctx, a.db).DB
 	if v := params.LikeProjectName; v != "" {
 		db = db.Where("project_name LIKE ?", "%"+v+"%")
 	}

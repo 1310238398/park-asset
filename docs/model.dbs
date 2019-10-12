@@ -61,6 +61,18 @@
 			<column name="building_type" type="int" length="50" jt="4" >
 				<comment><![CDATA[建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌]]></comment>
 			</column>
+			<column name="unit_num" type="int" jt="4" >
+				<comment><![CDATA[单元数]]></comment>
+			</column>
+			<column name="unit_naming" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[单元命名规则]]></comment>
+			</column>
+			<column name="layer_num" type="int" jt="4" >
+				<comment><![CDATA[楼层数]]></comment>
+			</column>
+			<column name="layer_naming" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[楼层命名规则]]></comment>
+			</column>
 			<column name="building_area" type="int" jt="4" >
 				<comment><![CDATA[建筑面积]]></comment>
 			</column>
@@ -489,6 +501,18 @@
 			</column>
 			<column name="name" type="varchar" length="200" jt="12" >
 				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="unit_num" type="int" jt="4" >
+				<comment><![CDATA[单元数]]></comment>
+			</column>
+			<column name="unit_naming" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[单元命名规则]]></comment>
+			</column>
+			<column name="layer_num" type="int" jt="4" >
+				<comment><![CDATA[楼层数]]></comment>
+			</column>
+			<column name="layer_naming" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[楼层命名规则]]></comment>
 			</column>
 			<column name="is_all_rent" type="int" jt="4" >
 				<comment><![CDATA[是否全部出租（1是 2否）]]></comment>
@@ -1219,18 +1243,18 @@
 		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1680" y="800" />
 		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="2016" y="400" />
 		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="912" y="384" />
-		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="912" y="1664" />
 		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1504" y="400" />
 		<entity schema="parkassets" name="pa_asset_group" color="E6CCFF" x="1584" y="96" />
 		<entity schema="parkassets" name="pa_asset_group_detail" color="E6CCFF" x="1392" y="96" />
 		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1824" y="80" />
 		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1184" y="800" />
-		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1152" y="1664" />
-		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1424" y="1664" />
-		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1424" y="1328" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="912" y="896" />
-		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1152" y="1328" />
 		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="912" y="1328" />
+		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="912" y="896" />
+		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1424" y="1264" />
+		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1168" y="1264" />
+		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="912" y="1696" />
+		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1168" y="1696" />
+		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1424" y="1696" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />

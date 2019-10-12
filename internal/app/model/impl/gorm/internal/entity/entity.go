@@ -52,5 +52,13 @@ func getDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
 }
 
 func getDBWithModel(ctx context.Context, defDB *gormplus.DB, m interface{}) *gormplus.DB {
+
+	type t interface {
+		TableName() string
+	}
+
+	if v, ok := m.(t); ok {
+		return gormplus.Wrap(getDB(ctx, defDB).Table(v.TableName()))
+	}
 	return gormplus.Wrap(getDB(ctx, defDB).Model(m))
 }
