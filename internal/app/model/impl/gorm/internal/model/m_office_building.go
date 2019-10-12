@@ -49,6 +49,9 @@ func (a *OfficeBuilding) Query(ctx context.Context, params schema.OfficeBuilding
 	if v := params.RentStatus; v != 0 {
 		db = db.Where("rent_status=?", v)
 	}
+	if v := params.ParentID; v != "" {
+		db = db.Where("parent_id=?", v)
+	}
 
 	db = db.Order("id DESC")
 

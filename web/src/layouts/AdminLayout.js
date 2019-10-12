@@ -168,10 +168,10 @@ class AdminLayout extends React.PureComponent {
     }
 
     return menusData.map(item => {
-      if (!item.name) {
+      if (!item.name || item.hidden !== 0) {
         return null;
       }
-      if (item.children && item.children.some(child => child.name)) {
+      if (item.children && item.children.some(child => child.name && child.hidden === 0)) {
         return (
           <SubMenu
             title={

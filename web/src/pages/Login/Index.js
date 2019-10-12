@@ -111,7 +111,7 @@ class Login extends PureComponent {
                 ],
               })(
                 <Input
-                  style={{ width: '70%', marginRight: 10 }}
+                  style={{ width: '60%', marginRight: 10 }}
                   size="large"
                   prefix={<Icon type="code" className={styles.prefixIcon} />}
                   placeholder="请输入验证码"
@@ -119,12 +119,12 @@ class Login extends PureComponent {
               )}
               <div
                 style={{
-                  width: 100,
+                  width: 120,
                   height: 40,
                 }}
               >
                 <img
-                  style={{ maxWidth: '100%', maxHeight: '100%' }}
+                  style={{ width: '100%', height: '100%' }}
                   src={login.captcha}
                   alt="验证码"
                   onClick={() => {
