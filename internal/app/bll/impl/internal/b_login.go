@@ -4,12 +4,13 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/LyricTian/captcha"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/auth"
 	"gxt-park-assets/pkg/util"
+
+	"github.com/LyricTian/captcha"
 )
 
 // NewLogin 创建登录管理实例
@@ -163,12 +164,10 @@ func (a *Login) QueryUserMenuTree(ctx context.Context, userID string) ([]*schema
 	isRoot := CheckIsRootUser(ctx, userID)
 	// 如果是root用户，则查询所有显示的菜单树
 	if isRoot {
-		hidden := 0
-		result, err := a.MenuModel.Query(ctx, schema.MenuQueryParam{
-			Hidden: &hidden,
-		}, schema.MenuQueryOptions{
-			IncludeActions: true,
-		})
+		result, err := a.MenuModel.Query(ctx, schema.MenuQueryParam{},
+			schema.MenuQueryOptions{
+				IncludeActions: true,
+			})
 		if err != nil {
 			return nil, err
 		}
