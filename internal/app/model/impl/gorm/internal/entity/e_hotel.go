@@ -21,6 +21,10 @@ func (a SchemaHotel) ToHotel() *Hotel {
 		ProjectID:    &a.ProjectID,
 		Name:         &a.Name,
 		IsAllRent:    &a.IsAllRent,
+		UnitNum:      &a.UnitNum,
+		UnitNaming:   &a.UnitNaming,
+		LayerNum:     &a.LayerNum,
+		LayerNaming:  &a.LayerNaming,
 		BuildingType: &a.BuildingType,
 		BuildingArea: &a.BuildingArea,
 		RentArea:     &a.RentArea,
@@ -39,6 +43,10 @@ type Hotel struct {
 	ProjectID    *string `gorm:"column:project_id;size:36;index;"` // 项目ID
 	Name         *string `gorm:"column:name;size:200;index;"`      // 建筑名称
 	IsAllRent    *int    `gorm:"column:is_all_rent;index;"`        // 是否全部出租:(1是 2否)
+	UnitNum      *int    `gorm:"column:unit_num;"`                 // 单元数
+	UnitNaming   *string `gorm:"column:unit_naming;size:50;"`      // 单元命名规则
+	LayerNum     *int    `gorm:"column:layer_num;"`                // 层数
+	LayerNaming  *string `gorm:"column:layer_naming;size:50;"`     // 层命名规则
 	BuildingType *int    `gorm:"column:building_type;index;"`      // 建筑类型: 1:楼栋 2:单元 3:楼层 4:门牌
 	BuildingArea *int    `gorm:"column:building_area;"`            // 建筑面积
 	RentArea     *int    `gorm:"column:rent_area;"`                // 计租面积
@@ -64,6 +72,10 @@ func (a Hotel) ToSchemaHotel() *schema.Hotel {
 		ProjectID:    *a.ProjectID,
 		Name:         *a.Name,
 		IsAllRent:    *a.IsAllRent,
+		UnitNum:      *a.UnitNum,
+		UnitNaming:   *a.UnitNaming,
+		LayerNum:     *a.LayerNum,
+		LayerNaming:  *a.LayerNaming,
 		BuildingType: *a.BuildingType,
 		BuildingArea: *a.BuildingArea,
 		RentArea:     *a.RentArea,
