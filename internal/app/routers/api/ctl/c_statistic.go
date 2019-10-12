@@ -27,6 +27,30 @@ type Statistic struct {
 	StatisticBll bll.IStatistic
 }
 
+// QueryProjectName 查询项目名称
+// @Summary 查询项目名称
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param pageSize query int true "分页大小" 10
+// @Param name query string false "项目名称（模糊查询）"
+// @Success 200 []schema.Project "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/statistics/project/name
+func (a *Statistic) QueryProjectName(c *gin.Context) {
+	var params schema.TAssetDataQueryProjectNameParam
+	params.LikeProjectName = c.Query("name")
+	params.Count = ginplus.GetPageSize(c)
+
+	result, err := a.StatisticBll.QueryProjectName(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, result)
+}
+
 // QueryProject 项目统计查询
 // @Summary 项目统计查询
 // @Param Authorization header string false "Bearer 用户令牌"

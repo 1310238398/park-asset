@@ -21,6 +21,13 @@ type Hotel struct {
 
 // HotelQueryParam 查询条件
 type HotelQueryParam struct {
+	ProjectID    string
+	Name         string
+	LikeName     string
+	BuildingType int
+	IsAllRent    int
+	RentStatus   int
+	ParentID     string
 }
 
 // HotelQueryOptions 查询可选参数项

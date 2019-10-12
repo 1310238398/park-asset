@@ -21,6 +21,13 @@ type Apartment struct {
 
 // ApartmentQueryParam 查询条件
 type ApartmentQueryParam struct {
+	ProjectID    string
+	Name         string
+	LikeName     string
+	BuildingType int
+	IsAllRent    int
+	RentStatus   int
+	ParentID     string
 }
 
 // ApartmentQueryOptions 查询可选参数项
