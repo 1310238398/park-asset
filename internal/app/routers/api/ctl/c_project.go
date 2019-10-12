@@ -5,15 +5,21 @@ import (
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 // NewProject 创建项目管理控制器
-func NewProject(bProject bll.IProject, bOrganization bll.IOrganization) *Project {
+func NewProject(
+	bProject bll.IProject,
+	bOrganization bll.IOrganization,
+	bStatistic bll.IStatistic,
+) *Project {
 	return &Project{
 		ProjectBll:      bProject,
 		OrganizationBll: bOrganization,
+		StatisticBll:    bStatistic,
 	}
 }
 
@@ -23,6 +29,7 @@ func NewProject(bProject bll.IProject, bOrganization bll.IOrganization) *Project
 type Project struct {
 	ProjectBll      bll.IProject
 	OrganizationBll bll.IOrganization
+	StatisticBll    bll.IStatistic
 }
 
 // Query 查询数据
@@ -30,6 +37,8 @@ func (a *Project) Query(c *gin.Context) {
 	switch c.Query("q") {
 	case "page":
 		a.QueryPage(c)
+	case "list":
+		a.QueryList(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -75,6 +84,30 @@ func (a *Project) QueryPage(c *gin.Context) {
 	}
 
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询列表数据
+// @Summary 查询列表数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param pageSize query int true "分页大小" 10
+// @Param name query string false "项目名称（模糊查询）"
+// @Success 200 []schema.Project "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/projects?q=list
+func (a *Project) QueryList(c *gin.Context) {
+	var params schema.TAssetDataQueryProjectNameParam
+	params.LikeProjectName = c.Query("name")
+	params.Count = util.S(c.Query("pageSize")).DefaultInt(0)
+
+	result, err := a.StatisticBll.QueryProjectName(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, result)
 }
 
 // Get 查询指定数据
