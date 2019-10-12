@@ -55,6 +55,33 @@ func (a *TAssetData) Query(ctx context.Context, params schema.TAssetDataQueryPar
 	return qr, nil
 }
 
+// QueryProjectName 查询项目名称列表
+func (a *TAssetData) QueryProjectName(ctx context.Context, params schema.TAssetDataQueryProjectNameParam) ([]string, error) {
+	db := a.db.Table(entity.TAssetData{}.TableName())
+	if v := params.LikeProjectName; v != "" {
+		db = db.Where("project_name LIKE ?", "%"+v+"%")
+	}
+	if v := params.Count; v > 0 {
+		db = db.Limit(v)
+	}
+	db = db.Select("project_name").Group("project_name")
+
+	var result []struct {
+		ProjectName string `grom:"column:project_name"`
+	}
+	dbResult := db.Find(&result)
+	if err := dbResult.Error; err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	names := make([]string, len(result))
+	for i, item := range result {
+		names[i] = item.ProjectName
+	}
+
+	return names, nil
+}
+
 // Get 查询指定数据
 func (a *TAssetData) Get(ctx context.Context, recordID string, opts ...schema.TAssetDataQueryOptions) (*schema.TAssetData, error) {
 	db := entity.GetTAssetDataDB(ctx, a.db).Where("record_id=?", recordID)

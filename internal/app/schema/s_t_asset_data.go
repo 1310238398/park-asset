@@ -74,3 +74,9 @@ type TAssetDataQueryResult struct {
 	Data       []*TAssetData
 	PageResult *PaginationResult
 }
+
+// TAssetDataQueryProjectNameParam 查询项目名称查询参数
+type TAssetDataQueryProjectNameParam struct {
+	LikeProjectName string
+	Count           int
+}

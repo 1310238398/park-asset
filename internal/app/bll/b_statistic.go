@@ -25,4 +25,6 @@ type IStatistic interface {
 	QueryFinanciallIndicator(ctx context.Context, params schema.FinanciallIndicatorStatisticQueryParam) ([]*schema.FinanciallIndicatorStatistic, error)
 	// 子公司统计
 	QueryCompany(ctx context.Context, params schema.CompanyStatisticQueryParam) ([]*schema.CompanyStatistic, error)
+	// 查询项目名称
+	QueryProjectName(ctx context.Context, params schema.TAssetDataQueryProjectNameParam) ([]*schema.Project, error)
 }

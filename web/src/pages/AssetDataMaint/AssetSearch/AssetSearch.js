@@ -8,11 +8,13 @@ import styles from '../AssetDataMaint.less';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
+import ProSelect from '@/components/ProSelect/ProSelect';
 import store from '../../../utils/store';
 
 @connect(state => ({
   statistic: state.statistic,
   loading: state.loading.models.statistic,
+  projectManage: state.projectManage,
 }))
 @Form.create()
 class AssetSearch extends PureComponent {
@@ -21,6 +23,9 @@ class AssetSearch extends PureComponent {
       type: 'statistic/fetch',
       search: { rent_cycle: this.getCurYear() },
       pagination: {},
+    });
+    this.dispatch({
+      type: 'projectManage/queryCompany',
     });
   }
 
@@ -163,7 +168,9 @@ class AssetSearch extends PureComponent {
     const { Option } = Select;
     const {
       form: { getFieldDecorator },
+      projectManage: { companyList }
     } = this.props;
+  
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -187,7 +194,14 @@ class AssetSearch extends PureComponent {
         <Row gutter={16}>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="公司名称">
-              {getFieldDecorator('org_name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('org_name')(<Select placeholder="请选择" style={{ width: '100%' }}>
+                    {companyList &&
+                      companyList.map(item => (
+                        <Select.Option key={item.record_id} value={item.name}>
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                  </Select>)}
             </Form.Item>
           </Col>
           <Col {...col}>
@@ -204,7 +218,7 @@ class AssetSearch extends PureComponent {
           </Col>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="项目名称">
-              {getFieldDecorator('project_name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('project_name')(<ProSelect />)}
             </Form.Item>
           </Col>
         </Row>

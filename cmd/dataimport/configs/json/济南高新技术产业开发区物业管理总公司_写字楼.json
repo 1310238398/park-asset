@@ -3,7 +3,7 @@
   "asset_type": 1,
   "sheet_index": 1,
   "row_start_index": 4,
-  "max_index": 45,
+  "max_index": 40,
   "items": [
     {
       "key": "ProjectName",
@@ -63,7 +63,7 @@
     },
     {
       "key": "DayRent",
-      "index": "N   "
+      "index": "N"
     },
     {
       "key": "MonthRent",
