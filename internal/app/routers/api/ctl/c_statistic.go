@@ -30,7 +30,6 @@ type Statistic struct {
 // QueryProjectName 查询项目名称
 // @Summary 查询项目名称
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param pageSize query int true "分页大小" 10
 // @Param name query string false "项目名称（模糊查询）"
 // @Success 200 []schema.Project "查询结果：{list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
@@ -40,7 +39,7 @@ type Statistic struct {
 func (a *Statistic) QueryProjectName(c *gin.Context) {
 	var params schema.TAssetDataQueryProjectNameParam
 	params.LikeProjectName = c.Query("name")
-	params.Count = ginplus.GetPageSize(c)
+	params.Count = 50
 
 	result, err := a.StatisticBll.QueryProjectName(ginplus.NewContext(c), params)
 	if err != nil {
