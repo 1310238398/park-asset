@@ -56,13 +56,13 @@ export default {
     proID: '',
   },
   effects: {
-    *del({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.del, payload);
-      if (response.status === 'OK') {
-        message.success('删除成功');
-        yield put({ type: 'fetch' });
-      }
-    },
+    // *del({ payload }, { call, put }) {
+    //   const response = yield call(assetBuildDataService.del, payload);
+    //   if (response.status === 'OK') {
+    //     message.success('删除成功');
+    //     yield put({ type: 'fetch' });
+    //   }
+    // },
     // 楼栋数据
     *LoadBuild({ payload }, { put }) {
       yield put({
@@ -137,7 +137,7 @@ export default {
 
     // 查询楼栋单条数据
     *fetchFormBuild({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.getBuildOne, payload);
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
       yield put({
         type: 'saveFormDataBuild',
         payload: response,
@@ -151,14 +151,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formTypeBuild = yield select(state => state.assetDatamaint.formTypeBuild);
+      const formTypeBuild = yield select(state => state.assetBuildData.formTypeBuild);
 
       let response;
       if (formTypeBuild === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formIDBuild);
-        response = yield call(assetDatamaintService.updateBuild, params);
+        params.record_id = yield select(state => state.assetBuildData.formIDBuild);
+        response = yield call(assetBuildDataService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.createBuild, params);
+        response = yield call(assetBuildDataService.createBuild, params);
       }
 
       yield put({
@@ -181,7 +181,7 @@ export default {
 
     // 查询项目名称和ID
     *selectProjectIDName({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.selectProInfo, payload);
+      const response = yield call(assetBuildDataService.selectProInfo, payload);
       yield put({ type: 'saveProData', payload: response });
     },
 
@@ -189,7 +189,7 @@ export default {
     *cellRoute({ payload }, { put }) {
       yield put(
         routerRedux.push({
-          pathname: '/assetdatamaint/assetunitmaint',
+          pathname: '/assettypedata/assetunit',
           query: {
             recordID: payload.record_id,
             currentName: payload.name,
@@ -264,7 +264,7 @@ export default {
       }
     },
     *fetchFormUnit({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.get, payload);
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
       yield [
         put({
           type: 'saveFormDataUnit',
@@ -279,14 +279,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.assetDatamaint.formType);
+      const formType = yield select(state => state.assetBuildData.formTypeUnit);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formID);
-        response = yield call(assetDatamaintService.updateBuild, params);
+        params.record_id = yield select(state => state.assetBuildData.formIDUnit);
+        response = yield call(assetBuildDataService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.createBuild, params);
+        response = yield call(assetBuildDataService.createBuild, params);
       }
 
       yield put({
@@ -307,7 +307,7 @@ export default {
       }
     },
     *delUnit({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.delBuild, payload);
+      const response = yield call(assetBuildDataService.delBuild, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetchUnit' });
@@ -317,7 +317,7 @@ export default {
     *floorRoute({ payload }, { put }) {
       yield put(
         routerRedux.push({
-          pathname: '/assetdatamaint/assetfloormaint',
+          pathname: '/assettypedata/assetfloor',
           query: {
             recordID: payload.record_id,
             projectID: payload.project_id,
@@ -328,7 +328,7 @@ export default {
       );
     },
     // 查询写字楼列表
-    *fetchBuidings({ search, pagination, select }, { call, put }) {
+    *fetchBuidings({ search, pagination}, { call, put,select }) {
       let params = {
         q: 'page',
       };
@@ -339,7 +339,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.assetDatamaint.searchBuild);
+        const s = yield select(state => state.assetBuildData.searchBuild);
         if (s) {
           params = { ...params, ...s };
         }
@@ -352,12 +352,12 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.assetDatamaint.paginationBuild);
+        const p = yield select(state => state.assetBuildData.paginationBuild);
         if (p) {
           params = { ...params, ...p };
         }
       }
-      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveBuidings',
@@ -365,8 +365,17 @@ export default {
         }),
       ];
     },
+
+    // 删除楼栋
+      *delBuild({ payload }, { call, put }) {
+        const response = yield call(assetBuildDataService.delBuild, payload);
+        if (response.status === 'OK') {
+          message.success('删除成功');
+          yield put({ type: 'fetchBuidings' });
+        }
+      },
     // 查询单元列表
-    *fetchUnit({ search, pagination, select }, { call, put }) {
+    *fetchUnit({ search, pagination}, { call, put,select }) {
       let params = {
         q: 'page',
       };
@@ -377,7 +386,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.assetDatamaint.searchUnit);
+        const s = yield select(state => state.assetBuildData.searchUnit);
         if (s) {
           params = { ...params, ...s };
         }
@@ -390,12 +399,12 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.assetDatamaint.paginationUnit);
+        const p = yield select(state => state.assetBuildData.paginationUnit);
         if (p) {
           params = { ...params, ...p };
         }
       }
-      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveUnitList',
@@ -416,7 +425,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.assetDatamaint.searchFloor);
+        const s = yield select(state => state.assetBuildData.searchFloor);
         if (s) {
           params = { ...params, ...s };
         }
@@ -429,12 +438,12 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.assetDatamaint.paginationFloor);
+        const p = yield select(state => state.assetBuildData.paginationFloor);
         if (p) {
           params = { ...params, ...p };
         }
       }
-      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveFloorList',
@@ -444,7 +453,7 @@ export default {
     },
     // 查询楼层单条数据
     *fetchFormFloor({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.getBuildOne, payload);
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
       yield put({
         type: 'saveFormDataFloor',
         payload: response,
@@ -522,14 +531,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.assetDatamaint.formTypeFloor);
+      const formType = yield select(state => state.assetBuildData.formTypeFloor);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formIDFloor);
-        response = yield call(assetDatamaintService.updateBuild, params);
+        params.record_id = yield select(state => state.assetBuildData.formIDFloor);
+        response = yield call(assetBuildDataService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.createBuild, params);
+        response = yield call(assetBuildDataService.createBuild, params);
       }
 
       yield put({
@@ -552,7 +561,7 @@ export default {
 
     // 删除楼层
     *delFloor({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.delBuild, payload);
+      const response = yield call(assetBuildDataService.delBuild, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetchFloor' });
