@@ -10,6 +10,8 @@ import (
 type ITAssetData interface {
 	// 查询数据
 	Query(ctx context.Context, params schema.TAssetDataQueryParam, opts ...schema.TAssetDataQueryOptions) (*schema.TAssetDataQueryResult, error)
+	// 查询项目名称列表
+	QueryProjectName(ctx context.Context, params schema.TAssetDataQueryProjectNameParam) ([]string, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.TAssetDataQueryOptions) (*schema.TAssetData, error)
 	// 创建数据

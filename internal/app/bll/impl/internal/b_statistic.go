@@ -466,3 +466,19 @@ func (a *Statistic) QueryCompany(ctx context.Context, params schema.CompanyStati
 
 	return items, nil
 }
+
+// QueryProjectName 查询项目名称
+func (a *Statistic) QueryProjectName(ctx context.Context, params schema.TAssetDataQueryProjectNameParam) ([]*schema.Project, error) {
+	names, err := a.TAssetDataModel.QueryProjectName(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]*schema.Project, len(names))
+	for i, v := range names {
+		items[i] = &schema.Project{
+			Name: v,
+		}
+	}
+	return items, nil
+}

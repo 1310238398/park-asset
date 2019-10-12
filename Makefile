@@ -1,4 +1,4 @@
-.PHONY: start build build-linux
+.PHONY: start build build-linux swagger
 
 NOW = $(shell date -u '+%Y%m%d%I%M%S')
 
@@ -23,6 +23,9 @@ build-linux:
 
 publish: build-linux
 	scp $(SERVER_BIN) root@39.98.250.155:/root/services/gxtparkassets/gxtparkassets2
+
+publish-swagger: swagger
+	scp ./internal/app/swagger/* root@39.98.250.155:/root/services/gxtparkassets/swagger/
 
 test:
 	@go test -cover -race ./...

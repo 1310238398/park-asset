@@ -1,5 +1,5 @@
 # 运行模式(debug:调试,test:测试,release:正式)
-run_mode = "release"
+run_mode = "debug"
 
 # casbin模型配置文件(也可以启动服务时使用-m指定)
 casbin_model_conf = ""
@@ -14,7 +14,7 @@ swagger = ""
 store = "gorm"
 
 # 是否允许初始化菜单数据(检查当前数据库中是否存在菜单数据，如果不存在则执行数据初始化)
-allow_init_menu = true
+allow_init_menu = false
 
 # 是否启用casbin鉴权
 enable_casbin = false
