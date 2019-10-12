@@ -102,7 +102,7 @@ store = "memory"
 # 数字长度
 length = 4
 # 图片宽度
-width = 300
+width = 360
 # 图片高度
 height = 120
 # redis数据库(如果存储方式是redis，则指定存储的数据库)
