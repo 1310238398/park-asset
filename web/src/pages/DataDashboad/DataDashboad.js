@@ -157,7 +157,26 @@ class DataDashboad extends PureComponent {
   handleLocation = () => {
     router.push('/');
   };
-
+  backGo = () => {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          position: 'relative',
+          top: '1vh',
+          right: '3.89vw',
+          color:'#FFF'
+        }}
+        onClick={() => {
+          this.handleLocation();
+        }}
+      >
+        返回
+      </div>
+    );
+  };
   render() {
     const { year, quarter } = this.state;
     const {
@@ -172,6 +191,7 @@ class DataDashboad extends PureComponent {
         <div className={styles.topCenter}>
           <div>{this.getYearSelect()}</div>
           <span className={styles.topMiddleTitle}>济南高新控股集团资产运营数据看板</span>
+          <div>{this.backGo()}</div>
         </div>
         <div className={styles.middleCenter}>
           <div>
@@ -228,7 +248,10 @@ class DataDashboad extends PureComponent {
                     data={v}
                     height={((21.11 - 1.24 - 1.66 - 1.31) / 100) * window.innerHeight - 10}
                   />
-                  <p className={styles.companyPlan}  title={formatNumber(v.plan_income, 100 * 10000, 2)+'万元'}>
+                  <p
+                    className={styles.companyPlan}
+                    title={formatNumber(v.plan_income, 100 * 10000, 2) + '万元'}
+                  >
                     年收入计划 {formatNumber(v.plan_income, 100 * 10000, 2)}万元
                   </p>
                 </div>,
