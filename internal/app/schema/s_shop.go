@@ -16,6 +16,10 @@ type Shop struct {
 
 // ShopQueryParam 查询条件
 type ShopQueryParam struct {
+	ProjectID  string
+	Name       string
+	LikeName   string
+	RentStatus int
 }
 
 // ShopQueryOptions 查询可选参数项
