@@ -758,7 +758,6 @@ export default {
       }
     },
     *submitPlate({ payload }, { call, put, select }) {
-      debugger;
       yield put({
         type: 'changeSubmitting',
         payload: true,
@@ -949,10 +948,10 @@ export default {
         yield put({
           type: 'fetchSubDoor',
         });
-        yield put({
-          type: 'fetchFormSubDoor',
-          payload: { record_id: payload.parent_id },
-        });
+        // yield put({
+        //   type: 'fetchFormSubDoor',
+        //   payload: { record_id: payload.parent_id },
+        // });
       }
     },
 

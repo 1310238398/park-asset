@@ -130,6 +130,10 @@ export default [
           {
             path: '/assettypedata/assetsubdoor',
             component: './AssetTypeData/AssetBuildData/AssetNumPlate/AssetSubDoor',
+          },
+          {
+            path: '/assettypedata/assetshop',
+            component: './AssetTypeData/AssetShopData/AssetShopData',
           }
         ],
       }
