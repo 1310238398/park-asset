@@ -41,6 +41,7 @@ func (a *Shop) Query(c *gin.Context) {
 // @Param pageSize query int true "分页大小" 10
 // @Param project_id query string true "项目ID"
 // @Param name query string false "名称（模糊查询）"
+// @Param business query string false "业态"
 // @Param rent_status query int false "出租状态:1未租 2锁定 3已租"
 // @Success 200 []schema.Shop "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
@@ -55,6 +56,7 @@ func (a *Shop) QueryPage(c *gin.Context) {
 		return
 	}
 	params.LikeName = c.Query("name")
+	params.Business = c.Query("business")
 	params.RentStatus = util.S(c.Query("rent_status")).DefaultInt(0)
 
 	result, err := a.ShopBll.Query(ginplus.NewContext(c), params, schema.ShopQueryOptions{
