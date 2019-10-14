@@ -3,28 +3,29 @@ import { connect } from 'dva';
 import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio, Tabs } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
+
 @connect(({ assetBuildData }) => ({
   assetBuildData,
 }))
 @Form.create()
-class AssetBuildEdit extends PureComponent {
+class AssetUnitEdit extends PureComponent {
   constructor(props) {
     super(props);
     this.custom = React.createRef();
-    this.agreement = React.createRef();
   }
 
   onOKClick = () => {
     const {
       form,
-      assetBuildData: { proData },
+      assetBuildData: { proData, formDataBuild },
       onSubmit,
     } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
         formData.project_id = proData.record_id;
-        formData.building_type = 1;
+        formData.parent_id = formDataBuild.record_id;
+        formData.building_type = 2;
         if (formData && formData.building_area) {
           formData.building_area = Math.round(Number(formData.building_area) * 100);
         }
@@ -32,7 +33,7 @@ class AssetBuildEdit extends PureComponent {
           formData.rent_area = Math.round(Number(formData.rent_area) * 100);
         }
 
-        onSubmit(formData);
+          onSubmit(formData);
       }
     });
   };
@@ -44,16 +45,11 @@ class AssetBuildEdit extends PureComponent {
 
   render() {
     const {
-      assetBuildData: {
-        formVisibleBuild,
-        formTitleBuild,
-        formDataBuild,
-        submitting,
-        formTypeBuild,
-        proData,
-      },
+      assetBuildData: { formVisibleUnit, formTitleUnit, formDataUnit, 
+        submitting, proData,formTypeUnit,loudongName },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
+      titleName,
     } = this.props;
     const RadioGroup = Radio.Group;
     const { TabPane } = Tabs;
@@ -65,14 +61,7 @@ class AssetBuildEdit extends PureComponent {
         span: 18,
       },
     };
-    const formItemLayoutmome = {
-      labelCol: {
-        span: 10,
-      },
-      wrapperCol: {
-        span: 14,
-      },
-    };
+
     const formItemLayoutTwo = {
       labelCol: {
         span: 12,
@@ -83,9 +72,9 @@ class AssetBuildEdit extends PureComponent {
     };
     return (
       <Modal
-        title={formTitleBuild}
+        title={formTitleUnit}
         width={850}
-        visible={formVisibleBuild}
+        visible={formVisibleUnit}
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
@@ -102,10 +91,17 @@ class AssetBuildEdit extends PureComponent {
                   <span className="ant-form-text">{proData.name}</span>
                 </Form.Item>
               </Col>
-              <Col span={8}>
-                <Form.Item {...formItemLayoutmome} label="楼栋名称">
+              <Col span={12}>
+                <Form.Item {...formItemLayout} label="楼栋名称">
+                  <span className="ant-form-text">{loudongName}</span>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <Form.Item {...formItemLayout} label="单元名称">
                   {getFieldDecorator('name', {
-                    initialValue: formDataBuild.name,
+                    initialValue: formDataUnit.name,
                     rules: [
                       {
                         required: true,
@@ -115,11 +111,10 @@ class AssetBuildEdit extends PureComponent {
                   })(<Input placeholder="请输入" />)}
                 </Form.Item>
               </Col>
-
               <Col span={8}>
-                <Form.Item {...formItemLayoutTwo} label="是否整栋出租">
+                <Form.Item {...formItemLayoutTwo} label="是否整单元出租">
                   {getFieldDecorator('is_all_rent', {
-                    initialValue: formDataBuild.is_all_rent ? formDataBuild.is_all_rent : 2,
+                    initialValue: formDataUnit.is_all_rent ? formDataUnit.is_all_rent : 2,
                     rules: [
                       {
                         required: true,
@@ -135,99 +130,6 @@ class AssetBuildEdit extends PureComponent {
                 </Form.Item>
               </Col>
             </Row>
-
-            <Row>
-              <Col span={12}>
-                <Form.Item
-                  {...formItemLayout}
-                  label="单元数"
-                  style={{
-                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
-                  }}
-                >
-                  {getFieldDecorator('unit_num', {
-                    initialValue: formDataBuild.unit_num ? formDataBuild.unit_num : 0,
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入',
-                      },
-                    ],
-                  })(
-                    <InputNumber
-                      min={0}
-                      max={9999}
-                      placeholder="请输入"
-                      disabled={formTypeBuild === 'E'}
-                    />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  {...formItemLayoutmome}
-                  label="单元命名规则"
-                  style={{
-                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
-                  }}
-                >
-                  {getFieldDecorator('unit_naming', {
-                    initialValue: formDataBuild.unit_naming ? formDataBuild.unit_naming : '单元',
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入',
-                      },
-                    ],
-                  })(<Input placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  {...formItemLayout}
-                  label="楼层数"
-                  style={{
-                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
-                  }}
-                >
-                  {getFieldDecorator('layer_num', {
-                    initialValue: formDataBuild.layer_num ? formDataBuild.layer_num : 0,
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入',
-                      },
-                    ],
-                  })(
-                    <InputNumber
-                      min={0}
-                      max={9999}
-                      placeholder="请输入"
-                      disabled={formTypeBuild === 'E'}
-                    />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  {...formItemLayoutmome}
-                  label="楼层命名规则"
-                  style={{
-                    display: getFieldValue('is_all_rent') === 2 ? 'block' : 'none',
-                  }}
-                >
-                  {getFieldDecorator('layer_naming', {
-                    initialValue: formDataBuild.layer_naming ? formDataBuild.layer_naming : 'F',
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入',
-                      },
-                    ],
-                  })(<Input placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
-                </Form.Item>
-              </Col>
-            </Row>
             <Row>
               <Col span={8}>
                 <Form.Item
@@ -238,9 +140,7 @@ class AssetBuildEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('building_area', {
-                    initialValue: formDataBuild.building_area
-                      ? formDataBuild.building_area / 100
-                      : 0,
+                    initialValue: formDataUnit.building_area ? formDataUnit.building_area / 100 : 0,
                     rules: [
                       {
                         required: true,
@@ -259,7 +159,7 @@ class AssetBuildEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('rent_area', {
-                    initialValue: formDataBuild.rent_area ? formDataBuild.rent_area / 100 : 0,
+                    initialValue: formDataUnit.rent_area ? formDataUnit.rent_area / 100 : 0,
                     rules: [
                       {
                         required: true,
@@ -278,7 +178,7 @@ class AssetBuildEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('decoration', {
-                    initialValue: formDataBuild.decoration,
+                    initialValue: formDataUnit.decoration,
                     rules: [
                       {
                         required: false,
@@ -305,10 +205,10 @@ class AssetBuildEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('rent_status', {
-                    initialValue: formDataBuild.rent_status ? formDataBuild.rent_status : 0,
+                    initialValue: formDataUnit.rent_status ? formDataUnit.rent_status : 0,
                     rules: [{ required: true, message: '请选择' }],
                   })(
-                    <RadioGroup disabled={formTypeBuild === 'E'}>
+                    <RadioGroup  disabled={formTypeUnit === 'E'}>
                       <Radio.Button value={1}>未租</Radio.Button>
                       <Radio.Button value={2}>锁定</Radio.Button>
                       <Radio.Button value={3}>已租</Radio.Button>
@@ -324,4 +224,4 @@ class AssetBuildEdit extends PureComponent {
   }
 }
 
-export default AssetBuildEdit;
+export default AssetUnitEdit;

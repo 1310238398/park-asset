@@ -73,7 +73,7 @@ class AssetBuildMaint extends PureComponent {
     } else {
       this.dispatch({
         type: 'assetDatamaint/floorRoute',
-        payload: item,
+        payload: item
       });
     }
   };

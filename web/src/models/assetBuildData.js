@@ -27,6 +27,20 @@ export default {
       pagination: {},
     },
 
+    // 门牌
+    searchPlate: {},
+    paginationPlate: {},
+    dataPlate: {
+      list: [],
+      pagination: {},
+    },
+    // 子门牌
+    searchSubDoor: {},
+    paginationSubDoor: {},
+    dataSubDoor: {
+      list: [],
+      pagination: {},
+    },
     submitting: false,
     formTitle: '',
     formID: '',
@@ -51,18 +65,40 @@ export default {
     formDataFloor: {},
     formTitleFloor: '',
     formIDFloor: '',
+
+    // 门牌数据
+    formTypePlate: '',
+    formVisiblePlate: false,
+    formDataPlate: {},
+    formTitlePlate: '',
+    formIDPlate: '',
+    // 子门牌数据
+    formTypeSubDoor: '',
+    formVisibleSubDoor: false,
+    formDataSubDoor: {},
+    formTitleSubDoor: '',
+    formIDSubDoor: '',
     // 项目数据
     proData: {},
     proID: '',
+
+    // 楼栋name
+    loudongName: '',
+    // 单元 name
+    UnitName: '',
+    // 门牌Name
+    DoorName: '',
+    loudongN: '',
+    unitNum: 0,
   },
   effects: {
-    *del({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.del, payload);
-      if (response.status === 'OK') {
-        message.success('删除成功');
-        yield put({ type: 'fetch' });
-      }
-    },
+    // *del({ payload }, { call, put }) {
+    //   const response = yield call(assetBuildDataService.del, payload);
+    //   if (response.status === 'OK') {
+    //     message.success('删除成功');
+    //     yield put({ type: 'fetch' });
+    //   }
+    // },
     // 楼栋数据
     *LoadBuild({ payload }, { put }) {
       yield put({
@@ -137,7 +173,7 @@ export default {
 
     // 查询楼栋单条数据
     *fetchFormBuild({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.getBuildOne, payload);
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
       yield put({
         type: 'saveFormDataBuild',
         payload: response,
@@ -151,14 +187,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formTypeBuild = yield select(state => state.assetDatamaint.formTypeBuild);
+      const formTypeBuild = yield select(state => state.assetBuildData.formTypeBuild);
 
       let response;
       if (formTypeBuild === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formIDBuild);
-        response = yield call(assetDatamaintService.updateBuild, params);
+        params.record_id = yield select(state => state.assetBuildData.formIDBuild);
+        response = yield call(assetBuildDataService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.createBuild, params);
+        response = yield call(assetBuildDataService.createBuild, params);
       }
 
       yield put({
@@ -181,15 +217,15 @@ export default {
 
     // 查询项目名称和ID
     *selectProjectIDName({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.selectProInfo, payload);
+      const response = yield call(assetBuildDataService.selectProInfo, payload);
       yield put({ type: 'saveProData', payload: response });
     },
 
     // 单元部分数据
-    *cellRoute({ payload }, { put }) {
+    *cellRoute({ payload, unit }, { put }) {
       yield put(
         routerRedux.push({
-          pathname: '/assetdatamaint/assetunitmaint',
+          pathname: '/assettypedata/assetunit',
           query: {
             recordID: payload.record_id,
             currentName: payload.name,
@@ -197,6 +233,8 @@ export default {
           },
         })
       );
+      yield put({ type: 'saveLoudongName', payload: payload.name });
+      yield put({ type: 'saveUnitNum', payload: unit });
     },
 
     *LoadUnit({ payload }, { put }) {
@@ -264,7 +302,7 @@ export default {
       }
     },
     *fetchFormUnit({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.get, payload);
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
       yield [
         put({
           type: 'saveFormDataUnit',
@@ -279,14 +317,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.assetDatamaint.formType);
+      const formType = yield select(state => state.assetBuildData.formTypeUnit);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formID);
-        response = yield call(assetDatamaintService.updateBuild, params);
+        params.record_id = yield select(state => state.assetBuildData.formIDUnit);
+        response = yield call(assetBuildDataService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.createBuild, params);
+        response = yield call(assetBuildDataService.createBuild, params);
       }
 
       yield put({
@@ -307,7 +345,7 @@ export default {
       }
     },
     *delUnit({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.delBuild, payload);
+      const response = yield call(assetBuildDataService.delBuild, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetchUnit' });
@@ -317,7 +355,45 @@ export default {
     *floorRoute({ payload }, { put }) {
       yield put(
         routerRedux.push({
-          pathname: '/assetdatamaint/assetfloormaint',
+          pathname: '/assettypedata/assetfloor',
+          query: {
+            recordID: payload.item.record_id,
+            projectID: payload.item.project_id,
+            type: payload.item.asset_type,
+            currentName: payload.item.name,
+            loudong: payload.loudongName,
+          },
+        })
+      );
+      yield put({ type: 'saveUnitName', payload: payload.item.name });
+      yield put({ type: 'saveUnitNum', payload: payload.unit });
+    },
+
+    // 跳转门牌
+    *plateRoute({ payload }, { put }) {
+      yield put(
+        routerRedux.push({
+          pathname: '/assettypedata/assetnumplate',
+          query: {
+            recordID: payload.item.record_id,
+            projectID: payload.item.project_id,
+            type: payload.item.asset_type,
+            currentName: payload.item.name,
+            loudong: payload.loudongName,
+          },
+        })
+      );
+      yield put({
+        type: 'saveloudong',
+        payload: payload.loudongName,
+      });
+    },
+
+    // 跳转子门牌
+    *subDoorRoute({ payload }, { put }) {
+      yield put(
+        routerRedux.push({
+          pathname: '/assettypedata/assetsubdoor',
           query: {
             recordID: payload.record_id,
             projectID: payload.project_id,
@@ -326,9 +402,11 @@ export default {
           },
         })
       );
+      yield put({ type: 'saveDoorName', payload: payload.name });
     },
+
     // 查询写字楼列表
-    *fetchBuidings({ search, pagination, select }, { call, put }) {
+    *fetchBuidings({ search, pagination }, { call, put, select }) {
       let params = {
         q: 'page',
       };
@@ -339,7 +417,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.assetDatamaint.searchBuild);
+        const s = yield select(state => state.assetBuildData.searchBuild);
         if (s) {
           params = { ...params, ...s };
         }
@@ -352,12 +430,12 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.assetDatamaint.paginationBuild);
+        const p = yield select(state => state.assetBuildData.paginationBuild);
         if (p) {
           params = { ...params, ...p };
         }
       }
-      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveBuidings',
@@ -365,8 +443,17 @@ export default {
         }),
       ];
     },
+
+    // 删除楼栋
+    *delBuild({ payload }, { call, put }) {
+      const response = yield call(assetBuildDataService.delBuild, payload);
+      if (response.status === 'OK') {
+        message.success('删除成功');
+        yield put({ type: 'fetchBuidings' });
+      }
+    },
     // 查询单元列表
-    *fetchUnit({ search, pagination, select }, { call, put }) {
+    *fetchUnit({ search, pagination }, { call, put, select }) {
       let params = {
         q: 'page',
       };
@@ -377,7 +464,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.assetDatamaint.searchUnit);
+        const s = yield select(state => state.assetBuildData.searchUnit);
         if (s) {
           params = { ...params, ...s };
         }
@@ -390,12 +477,12 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.assetDatamaint.paginationUnit);
+        const p = yield select(state => state.assetBuildData.paginationUnit);
         if (p) {
           params = { ...params, ...p };
         }
       }
-      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveUnitList',
@@ -416,7 +503,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.assetDatamaint.searchFloor);
+        const s = yield select(state => state.assetBuildData.searchFloor);
         if (s) {
           params = { ...params, ...s };
         }
@@ -429,12 +516,12 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.assetDatamaint.paginationFloor);
+        const p = yield select(state => state.assetBuildData.paginationFloor);
         if (p) {
           params = { ...params, ...p };
         }
       }
-      const response = yield call(assetDatamaintService.queryBuildingsPage, params);
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
       yield [
         put({
           type: 'saveFloorList',
@@ -444,7 +531,7 @@ export default {
     },
     // 查询楼层单条数据
     *fetchFormFloor({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.getBuildOne, payload);
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
       yield put({
         type: 'saveFormDataFloor',
         payload: response,
@@ -522,14 +609,14 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.assetDatamaint.formTypeFloor);
+      const formType = yield select(state => state.assetBuildData.formTypeFloor);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.assetDatamaint.formIDFloor);
-        response = yield call(assetDatamaintService.updateBuild, params);
+        params.record_id = yield select(state => state.assetBuildData.formIDFloor);
+        response = yield call(assetBuildDataService.updateBuild, params);
       } else {
-        response = yield call(assetDatamaintService.createBuild, params);
+        response = yield call(assetBuildDataService.createBuild, params);
       }
 
       yield put({
@@ -552,10 +639,329 @@ export default {
 
     // 删除楼层
     *delFloor({ payload }, { call, put }) {
-      const response = yield call(assetDatamaintService.delBuild, payload);
+      const response = yield call(assetBuildDataService.delBuild, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetchFloor' });
+      }
+    },
+
+    // 查询门牌列表
+    *fetchPlate({ search, pagination }, { call, put, select }) {
+      let params = {
+        q: 'page',
+      };
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchPlate',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.assetBuildData.searchPlate);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePaginationPlate',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.assetBuildData.paginationPlate);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
+      yield [
+        put({
+          type: 'savePlateList',
+          payload: response,
+        }),
+      ];
+    },
+    // 查询门牌单条数据
+    *fetchFormPlate({ payload }, { call, put }) {
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
+      yield put({
+        type: 'saveFormDataPlate',
+        payload: response,
+      });
+    },
+
+    *LoadPlate({ payload }, { put }) {
+      yield put({
+        type: 'changeFormVisiblePlate',
+        payload: true,
+      });
+
+      if (payload.inProjectID) {
+        yield put({
+          type: 'selectProjectIDName',
+          payload: { ID: payload.inProjectID },
+        });
+      }
+      yield [
+        put({
+          type: 'saveFormTypePlate',
+          payload: payload.type,
+        }),
+        put({
+          type: 'saveFormTitlePlate',
+          payload: '新建门牌',
+        }),
+        put({
+          type: 'saveFormIDPlate',
+          payload: '',
+        }),
+        put({
+          type: 'saveFormDataPlate',
+          payload: {},
+        }),
+      ];
+
+      if (payload.type === 'E') {
+        yield [
+          put({
+            type: 'saveFormTitlePlate',
+            payload: '编辑门牌',
+          }),
+          put({
+            type: 'saveFormIDPlate',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormPlate',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitlePlate',
+            payload: '查看门牌',
+          }),
+          put({
+            type: 'saveFormIDPlate',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormPlate',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+    },
+    *submitPlate({ payload }, { call, put, select }) {
+      debugger;
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetBuildData.formTypePlate);
+
+      let response;
+      if (formType === 'E') {
+        params.record_id = yield select(state => state.assetBuildData.formIDPlate);
+        response = yield call(assetBuildDataService.updateBuild, params);
+      } else {
+        response = yield call(assetBuildDataService.createBuild, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisiblePlate',
+          payload: false,
+        });
+        // TODO 查询门牌列表
+        yield put({
+          type: 'fetchPlate',
+        });
+        yield put({
+          type: 'fetchFormPlate',
+          payload: { record_id: payload.parent_id },
+        });
+      }
+    },
+
+    // 删除门牌
+    *delPlate({ payload }, { call, put }) {
+      const response = yield call(assetBuildDataService.delBuild, payload);
+      if (response.status === 'OK') {
+        message.success('删除成功');
+        yield put({ type: 'fetchPlate' });
+      }
+    },
+
+    // 查询子门牌列表
+    *fetchSubDoor({ search, pagination }, { call, put, select }) {
+      let params = {
+        q: 'page',
+      };
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchSubDoor',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.assetBuildData.searchSubDoor);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePaginationPlate',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.assetBuildData.paginationPlate);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
+      const response = yield call(assetBuildDataService.queryBuildingsPage, params);
+      yield [
+        put({
+          type: 'saveSubDoorList',
+          payload: response,
+        }),
+      ];
+    },
+    // 查询门牌单条数据
+    *fetchFormSubDoor({ payload }, { call, put }) {
+      const response = yield call(assetBuildDataService.getBuildOne, payload);
+      yield put({
+        type: 'saveFormDataSubDoor',
+        payload: response,
+      });
+    },
+
+    *LoadSubDoor({ payload }, { put }) {
+      yield put({
+        type: 'changeFormVisibleSubDoor',
+        payload: true,
+      });
+
+      if (payload.inProjectID) {
+        yield put({
+          type: 'selectProjectIDName',
+          payload: { ID: payload.inProjectID },
+        });
+      }
+      yield [
+        put({
+          type: 'saveFormTypeSubDoor',
+          payload: payload.type,
+        }),
+        put({
+          type: 'saveFormTitleSubDoor',
+          payload: '新建门牌',
+        }),
+        put({
+          type: 'saveFormIDSubDoor',
+          payload: '',
+        }),
+        put({
+          type: 'saveFormDataSubDoor',
+          payload: {},
+        }),
+      ];
+
+      if (payload.type === 'E') {
+        yield [
+          put({
+            type: 'saveFormTitleSubDoor',
+            payload: '编辑子门牌',
+          }),
+          put({
+            type: 'saveFormIDSubDoor',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormSubDoor',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+      if (payload.type === 'S') {
+        yield [
+          put({
+            type: 'saveFormTitleSubDoor',
+            payload: '查看子门牌',
+          }),
+          put({
+            type: 'saveFormIDSubDoor',
+            payload: payload.id,
+          }),
+          put({
+            type: 'fetchFormSubDoor',
+            payload: { record_id: payload.id },
+          }),
+        ];
+      }
+    },
+    *submitSubDoor({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      const formType = yield select(state => state.assetBuildData.formTypeSubDoor);
+
+      let response;
+      if (formType === 'E') {
+        params.record_id = yield select(state => state.assetBuildData.formIDSubDoor);
+        response = yield call(assetBuildDataService.updateBuild, params);
+      } else {
+        response = yield call(assetBuildDataService.createBuild, params);
+      }
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisibleSubDoor',
+          payload: false,
+        });
+        // TODO 查询门牌列表
+        yield put({
+          type: 'fetchSubDoor',
+        });
+        yield put({
+          type: 'fetchFormSubDoor',
+          payload: { record_id: payload.parent_id },
+        });
+      }
+    },
+
+    // 删除门牌
+    *delSubDoor({ payload }, { call, put }) {
+      const response = yield call(assetBuildDataService.delBuild, payload);
+      if (response.status === 'OK') {
+        message.success('删除成功');
+        yield put({ type: 'fetchSubDoor' });
       }
     },
   },
@@ -666,13 +1072,80 @@ export default {
       return { ...state, paginationBuild: payload };
     },
 
-      // 项目名称
+    // 项目名称
     saveProData(state, { payload }) {
       return { ...state, proData: payload };
     },
     // 保存项目ID
     saveProjectID(state, { payload }) {
       return { ...state, proID: payload };
+    },
+
+    // 门牌数据
+    savePlateList(state, { payload }) {
+      return { ...state, dataPlate: payload };
+    },
+    saveSearchPlate(state, { payload }) {
+      return { ...state, searchPlate: payload };
+    },
+    savePaginationPlate(state, { payload }) {
+      return { ...state, paginationPlate: payload };
+    },
+    changeFormVisiblePlate(state, { payload }) {
+      return { ...state, formVisiblePlate: payload };
+    },
+    saveFormTitlePlate(state, { payload }) {
+      return { ...state, formTitlePlate: payload };
+    },
+    saveFormTypePlate(state, { payload }) {
+      return { ...state, formTypePlate: payload };
+    },
+    saveFormIDPlate(state, { payload }) {
+      return { ...state, formIDPlate: payload };
+    },
+    saveFormDataPlate(state, { payload }) {
+      return { ...state, formDataPlate: payload };
+    },
+    saveLoudongName(state, { payload }) {
+      return { ...state, loudongName: payload };
+    },
+    saveUnitName(state, { payload }) {
+      return { ...state, UnitName: payload };
+    },
+    saveDoorName(state, { payload }) {
+      return { ...state, DoorName: payload };
+    },
+    saveloudong(state, { payload }) {
+      return { ...state, loudongN: payload };
+    },
+    saveUnitNum(state, { payload }) {
+      return { ...state, unitNum: payload };
+    },
+
+    // 子门牌数据
+    saveSubDoorList(state, { payload }) {
+      return { ...state, dataSubDoor: payload };
+    },
+    saveSearchSubDoor(state, { payload }) {
+      return { ...state, searchSubDoor: payload };
+    },
+    savePaginationSubDoor(state, { payload }) {
+      return { ...state, paginationSubDoor: payload };
+    },
+    changeFormVisibleSubDoor(state, { payload }) {
+      return { ...state, formVisibleSubDoor: payload };
+    },
+    saveFormTitleSubDoor(state, { payload }) {
+      return { ...state, formTitleSubDoor: payload };
+    },
+    saveFormTypeSubDoor(state, { payload }) {
+      return { ...state, formTypeSubDoor: payload };
+    },
+    saveFormIDSubDoor(state, { payload }) {
+      return { ...state, formIDSubDoor: payload };
+    },
+    saveFormDataSubDoor(state, { payload }) {
+      return { ...state, formDataSubDoor: payload };
     },
   },
 };

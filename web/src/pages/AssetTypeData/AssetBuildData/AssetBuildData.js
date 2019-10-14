@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal,message } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, message } from 'antd';
 import PButton from '@/components/PermButton';
 import AssetBuildEdit from './AssetBuildEdit';
 // import AssetBuildShowMaint from './AssetBuildShowMaint';
 import styles from './AssetBuildData.less';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import DicShow from '@/components/DictionaryNew/DicShow';
-import ProSelect from '@/components/ProSelect/ProSelect';
+import ProSelect from '@/components/ProSelectID/ProSelect';
 
 @connect(state => ({
-    assetBuildData: state.assetBuildData,
+  assetBuildData: state.assetBuildData,
   loading: state.loading.models.AssetBuildData,
 }))
 @Form.create()
@@ -18,7 +18,7 @@ class AssetBuildData extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
-    project_id:'',
+    project_id: '',
   };
 
   //   componentDidMount() {
@@ -65,25 +65,30 @@ class AssetBuildData extends PureComponent {
       this.dispatch({
         type: 'assetBuildData/cellRoute',
         payload: item,
+        unit:1,
       });
     } else {
       this.dispatch({
         type: 'assetBuildData/floorRoute',
-        payload: item,
+        payload: {item,loudongName:'',unit:0}
       });
     }
   };
 
   // 新建楼栋
   handleAddBuildClick = () => {
-    const { onProjectId } = this.props;
-    this.dispatch({
-      type: 'assetBuildData/LoadBuild',
-      payload: {
-        type: 'A',
-        inProjectID: onProjectId,
-      },
-    });
+    const { project_id } = this.state;
+    if (project_id) {
+      this.dispatch({
+        type: 'assetBuildData/LoadBuild',
+        payload: {
+          type: 'A',
+          inProjectID: project_id,
+        },
+      });
+    } else {
+      message.warning('请选择项目名称，进行相应的数据操作');
+    }
   };
 
   // 编辑单元
@@ -93,15 +98,19 @@ class AssetBuildData extends PureComponent {
       return;
     }
     const item = selectedRows[0];
-    const { onProjectId } = this.props;
-    this.dispatch({
-      type: 'assetBuildData/LoadBuild',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-        inProjectID: onProjectId,
-      },
-    });
+    const { project_id } = this.state;
+    if (project_id) {
+      this.dispatch({
+        type: 'assetBuildData/LoadBuild',
+        payload: {
+          type: 'E',
+          id: item.record_id,
+          inProjectID: project_id,
+        },
+      });
+    } else {
+      message.warning('请选择项目名称，进行相应的数据操作');
+    }
   };
 
   // 判断数值
@@ -131,7 +140,7 @@ class AssetBuildData extends PureComponent {
   // 查看单元
   handleSeeClick = () => {
     const { onProjectId } = this.props;
-    const { selectedRows } = this.state;
+    const { selectedRows, } = this.state;
     if (selectedRows.length === 0) {
       return;
     }
@@ -173,7 +182,7 @@ class AssetBuildData extends PureComponent {
   // 提交数据
   handleFormSubmit = data => {
     const {
-        assetBuildData: { formTypeBuild },
+      assetBuildData: { formTypeBuild },
     } = this.props;
     this.dispatch({
       type: 'assetBuildData/submitBuild',
@@ -196,8 +205,9 @@ class AssetBuildData extends PureComponent {
         message.warning('请选择项目名称，进行相应的数据操作');
         return;
       }
+      let formData = { ...values };
       //TODO
-      this.setState({project_id:values.project_id})
+      this.setState({ project_id: formData.project_id });
       this.dispatch({
         type: 'assetBuildData/fetchBuidings',
         building_type: 1,
@@ -229,19 +239,25 @@ class AssetBuildData extends PureComponent {
     this.clearSelectRows();
   }
 
+  handleChangePro = e => {
+    this.setState({ project_id: e });
+    this.dispatch({
+        type:'assetBuildData/saveProjectID',
+        payload:e
+    })
+  };
+
   // 显示弹窗
   renderDataForm() {
     const {
-        assetBuildData: { formTypeBuild },
+      assetBuildData: { formTypeBuild },
     } = this.props;
     if (formTypeBuild === 'A' || formTypeBuild === 'E') {
-      return (
-        <AssetBuildEdit onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />
-      );
+      return <AssetBuildEdit onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />;
     }
-    if (formTypeBuild === 'S') {
-      return <AssetBuildShowMaint onCancel={this.handleFormBuildShow} />;
-    }
+    // if (formTypeBuild === 'S') {
+    //   return <AssetBuildShowMaint onCancel={this.handleFormBuildShow} />;
+    // }
     return <React.Fragment></React.Fragment>;
   }
 
@@ -272,14 +288,14 @@ class AssetBuildData extends PureComponent {
         <Row gutter={16}>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="项目名称">
-              {getFieldDecorator('pro_name', {
+              {getFieldDecorator('project_id', {
                 rules: [
                   {
                     required: true,
                     message: '请输入',
                   },
                 ],
-              })(<ProSelect />)}
+              })(<ProSelect onChange={this.handleChangePro} />)}
             </Form.Item>
           </Col>
           <Col {...col}>
@@ -299,8 +315,8 @@ class AssetBuildData extends PureComponent {
               )}
             </Form.Item>
           </Col>
-          </Row>
-          <Row>
+        </Row>
+        <Row>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="出租状态">
               {getFieldDecorator('rent_status')(
@@ -472,9 +488,9 @@ class AssetBuildData extends PureComponent {
                 >
                   删除
                 </PButton>,
-                <PButton code="querybuild" onClick={() => this.handleSeeClick(selectedRows[0])}>
-                  查看
-                </PButton>,
+                // <PButton code="querybuild" onClick={() => this.handleSeeClick(selectedRows[0])}>
+                //   查看
+                // </PButton>,
               ]}
             </div>
             <div>

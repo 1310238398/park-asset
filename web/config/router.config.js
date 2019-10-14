@@ -115,6 +115,22 @@ export default [
             path: '/assettypedata/assetbuilddata',
             component: './AssetTypeData/AssetBuildData/AssetBuildData',
           },
+          {
+            path: '/assettypedata/assetunit',
+            component: './AssetTypeData/AssetBuildData/AssetUnitData/AssetUnitData',
+          },
+          {
+            path: '/assettypedata/assetfloor',
+            component: './AssetTypeData/AssetBuildData/AssetFloorData/AssetFloorData',
+          },
+          {
+            path: '/assettypedata/assetnumplate',
+            component: './AssetTypeData/AssetBuildData/AssetNumPlate/AssetNumPlate',
+          },
+          {
+            path: '/assettypedata/assetsubdoor',
+            component: './AssetTypeData/AssetBuildData/AssetNumPlate/AssetSubDoor',
+          }
         ],
       }
     ],
