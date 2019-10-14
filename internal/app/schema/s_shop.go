@@ -20,6 +20,7 @@ type ShopQueryParam struct {
 	Name       string
 	LikeName   string
 	RentStatus int
+	Business   string
 }
 
 // ShopQueryOptions 查询可选参数项

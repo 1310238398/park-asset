@@ -36,6 +36,9 @@ func (a *Shop) Query(ctx context.Context, params schema.ShopQueryParam, opts ...
 	if v := params.Name; v != "" {
 		db = db.Where("name=?", v)
 	}
+	if v := params.Business; v != "" {
+		db = db.Where("business=?", v)
+	}
 	if v := params.LikeName; v != "" {
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
