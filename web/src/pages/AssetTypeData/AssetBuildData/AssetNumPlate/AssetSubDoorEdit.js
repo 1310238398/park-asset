@@ -3,12 +3,11 @@ import { connect } from 'dva';
 import { Form, Input, Card, Modal, InputNumber, Row, Col, Radio, Tabs } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
-
 @connect(({ assetBuildData }) => ({
   assetBuildData,
 }))
 @Form.create()
-class AssetUnitEdit extends PureComponent {
+class AssetSubDoorEdit extends PureComponent {
   constructor(props) {
     super(props);
     this.custom = React.createRef();
@@ -17,15 +16,17 @@ class AssetUnitEdit extends PureComponent {
   onOKClick = () => {
     const {
       form,
-      assetBuildData: { proData, formDataBuild },
+      assetBuildData: { proData, formDataPlate },
       onSubmit,
+      loudong,
     } = this.props;
+
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
         formData.project_id = proData.record_id;
-        formData.parent_id = formDataBuild.record_id;
-        formData.building_type = 2;
+        formData.parent_id = formDataPlate.record_id;
+        formData.building_type = 4;
         if (formData && formData.building_area) {
           formData.building_area = Math.round(Number(formData.building_area) * 100);
         }
@@ -33,7 +34,7 @@ class AssetUnitEdit extends PureComponent {
           formData.rent_area = Math.round(Number(formData.rent_area) * 100);
         }
 
-          onSubmit(formData);
+        onSubmit(formData);
       }
     });
   };
@@ -45,11 +46,25 @@ class AssetUnitEdit extends PureComponent {
 
   render() {
     const {
-      assetBuildData: { formVisibleUnit, formTitleUnit, formDataUnit, 
-        submitting, proData,formTypeUnit,loudongName },
+      assetBuildData: {
+        formVisibleSubDoor,
+        formTitleSubDoor,
+        formDataSubDoor,
+        submitting,
+        proData,
+        formTypeSubDoor,
+        formDataBuild,
+        formDataFloor,
+        loudongName,
+        UnitName,
+        DoorName,
+        loudongN,
+        unitNum
+      },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
       titleName,
+      loudong,
     } = this.props;
     const RadioGroup = Radio.Group;
     const { TabPane } = Tabs;
@@ -72,9 +87,9 @@ class AssetUnitEdit extends PureComponent {
     };
     return (
       <Modal
-        title={formTitleUnit}
+        title={formTitleSubDoor}
         width={850}
-        visible={formVisibleUnit}
+        visible={formVisibleSubDoor}
         maskClosable={false}
         confirmLoading={submitting}
         destroyOnClose
@@ -91,17 +106,47 @@ class AssetUnitEdit extends PureComponent {
                   <span className="ant-form-text">{proData.name}</span>
                 </Form.Item>
               </Col>
-              <Col span={12}>
+            </Row>
+            {unitNum!== 0 ? (
+              <Col span={8}>
                 <Form.Item {...formItemLayout} label="楼栋名称">
                   <span className="ant-form-text">{loudongName}</span>
+                </Form.Item>
+              </Col>
+            ) : (
+              <Col span={8}>
+                <Form.Item {...formItemLayout} label="楼栋名称">
+                  <span className="ant-form-text">{loudongN}</span>
+                </Form.Item>
+              </Col>
+            )}
+            <Row>
+              {unitNum!== 0 ? (
+                <Col span={8}>
+                  <Form.Item {...formItemLayout} label="单元名称">
+                    <span className="ant-form-text">{UnitName}</span>
+                  </Form.Item>
+                </Col>
+              ) : (
+                ''
+              )}
+              <Col span={8}>
+                <Form.Item {...formItemLayout} label="楼层名称">
+                  <span className="ant-form-text">{formDataFloor.name}</span>
+                </Form.Item>
+              </Col>
+
+              <Col span={8}>
+                <Form.Item {...formItemLayout} label="门牌名称">
+                  <span className="ant-form-text">{DoorName}</span>
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <Form.Item {...formItemLayout} label="单元名称">
+                <Form.Item {...formItemLayout} label="子门牌名称">
                   {getFieldDecorator('name', {
-                    initialValue: formDataUnit.name,
+                    initialValue: formDataSubDoor.name,
                     rules: [
                       {
                         required: true,
@@ -112,9 +157,9 @@ class AssetUnitEdit extends PureComponent {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item {...formItemLayoutTwo} label="是否整单元出租">
+                <Form.Item {...formItemLayoutTwo} label="是否整门牌出租">
                   {getFieldDecorator('is_all_rent', {
-                    initialValue: formDataUnit.is_all_rent ? formDataUnit.is_all_rent : 2,
+                    initialValue: formDataSubDoor.is_all_rent ? formDataSubDoor.is_all_rent : 2,
                     rules: [
                       {
                         required: true,
@@ -140,7 +185,9 @@ class AssetUnitEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('building_area', {
-                    initialValue: formDataUnit.building_area ? formDataUnit.building_area / 100 : 0,
+                    initialValue: formDataSubDoor.building_area
+                      ? formDataSubDoor.building_area / 100
+                      : 0,
                     rules: [
                       {
                         required: true,
@@ -159,7 +206,7 @@ class AssetUnitEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('rent_area', {
-                    initialValue: formDataUnit.rent_area ? formDataUnit.rent_area / 100 : 0,
+                    initialValue: formDataSubDoor.rent_area ? formDataSubDoor.rent_area / 100 : 0,
                     rules: [
                       {
                         required: true,
@@ -178,7 +225,7 @@ class AssetUnitEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('decoration', {
-                    initialValue: formDataUnit.decoration,
+                    initialValue: formDataSubDoor.decoration,
                     rules: [
                       {
                         required: false,
@@ -205,10 +252,10 @@ class AssetUnitEdit extends PureComponent {
                   }}
                 >
                   {getFieldDecorator('rent_status', {
-                    initialValue: formDataUnit.rent_status ? formDataUnit.rent_status : 0,
+                    initialValue: formDataSubDoor.rent_status ? formDataSubDoor.rent_status : 0,
                     rules: [{ required: true, message: '请选择' }],
                   })(
-                    <RadioGroup  disabled={formTypeUnit === 'E'}>
+                    <RadioGroup disabled={formTypeSubDoor === 'E'}>
                       <Radio.Button value={1}>未租</Radio.Button>
                       <Radio.Button value={2}>锁定</Radio.Button>
                       <Radio.Button value={3}>已租</Radio.Button>
@@ -224,4 +271,4 @@ class AssetUnitEdit extends PureComponent {
   }
 }
 
-export default AssetUnitEdit;
+export default AssetSubDoorEdit;

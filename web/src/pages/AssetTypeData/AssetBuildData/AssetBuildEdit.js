@@ -32,7 +32,7 @@ class AssetBuildEdit extends PureComponent {
           formData.rent_area = Math.round(Number(formData.rent_area) * 100);
         }
 
-           onSubmit(formData);
+        onSubmit(formData);
       }
     });
   };
@@ -155,7 +155,7 @@ class AssetBuildEdit extends PureComponent {
                     ],
                   })(
                     <InputNumber
-                      min={1}
+                      min={0}
                       max={9999}
                       placeholder="请输入"
                       disabled={formTypeBuild === 'E'}
@@ -198,7 +198,14 @@ class AssetBuildEdit extends PureComponent {
                         message: '请输入',
                       },
                     ],
-                  })(<InputNumber placeholder="请输入" disabled={formTypeBuild === 'E'} />)}
+                  })(
+                    <InputNumber
+                      min={0}
+                      max={9999}
+                      placeholder="请输入"
+                      disabled={formTypeBuild === 'E'}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>

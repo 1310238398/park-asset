@@ -2,9 +2,8 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Form, Row, Col, Table, Modal, Tag, Button } from 'antd';
 import PButton from '@/components/PermButton';
-import AssetUnitEdit from './AssetUnitEdit';
-// import AssetUnitShowMaint from './AssetUnitShowMaint';
-import DicShow from '@/components/DictionaryNew/DicShow';
+import AssetNumPlateEdit from './AssetNumPlateEdit';
+// import AssetFloorShowMaint from './AssetFloor/AssetFloorShowMaint';
 import styles from '../AssetBuildData.less';
 
 @connect(state => ({
@@ -12,7 +11,7 @@ import styles from '../AssetBuildData.less';
   loading: state.loading.models.assetBuildData,
 }))
 @Form.create()
-class AssetUnitMaint extends PureComponent {
+class AssetNumPlate extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -25,13 +24,13 @@ class AssetUnitMaint extends PureComponent {
       },
     } = this.props;
     this.dispatch({
-      type: 'assetBuildData/fetchUnit',
-      search: { building_type: 2, parent_id: recordID, project_id: projectID },
+      type: 'assetBuildData/fetchPlate',
+      search: { building_type: 4, project_id: projectID, parent_id: recordID },
       pagination: {},
     });
 
     this.dispatch({
-      type: 'assetBuildData/fetchFormBuild',
+      type: 'assetBuildData/fetchFormFloor',
       payload: { record_id: recordID },
     });
   }
@@ -62,7 +61,7 @@ class AssetUnitMaint extends PureComponent {
     });
   };
 
-  // 新增单元
+  // 新增楼层
   handleAddClick = () => {
     const {
       location: {
@@ -70,7 +69,7 @@ class AssetUnitMaint extends PureComponent {
       },
     } = this.props;
     this.dispatch({
-      type: 'assetBuildData/LoadUnit',
+      type: 'assetBuildData/LoadPlate',
       payload: {
         type: 'A',
         inProjectID: projectID,
@@ -78,7 +77,7 @@ class AssetUnitMaint extends PureComponent {
     });
   };
 
-  // 编辑单元
+  // 编辑楼层
   handleEditClick = () => {
     const {
       location: {
@@ -91,7 +90,7 @@ class AssetUnitMaint extends PureComponent {
     }
     const item = selectedRows[0];
     this.dispatch({
-      type: 'assetBuildData/LoadUnit',
+      type: 'assetBuildData/LoadPlate',
       payload: {
         type: 'E',
         id: item.record_id,
@@ -100,7 +99,7 @@ class AssetUnitMaint extends PureComponent {
     });
   };
 
-  // 删除单元
+  // 删除楼层
   handleDelClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
@@ -108,7 +107,7 @@ class AssetUnitMaint extends PureComponent {
     }
     const item = selectedRows[0];
     Modal.confirm({
-      title: `确定删除【单元数据：${item.name}】？`,
+      title: `确定删除【门牌数据：${item.name}】？`,
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
@@ -116,7 +115,7 @@ class AssetUnitMaint extends PureComponent {
     });
   };
 
-  // 查看单元
+  // 查看楼层
   handleSeeClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
@@ -124,7 +123,7 @@ class AssetUnitMaint extends PureComponent {
     }
     const item = selectedRows[0];
     this.dispatch({
-      type: 'assetBuildData/LoadUnit',
+      type: 'assetBuildData/LoadPlate',
       payload: {
         type: 'S',
         id: item.record_id,
@@ -135,7 +134,7 @@ class AssetUnitMaint extends PureComponent {
   // 关闭弹窗
   handleFormCancel = () => {
     this.dispatch({
-      type: 'assetBuildData/changeFormVisibleUnit',
+      type: 'assetBuildData/changeFormVisiblePlate',
       payload: false,
     });
   };
@@ -143,22 +142,10 @@ class AssetUnitMaint extends PureComponent {
   // 提交数据
   handleFormSubmit = data => {
     this.dispatch({
-      type: 'assetBuildData/submitUnit',
+      type: 'assetBuildData/submitPlate',
       payload: data,
     });
     this.clearSelectRows();
-  };
-
-  // 跳转 
-  onItemDetailClick = item => {
-    const {
-      assetBuildData: { formDataBuild:{name}},
-    } = this.props;
-    this.dispatch({
-      type: 'assetBuildData/floorRoute',
-      payload: {item,loudongName: name}
-      
-    });
   };
 
   // 判断数值
@@ -215,7 +202,7 @@ class AssetUnitMaint extends PureComponent {
 
   handleDelOKClick(id) {
     this.dispatch({
-      type: 'assetBuildData/delUnit',
+      type: 'assetBuildData/delPlate',
       payload: { record_id: id },
     });
     this.clearSelectRows();
@@ -224,58 +211,64 @@ class AssetUnitMaint extends PureComponent {
   // 显示弹窗
   renderDataForm() {
     const {
-      assetBuildData: { formTypeUnit},
+      assetBuildData: { formTypePlate },
       location: {
-        query: { currentName },
+        query: { currentName, loudong },
       },
     } = this.props;
-    if (formTypeUnit === 'A' || formTypeUnit === 'E') {
+    if (formTypePlate === 'A' || formTypePlate === 'E') {
       return (
-        <AssetUnitEdit
+        <AssetNumPlateEdit
           onCancel={this.handleFormCancel}
           onSubmit={this.handleFormSubmit}
           titleName={currentName}
+          loudong={loudong}
         />
       );
     }
-    // if (formTypeUnit === 'S') {
-    //   return <AssetUnitShowMaint onCancel={this.handleFormCancel} />;
+    // if (formTypeFloor === 'S') {
+    //   return <AssetFloorShowMaint onCancel={this.handleFormCancel} />;
     // }
     return <React.Fragment></React.Fragment>;
   }
+
+  // 跳转 子门牌
+  onItemDetailClick = item => {
+    this.dispatch({
+      type: 'assetBuildData/subDoorRoute',
+      payload: item,
+    });
+  };
 
   render() {
     const {
       loading,
       assetBuildData: {
-        dataUnit: { list, pagination },
-        formDataBuild,
+        dataPlate: { list, pagination },
+        unitNum,
+        formDataUnit,
+        formDataFloor,
       },
     } = this.props;
     const { selectedRowKeys, selectedRows } = this.state;
     const columns = [
       {
-        title: '单元号',
+        title: '门牌号',
         dataIndex: 'name',
         width: 100,
       },
       {
-        title: '是否整单元出租',
+        title: '是否整租',
         dataIndex: 'is_all_rent',
-        width: 200,
-        render: val => {
-          return <span>{val === 1 ? '是' : '否'}</span>;
-        },
-      },
-      {
-        title: '出租状态',
-        dataIndex: 'rent_status',
         width: 150,
         render: val => {
           if (val === 0) {
             return '';
           }
-          return <DicShow pcode="pa$#build$#rente" code={[val]} />;
+          if (val === 1) {
+            return '是';
+          }
+          return '否';
         },
       },
       {
@@ -287,42 +280,11 @@ class AssetUnitMaint extends PureComponent {
         },
       },
       {
-        title: '已租面积（㎡）',
+        title: '计租面积（㎡）',
         dataIndex: 'rent_area',
         width: 150,
-        render: item => {
-          if (item.is_all_rent === 1) {
-            if (item.rent_status !== 3) {
-              return 0;
-            }
-            return -1;
-          }
-          return <span>{this.statusValue(item.rent_area)}</span>;
-        },
-      },
-      {
-        title: '出租率',
-        dataIndex: '',
-        width: 150,
-        render: item => {
-          if (item.is_all_rent === 1) {
-            if (item.rent_status !== 3) {
-              return 0;
-            }
-            return <span>100%</span>;
-          }
-          return <span>{item.rent_area}</span>;
-        },
-      },
-      {
-        title: '未租面积（㎡）',
-        dataIndex: 'parent_path',
-        width: 150,
-        render: item => {
-          if (item.is_all_rent === 1 && item.rent_status !== 3) {
-            return item.rent_area;
-          }
-          return <span>{this.statusValue(item.rent_area)}</span>;
+        render: val => {
+          return <span>{this.statusValue(val)}</span>;
         },
       },
     ];
@@ -338,23 +300,22 @@ class AssetUnitMaint extends PureComponent {
         <Card>
           <div>
             <Row>
-              <Col span={4}>{formDataBuild.name}</Col>
+              <Col span={4}>{formDataFloor.name}</Col>
               <Col span={4}>
-                <Tag color="#2db7f5">{this.getRentStatus(formDataBuild)}</Tag>
+                <Tag color="#2db7f5">{this.getRentStatus(formDataFloor)}</Tag>
               </Col>
             </Row>
             <Row type="flex" justify="start">
-              <Col span={4}>单元数：{formDataBuild.unit_num}</Col>
-              <Col span={4}>楼层数：{formDataBuild.layer_num}</Col>
-            </Row>
-            <Row type="flex" justify="start">
-              <Col span={4}>
+              <Col span={4}>楼层数：{formDataFloor.unit_num}</Col>
+              <Col span={6}>
                 建筑面积（㎡）：
-                {formDataBuild.building_area ? formDataBuild.building_area / 100 : 0}
+                {formDataFloor.building_area ? (formDataFloor.building_area / 100).toString() : '0'}
               </Col>
-              <Col span={4}>已租面积（㎡）：{this.statusArea(formDataBuild)}</Col>
-              <Col span={4}>出租率：{this.statusLv(formDataBuild)}</Col>
-              <Col span={4}>未租面积（㎡）：{this.statusTorentArea(formDataBuild)}</Col>
+            </Row>
+            <Row type="flex" justify="start">
+              <Col span={4}>已租面积（㎡）：{this.statusArea(formDataFloor)}</Col>
+              <Col span={4}>出租率：{this.statusLv(formDataFloor)}</Col>
+              <Col span={4}>未租面积（㎡）：{this.statusTorentArea(formDataFloor)}</Col>
             </Row>
           </div>
         </Card>
@@ -362,35 +323,38 @@ class AssetUnitMaint extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
               <PButton
-                code="addUnit"
+                code="addPlate"
                 icon="plus"
                 type="primary"
                 onClick={() => this.handleAddClick()}
               >
-                新建单元
+                新建门牌
               </PButton>
-
               {selectedRows.length === 1 && [
                 <PButton
-                  key="editUnit"
-                  code="editUnit"
+                  key="editPlate"
+                  code="editPlate"
                   icon="edit"
                   onClick={() => this.handleEditClick(selectedRows[0])}
                 >
                   编辑
                 </PButton>,
                 <PButton
-                  key="del"
-                  code="delUnit"
+                  key="delPlate"
+                  code="delPlate"
                   icon="delete"
                   type="danger"
                   onClick={() => this.handleDelClick(selectedRows[0])}
                 >
                   删除
                 </PButton>,
-                // <Button code="queryUnit" onClick={() => this.handleSeeClick(selectedRows[0])}>
+                // <PButton
+                //   code="queryFloor"
+                //   key="queryFloor"
+                //   onClick={() => this.handleSeeClick(selectedRows[0])}
+                // >
                 //   查看
-                // </Button>,
+                // </PButton>,
               ]}
             </div>
             <div>
@@ -423,4 +387,4 @@ class AssetUnitMaint extends PureComponent {
   }
 }
 
-export default AssetUnitMaint;
+export default AssetNumPlate;

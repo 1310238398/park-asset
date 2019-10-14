@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Form, Row, Col, Table, Modal, Tag,Button } from 'antd';
+import { Card, Form, Row, Col, Table, Modal, Tag, Button } from 'antd';
 import PButton from '@/components/PermButton';
 import AssetFloorEdit from './AssetFloorEdit';
 // import AssetFloorShowMaint from './AssetFloor/AssetFloorShowMaint';
@@ -22,17 +22,24 @@ class AssetFloorData extends PureComponent {
       location: {
         query: { recordID, projectID },
       },
+      assetBuildData: { unitNum },
     } = this.props;
     this.dispatch({
       type: 'assetBuildData/fetchFloor',
       search: { building_type: 3, project_id: projectID, parent_id: recordID },
       pagination: {},
     });
-
-    this.dispatch({
-      type: 'assetBuildData/fetchFormBuild',
-      payload: { record_id: recordID },
-    });
+    if (unitNum === 0) {
+      this.dispatch({
+        type: 'assetBuildData/fetchFormBuild',
+        payload: { record_id: recordID },
+      });
+    } else {
+      this.dispatch({
+        type: 'assetBuildData/fetchFormUnit',
+        payload: { record_id: recordID },
+      });
+    }
   }
 
   clearSelectRows = () => {
@@ -208,12 +215,25 @@ class AssetFloorData extends PureComponent {
     this.clearSelectRows();
   }
 
+  // 跳转
+  onItemDetailClick = item => {
+    const {
+      assetBuildData: {
+        formDataBuild: { name },
+      },
+    } = this.props;
+    this.dispatch({
+      type: 'assetBuildData/plateRoute',
+      payload: { item, loudongName: name },
+    });
+  };
+
   // 显示弹窗
   renderDataForm() {
     const {
       assetBuildData: { formTypeFloor },
       location: {
-        query: { currentName },
+        query: { currentName, loudong },
       },
     } = this.props;
     if (formTypeFloor === 'A' || formTypeFloor === 'E') {
@@ -222,6 +242,7 @@ class AssetFloorData extends PureComponent {
           onCancel={this.handleFormCancel}
           onSubmit={this.handleFormSubmit}
           titleName={currentName}
+          loudong={loudong}
         />
       );
     }
@@ -237,6 +258,8 @@ class AssetFloorData extends PureComponent {
       assetBuildData: {
         dataFloor: { list, pagination },
         formDataBuild,
+        unitNum,
+        formDataUnit,
       },
     } = this.props;
     const { selectedRowKeys, selectedRows } = this.state;
@@ -287,48 +310,75 @@ class AssetFloorData extends PureComponent {
     return (
       <div>
         <Card>
-          <div>
-            <Row>
-              <Col span={4}>{formDataBuild.name}</Col>
-              <Col span={4}>
-                <Tag color="#2db7f5">{this.getRentStatus(formDataBuild)}</Tag>
-              </Col>
-            </Row>
-            <Row type="flex" justify="start">
-              <Col span={4}>楼层数：{formDataBuild.unit_num}</Col>
-              <Col span={6}>
-                建筑面积（㎡）：
-                {formDataBuild.building_area ? (formDataBuild.building_area / 100).toString() : '0'}
-              </Col>
-            </Row>
-            <Row type="flex" justify="start">
-              <Col span={4}>已租面积（㎡）：{this.statusArea(formDataBuild)}</Col>
-              <Col span={4}>出租率：{this.statusLv(formDataBuild)}</Col>
-              <Col span={4}>未租面积（㎡）：{this.statusTorentArea(formDataBuild)}</Col>
-            </Row>
-          </div>
+          {unitNum === 0 ? (
+            <div>
+              <Row>
+                <Col span={4}>{formDataBuild.name}</Col>
+                <Col span={4}>
+                  <Tag color="#2db7f5">{this.getRentStatus(formDataBuild)}</Tag>
+                </Col>
+              </Row>
+              <Row type="flex" justify="start">
+                <Col span={4}>楼层数：{formDataBuild.unit_num}</Col>
+                <Col span={6}>
+                  建筑面积（㎡）：
+                  {formDataBuild.building_area
+                    ? (formDataBuild.building_area / 100).toString()
+                    : '0'}
+                </Col>
+              </Row>
+              <Row type="flex" justify="start">
+                <Col span={4}>已租面积（㎡）：{this.statusArea(formDataBuild)}</Col>
+                <Col span={4}>出租率：{this.statusLv(formDataBuild)}</Col>
+                <Col span={4}>未租面积（㎡）：{this.statusTorentArea(formDataBuild)}</Col>
+              </Row>
+            </div>
+          ) : (
+            <div>
+              <Row>
+                <Col span={4}>{formDataUnit.name}</Col>
+                <Col span={4}>
+                  <Tag color="#2db7f5">{this.getRentStatus(formDataUnit)}</Tag>
+                </Col>
+              </Row>
+              <Row type="flex" justify="start">
+                <Col span={4}>楼层数：{formDataUnit.unit_num}</Col>
+                <Col span={6}>
+                  建筑面积（㎡）：
+                  {formDataUnit.building_area
+                    ? (formDataUnit.building_area / 100).toString()
+                    : '0'}
+                </Col>
+              </Row>
+              <Row type="flex" justify="start">
+                <Col span={4}>已租面积（㎡）：{this.statusArea(formDataUnit)}</Col>
+                <Col span={4}>出租率：{this.statusLv(formDataUnit)}</Col>
+                <Col span={4}>未租面积（㎡）：{this.statusTorentArea(formDataUnit)}</Col>
+              </Row>
+            </div>
+          )}
         </Card>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button
+              <PButton
                 code="addFloor"
                 icon="plus"
                 type="primary"
                 onClick={() => this.handleAddClick()}
               >
                 新建楼层
-              </Button>
+              </PButton>
               {selectedRows.length === 1 && [
-                <Button
+                <PButton
                   key="editFloor"
                   code="editFloor"
                   icon="edit"
                   onClick={() => this.handleEditClick(selectedRows[0])}
                 >
                   编辑
-                </Button>,
-                <Button
+                </PButton>,
+                <PButton
                   key="delFloor"
                   code="delFloor"
                   icon="delete"
@@ -336,7 +386,7 @@ class AssetFloorData extends PureComponent {
                   onClick={() => this.handleDelClick(selectedRows[0])}
                 >
                   删除
-                </Button>,
+                </PButton>,
                 // <PButton
                 //   code="queryFloor"
                 //   key="queryFloor"

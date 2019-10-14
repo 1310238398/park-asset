@@ -65,11 +65,12 @@ class AssetBuildData extends PureComponent {
       this.dispatch({
         type: 'assetBuildData/cellRoute',
         payload: item,
+        unit:1,
       });
     } else {
       this.dispatch({
         type: 'assetBuildData/floorRoute',
-        payload: item,
+        payload: {item,loudongName:'',unit:0}
       });
     }
   };

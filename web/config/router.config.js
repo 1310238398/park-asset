@@ -123,6 +123,14 @@ export default [
             path: '/assettypedata/assetfloor',
             component: './AssetTypeData/AssetBuildData/AssetFloorData/AssetFloorData',
           },
+          {
+            path: '/assettypedata/assetnumplate',
+            component: './AssetTypeData/AssetBuildData/AssetNumPlate/AssetNumPlate',
+          },
+          {
+            path: '/assettypedata/assetsubdoor',
+            component: './AssetTypeData/AssetBuildData/AssetNumPlate/AssetSubDoor',
+          }
         ],
       }
     ],
