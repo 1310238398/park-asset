@@ -53,7 +53,7 @@ func (a *OfficeBuilding) Query(ctx context.Context, params schema.OfficeBuilding
 		db = db.Where("parent_id=?", v)
 	}
 
-	db = db.Order("id DESC")
+	db = db.Order("name,id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.OfficeBuildings

@@ -13,21 +13,21 @@ import (
 // NewOfficeBuilding 创建写字楼管理
 func NewOfficeBuilding(
 	mTrans model.ITrans,
-	mOfficeBuilding model.IOfficeBuilding,
 	mAsset model.IAsset,
+	mOfficeBuilding model.IOfficeBuilding,
 ) *OfficeBuilding {
 	return &OfficeBuilding{
 		TransModel:          mTrans,
-		OfficeBuildingModel: mOfficeBuilding,
 		AssetModel:          mAsset,
+		OfficeBuildingModel: mOfficeBuilding,
 	}
 }
 
 // OfficeBuilding 写字楼管理业务逻辑
 type OfficeBuilding struct {
 	TransModel          model.ITrans
-	OfficeBuildingModel model.IOfficeBuilding
 	AssetModel          model.IAsset
+	OfficeBuildingModel model.IOfficeBuilding
 }
 
 // Query 查询数据
@@ -53,8 +53,9 @@ func (a *OfficeBuilding) getUpdate(ctx context.Context, recordID string) (*schem
 
 func (a *OfficeBuilding) checkName(ctx context.Context, item schema.OfficeBuilding) error {
 	result, err := a.OfficeBuildingModel.Query(ctx, schema.OfficeBuildingQueryParam{
-		ParentID: item.ParentID,
-		Name:     item.Name,
+		ProjectID: item.ProjectID,
+		ParentID:  item.ParentID,
+		Name:      item.Name,
 	}, schema.OfficeBuildingQueryOptions{
 		PageParam: &schema.PaginationParam{PageSize: -1},
 	})
@@ -195,6 +196,27 @@ func (a *OfficeBuilding) Create(ctx context.Context, item schema.OfficeBuilding)
 	return a.getUpdate(ctx, item.RecordID)
 }
 
+// 更新资产数据
+func (a *OfficeBuilding) updateAsset(ctx context.Context, recordID string, item schema.OfficeBuilding) error {
+	oldAssetItem, err := a.AssetModel.Get(ctx, recordID)
+	if err != nil {
+		return err
+	} else if oldAssetItem == nil {
+		return errors.ErrNotFound
+	}
+
+	newAssetItem := *oldAssetItem
+	newAssetItem.Name = item.Name
+	newAssetItem.BuildingArea = item.BuildingArea
+	newAssetItem.RentArea = item.RentArea
+	err = a.AssetModel.Update(ctx, recordID, newAssetItem)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Update 更新数据
 func (a *OfficeBuilding) Update(ctx context.Context, recordID string, item schema.OfficeBuilding) (*schema.OfficeBuilding, error) {
 	oldItem, err := a.OfficeBuildingModel.Get(ctx, recordID)
@@ -209,13 +231,6 @@ func (a *OfficeBuilding) Update(ctx context.Context, recordID string, item schem
 		}
 	}
 
-	oldAssetItem, err := a.AssetModel.Get(ctx, recordID)
-	if err != nil {
-		return nil, err
-	} else if oldAssetItem == nil {
-		return nil, errors.ErrNotFound
-	}
-
 	err = ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		newItem := *oldItem
 		newItem.Name = item.Name
@@ -228,11 +243,7 @@ func (a *OfficeBuilding) Update(ctx context.Context, recordID string, item schem
 			return err
 		}
 
-		newAssetItem := *oldAssetItem
-		newAssetItem.Name = item.Name
-		newAssetItem.BuildingArea = item.BuildingArea
-		newAssetItem.RentArea = item.RentArea
-		err = a.AssetModel.Update(ctx, recordID, newAssetItem)
+		err = a.updateAsset(ctx, recordID, item)
 		if err != nil {
 			return err
 		}
