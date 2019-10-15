@@ -695,6 +695,9 @@
 			<index name="idx_pa_menu_record_id_5" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
+			<fk name="fk_pa_office_building_pa_asset" virtual="y" to_schema="parkassets" to_table="pa_asset" >
+				<fk_column name="record_id" pk="record_id" />
+			</fk>
 		</table>
 		<table name="pa_organization" >
 			<comment><![CDATA[组织机构管理]]></comment>
@@ -1247,14 +1250,14 @@
 		<entity schema="parkassets" name="pa_asset_group" color="E6CCFF" x="1584" y="96" />
 		<entity schema="parkassets" name="pa_asset_group_detail" color="E6CCFF" x="1392" y="96" />
 		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1824" y="80" />
-		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1184" y="800" />
 		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="912" y="1328" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="912" y="896" />
 		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1424" y="1264" />
 		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1168" y="1264" />
 		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="912" y="1696" />
 		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1168" y="1696" />
 		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1424" y="1696" />
+		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1184" y="800" />
+		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="912" y="928" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets" name="pa_menu" />
 			<entity schema="parkassets" name="pa_menu_action" />

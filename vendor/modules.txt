@@ -90,6 +90,8 @@ github.com/pmezard/go-difflib/difflib
 github.com/sirupsen/logrus
 # github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
+# github.com/tealeg/xlsx v1.0.3
+github.com/tealeg/xlsx
 # github.com/tidwall/btree v0.0.0-20170113224114-9876f1454cf0
 github.com/tidwall/btree
 # github.com/tidwall/buntdb v1.1.0
