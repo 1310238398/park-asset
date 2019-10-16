@@ -234,7 +234,6 @@ func (a *Hotel) Update(ctx context.Context, recordID string, item schema.Hotel) 
 		newItem.Name = item.Name
 		newItem.BuildingArea = item.BuildingArea
 		newItem.RentArea = item.RentArea
-		newItem.Decoration = item.Decoration
 
 		err := a.HotelModel.Update(ctx, recordID, newItem)
 		if err != nil {
