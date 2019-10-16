@@ -153,7 +153,7 @@ export default {
 
       const params = { ...payload };
       const formType = yield select(state => state.assetShopData.formTypeShop);
-
+      const proid = payload.project_id;
       let response;
       if (formType === 'E') {
         params.record_id = yield select(state => state.assetShopData.formIDShop);
@@ -176,6 +176,7 @@ export default {
         // TODO 查询门牌列表
         yield put({
           type: 'fetchShop',
+          search:{project_id:proid}
         });
       }
     },
@@ -203,7 +204,7 @@ export default {
     changeFormVisibleShop(state, { payload }) {
       return { ...state, formVisibleShop: payload };
     },
-    saveFormTitleShopr(state, { payload }) {
+    saveFormTitleShop(state, { payload }) {
       return { ...state, formTitleShop: payload };
     },
     saveFormTypeShop(state, { payload }) {

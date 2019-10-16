@@ -15,6 +15,10 @@ type AgriculturalMarket struct {
 
 // AgriculturalMarketQueryParam 查询条件
 type AgriculturalMarketQueryParam struct {
+	ProjectID  string
+	Name       string
+	LikeName   string
+	RentStatus int
 }
 
 // AgriculturalMarketQueryOptions 查询可选参数项

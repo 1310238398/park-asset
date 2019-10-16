@@ -15,6 +15,10 @@ type FactoryBuilding struct {
 
 // FactoryBuildingQueryParam 查询条件
 type FactoryBuildingQueryParam struct {
+	ProjectID  string
+	Name       string
+	LikeName   string
+	RentStatus int
 }
 
 // FactoryBuildingQueryOptions 查询可选参数项

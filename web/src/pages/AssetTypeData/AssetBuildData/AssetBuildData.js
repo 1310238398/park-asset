@@ -11,7 +11,7 @@ import ProSelect from '@/components/ProSelectID/ProSelect';
 
 @connect(state => ({
   assetBuildData: state.assetBuildData,
-  loading: state.loading.models.AssetBuildData,
+  loading: state.loading.models.assetBuildData,
 }))
 @Form.create()
 class AssetBuildData extends PureComponent {

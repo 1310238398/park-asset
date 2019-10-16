@@ -188,7 +188,7 @@ export default {
 
       const params = { ...payload };
       const formTypeBuild = yield select(state => state.assetBuildData.formTypeBuild);
-
+      const proid = payload.project_id;
       let response;
       if (formTypeBuild === 'E') {
         params.record_id = yield select(state => state.assetBuildData.formIDBuild);
@@ -211,6 +211,7 @@ export default {
         // TODO 查询单元列表
         yield put({
           type: 'fetchBuidings',
+          search:{project_id:proid}
         });
       }
     },

@@ -1,11 +1,13 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/util"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewAgriculturalMarket 创建农贸市场管理控制器
@@ -37,6 +39,9 @@ func (a *AgriculturalMarket) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param project_id query string true "项目ID"
+// @Param name query string false "名称（模糊查询）"
+// @Param rent_status query int false "出租状态:1未租 2锁定 3已租"
 // @Success 200 []schema.AgriculturalMarket "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -44,7 +49,13 @@ func (a *AgriculturalMarket) Query(c *gin.Context) {
 // @Router GET /api/v1/agricultural_markets?q=page
 func (a *AgriculturalMarket) QueryPage(c *gin.Context) {
 	var params schema.AgriculturalMarketQueryParam
-
+	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	params.LikeName = c.Query("name")
+	params.RentStatus = util.S(c.Query("rent_status")).DefaultInt(0)
 	result, err := a.AgriculturalMarketBll.Query(ginplus.NewContext(c), params, schema.AgriculturalMarketQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})

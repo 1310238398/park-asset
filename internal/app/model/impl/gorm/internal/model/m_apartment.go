@@ -31,7 +31,29 @@ func (a *Apartment) getQueryOption(opts ...schema.ApartmentQueryOptions) schema.
 func (a *Apartment) Query(ctx context.Context, params schema.ApartmentQueryParam, opts ...schema.ApartmentQueryOptions) (*schema.ApartmentQueryResult, error) {
 	db := entity.GetApartmentDB(ctx, a.db).DB
 
-	db = db.Order("id DESC")
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id=?", v)
+	}
+	if v := params.Name; v != "" {
+		db = db.Where("name=?", v)
+	}
+	if v := params.LikeName; v != "" {
+		db = db.Where("name LIKE ?", "%"+v+"%")
+	}
+	if v := params.BuildingType; v != 0 {
+		db = db.Where("building_type=?", v)
+	}
+	if v := params.IsAllRent; v != 0 {
+		db = db.Where("is_all_rent=?", v)
+	}
+	if v := params.RentStatus; v != 0 {
+		db = db.Where("rent_status=?", v)
+	}
+	if v := params.ParentID; v != "" {
+		db = db.Where("parent_id=?", v)
+	}
+
+	db = db.Order("name,id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Apartments

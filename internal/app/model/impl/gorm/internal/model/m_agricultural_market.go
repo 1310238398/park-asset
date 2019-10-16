@@ -30,9 +30,19 @@ func (a *AgriculturalMarket) getQueryOption(opts ...schema.AgriculturalMarketQue
 // Query 查询数据
 func (a *AgriculturalMarket) Query(ctx context.Context, params schema.AgriculturalMarketQueryParam, opts ...schema.AgriculturalMarketQueryOptions) (*schema.AgriculturalMarketQueryResult, error) {
 	db := entity.GetAgriculturalMarketDB(ctx, a.db).DB
-
-	db = db.Order("id DESC")
-
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id=?", v)
+	}
+	if v := params.Name; v != "" {
+		db = db.Where("name=?", v)
+	}
+	if v := params.LikeName; v != "" {
+		db = db.Where("name LIKE ?", "%"+v+"%")
+	}
+	if v := params.RentStatus; v != 0 {
+		db = db.Where("rent_status=?", v)
+	}
+	db = db.Order("name, id DESC")
 	opt := a.getQueryOption(opts...)
 	var list entity.AgriculturalMarkets
 	pr, err := WrapPageQuery(db, opt.PageParam, &list)

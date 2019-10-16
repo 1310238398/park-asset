@@ -30,10 +30,21 @@ func (a *CarChanger) getQueryOption(opts ...schema.CarChangerQueryOptions) schem
 // Query 查询数据
 func (a *CarChanger) Query(ctx context.Context, params schema.CarChangerQueryParam, opts ...schema.CarChangerQueryOptions) (*schema.CarChangerQueryResult, error) {
 	db := entity.GetCarChangerDB(ctx, a.db).DB
-
-	db = db.Order("id DESC")
-
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id=?", v)
+	}
+	if v := params.Name; v != "" {
+		db = db.Where("name=?", v)
+	}
+	if v := params.LikeName; v != "" {
+		db = db.Where("name LIKE ?", "%"+v+"%")
+	}
+	if v := params.RentStatus; v != 0 {
+		db = db.Where("rent_status=?", v)
+	}
+	db = db.Order("name, id DESC")
 	opt := a.getQueryOption(opts...)
+
 	var list entity.CarChangers
 	pr, err := WrapPageQuery(db, opt.PageParam, &list)
 	if err != nil {

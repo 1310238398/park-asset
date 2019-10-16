@@ -300,16 +300,8 @@ class AssetShopData extends PureComponent {
               )}
             </Form.Item>
           </Col>
-        </Row>
-        <Row>
+        
           <Col {...col}>
-            <Form.Item {...formItemLayout} label="商铺名称">
-              {getFieldDecorator('rent_status')(
-               <Input placeholder="请输入" />
-              )}
-            </Form.Item>
-          </Col>
-          <Col {...col} offset={1}>
             <div style={{ overflow: 'hidden' }}>
               <span style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">

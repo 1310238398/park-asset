@@ -30,8 +30,29 @@ func (a *Hotel) getQueryOption(opts ...schema.HotelQueryOptions) schema.HotelQue
 // Query 查询数据
 func (a *Hotel) Query(ctx context.Context, params schema.HotelQueryParam, opts ...schema.HotelQueryOptions) (*schema.HotelQueryResult, error) {
 	db := entity.GetHotelDB(ctx, a.db).DB
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id=?", v)
+	}
+	if v := params.Name; v != "" {
+		db = db.Where("name=?", v)
+	}
+	if v := params.LikeName; v != "" {
+		db = db.Where("name LIKE ?", "%"+v+"%")
+	}
+	if v := params.BuildingType; v != 0 {
+		db = db.Where("building_type=?", v)
+	}
+	if v := params.IsAllRent; v != 0 {
+		db = db.Where("is_all_rent=?", v)
+	}
+	if v := params.RentStatus; v != 0 {
+		db = db.Where("rent_status=?", v)
+	}
+	if v := params.ParentID; v != "" {
+		db = db.Where("parent_id=?", v)
+	}
 
-	db = db.Order("id DESC")
+	db = db.Order("name,id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Hotels

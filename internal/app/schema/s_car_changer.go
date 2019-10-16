@@ -15,6 +15,10 @@ type CarChanger struct {
 
 // CarChangerQueryParam 查询条件
 type CarChangerQueryParam struct {
+	ProjectID  string
+	Name       string
+	LikeName   string
+	RentStatus int
 }
 
 // CarChangerQueryOptions 查询可选参数项
