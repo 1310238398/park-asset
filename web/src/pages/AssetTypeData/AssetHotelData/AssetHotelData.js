@@ -454,7 +454,7 @@ class AssetHotelData extends PureComponent {
               >
                 新建酒店
               </PButton>
-              <PButton
+              {/* <PButton
                 code="temhotel"
                 // icon="plus"
                 type="primary"
@@ -469,7 +469,7 @@ class AssetHotelData extends PureComponent {
                 onClick={() => this.handleAddClick()}
               >
                 批量导入
-              </PButton>
+              </PButton> */}
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"

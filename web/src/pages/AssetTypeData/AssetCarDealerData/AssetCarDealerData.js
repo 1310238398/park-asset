@@ -416,7 +416,7 @@ class AssetCarDealerData extends PureComponent {
               >
                 新建车改商
               </PButton>
-              <PButton
+              {/* <PButton
                 code="temCarDealer"
                 // icon="plus"
                 type="primary"
@@ -431,7 +431,7 @@ class AssetCarDealerData extends PureComponent {
                 onClick={() => this.handleAddClick()}
               >
                 批量导入
-              </PButton>
+              </PButton> */}
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"

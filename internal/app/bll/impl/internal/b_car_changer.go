@@ -66,7 +66,7 @@ func (a *CarChanger) createAsset(ctx context.Context, item schema.CarChanger) er
 	return a.AssetModel.Create(ctx, schema.Asset{
 		RecordID:     item.RecordID,
 		ProjectID:    item.ProjectID,
-		AssetType:    2,
+		AssetType:    7,
 		Creator:      item.Creator,
 		Name:         item.Name,
 		BuildingArea: item.BuildingArea,

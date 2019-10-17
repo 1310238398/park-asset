@@ -454,7 +454,7 @@ class AssetBuildData extends PureComponent {
               >
                 新建楼栋
               </PButton>
-              <PButton
+              {/* <PButton
                 code="tembuild"
                 // icon="plus"
                 type="primary"
@@ -469,7 +469,7 @@ class AssetBuildData extends PureComponent {
                 onClick={() => this.handleAddClick()}
               >
                 批量导入
-              </PButton>
+              </PButton> */}
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"

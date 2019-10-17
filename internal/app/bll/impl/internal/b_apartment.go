@@ -122,7 +122,7 @@ func (a *Apartment) createAsset(ctx context.Context, item schema.Apartment) erro
 	return a.AssetModel.Create(ctx, schema.Asset{
 		RecordID:     item.RecordID,
 		ProjectID:    item.ProjectID,
-		AssetType:    1,
+		AssetType:    4,
 		Creator:      item.Creator,
 		Name:         item.Name,
 		BuildingArea: item.BuildingArea,

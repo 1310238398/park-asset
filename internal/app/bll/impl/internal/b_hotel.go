@@ -122,7 +122,7 @@ func (a *Hotel) createAsset(ctx context.Context, item schema.Hotel) error {
 	return a.AssetModel.Create(ctx, schema.Asset{
 		RecordID:     item.RecordID,
 		ProjectID:    item.ProjectID,
-		AssetType:    1,
+		AssetType:    5,
 		Creator:      item.Creator,
 		Name:         item.Name,
 		BuildingArea: item.BuildingArea,

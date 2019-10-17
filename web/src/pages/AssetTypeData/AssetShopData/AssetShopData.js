@@ -437,7 +437,7 @@ class AssetShopData extends PureComponent {
               >
                 新建商铺
               </PButton>
-              <PButton
+              {/* <PButton
                 code="temshop"
                 // icon="plus"
                 type="primary"
@@ -452,7 +452,7 @@ class AssetShopData extends PureComponent {
                 onClick={() => this.handleAddClick()}
               >
                 批量导入
-              </PButton>
+              </PButton> */}
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"

@@ -66,7 +66,7 @@ func (a *AgriculturalMarket) createAsset(ctx context.Context, item schema.Agricu
 	return a.AssetModel.Create(ctx, schema.Asset{
 		RecordID:     item.RecordID,
 		ProjectID:    item.ProjectID,
-		AssetType:    2,
+		AssetType:    6,
 		Creator:      item.Creator,
 		Name:         item.Name,
 		BuildingArea: item.BuildingArea,

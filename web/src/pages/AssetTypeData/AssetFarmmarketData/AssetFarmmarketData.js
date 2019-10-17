@@ -416,7 +416,7 @@ class AssetFarmmarketData extends PureComponent {
               >
                 新建农贸市场
               </PButton>
-              <PButton
+              {/* <PButton
                 code="temFarmmarket"
                 // icon="plus"
                 type="primary"
@@ -431,7 +431,7 @@ class AssetFarmmarketData extends PureComponent {
                 onClick={() => this.handleAddClick()}
               >
                 批量导入
-              </PButton>
+              </PButton> */}
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"

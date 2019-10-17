@@ -68,7 +68,7 @@ func (a *FactoryBuilding) createAsset(ctx context.Context, item schema.FactoryBu
 	return a.AssetModel.Create(ctx, schema.Asset{
 		RecordID:     item.RecordID,
 		ProjectID:    item.ProjectID,
-		AssetType:    2,
+		AssetType:    3,
 		Creator:      item.Creator,
 		Name:         item.Name,
 		BuildingArea: item.BuildingArea,
