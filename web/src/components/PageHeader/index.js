@@ -40,6 +40,7 @@ export default class PageHeader extends PureComponent {
     }
     return (
       <div className={clsString}>
+      
         <div className={wide ? styles.wide : ''}>
           <Skeleton
             loading={loading}
@@ -50,10 +51,14 @@ export default class PageHeader extends PureComponent {
           >
             {hiddenBreadcrumb ? null : <BreadcrumbView {...this.props} />}
             <div className={styles.detail}>
+            
               {logo && <div className={styles.logo}>{logo}</div>}
               <div className={styles.main}>
+              
                 <div className={styles.row}>
                   {title && <h1 className={styles.title}>{title}</h1>}
+                   {/* 选择项目ycc */}
+              <div className={styles.project}>当前项目：汉峪金谷</div>
                   {action && <div className={styles.action}>{action}</div>}
                 </div>
                 <div className={styles.row}>
@@ -61,6 +66,7 @@ export default class PageHeader extends PureComponent {
                   {extraContent && <div className={styles.extraContent}>{extraContent}</div>}
                 </div>
               </div>
+             
             </div>
             {tabList && tabList.length ? (
               <Tabs

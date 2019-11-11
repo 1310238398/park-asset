@@ -1,7 +1,7 @@
 {
   "name": "gin-admin-react",
   "version": "2.0.0",
-  "description": "资产管理系统",
+  "description": "项目管理系统",
   "private": true,
   "scripts": {
     "start": "umi dev",

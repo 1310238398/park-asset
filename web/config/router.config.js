@@ -194,6 +194,17 @@ export default [
               component: './AssetTypeData/AssetHotelData/AssetNumPlate/AssetSubDoor',
             },
         ],
+      },
+      // 成本管理
+      {
+
+        path: '/cost',
+        routes: [
+          // { path: '/system/menu', component: './Menu/MenuList' },
+          // { path: '/system/role', component: './Role/RoleList' },
+          // { path: '/system/user', component: './User/UserList' },
+          // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
+        ],
       }
     ],
   },
