@@ -15,10 +15,12 @@ export default {
     formTitle: '',
     formID: '',
     formVisible: false,
+    newFormVisible: false,
     formData: {},
     companyList: [],
     poltList: [],
   },
+  // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
@@ -58,10 +60,20 @@ export default {
       });
     },
     *loadForm({ payload }, { put }) {
-      yield put({
+      if (payload.type === 'E') {
+ yield put({
         type: 'changeFormVisible',
         payload: true,
       });
+      }
+      else if (payload.type === 'A') {
+
+        yield put({
+          type: 'changeNewFormVisible',
+          payload: true,
+        });
+      }
+     
 
       yield [
         put({
@@ -197,6 +209,9 @@ export default {
     },
     changeFormVisible(state, { payload }) {
       return { ...state, formVisible: payload };
+    },
+    changeNewFormVisible(state, { payload }) {
+      return { ...state, newFormVisible: payload };
     },
     saveFormTitle(state, { payload }) {
       return { ...state, formTitle: payload };

@@ -57,8 +57,8 @@ export default class PageHeader extends PureComponent {
               
                 <div className={styles.row}>
                   {title && <h1 className={styles.title}>{title}</h1>}
-                   {/* 选择项目ycc */}
-              <div className={styles.project}>当前项目：汉峪金谷</div>
+                   {/* 选择项目ycc
+              <div className={styles.project}>当前项目：汉峪金谷</div> */}
                   {action && <div className={styles.action}>{action}</div>}
                 </div>
                 <div className={styles.row}>

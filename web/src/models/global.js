@@ -4,7 +4,7 @@ export default {
   namespace: 'global',
 
   state: {
-    title: '资产管理系统',
+    title: '项目管理系统',
     copyRight: '2019',
     defaultURL: '/dashboard',
     collapsed: false,
