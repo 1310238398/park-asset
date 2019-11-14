@@ -14,7 +14,8 @@
       "comment": "任务名称",
       "struct_field_required": true,
       "struct_field_type": "string",
-      "gorm_options": "size:200;index;"
+      "gorm_options": "size:200;index;",
+      "binding_options": "required"
     },
     {
       "struct_field_name": "Memo",
