@@ -46,7 +46,7 @@ func (a *CarChanger) Query(ctx context.Context, params schema.CarChangerQueryPar
 	opt := a.getQueryOption(opts...)
 
 	var list entity.CarChangers
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
