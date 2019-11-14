@@ -5,6 +5,7 @@ import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import Step1 from './Step1';
 import Step2 from './Step2';
+import Step3 from './Step3';
 //import Step3 from './Step3';
 // import GetLocation from './GetLocation';
 
@@ -32,7 +33,7 @@ class ProjectManageCardNew extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      current: 0,
+      current: 2,
     };
   }
 
@@ -41,37 +42,50 @@ class ProjectManageCardNew extends PureComponent {
       type: 'projectManage/queryCompany',
     });
   }
+  // execCallback = () => {
+  //   const { chg } = this.state;
+  //   const {
+  //     projectManage: {  newFormVisible },
 
-  next() {
-    const current = this.state.current + 1;
-    this.setState({ current });
-  }
+  //   } = this.props;
+  //  // this.props.callback(chg && 'ok');
+  //   this.setState({ newFormVisible: false });
+  // };
 
-  prev() {
-    const current = this.state.current - 1;
-    this.setState({ current });
-  }
+  // next() {
+  //   const current = this.state.current + 1;
+  //   this.setState({ current });
+  // }
+
+  // prev() {
+  //   const current = this.state.current - 1;
+  //   this.setState({ current });
+  // }
 
   onOKClick = () => {
-
-    console.log("哈哈哈1")
+    console.log('哈哈哈1');
     const { form, onSubmit } = this.props;
 
-      setTimeout(() => {
-        const { current } = this.state;
-        if (current === 0) {
-          this.step1();
-        }
-        if (current === 1) {
-          this.step2();
-        }
-        if (current === 2) {
-          this.step3();
-        }
-      }, 1);
-  
+    setTimeout(() => {
+      const { current } = this.state;
+      if (current === 0) {
+        this.step1();
+      }
+      if (current === 1) {
+        this.step2();
+      }
+      if (current === 2) {
+        this.step3();
+      }
+    }, 1);
+  };
 
-   
+  onCancelClick = () => {
+    console.log('onCancelClick');
+    const { onCancel } = this.props;
+    this.setState({ current: 2 });
+
+    onCancel();
   };
 
   dispatch = action => {
@@ -80,33 +94,35 @@ class ProjectManageCardNew extends PureComponent {
   };
 
   showStep = step => {
-    console.log("showStep");
-    const cobj = { step, formVisible: step !== -1 };
-   // const columnid = this.getColumnId();
-    // if (!columnid) {
-    //   cobj.step = 0;
-    // }
-    const current = step;
+    console.log('showStep');
+
+    const current = step !== -1 ? step : 0;
     this.setState({ current });
 
-    this.setState({ ...cobj });
+    if (step === -1) {
+      this.handleDataNewFormCancel();
+    }
+    //
+  };
+  handleDataNewFormCancel = () => {
+    this.dispatch({
+      type: 'projectManage/changeNewFormVisible',
+      payload: false,
+    });
   };
   idHandler = id => {
-    console.log("idHandler");
+    console.log('idHandler');
     this.setState({ id });
   };
 
-
-
   setStep1Submit = handler => {
-    console.log("setStep1Submit");
+    console.log('setStep1Submit');
     this.step1 = handler;
   };
 
   step1Next = () => {
-    console.log("step1Next");
+    console.log('step1Next');
     this.showStep(1);
-    this.setState({ chg: true });
   };
 
   step2Next = () => {
@@ -114,8 +130,9 @@ class ProjectManageCardNew extends PureComponent {
   };
 
   step3Next = () => {
+    console.log('step3Next');
     this.showStep(-1);
-    this.execCallback();
+    // this.execCallback();
   };
 
   setStep2Submit = handler => {
@@ -158,45 +175,48 @@ class ProjectManageCardNew extends PureComponent {
           </Row>
         }
         width="60%"
-     
+        centered={true}
         visible={newFormVisible}
         maskClosable={false}
         confirmLoading={submitting}
-        destroyOnClose
+        destroyOnClose={true}
         onOk={this.onOKClick}
-        onCancel={onCancel}
-        style={{ top: 20 }}
-        bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', overflowY: 'auto' }}
+        onCancel={this.onCancelClick}
+        //   style={{ height: 800 }}
+        bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', height: '500px', overflowY: 'auto' }}
       >
         <div>
           {/* <div className="steps-content">{steps[current].content}</div> */}
           <div className="steps-action">
-            {current  ==0 && (
-             <Step1
-             //id={columnid}
-             callback={this.setStep1Submit}
-             idHandler={this.idHandler}
-             nextHandler={this.step1Next}
-           //  org={orgid}
-           />
+            {current == 0 && (
+              <Step1
+                //id={columnid}
+                callback={this.setStep1Submit}
+                idHandler={this.idHandler}
+                nextHandler={this.step1Next}
+                //  org={orgid}
+              />
             )}
             {current === 1 && (
-             <Step2
-             //id={columnid}
-             callback={this.setStep2Submit}
-             idHandler={this.idHandler}
-             nextHandler={this.step2Next}
-           //  org={orgid}
-           />
+              <Step2
+                //id={columnid}
+                callback={this.setStep2Submit}
+                idHandler={this.idHandler}
+                nextHandler={this.step2Next}
+                //  org={orgid}
+              />
             )}
             {current === 2 && (
-              <Button style={{ marginLeft: 8 }} onClick={() => this.prev()}>
-                Previous
-              </Button>
+              <Step3
+                //id={columnid}
+                callback={this.setStep3Submit}
+                idHandler={this.idHandler}
+                nextHandler={this.step3Next}
+                //  org={orgid}
+              />
             )}
           </div>
         </div>
-       
       </Modal>
     );
   }
