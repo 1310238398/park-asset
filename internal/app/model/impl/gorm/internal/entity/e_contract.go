@@ -9,7 +9,7 @@ import (
 
 // GetContractDB 合同信息管理
 func GetContractDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Contract{})
+	return getDBWithModelPlus(ctx, defDB, Contract{})
 }
 
 // SchemaContract 合同信息管理

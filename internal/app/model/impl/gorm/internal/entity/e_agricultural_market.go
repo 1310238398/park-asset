@@ -8,7 +8,7 @@ import (
 
 // GetAgriculturalMarketDB 农贸市场管理
 func GetAgriculturalMarketDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, AgriculturalMarket{})
+	return getDBWithModelPlus(ctx, defDB, AgriculturalMarket{})
 }
 
 // SchemaAgriculturalMarket 农贸市场管理

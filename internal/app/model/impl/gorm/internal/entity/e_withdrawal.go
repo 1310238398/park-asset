@@ -9,7 +9,7 @@ import (
 
 // GetWithdrawalDB 退租管理
 func GetWithdrawalDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Withdrawal{})
+	return getDBWithModelPlus(ctx, defDB, Withdrawal{})
 }
 
 // SchemaWithdrawal 退租管理

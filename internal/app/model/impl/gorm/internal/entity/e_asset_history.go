@@ -9,7 +9,7 @@ import (
 
 // GetAssetHistoryDB 资产历史管理
 func GetAssetHistoryDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, AssetHistory{})
+	return getDBWithModelPlus(ctx, defDB, AssetHistory{})
 }
 
 // SchemaAssetHistory 资产历史管理

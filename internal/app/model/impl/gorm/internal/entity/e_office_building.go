@@ -8,7 +8,7 @@ import (
 
 // GetOfficeBuildingDB 写字楼管理
 func GetOfficeBuildingDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, OfficeBuilding{})
+	return getDBWithModelPlus(ctx, defDB, OfficeBuilding{})
 }
 
 // SchemaOfficeBuilding 写字楼管理

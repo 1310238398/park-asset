@@ -9,7 +9,7 @@ import (
 
 // GetRentDetailDB 租金明细
 func GetRentDetailDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, RentDetail{})
+	return getDBWithModelPlus(ctx, defDB, RentDetail{})
 }
 
 // SchemaRentDetail 租金明细

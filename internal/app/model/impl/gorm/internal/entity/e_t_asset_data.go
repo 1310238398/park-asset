@@ -9,7 +9,7 @@ import (
 
 // GetTAssetDataDB 资产数据
 func GetTAssetDataDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, TAssetData{})
+	return getDBWithModelPlus(ctx, defDB, TAssetData{})
 }
 
 // SchemaTAssetData 资产数据
