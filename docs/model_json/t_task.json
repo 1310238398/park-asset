@@ -26,7 +26,7 @@
     {
       "struct_field_name": "Status",
       "comment": "状态(1:启用 2:停用)",
-      "struct_field_required": false,
+      "struct_field_required": true,
       "struct_field_type": "int",
       "gorm_options": "",
       "binding_options": "max=2,min=1"
