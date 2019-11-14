@@ -7,21 +7,24 @@
       "comment": "记录ID",
       "struct_field_required": false,
       "struct_field_type": "string",
-      "gorm_options": "size:36;index;"
+      "gorm_options": "size:36;index;",
+      "binding_options": ""
     },
     {
       "struct_field_name": "Name",
       "comment": "任务名称",
       "struct_field_required": true,
       "struct_field_type": "string",
-      "gorm_options": "size:200;index;"
+      "gorm_options": "size:200;index;",
+      "binding_options": ""
     },
     {
       "struct_field_name": "Memo",
       "comment": "备注",
       "struct_field_required": false,
       "struct_field_type": "string",
-      "gorm_options": "size:1024;"
+      "gorm_options": "size:1024;",
+      "binding_options": ""
     },
     {
       "struct_field_name": "Status",
@@ -36,7 +39,8 @@
       "comment": "创建者",
       "struct_field_required": false,
       "struct_field_type": "string",
-      "gorm_options": "size:36;index;"
+      "gorm_options": "size:36;index;",
+      "binding_options": ""
     }
   ]
 }
