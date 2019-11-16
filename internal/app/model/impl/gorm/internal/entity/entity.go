@@ -38,6 +38,19 @@ func (Model) TableName(name string) string {
 	return fmt.Sprintf("%s%s", GetTablePrefix(), name)
 }
 
+// CostModel base model
+type CostModel struct {
+	ID        uint       `gorm:"column:id;primary_key;auto_increment;"`
+	CreatedAt time.Time  `gorm:"column:created_at;"`
+	UpdatedAt time.Time  `gorm:"column:updated_at;"`
+	DeletedAt *time.Time `gorm:"column:deleted_at;index;"`
+}
+
+// TableName table name
+func (CostModel) TableName(name string) string {
+	return fmt.Sprintf("%s%s", "pc_", name)
+}
+
 func toString(v interface{}) string {
 	return util.JSONMarshalToString(v)
 }

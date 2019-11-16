@@ -1,0 +1,42 @@
+{
+    "struct_name": "ProjDeliveryStandard",
+    "comment": "成本项目交付标准",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"   
+        },
+        {
+            "struct_field_name": "Content",
+            "comment": "交付标准内容",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"   
+        },
+        {
+            "struct_field_name": "Part",
+            "comment": "建筑部位",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;" 
+        },
+        {
+            "struct_field_name": "ParentID",
+            "comment": "父级ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ParentPath",
+            "comment": "父级路经",
+            "struct_field_type": "string",
+            "gorm_options": "size:518;index;"
+        }
+    ]
+}

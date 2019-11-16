@@ -1,0 +1,47 @@
+{
+    "struct_name": "LandAppreciationTax",
+    "comment": "土地增值税",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "SaledArea",
+            "comment": "销售面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "ValueAdded",
+            "comment": "增值额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+ 
+        },
+        {
+            "struct_field_name": "ValueAddedRate",
+            "comment": "增值率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+ 
+        },
+        {
+            "struct_field_name": "Tax",
+            "comment": "土地增值税",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "SaledWithoutTax",
+            "comment": "不含税销售收入",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+   
+        }
+    ]
+}

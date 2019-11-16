@@ -1,0 +1,62 @@
+{
+    "struct_name": "ProjCostItem",
+    "comment": "项目成本项",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;" 
+        },
+        {
+            "struct_field_name": "CostID",
+            "comment": "成本项ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;" 
+        },
+        {
+            "struct_field_name": "TaxRate",
+            "comment": "税率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"    
+        },
+        {
+            "struct_field_name": "TaxPrise",
+            "comment": "缴税税额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);" 
+        },
+        {
+            "struct_field_name": "Prise",
+            "comment": "成本项价格",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        },
+        {   
+            "struct_field_name": "Principal",
+            "comment": "负责人",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"  
+        },
+        {
+            "struct_field_name": "ProjIncomeID",
+            "comment": "项目收益测算ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;" 
+            
+        }
+
+    ]
+}
