@@ -1,0 +1,26 @@
+{
+    "struct_name": "ProjExpendCost",
+    "comment": "项目支出节点成本项",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ProjCostID",
+            "comment": "项目成本项ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+
+        },
+        {
+            "struct_field_name": "ProjExpenditureID",
+            "comment": "项目支出节点ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+
+        }
+    ]
+}

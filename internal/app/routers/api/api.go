@@ -39,6 +39,26 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cFactoryBuilding *ctl.FactoryBuilding,
 		cPlot *ctl.Plot,
 		cStatistic *ctl.Statistic,
+		cBusinessFormat *ctl.BusinessFormat,
+		cCostItem *ctl.CostItem,
+		cExpenditure *ctl.Expenditure,
+		cLandAppreciationTax *ctl.LandAppreciationTax,
+		cPcProject *ctl.PcProject,
+		cProjBusinessFormat *ctl.ProjBusinessFormat,
+		cProjCapitalizedHis *ctl.ProjCapitalizedHis,
+		cProjCapitalizedInterest *ctl.ProjCapitalizedInterest,
+		cProjCostBusiness *ctl.ProjCostBusiness,
+		cProjCostHis *ctl.ProjCostHis,
+		cProjCostItem *ctl.ProjCostItem,
+		cProjDeliveryStandard *ctl.ProjDeliveryStandard,
+		cProjExpendCost *ctl.ProjExpendCost,
+		cProjExpenditureTime *ctl.ProjExpenditureTime,
+		cProjExpenditure *ctl.ProjExpenditure,
+		cProjFile *ctl.ProjFile,
+		cProjIncomeCalculation *ctl.ProjIncomeCalculation,
+		cProjSalesHis *ctl.ProjSalesHis,
+		cProjSalesPlan *ctl.ProjSalesPlan,
+		cTaxCalculation *ctl.TaxCalculation,
 	) error {
 
 		g := app.Group("/api")
@@ -223,6 +243,207 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.GET("/statistics/quarter_financiall_indicator", cStatistic.QueryQuarterFinanciallIndicator)
 			v1.GET("/statistics/financiall_indicator", cStatistic.QueryFinanciallIndicator)
 			v1.GET("/statistics/company", cStatistic.QueryCompany)
+
+			// 注册/api/v1/business-formats
+			gBusinessFormat := v1.Group("business-formats")
+			{
+				gBusinessFormat.GET("", cBusinessFormat.Query)
+				gBusinessFormat.GET(":id", cBusinessFormat.Get)
+				gBusinessFormat.POST("", cBusinessFormat.Create)
+				gBusinessFormat.PUT(":id", cBusinessFormat.Update)
+				gBusinessFormat.DELETE(":id", cBusinessFormat.Delete)
+			}
+
+			// 注册/api/v1/cost-items
+			gCostItem := v1.Group("cost-items")
+			{
+				gCostItem.GET("", cCostItem.Query)
+				gCostItem.GET(":id", cCostItem.Get)
+				gCostItem.POST("", cCostItem.Create)
+				gCostItem.PUT(":id", cCostItem.Update)
+				gCostItem.DELETE(":id", cCostItem.Delete)
+			}
+
+			// 注册/api/v1/expenditures
+			gExpenditure := v1.Group("expenditures")
+			{
+				gExpenditure.GET("", cExpenditure.Query)
+				gExpenditure.GET(":id", cExpenditure.Get)
+				gExpenditure.POST("", cExpenditure.Create)
+				gExpenditure.PUT(":id", cExpenditure.Update)
+				gExpenditure.DELETE(":id", cExpenditure.Delete)
+			}
+
+			// 注册/api/v1/land-appreciation-taxes
+			gLandAppreciationTax := v1.Group("land-appreciation-taxes")
+			{
+				gLandAppreciationTax.GET("", cLandAppreciationTax.Query)
+				gLandAppreciationTax.GET(":id", cLandAppreciationTax.Get)
+				gLandAppreciationTax.POST("", cLandAppreciationTax.Create)
+				gLandAppreciationTax.PUT(":id", cLandAppreciationTax.Update)
+				gLandAppreciationTax.DELETE(":id", cLandAppreciationTax.Delete)
+			}
+
+			// 注册/api/v1/pc-projects
+			gPcProject := v1.Group("pc-projects")
+			{
+				gPcProject.GET("", cPcProject.Query)
+				gPcProject.GET(":id", cPcProject.Get)
+				gPcProject.POST("", cPcProject.Create)
+				gPcProject.PUT(":id", cPcProject.Update)
+				gPcProject.DELETE(":id", cPcProject.Delete)
+			}
+
+			// 注册/api/v1/proj-business-formats
+			gProjBusinessFormat := v1.Group("proj-business-formats")
+			{
+				gProjBusinessFormat.GET("", cProjBusinessFormat.Query)
+				gProjBusinessFormat.GET(":id", cProjBusinessFormat.Get)
+				gProjBusinessFormat.POST("", cProjBusinessFormat.Create)
+				gProjBusinessFormat.PUT(":id", cProjBusinessFormat.Update)
+				gProjBusinessFormat.DELETE(":id", cProjBusinessFormat.Delete)
+			}
+
+			// 注册/api/v1/proj-capitalized-his
+			gProjCapitalizedHis := v1.Group("proj-capitalized-his")
+			{
+				gProjCapitalizedHis.GET("", cProjCapitalizedHis.Query)
+				gProjCapitalizedHis.GET(":id", cProjCapitalizedHis.Get)
+				gProjCapitalizedHis.POST("", cProjCapitalizedHis.Create)
+				gProjCapitalizedHis.PUT(":id", cProjCapitalizedHis.Update)
+				gProjCapitalizedHis.DELETE(":id", cProjCapitalizedHis.Delete)
+			}
+
+			// 注册/api/v1/proj-capitalized-interests
+			gProjCapitalizedInterest := v1.Group("proj-capitalized-interests")
+			{
+				gProjCapitalizedInterest.GET("", cProjCapitalizedInterest.Query)
+				gProjCapitalizedInterest.GET(":id", cProjCapitalizedInterest.Get)
+				gProjCapitalizedInterest.POST("", cProjCapitalizedInterest.Create)
+				gProjCapitalizedInterest.PUT(":id", cProjCapitalizedInterest.Update)
+				gProjCapitalizedInterest.DELETE(":id", cProjCapitalizedInterest.Delete)
+			}
+
+			// 注册/api/v1/proj-cost-businesses
+			gProjCostBusiness := v1.Group("proj-cost-businesses")
+			{
+				gProjCostBusiness.GET("", cProjCostBusiness.Query)
+				gProjCostBusiness.GET(":id", cProjCostBusiness.Get)
+				gProjCostBusiness.POST("", cProjCostBusiness.Create)
+				gProjCostBusiness.PUT(":id", cProjCostBusiness.Update)
+				gProjCostBusiness.DELETE(":id", cProjCostBusiness.Delete)
+			}
+
+			// 注册/api/v1/proj-cost-his
+			gProjCostHis := v1.Group("proj-cost-his")
+			{
+				gProjCostHis.GET("", cProjCostHis.Query)
+				gProjCostHis.GET(":id", cProjCostHis.Get)
+				gProjCostHis.POST("", cProjCostHis.Create)
+				gProjCostHis.PUT(":id", cProjCostHis.Update)
+				gProjCostHis.DELETE(":id", cProjCostHis.Delete)
+			}
+
+			// 注册/api/v1/proj-cost-items
+			gProjCostItem := v1.Group("proj-cost-items")
+			{
+				gProjCostItem.GET("", cProjCostItem.Query)
+				gProjCostItem.GET(":id", cProjCostItem.Get)
+				gProjCostItem.POST("", cProjCostItem.Create)
+				gProjCostItem.PUT(":id", cProjCostItem.Update)
+				gProjCostItem.DELETE(":id", cProjCostItem.Delete)
+			}
+
+			// 注册/api/v1/proj-delivery-standards
+			gProjDeliveryStandard := v1.Group("proj-delivery-standards")
+			{
+				gProjDeliveryStandard.GET("", cProjDeliveryStandard.Query)
+				gProjDeliveryStandard.GET(":id", cProjDeliveryStandard.Get)
+				gProjDeliveryStandard.POST("", cProjDeliveryStandard.Create)
+				gProjDeliveryStandard.PUT(":id", cProjDeliveryStandard.Update)
+				gProjDeliveryStandard.DELETE(":id", cProjDeliveryStandard.Delete)
+			}
+
+			// 注册/api/v1/proj-expend-costs
+			gProjExpendCost := v1.Group("proj-expend-costs")
+			{
+				gProjExpendCost.GET("", cProjExpendCost.Query)
+				gProjExpendCost.GET(":id", cProjExpendCost.Get)
+				gProjExpendCost.POST("", cProjExpendCost.Create)
+				gProjExpendCost.PUT(":id", cProjExpendCost.Update)
+				gProjExpendCost.DELETE(":id", cProjExpendCost.Delete)
+			}
+
+			// 注册/api/v1/proj-expenditure-times
+			gProjExpenditureTime := v1.Group("proj-expenditure-times")
+			{
+				gProjExpenditureTime.GET("", cProjExpenditureTime.Query)
+				gProjExpenditureTime.GET(":id", cProjExpenditureTime.Get)
+				gProjExpenditureTime.POST("", cProjExpenditureTime.Create)
+				gProjExpenditureTime.PUT(":id", cProjExpenditureTime.Update)
+				gProjExpenditureTime.DELETE(":id", cProjExpenditureTime.Delete)
+			}
+
+			// 注册/api/v1/proj-expenditures
+			gProjExpenditure := v1.Group("proj-expenditures")
+			{
+				gProjExpenditure.GET("", cProjExpenditure.Query)
+				gProjExpenditure.GET(":id", cProjExpenditure.Get)
+				gProjExpenditure.POST("", cProjExpenditure.Create)
+				gProjExpenditure.PUT(":id", cProjExpenditure.Update)
+				gProjExpenditure.DELETE(":id", cProjExpenditure.Delete)
+			}
+
+			// 注册/api/v1/proj-files
+			gProjFile := v1.Group("proj-files")
+			{
+				gProjFile.GET("", cProjFile.Query)
+				gProjFile.GET(":id", cProjFile.Get)
+				gProjFile.POST("", cProjFile.Create)
+				gProjFile.PUT(":id", cProjFile.Update)
+				gProjFile.DELETE(":id", cProjFile.Delete)
+			}
+
+			// 注册/api/v1/proj-income-calculations
+			gProjIncomeCalculation := v1.Group("proj-income-calculations")
+			{
+				gProjIncomeCalculation.GET("", cProjIncomeCalculation.Query)
+				gProjIncomeCalculation.GET(":id", cProjIncomeCalculation.Get)
+				gProjIncomeCalculation.POST("", cProjIncomeCalculation.Create)
+				gProjIncomeCalculation.PUT(":id", cProjIncomeCalculation.Update)
+				gProjIncomeCalculation.DELETE(":id", cProjIncomeCalculation.Delete)
+			}
+
+			// 注册/api/v1/proj-sales-his
+			gProjSalesHis := v1.Group("proj-sales-his")
+			{
+				gProjSalesHis.GET("", cProjSalesHis.Query)
+				gProjSalesHis.GET(":id", cProjSalesHis.Get)
+				gProjSalesHis.POST("", cProjSalesHis.Create)
+				gProjSalesHis.PUT(":id", cProjSalesHis.Update)
+				gProjSalesHis.DELETE(":id", cProjSalesHis.Delete)
+			}
+
+			// 注册/api/v1/proj-sales-plans
+			gProjSalesPlan := v1.Group("proj-sales-plans")
+			{
+				gProjSalesPlan.GET("", cProjSalesPlan.Query)
+				gProjSalesPlan.GET(":id", cProjSalesPlan.Get)
+				gProjSalesPlan.POST("", cProjSalesPlan.Create)
+				gProjSalesPlan.PUT(":id", cProjSalesPlan.Update)
+				gProjSalesPlan.DELETE(":id", cProjSalesPlan.Delete)
+			}
+
+			// 注册/api/v1/tax-calculations
+			gTaxCalculation := v1.Group("tax-calculations")
+			{
+				gTaxCalculation.GET("", cTaxCalculation.Query)
+				gTaxCalculation.GET(":id", cTaxCalculation.Get)
+				gTaxCalculation.POST("", cTaxCalculation.Create)
+				gTaxCalculation.PUT(":id", cTaxCalculation.Update)
+				gTaxCalculation.DELETE(":id", cTaxCalculation.Delete)
+			}
+
 		}
 
 		return nil

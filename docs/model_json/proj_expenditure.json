@@ -1,0 +1,73 @@
+{
+    "struct_name": "ProjExpenditure",
+    "comment": "项目支出节点",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "项目支出节点名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"   
+
+        },
+        {
+            "struct_field_name": "StartTime",
+            "comment": "开始时间",
+            "struct_field_type": "time.Time",
+            "gorm_options": "type:date;"   
+
+        },
+        {
+            "struct_field_name": "EndTime",
+            "comment": "结束时间",
+            "struct_field_type": "time.Time",
+            "gorm_options": "type:date;"      
+
+        },
+        {
+            "struct_field_name": "ExpenditureTimeType",
+            "comment": "资金支出时间方式(1:完成时间前30天 2:完成时间 3:完成时间后30天 4:完成时间后2个月 5:完成时间后6个月 6:完成时间后1年 7:平摊道每个月 8:平摊道每个季度)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"      
+ 
+        },
+        {
+            "struct_field_name": "AccExpendRate",
+            "comment": "累计支出比例",
+            "struct_field_type": "int",
+            "gorm_options": ""      
+
+        },
+        {
+            "struct_field_name": "ParentID",
+            "comment": "父级ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ParentPath",
+            "comment": "父级路经",
+            "struct_field_type": "string",
+            "gorm_options": "size:518;index;"
+        },
+        {
+            "struct_field_name": "TotalCost",
+            "comment": "支出总额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        }
+    ]
+}

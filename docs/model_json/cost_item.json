@@ -1,0 +1,55 @@
+{
+    "struct_name": "CostItem",
+    "comment": "成本项",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ParentID",
+            "comment": "父级ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;" 
+        },
+        {
+            "struct_field_name": "ParentPath",
+            "comment": "父级路经",
+            "struct_field_type": "string",
+            "gorm_options": "size:518;index;"   
+        },
+        {
+            "struct_field_name": "Level",
+            "comment": "层级",
+            "struct_field_type": "int",
+            "gorm_options": "index;" 
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+        },
+        {
+            "struct_field_name": "TaxID",
+            "comment": "税目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Status",
+            "comment": "状态(1:启用2:停用)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "Label",
+            "comment": "标签(1:成本科目 2:测算科目)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"   
+        }
+
+    ]
+}

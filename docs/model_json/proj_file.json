@@ -1,0 +1,50 @@
+
+{
+    "struct_name": "ProjFile",
+    "comment": "成本项目文件管理",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "文件名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+        },
+        {
+            "struct_field_name": "Path",
+            "comment": "文件路经",
+            "struct_field_type": "string",
+            "gorm_options": "size:512;index;"
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"   
+        },
+        {
+            "struct_field_name": "Size",
+            "comment": "大小(单位:字节)",
+            "struct_field_type": "int",
+            "gorm_options": ""   
+        },
+        {
+            "struct_field_name": "Type",
+            "comment": "类型",
+            "struct_field_type": "string",
+            "gorm_options": "size:50;" 
+        }
+
+    ]
+}
