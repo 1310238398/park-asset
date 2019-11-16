@@ -298,6 +298,9 @@ class AdminLayout extends React.PureComponent {
               type={collapsed ? 'menu-unfold' : 'menu-fold'}
               onClick={this.onToggleClick}
             />
+            {/* 选择当前项目
+            <div style = {{color: 'white'}}>当前项目：哈哈哈</div> */}
+            
             <div className={styles.right}>
               {/* <div
                 title="驾驶舱"
