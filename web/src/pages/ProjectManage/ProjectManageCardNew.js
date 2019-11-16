@@ -33,7 +33,7 @@ class ProjectManageCardNew extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      current: 2,
+      current: 0,
     };
   }
 
@@ -83,7 +83,7 @@ class ProjectManageCardNew extends PureComponent {
   onCancelClick = () => {
     console.log('onCancelClick');
     const { onCancel } = this.props;
-    this.setState({ current: 2 });
+    this.setState({ current: 0 });
 
     onCancel();
   };

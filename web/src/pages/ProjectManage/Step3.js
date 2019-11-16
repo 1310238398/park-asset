@@ -1,14 +1,14 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Input, InputNumber, Popconfirm, Form, message, Button } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, message, Button,  Dropdown, Menu } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import DeliveryStandard from './DeliveryStandard';
+
 
 const FormItem = Form.Item;
 import * as menuService from '@/services/menu';
 const data = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 5; i++) {
   data.push({
     key: i.toString(),
     standard: `精装修 ${i}`,
@@ -100,7 +100,7 @@ class EditableCell extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: `Please Input ${title}!`,
+                  message: `请输入 ${title}!`,
                 },
               ],
               initialValue: record[dataIndex],
@@ -133,10 +133,25 @@ export default class Step3 extends PureComponent {
 
       expandHang: [],
       expandedRowKeys: [],
-      count: 10,
+      count: 5,
       //所有的二级key
       //所有的三级key
     };
+    this.menu = (
+      <Menu>
+        <Menu.Item>
+          <a  rel="noopener noreferrer" href="">
+           同级添加
+          </a>
+        </Menu.Item>
+      
+        <Menu.Item>
+          <a  rel="noopener noreferrer" href="">
+           下级添加
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
     this.columns = [
       // {
       //   title: 'name',
@@ -186,9 +201,18 @@ export default class Step3 extends PureComponent {
               </Popconfirm>
             </span>
           ) : (
+            <div>
             <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)}>
               编辑
             </a>
+            {/* 点击添加出现下拉菜单选择 同级添加还是 下级添加 */}
+           
+            <Dropdown overlay={this.menu} placement="bottomCenter">
+              <a  style={{ marginLeft: 8 }}>添加</a> 
+            </Dropdown>
+            <a style={{ marginLeft: 8 }}>删除</a>
+         
+            </div>
           );
         },
       },
@@ -381,9 +405,9 @@ export default class Step3 extends PureComponent {
     const { count, data } = this.state;
     const newData = {
       key: count.toString(),
-      standard: `Edward King ${count}`,
+      standard: "请输入标准内容",
 
-      address: `London, Park Lane no. ${count}`,
+      address: "请输入部位名称",
     };
     this.setState({
       data: [...data, newData],
@@ -484,7 +508,7 @@ export default class Step3 extends PureComponent {
           dataSource={this.state.data}
           columns={columns}
           rowClassName="editable-row"
-          expandRowByClick={true}
+          //expandRowByClick={true}
           expandedRowKeys={this.state.expandedRowKeys}
           // onExpand={record}
           rowKey={record => record.key}
