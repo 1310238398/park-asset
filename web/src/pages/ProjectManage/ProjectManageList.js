@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Select } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, Select,Descriptions } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import ProjectManageCard from './ProjectManageCard';
+import ProjectManageCardNew from './ProjectManageCardNew';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import styles from './ProjectManage.less';
@@ -130,6 +131,7 @@ class ProjectManageList extends PureComponent {
   };
 
   handleDataFormSubmit = data => {
+    console.log("哈哈哈2");
     this.dispatch({
       type: 'projectManage/submit',
       payload: data,
@@ -140,6 +142,13 @@ class ProjectManageList extends PureComponent {
   handleDataFormCancel = () => {
     this.dispatch({
       type: 'projectManage/changeFormVisible',
+      payload: false,
+    });
+  };
+  handleDataNewFormCancel = () => {
+   
+    this.dispatch({
+      type: 'projectManage/changeNewFormVisible',
       payload: false,
     });
   };
@@ -182,6 +191,16 @@ class ProjectManageList extends PureComponent {
       />
     );
   }
+  renderDataNewForm() {
+    return (
+      <ProjectManageCardNew
+        onCancel={this.handleDataNewFormCancel}
+        onSubmit={this.handleDataFormSubmit}
+      />
+    );
+  }
+
+
 
   renderSearchForm() {
     const {
@@ -194,7 +213,7 @@ class ProjectManageList extends PureComponent {
         <Row gutter={16}>
           <Col md={6} sm={24}>
             <Form.Item label="项目名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('name')(<Input placeholder="请输入项目名称" />)}
             </Form.Item>
           </Col>
           <Col md={6} sm={24}>
@@ -203,7 +222,20 @@ class ProjectManageList extends PureComponent {
                 <DicSelect
                   vmode="sting"
                   pcode="pa$#atype"
+                  placeholder="请选择资产类型"
                   selectProps={{ mode: 'multiple', placeholder: '请选择' }}
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col md={6} sm={24}>
+            <Form.Item label="项目类型">
+              {getFieldDecorator('project_type')(
+                <DicSelect
+                  vmode="sting"
+                  pcode="pro"
+                  placeholder="请选择项目类型"
+                  selectProps={{ placeholder: '请选择' }}
                 />
               )}
             </Form.Item>
@@ -213,7 +245,7 @@ class ProjectManageList extends PureComponent {
           <Col md={6} sm={24}>
             <Form.Item label="所属公司">
               {getFieldDecorator('org_id')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
+                <Select placeholder="请选择公司" style={{ width: '100%' }}>
                   {companyList &&
                     companyList.map(item => (
                       <Select.Option key={item.record_id} value={item.record_id}>
@@ -227,7 +259,7 @@ class ProjectManageList extends PureComponent {
           <Col md={6} sm={24}>
             <Form.Item label="所属地块">
               {getFieldDecorator('plot_id')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
+                <Select placeholder="请选择地块" style={{ width: '100%' }}>
                   {poltList &&
                     poltList.map(item => (
                       <Select.Option key={item.record_id} value={item.record_id}>
@@ -254,6 +286,11 @@ class ProjectManageList extends PureComponent {
       </Form>
     );
   }
+
+  renderContent() { return (<Descriptions size="small" column={3} >
+  <Descriptions.Item label="当前项目">汉峪金谷</Descriptions.Item>
+  
+      </Descriptions>); };
 
   render() {
     const {
@@ -312,8 +349,15 @@ class ProjectManageList extends PureComponent {
       { title: '项目管理', href: '/project/projectmanage' },
     ];
 
+
+    
+   
     return (
-      <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}>
+      
+      <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}
+       content={ this.renderContent()
+     }>
+         
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
@@ -387,7 +431,9 @@ class ProjectManageList extends PureComponent {
           </div>
         </Card>
         {this.renderDataForm()}
+        {this.renderDataNewForm()}
       </PageHeaderLayout>
+   
     );
   }
 }

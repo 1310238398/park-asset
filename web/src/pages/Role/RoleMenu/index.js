@@ -38,6 +38,7 @@ export default class RoleMenu extends PureComponent {
     menuService.query({ q: 'tree', include_actions: '1', include_resources: '1' }).then(data => {
       const list = data.list || [];
       this.setState({ menuData: this.fillData(list) });
+    //  console.log("menuData "+ JSON.stringify(this.state.menuData));
     });
   }
 
@@ -52,6 +53,7 @@ export default class RoleMenu extends PureComponent {
   }
 
   fillData = data => {
+   
     const newData = [...data];
     for (let i = 0; i < newData.length; i += 1) {
       const { children } = newData[i];
@@ -61,12 +63,19 @@ export default class RoleMenu extends PureComponent {
       }
       newData[i] = item;
     }
+   
     return newData;
   };
 
   handleSave = (record, dataIndex, values) => {
+
     const { dataSource } = this.state;
+    console.log("handleSave");
+    console.log("record  " +JSON.stringify(record));
+    console.log("dataIndex "+ dataIndex);
+   
     const data = [...dataSource];
+    console.log(data);
     const index = data.findIndex(item => item.menu_id === record.record_id);
     let item = data[index];
     if (!item) {
