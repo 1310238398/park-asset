@@ -16,22 +16,27 @@ for (let i = 0; i < 5; i++) {
     address: `大堂 ${i}`,
     children: [
       {
+        key: i.toString() + '-0',
+        standard: '精装修' + i.toString() + '-0',
+
+        address: '大堂' + i.toString() + '-0',
+        parent:i.toString()
+        
+      },
+      {
         key: i.toString() + '-1',
         standard: '精装修' + i.toString() + '-1',
 
         address: '大堂' + i.toString() + '-1',
-      },
-      {
-        key: i.toString() + '-2',
-        standard: '精装修' + i.toString() + '-2',
-
-        address: '大堂' + i.toString() + '-2',
+        parent: i.toString(),
         children: [
           {
-            key: i.toString() + '-2-1',
-            standard: '精装修' + i.toString() + '-2-1',
+            key: i.toString() + '-1-0',
+            standard: '精装修' + i.toString() + '-1-0',
 
-            address: '大堂' + i.toString() + '-2-1',
+            address: '大堂' + i.toString() + '-1-0',
+            parent: i.toString() + '-1'
+            
           },
         ],
       },
@@ -133,22 +138,22 @@ export default class Step3 extends PureComponent {
 
       expandHang: [],
       expandedRowKeys: [],
-      count: 5,
+      currentItem:"",// 当前点击的对象
       //所有的二级key
       //所有的三级key
     };
     this.menu = (
-      <Menu>
-        <Menu.Item>
-          <a  rel="noopener noreferrer" href="">
+      <Menu onClick={this.addItem}>
+        <Menu.Item key="1">
+          
            同级添加
-          </a>
+          
         </Menu.Item>
       
-        <Menu.Item>
-          <a  rel="noopener noreferrer" href="">
+        <Menu.Item key="2">
+        
            下级添加
-          </a>
+          
         </Menu.Item>
       </Menu>
     );
@@ -201,14 +206,14 @@ export default class Step3 extends PureComponent {
               </Popconfirm>
             </span>
           ) : (
-            <div>
+            <div >
             <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)}>
               编辑
             </a>
             {/* 点击添加出现下拉菜单选择 同级添加还是 下级添加 */}
            
             <Dropdown overlay={this.menu} placement="bottomCenter">
-              <a  style={{ marginLeft: 8 }}>添加</a> 
+              <a  style={{ marginLeft: 8 }}  onMouseEnter={() =>this.currentClickKey(record)}>添加</a> 
             </Dropdown>
             <a style={{ marginLeft: 8 }}>删除</a>
          
@@ -242,6 +247,7 @@ export default class Step3 extends PureComponent {
     this.setState({ editingKey: '' });
   };
 
+  
   save(form, key) {
     console.log('要保存数据的key ' + key);
     // form.validateFields((error, row) => {
@@ -401,6 +407,141 @@ export default class Step3 extends PureComponent {
     console.log(this.state.expandHang);
   };
 
+  addItem = ({key}) => {
+    if (key === "1") {
+      // 同级添加
+      console.log("同级添加");
+      this.brotherLevelAdd();
+
+    }
+    else if (key === "2") {
+
+      //子级添加
+      console.log("子级添加");
+      this.childLevelAdd();
+    }
+  }
+
+  // 同级添加
+  brotherLevelAdd = () => {
+    console.log("brotherLevelAdd");
+    const {currentItem,  data } = this.state;
+    if (currentItem.parent === undefined) {
+      console.log("顶级添加");
+      // 直接顶层添加
+      let count = data.length;
+      const newItem = {
+        key: count.toString(),
+        standard: "请输入标准内容",
+  
+        address: "请输入部位名称",
+      };
+      data.push(newItem);
+      this.setState({
+        data: [...data],
+       
+       
+      });
+
+      return;
+    }
+    let item = this.findItem(data,currentItem.parent);  
+    let count =  0;
+    if (item.children != undefined ) {
+      count = item.children.length;
+
+    }
+
+    const newItem = {
+      key: item.key+"-"+count.toString(),
+      standard: "请输入标准内容",
+
+      address: "请输入部位名称",
+    };
+    if (item.children) {
+      item.children.push(newItem);
+    }
+    else {
+      item.children = [];
+      item.children.push(newItem);
+    }
+
+    this.setState({
+      data: [...data],
+     
+     
+    });
+  }
+
+  //子级添加
+  childLevelAdd = () => {
+    const {currentItem,  data , expandedRowKeys} = this.state;
+
+    
+   
+    // 递归遍历
+      let item = this.findItem(data, currentItem.key);  
+       let count =  0;
+      if (item.children != undefined ) {
+        count = item.children.length;
+
+      }
+    
+   
+    const newItem = {
+      key: item.key+"-"+count.toString(),
+      standard: "请输入标准内容",
+
+      address: "请输入部位名称",
+    };
+    if (item.children) {
+      item.children.push(newItem);
+    }
+    else {
+      item.children = [];
+      item.children.push(newItem);
+    }
+    
+    let expandKeys =[];
+    expandKeys.push(item.key);
+    for (let i in item.children) {
+      expandKeys.push(item.children[i].key);
+    }
+    this.setState({
+      data: [...data],
+      expandedRowKeys:[...expandedRowKeys, ...expandKeys],
+     // count: count + 1,
+    });
+    console.log("需要展开的子项 "+ this.state.expandedRowKeys);
+
+    // 并展开子项
+  
+    console.log('添加结果 '+ JSON.stringify(this.state.data));
+  };
+
+  // 递归遍历(有问题)
+  findItem(objList, key) {
+    console.log("findItem  "+key);
+    console.log("objList "+ JSON.stringify(objList));
+
+    // 递归遍历
+    for (let i = 0; i < objList.length; i++) {
+      console.log("循环");
+      console.log("objList[i].key "+objList[i].key);
+
+      if (key === objList[i].key) {
+        console.log("定位到对象 "+JSON.stringify(objList[i]));
+        return objList[i];
+       
+      }
+      else if (key.indexOf(objList[i].key) !== -1 &&  objList[i].children && objList[i].children.length > 0) {
+
+        return this.findItem(objList[i].children, key);
+      }
+
+    }
+  }
+
   handleAdd = () => {
     const { count, data } = this.state;
     const newData = {
@@ -426,6 +567,11 @@ export default class Step3 extends PureComponent {
     });
     this.setState({ data: newData });
   };
+
+  currentClickKey(item) {
+    console.log("当前点击的key "+ item.key);
+    this.setState({currentItem: item});
+  }
 
   render() {
     //const { expandHang } = this.state;

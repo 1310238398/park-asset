@@ -13,15 +13,15 @@ const { Step } = Steps;
 const steps = [
   {
     title: '基本信息',
-    content: 'First-content',
+   
   },
   {
     title: '项目业态',
-    content: 'Second-content',
+    
   },
   {
     title: '交付标准',
-    content: 'Last-content',
+    
   },
 ];
 
@@ -33,7 +33,7 @@ class ProjectManageCardNew extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      current: 0,
+      current: 2,
     };
   }
 
