@@ -190,9 +190,9 @@ export default {
         routerRedux.push({
           pathname: '/assetdatamaint/assetdatamaintlist',
           query: {
-            recordID: payload.record_id,
+          recordID: payload.record_id,
             type: payload.asset_type,
-          },
+          },  
         })
       );
     },

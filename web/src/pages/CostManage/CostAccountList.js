@@ -6,14 +6,15 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import Link from 'umi/link';
+import AddNewSalesPlan from './AddNewSalesPlan';
+
 import styles from './CostAccount.less';
 //import { catchClause } from '@babel/types';
 const data = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 3; i++) {
   data.push({
     key: i.toString(),
-    name: `控股集团测试长度测试长度测试长度 ${i}`,
+    name: `控股集团 ${i}`,
     isPro: false,
     type:"",
     floor_area:"",
@@ -23,7 +24,7 @@ for (let i = 0; i < 10; i++) {
     children: [
       {
         key: i.toString() + '-1',
-        name: '二级公司测试长度测试长度测试长度' + i.toString() + '-1',
+        name: '二级公司' + i.toString() + '-1',
         isPro: false,
         type:"",
         floor_area:"",
@@ -31,7 +32,7 @@ for (let i = 0; i < 10; i++) {
       },
       {
         key: i.toString() + '-2',
-        name: '二级公司测试长度测试长度' + i.toString() + '-2',
+        name: '二级公司' + i.toString() + '-2',
         isPro: false,
         type:"",
         floor_area:"",
@@ -39,11 +40,11 @@ for (let i = 0; i < 10; i++) {
         children: [
           {
             key: i.toString() + '-2-1',
-            name: '汉峪金谷项目测试长度测试长度测试长度' + i.toString() + '-2-1',
+            name: '汉峪金谷项目' + i.toString() + '-2-1',
             isPro: true,
             type:"商业",
-        floor_area:"189，000",
-        return_rate:"40%",
+          floor_area:"189，000",
+          return_rate:"40%",
           },
         ],
       },
@@ -62,8 +63,10 @@ class CostAccountList extends PureComponent {
   state = {
     projectList:[],
    
-      selectedRowKeys: [],
-      selectedRows: [],
+      // selectedRowKeys: [],
+      // selectedRows: [],
+      expandHang: [],
+      expandedRowKeys: [],
       
     
   };
@@ -98,52 +101,25 @@ class CostAccountList extends PureComponent {
     dispatch(action);
   };
 
-  handleAddClick = () => {
-    this.dispatch({
-      type: 'projectManage/loadForm',
-      payload: {
-        type: 'A',
-      },
-    });
-  };
-
-  handleEditClick = item => {
-    this.dispatch({
-      type: 'projectManage/loadForm',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-      },
-    });
-  };
-
-  handleDelClick = item => {
-    Modal.confirm({
-      title: `确定删除【项目数据：${item.name}】？`,
-      okText: '确认',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: this.handleDelOKClick.bind(this, item.record_id),
-    });
-  };
 
   // handleTableSelectRow = (keys, rows) => {
   //   this.setState({
   //     selectedRowKeys: keys,
   //     selectedRows: rows,
-  //   });
+  //   });      
   // };
 
-  handleTableChange = pagination => {
-    this.dispatch({
-      type: 'projectManage/fetch',
-      pagination: {
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-      },
-    });
-    this.clearSelectRows();
-  };
+  // handleTableChange = pagination => {
+  //   console.log("handleTableChange");
+  //   this.dispatch({
+  //     type: 'projectManage/fetch',
+  //     pagination: {
+  //       current: pagination.current,
+  //       pageSize: pagination.pageSize,
+  //     },
+  //   });
+  //   this.clearSelectRows();
+  // };
 
   handleResetFormClick = () => {
     const { form } = this.props;
@@ -156,6 +132,7 @@ class CostAccountList extends PureComponent {
     });
   };
 
+  // 按照条件查询项目
   handleSearchFormSubmit = e => {
     if (e) {
       e.preventDefault();
@@ -181,77 +158,10 @@ class CostAccountList extends PureComponent {
     });
   };
 
-  handleDataFormSubmit = data => {
-    console.log("哈哈哈2");
-    this.dispatch({
-      type: 'projectManage/submit',
-      payload: data,
-    });
-    this.clearSelectRows();
-  };
 
-  handleDataFormCancel = () => {
-    this.dispatch({
-      type: 'projectManage/changeFormVisible',
-      payload: false,
-    });
-  };
-  handleDataNewFormCancel = () => {
-   
-    this.dispatch({
-      type: 'projectManage/changeNewFormVisible',
-      payload: false,
-    });
-  };
-
-  handleItemDisableClick = item => {
-    this.dispatch({
-      type: 'projectManage/changeStatus',
-      payload: { record_id: item.record_id, status: 2 },
-    });
-  };
-
-  handleItemEnableClick = item => {
-    this.dispatch({
-      type: 'projectManage/changeStatus',
-      payload: { record_id: item.record_id, status: 1 },
-    });
-  };
 
   // 跳转写字楼
-  onItemDetailClick = item => {
-    this.dispatch({
-      type: 'projectManage/redirectBuilings',
-      payload: item,
-    });
-  };
-
-  handleDelOKClick(id) {
-    this.dispatch({
-      type: 'projectManage/del',
-      payload: { record_id: id },
-    });
-    this.clearSelectRows();
-  }
-
-  renderDataForm() {
-    // return (
-    //   <ProjectManageCard
-    //     onCancel={this.handleDataFormCancel}
-    //     onSubmit={this.handleDataFormSubmit}
-    //   />
-    // );
-  }
-  renderDataNewForm() {
-    // return (
-    //   <ProjectManageCardNew
-    //     onCancel={this.handleDataNewFormCancel}
-    //     onSubmit={this.handleDataFormSubmit}
-    //   />
-    // );
-  }
-
-
+  
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
@@ -337,11 +247,67 @@ class CostAccountList extends PureComponent {
     );
   }
 
- goToDetail() {
+  handleOnExpand = (expanded, record) => {
+    console.log('handleOnExpand');
+    const { expandHang } = this.state;
 
+    //  let tempHang = expandHang;
+    if (expanded) {
+      console.log('true');
+      console.log('push');
+      expandHang.push(record.key);
+      expandHang.sort();
+    } else {
+      console.log('false');
+      for (let i = 0; i < expandHang.length; i++) {
+        if (expandHang[i] === record.key) {
+          if (i > 0) {
+            console.log('pop');
+            expandHang.splice(i, 1);
+          } else {
+            expandHang.splice(0, 1);
+          }
+        }
+        if (record.children) {
+          for (let y = 0; y < record.children.length; y++) {
+            if (expandHang[i] === record.children[y].key) {
+              console.log('hahah');
+              delete expandHang[i];
+            }
+          }
+        }
+      }
+    }
+    this.setState({
+      expandedRowKeys: [...expandHang],
+    });
 
- }
+    console.log(this.state.expandHang);
+  };
 
+  goToDetail(item) {
+    this.dispatch({
+      type: 'costAccount/redirectDetail',
+      payload: item,
+    });
+
+  }
+  handleDataFormCancel = () => {
+    this.dispatch({
+      type: 'costAccount/changeFormVisible',
+      payload: false,
+    });
+  };
+  handleDataFormSubmit = data => {
+    console.log("哈哈哈2");
+    this.dispatch({
+      type: 'costAccount/submit',
+      payload: data,
+    });
+    this.clearSelectRows();
+  };
+
+  
 
   render() {
     const {
@@ -393,11 +359,11 @@ class CostAccountList extends PureComponent {
             <PButton   code="edit"  onClick={() => {}}>
               编辑
             </PButton>
-            <Link to="/cost/detail">
-              <PButton  code="view" style={{ marginLeft: 8 }} onClick={() => {}}>
+            
+              <PButton  code="view" style={{ marginLeft: 8 }} onClick={() => {this.goToDetail(record);}}>
               查看
               </PButton>
-            </Link>
+          
            
          
             </div>
@@ -405,14 +371,7 @@ class CostAccountList extends PureComponent {
           );
         },
       },
-      // {
-      //   title: '项目资产类型',
-      //   dataIndex: 'asset_type',
-      //   width: 150,
-      //   render: value => {
-      //     return <DicShow pcode="pa$#atype" code={value.split(',')} />;
-      //   },
-      // },
+      
     ];
 
     const paginationProps = {
@@ -440,29 +399,7 @@ class CostAccountList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              {/* <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
-                新建
-              </PButton> */}
-              {/* {selectedRows.length === 1 && [
-                <PButton
-                  key="edit"
-                  code="edit"
-                  icon="edit"
-                  onClick={() => this.handleEditClick(selectedRows[0])}
-                >
-                  编辑
-                </PButton>,
-                <PButton
-                  key="del"
-                  code="del"
-                  icon="delete"
-                  type="danger"
-                  onClick={() => this.handleDelClick(selectedRows[0])}
-                >
-                  删除
-                </PButton>,
-               
-              ]} */}
+              
             </div>
             <div>
               <Table
@@ -472,12 +409,15 @@ class CostAccountList extends PureComponent {
                 // }}
              
                 loading={loading}
-                rowKey={record => record.record_id}
+                rowKey={record => record.key}
+                expandedRowKeys={this.state.expandedRowKeys}
                 dataSource={data}
                 columns={columns}
                 pagination={false}//{paginationProps}
                 scroll={{ y: 500}}
                 onChange={this.handleTableChange}
+                onExpand={this.handleOnExpand}
+
                 // onRow={record => {
                 //   return {
                 //     onClick: () => {
@@ -490,8 +430,7 @@ class CostAccountList extends PureComponent {
             </div>
           </div>
         </Card>
-        {this.renderDataForm()}
-        {this.renderDataNewForm()}
+     
       </PageHeaderLayout>
    
     );
