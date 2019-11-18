@@ -33,7 +33,7 @@ class ProjectManageCardNew extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      current: 2,
+      current: 0,
     };
   }
 
@@ -42,25 +42,7 @@ class ProjectManageCardNew extends PureComponent {
       type: 'projectManage/queryCompany',
     });
   }
-  // execCallback = () => {
-  //   const { chg } = this.state;
-  //   const {
-  //     projectManage: {  newFormVisible },
-
-  //   } = this.props;
-  //  // this.props.callback(chg && 'ok');
-  //   this.setState({ newFormVisible: false });
-  // };
-
-  // next() {
-  //   const current = this.state.current + 1;
-  //   this.setState({ current });
-  // }
-
-  // prev() {
-  //   const current = this.state.current - 1;
-  //   this.setState({ current });
-  // }
+ 
 
   onOKClick = () => {
     console.log('哈哈哈1');
