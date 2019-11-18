@@ -138,25 +138,25 @@ export default class Step3 extends PureComponent {
 
       expandHang: [],
       expandedRowKeys: [],
-      currentItem:"",// 当前点击的对象
+     
       //所有的二级key
       //所有的三级key
     };
-    this.menu = (
-      <Menu onClick={this.addItem}>
-        <Menu.Item key="1">
+    // this.menu = (
+    //   <Menu onClick={this.addItem}>
+    //     <Menu.Item key="1">
           
-           同级添加
+    //        同级添加
           
-        </Menu.Item>
+    //     </Menu.Item>
       
-        <Menu.Item key="2">
+    //     <Menu.Item key="2">
         
-           下级添加
+    //        下级添加
           
-        </Menu.Item>
-      </Menu>
-    );
+    //     </Menu.Item>
+    //   </Menu>
+    // );
     this.columns = [
       // {
       //   title: 'name',
@@ -212,8 +212,10 @@ export default class Step3 extends PureComponent {
             </a>
             {/* 点击添加出现下拉菜单选择 同级添加还是 下级添加 */}
            
-            <Dropdown overlay={this.menu} placement="bottomCenter">
-              <a  style={{ marginLeft: 8 }}  onMouseEnter={() =>this.currentClickKey(record)}>添加</a> 
+            <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter">
+              <a  style={{ marginLeft: 8 }}  
+             // onMouseEnter={() =>this.currentClickKey(record)}
+              >添加</a> 
             </Dropdown>
             <a style={{ marginLeft: 8 }}>删除</a>
          
@@ -358,6 +360,24 @@ export default class Step3 extends PureComponent {
     dispatch(action);
   };
 
+  getMenu = (record) => {
+    console.log("getMenu "+ JSON.stringify(record));
+    return (
+    <Menu >
+      <Menu.Item  onClick={() => this.brotherLevelAdd(record)}>
+        
+         同级添加
+        
+      </Menu.Item>
+    
+      <Menu.Item onClick={() => this.childLevelAdd(record)}>
+      
+         下级添加
+        
+      </Menu.Item>
+    </Menu>);
+  };
+
   expandRow(ji) {
     const { data } = this.state;
     if (ji === 1) {
@@ -407,25 +427,25 @@ export default class Step3 extends PureComponent {
     console.log(this.state.expandHang);
   };
 
-  addItem = ({key}) => {
-    if (key === "1") {
-      // 同级添加
-      console.log("同级添加");
-      this.brotherLevelAdd();
+  // addItem = ({key}) => {
+  //   if (key === "1") {
+  //     // 同级添加
+  //     console.log("同级添加");
+  //     this.brotherLevelAdd();
 
-    }
-    else if (key === "2") {
+  //   }
+  //   else if (key === "2") {
 
-      //子级添加
-      console.log("子级添加");
-      this.childLevelAdd();
-    }
-  }
+  //     //子级添加
+  //     console.log("子级添加");
+  //     this.childLevelAdd();
+  //   }
+  // }
 
   // 同级添加
-  brotherLevelAdd = () => {
+  brotherLevelAdd = (currentItem) => {
     console.log("brotherLevelAdd");
-    const {currentItem,  data } = this.state;
+    const {  data } = this.state;
     if (currentItem.parent === undefined) {
       console.log("顶级添加");
       // 直接顶层添加
@@ -474,8 +494,8 @@ export default class Step3 extends PureComponent {
   }
 
   //子级添加
-  childLevelAdd = () => {
-    const {currentItem,  data , expandedRowKeys} = this.state;
+  childLevelAdd = (currentItem) => {
+    const {  data , expandedRowKeys} = this.state;
 
     
    
@@ -645,9 +665,9 @@ export default class Step3 extends PureComponent {
         >
           三级
         </Button>
-        <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
+        {/* <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
           Add a row
-        </Button>
+        </Button> */}
         <Table
           components={components}
           bordered
