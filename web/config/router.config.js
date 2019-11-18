@@ -200,8 +200,8 @@ export default [
 
         path: '/cost',
         routes: [
-          // { path: '/system/menu', component: './Menu/MenuList' },
-          // { path: '/system/role', component: './Role/RoleList' },
+          { path: '/cost/list', component: './CostManage/CostAccountList' },
+          { path: '/cost/detail', component: './CostManage/CostAccountDetail'},
           // { path: '/system/user', component: './User/UserList' },
           // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
         ],
