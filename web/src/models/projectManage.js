@@ -20,7 +20,7 @@ export default {
     companyList: [],
     poltList: [],
   },
-  // 调service  call 调service函数 put 调reducer函数 select 暂存
+  // 调service  call 调service函数 put 调reducer函数 select 取当前model中的值
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
