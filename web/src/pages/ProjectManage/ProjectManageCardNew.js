@@ -33,7 +33,7 @@ class ProjectManageCardNew extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      current: 2,
+      current: 0,
     };
   }
 

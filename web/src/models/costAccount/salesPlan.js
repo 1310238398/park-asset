@@ -1,20 +1,63 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as costAccountService from '@/services/costAccount';
-// 成本核算
+// 成本核算:销售计划
 export default {
-  namespace: 'costAccount',
+  namespace: 'salesPlan',
   state: {
     search: {},
     pagination: {},
-    data: {
-      list: [],
-      pagination: {},
-    },
+    // 销售计划列表
+    data: [
+// average_prise	number($double)
+// 均价
+
+// contract_amount	number($double)
+// 合同额度
+
+// memo	string
+// 备注
+
+// payback	number($double)
+// 销售回款
+
+// principal	string
+// 负责人
+
+// proj_business_id	string
+// 项目业态ID
+
+// proj_business_name	string
+// 项目业态名称
+
+// proj_income_id	string
+// 项目收益测算ID
+
+// project_id	string
+// 成本项目ID
+
+// quarter	integer($int32)
+// 季度
+
+// record_id	string
+// 记录ID
+
+// sale_area	number($double)
+// 销售面积
+
+// tax_prise	number($double)
+// 销售税额
+
+// year	integer($int32)
+// 年度
+
+    ]
+     
+    ,
     submitting: false,
     formTitle: '',
     formID: '',
-    formVisible:false,
+   
     addSalesPlanVisible: false,
     formData: {},
   

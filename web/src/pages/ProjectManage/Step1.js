@@ -56,6 +56,8 @@ export default class Step1 extends PureComponent {
         } else {
           formData.asset_type = '';
         }
+
+        console.log("formData "+ JSON.stringify(formData));
       //  onSubmit(formData);
 
            // 新增  这块不明白
@@ -89,6 +91,66 @@ export default class Step1 extends PureComponent {
       },
     };
     return (
+
+
+// building_coverage	number($double)
+// 建筑密度
+
+// civil_air_defense_area	number($double)
+// 人防面积
+
+// construction_area	number($double)
+// 建设用地面积
+
+// cover_area	number($double)
+// 占地面积
+
+// creator	string
+// 创建人
+
+
+
+// floor_area	number($double)
+// 建筑面积
+
+// ground_floor_area	number($double)
+// 地上建筑面积
+
+// ground_volume_rate	number($double)
+// 地上容积率
+
+// location	string
+// 项目地址(经纬度)
+
+// memo	string
+// 备注
+
+
+
+
+
+// parent_id	string
+// 父级ID
+
+// parent_path	string
+// 父级路经
+
+
+// record_id	string
+// 记录ID
+
+// sale_area	number($double)
+// 可售面积
+
+// slag_volume	number($double)
+// 渣土工程量
+
+
+// underground_floor_area	number($double)
+// 地下建筑面积
+
+// underground_volume_rate	number($double)
+// 地下容积率
       <Form>
       <Row>
         <Col span={12}>
@@ -190,22 +252,17 @@ export default class Step1 extends PureComponent {
         </Col>
 
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="资产类型">
-            {getFieldDecorator('asset_type', {
+        <Form.Item {...formItemLayout} label="总用地面积(km²)">
+            {getFieldDecorator('total_using_area', {
              // initialValue: formData.asset_type,
               rules: [
                 {
                   required: true,
-                  message: '请选择资产类型',
+                  message: '请输入总用地面积',
                 },
               ],
             })(
-              <DicSelect
-                vmode="sting"
-                pcode="pa$#atype"
-                placeholder= '请选择资产类型'
-                selectProps={{ mode: 'multiple', placeholder: '请选择' }}
-              />
+              <Input placeholder="请输入总用地面积" />
             )}
           </Form.Item>
         </Col>
@@ -259,32 +316,32 @@ export default class Step1 extends PureComponent {
       </Row>
       <Row>
       <Col span={12}>
-          <Form.Item {...formItemLayout} label="总用地面积(km²)">
-            {getFieldDecorator('total_land_area', {
+      <Form.Item {...formItemLayout} label="地上建筑面积(km²)">
+            {getFieldDecorator('ground_floor_area', {
              // initialValue: formData.asset_type,
               rules: [
                 {
                   required: true,
-                  message: '请输入总用地面积',
+                  message: '请输入地上建筑面积',
                 },
               ],
             })(
-              <Input placeholder="请输入总用地面积" />
+              <Input placeholder="请输入地上建筑面积" />
             )}
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="总建筑面积(km²)">
-            {getFieldDecorator('total_build_area', {
+          <Form.Item {...formItemLayout} label="地下建筑面积(km²)">
+            {getFieldDecorator('underground_floor_area', {
              // initialValue: formData.asset_type,
               rules: [
                 {
                   required: true,
-                  message: '请输入总建筑面积',
+                  message: '请输入地下建筑面积',
                 },
               ],
             })(
-              <Input placeholder="请输入总建筑面积" />
+              <Input placeholder="请输入地下建筑面积" />
             )}
           </Form.Item>
         </Col>
@@ -292,7 +349,7 @@ export default class Step1 extends PureComponent {
       <Row>
       <Col span={12}>
           <Form.Item {...formItemLayout} label="地上容积率">
-            {getFieldDecorator('up_plot_ratio', {
+            {getFieldDecorator('ground_volume_rate', {
              // initialValue: formData.asset_type,
               rules: [
                 {
@@ -307,7 +364,7 @@ export default class Step1 extends PureComponent {
         </Col> 
         <Col span={12}>
           <Form.Item {...formItemLayout} label="地下容积率">
-            {getFieldDecorator('down_plot_ratio', {
+            {getFieldDecorator('underground_volume_rate', {
              // initialValue: formData.asset_type,
               rules: [
                 {
@@ -324,32 +381,32 @@ export default class Step1 extends PureComponent {
 
       <Row>
       <Col span={12}>
-          <Form.Item {...formItemLayout} label="地上可确权面积(km²)">
-            {getFieldDecorator('up_identifiable_area', {
+          <Form.Item {...formItemLayout} label="可确权面积(km²)">
+            {getFieldDecorator('identi_area', {
              // initialValue: formData.asset_type,
               rules: [
                 {
                   required: true,
-                  message: '请输入地上可确权面积',
+                  message: '请输入可确权面积',
                 },
               ],
             })(
-              <Input placeholder="请输入地上可确权面积" />
+              <Input placeholder="请输入可确权面积" />
             )}
           </Form.Item>
         </Col> 
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="地下可确权面积(km²)">
-            {getFieldDecorator('down_identifiable_area', {
+          <Form.Item {...formItemLayout} label="可售面积(km²)">
+            {getFieldDecorator('sale_area', {
              // initialValue: formData.asset_type,
               rules: [
                 {
                   required: true,
-                  message: '请输入地下可确权面积',
+                  message: '请输入可售面积',
                 },
               ],
             })(
-              <Input placeholder="请输入地下可确权面积" />
+              <Input placeholder="请输入可售面积" />
             )}
           </Form.Item>
         </Col> 
@@ -360,7 +417,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
           <Form.Item {...formItemLayout} label="项目相关证书">
           <span style={{ color: 'red' }}>（图片上传格式jpg,jpeg,png）</span>
-            {getFieldDecorator('photo', {
+            {getFieldDecorator('files', {
              // initialValue: formData.photo ? [formData.photo] : '',
               rules: [
                 {

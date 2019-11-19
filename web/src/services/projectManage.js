@@ -4,6 +4,17 @@ import request from '../utils/request';
 const router = 'projects';
 const proRouter = 'statistics/project/name';
 
+const pro_router = 'pc-projects';
+// 成本核算的接口
+export async function createPro(params) {
+  // /api/v1/
+  return request(`/api/v1/${pro_router}`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
+
 export async function query(params) {
   return request(`/v1/${router}?${stringify(params)}`);
 }

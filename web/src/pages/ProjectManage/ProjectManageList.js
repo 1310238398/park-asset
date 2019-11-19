@@ -21,6 +21,7 @@ class ProjectManageList extends PureComponent {
   };
 
   componentDidMount() {
+    // 查询列表
     this.dispatch({
       type: 'projectManage/fetch',
       search: {},

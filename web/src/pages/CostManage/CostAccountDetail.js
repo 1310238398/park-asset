@@ -11,6 +11,7 @@ import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 @connect(state => ({
   //projectManage: state.projectManage,
+  salesPlan: state.salesPlan,
 }))
 export default class CostAccountDetail extends PureComponent {
   constructor(props) {
@@ -51,7 +52,7 @@ export default class CostAccountDetail extends PureComponent {
 
   handleDataFormCancel = () => {
     this.dispatch({
-      type: 'costAccount/changeSalesPlanFormVisible',
+      type: 'salesPlan/changeSalesPlanFormVisible',
       payload: false,
     });
 

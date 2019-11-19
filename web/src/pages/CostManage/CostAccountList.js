@@ -6,7 +6,7 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import AddNewSalesPlan from './AddNewSalesPlan';
+
 
 import styles from './CostAccount.less';
 //import { catchClause } from '@babel/types';
@@ -52,7 +52,7 @@ for (let i = 0; i < 3; i++) {
   });
 }
 @connect(state => ({
-  projectManage: state.projectManage,
+ // projectManage: state.projectManage,
   costAccount: state.costAccount,
   loading: state.loading.models.costAccount,  //加载中效果
 }))
@@ -77,49 +77,21 @@ class CostAccountList extends PureComponent {
     //   search: {},
     //   pagination: {},
     // });
-    // this.dispatch({
-    //   type: 'projectManage/queryCompany',
-    // });
-    // this.dispatch({
-    //   type: 'projectManage/queryPlotList',
-    // });
+    this.dispatch({
+      type: 'costAccount/queryCompany',
+    });
+    this.dispatch({
+      type: 'costAccount/queryPlotList',
+    });
 
    
   }
 
 
-  // clearSelectRows = () => {
-  //   const { selectedRowKeys } = this.state;
-  //   if (selectedRowKeys.length === 0) {
-  //     return;
-  //   }
-  //   this.setState({ selectedRowKeys: [], selectedRows: [] });
-  // };
-
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
   };
-
-
-  // handleTableSelectRow = (keys, rows) => {
-  //   this.setState({
-  //     selectedRowKeys: keys,
-  //     selectedRows: rows,
-  //   });      
-  // };
-
-  // handleTableChange = pagination => {
-  //   console.log("handleTableChange");
-  //   this.dispatch({
-  //     type: 'projectManage/fetch',
-  //     pagination: {
-  //       current: pagination.current,
-  //       pageSize: pagination.pageSize,
-  //     },
-  //   });
-  //   this.clearSelectRows();
-  // };
 
   handleResetFormClick = () => {
     const { form } = this.props;
@@ -165,7 +137,7 @@ class CostAccountList extends PureComponent {
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
-      projectManage: { companyList, poltList },
+      costAccount: { companyList, poltList },
     } = this.props;
 
     return (
@@ -292,20 +264,7 @@ class CostAccountList extends PureComponent {
     });
 
   }
-  handleDataFormCancel = () => {
-    this.dispatch({
-      type: 'costAccount/changeFormVisible',
-      payload: false,
-    });
-  };
-  handleDataFormSubmit = data => {
-    console.log("哈哈哈2");
-    this.dispatch({
-      type: 'costAccount/submit',
-      payload: data,
-    });
-    this.clearSelectRows();
-  };
+ 
 
   
 

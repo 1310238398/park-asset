@@ -1,9 +1,10 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import * as projectManageService from '@/services/projectManage';
-
+import * as costAccountService from '@/services/costAccount';
+import * as projectManageService from '@/services/projectManage'
+// 成本核算
 export default {
-  namespace: 'projectManage',
+  namespace: 'costAccount',
   state: {
     search: {},
     pagination: {},
@@ -14,13 +15,14 @@ export default {
     submitting: false,
     formTitle: '',
     formID: '',
-    formVisible: false,
-    newFormVisible: false,
+    formVisible:false,
+    addSalesPlanVisible: false,
     formData: {},
     companyList: [],
     poltList: [],
+  
   },
-  // 调service  call 调service函数 put 调reducer函数 select 
+  // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
@@ -60,56 +62,62 @@ export default {
       });
     },
     *loadForm({ payload }, { put }) {
-      if (payload.type === 'E') {
- yield put({
-        type: 'changeFormVisible',
-        payload: true,
-      });
-      }
-      else if (payload.type === 'A') {
+      if (payload.type === 'addSalesPlan') {
 
+        console.log("新增销售计划页面");
         yield put({
-          type: 'changeNewFormVisible',
+          type: 'changeSalesPlanFormVisible',
           payload: true,
         });
-      }
-     
 
-      yield [
-        put({
-          type: 'saveFormType',
-          payload: payload.type,
-        }),
-        put({
-          type: 'saveFormTitle',
-          payload: '新建项目',
-        }),
-        put({
-          type: 'saveFormID',
-          payload: '',
-        }),
-        put({
-          type: 'saveFormData',
-          payload: {},
-        }),
-      ];
-
-      if (payload.type === 'E') {
         yield [
           put({
+            type: 'saveFormType',
+            payload: payload.type,
+          }),
+          put({
             type: 'saveFormTitle',
-            payload: '编辑项目',
+            payload: '新增销售计划',
           }),
           put({
             type: 'saveFormID',
-            payload: payload.id,
+            payload: '',
           }),
           put({
-            type: 'fetchForm',
-            payload: { record_id: payload.id },
+            type: 'saveFormData',
+            payload: {},
           }),
         ];
-      }
+       
+
+
+      } 
+      // else if (payload.type === 'A') {
+      //   yield put({
+      //     type: 'changeNewFormVisible',
+      //     payload: true,
+      //   });
+      // }
+
+    
+
+      // if (payload.type === 'E') {
+      //   yield [
+      //     put({
+      //       type: 'saveFormTitle',
+      //       payload: '编辑项目',
+      //     }),
+      //     put({
+      //       type: 'saveFormID',
+      //       payload: payload.id,
+      //     }),
+      //     // 请求数据
+      //     put({
+      //       type: 'fetchForm',
+      //       payload: { record_id: payload.id },
+      //     }),
+      //   ];
+      // }
     },
     *fetchForm({ payload }, { call, put }) {
       const response = yield call(projectManageService.get, payload);
@@ -190,12 +198,30 @@ export default {
         routerRedux.push({
           pathname: '/assetdatamaint/assetdatamaintlist',
           query: {
-          recordID: payload.record_id,
+            recordID: payload.record_id,
             type: payload.asset_type,
-          },  
+          },
         })
       );
     },
+
+
+
+    // 成本核算的接口
+    // 查看详情
+    *redirectDetail({ payload }, { put }) {
+     
+      yield put(
+        routerRedux.push({
+          pathname: '/cost/detail',
+          query: {
+            key: payload.key,
+           
+          },
+        })
+      );
+    },
+    
   },
   reducers: {
     saveData(state, { payload }) {
@@ -209,6 +235,10 @@ export default {
     },
     changeFormVisible(state, { payload }) {
       return { ...state, formVisible: payload };
+    },
+    changeSalesPlanFormVisible(state, { payload }) {
+      console.log("修改新增计划的状态");
+      return { ...state, addSalesPlanVisible: payload};
     },
     changeNewFormVisible(state, { payload }) {
       return { ...state, newFormVisible: payload };
