@@ -1,0 +1,53 @@
+{
+    "struct_name": "ProjExpenditureTime",
+    "comment": "项目支出节点时间表",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Year",
+            "comment": "年度",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+
+        },
+        {
+            "struct_field_name": "Quarter",
+            "comment": "季度",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+
+        },
+        {
+            "struct_field_name": "Month",
+            "comment": "月份",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "Day",
+            "comment": "天",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "ExpenditureRate",
+            "comment": "支出比例",
+            "struct_field_type": "int",
+            "gorm_options": ""
+   
+        },
+        {
+            "struct_field_name": "ProjExpenditureID",
+            "comment": "项目支出节点ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+
+        }
+
+    ]
+}

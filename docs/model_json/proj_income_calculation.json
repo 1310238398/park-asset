@@ -1,0 +1,173 @@
+{
+    "struct_name": "ProjIncomeCalculation",
+    "comment": "项目收益测算",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "VersionName",
+            "comment": "版本名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        },
+        {
+            "struct_field_name": "Sequence",
+            "comment": "排序值",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "TotalSale",
+            "comment": "总销售收入",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+        },
+        {
+            "struct_field_name": "SaledTax",
+            "comment": "销售税税额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "TotalCost",
+            "comment": "开发总成本",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "LandTransferFee",
+            "comment": "土地出让金",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "NetProfit",
+            "comment": "项目净利润",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "PaybackRate",
+            "comment": "投资回报率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+        },
+        {
+            "struct_field_name": "Principal",
+            "comment": "负责人",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"  
+
+        },
+        {
+            "struct_field_name": "DoneTime",
+            "comment": "生成时间",
+            "struct_field_type": "",
+            "gorm_options": "size:200;index;"  
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"   
+
+        },
+        {
+            "struct_field_name": "DeedTax",
+            "comment": "契税",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+
+        },
+        {
+            "struct_field_name": "LandUseTax",
+            "comment": "土地使用税",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+        },
+        {
+            "struct_field_name": "CapitalizedInterest",
+            "comment": "资本化利息",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "Flag",
+            "comment": "标记(1:当前版本 2:历史版本 3:最终版本 4:目标成本 领导审核后 不得轻易修改)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"  
+
+        },
+        {
+            "struct_field_name": "InputTax",
+            "comment": "进项税税额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "ValueAddTax",
+            "comment": "增值税额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+   
+        },
+        {
+            "struct_field_name": "ValueAddTaxSurcharge",
+            "comment": "增值税附加",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "LandValueAddedTax",
+            "comment": "土地增值税",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "CorporateIncomeTax",
+            "comment": "企业所得税",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "ProfitBeforeTax",
+            "comment": "税前利润",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "ProfitBeforeTaxRate",
+            "comment": "税前利润率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        },
+        {
+            "struct_field_name": "NetProfitRate",
+            "comment": "净利润率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+
+        }
+    ]
+}

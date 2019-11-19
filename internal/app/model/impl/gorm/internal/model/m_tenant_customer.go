@@ -35,7 +35,7 @@ func (a *TenantCustomer) Query(ctx context.Context, params schema.TenantCustomer
 
 	opt := a.getQueryOption(opts...)
 	var list entity.TenantCustomers
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

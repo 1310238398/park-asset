@@ -8,7 +8,7 @@ import (
 
 // GetPlotDB 地块管理
 func GetPlotDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Plot{})
+	return getDBWithModelPlus(ctx, defDB, Plot{})
 }
 
 // SchemaPlot 地块管理

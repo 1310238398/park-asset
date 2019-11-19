@@ -56,7 +56,7 @@ func (a *User) Query(ctx context.Context, params schema.UserQueryParam, opts ...
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Users
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

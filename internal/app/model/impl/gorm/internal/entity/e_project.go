@@ -9,7 +9,7 @@ import (
 
 // GetProjectDB 项目管理
 func GetProjectDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Project{})
+	return getDBWithModelPlus(ctx, defDB, Project{})
 }
 
 // SchemaProject 项目管理

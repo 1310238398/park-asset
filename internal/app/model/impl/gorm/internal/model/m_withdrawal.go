@@ -35,7 +35,7 @@ func (a *Withdrawal) Query(ctx context.Context, params schema.WithdrawalQueryPar
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Withdrawals
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

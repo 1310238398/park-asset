@@ -45,7 +45,7 @@ func (a *AgriculturalMarket) Query(ctx context.Context, params schema.Agricultur
 	db = db.Order("name, id DESC")
 	opt := a.getQueryOption(opts...)
 	var list entity.AgriculturalMarkets
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

@@ -47,6 +47,27 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.AssetGroup),
 		new(entity.AssetGroupDetail),
 		new(entity.TAssetData),
+		new(entity.BusinessFormat),
+		new(entity.CostBusiness),
+		new(entity.CostItem),
+		new(entity.Expenditure),
+		new(entity.LandAppreciationTax),
+		new(entity.PcProject),
+		new(entity.ProjBusinessFormat),
+		new(entity.ProjCapitalizedHis),
+		new(entity.ProjCapitalizedInterest),
+		new(entity.ProjCostBusiness),
+		new(entity.ProjCostHis),
+		new(entity.ProjCostItem),
+		new(entity.ProjDeliveryStandard),
+		new(entity.ProjExpendCost),
+		new(entity.ProjExpenditureTime),
+		new(entity.ProjExpenditure),
+		new(entity.ProjFile),
+		new(entity.ProjIncomeCalculation),
+		new(entity.ProjSalesHis),
+		new(entity.ProjSalesPlan),
+		new(entity.TaxCalculation),
 	).Error
 }
 
@@ -85,5 +106,26 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewAssetGroup, dig.As(new(model.IAssetGroup)))
 	container.Provide(imodel.NewAssetGroupDetail, dig.As(new(model.IAssetGroupDetail)))
 	container.Provide(imodel.NewTAssetData, dig.As(new(model.ITAssetData)))
+	container.Provide(imodel.NewBusinessFormat, dig.As(new(model.IBusinessFormat)))
+	container.Provide(imodel.NewCostBusiness, dig.As(new(model.ICostBusiness)))
+	container.Provide(imodel.NewCostItem, dig.As(new(model.ICostItem)))
+	container.Provide(imodel.NewExpenditure, dig.As(new(model.IExpenditure)))
+	container.Provide(imodel.NewLandAppreciationTax, dig.As(new(model.ILandAppreciationTax)))
+	container.Provide(imodel.NewPcProject, dig.As(new(model.IPcProject)))
+	container.Provide(imodel.NewProjBusinessFormat, dig.As(new(model.IProjBusinessFormat)))
+	container.Provide(imodel.NewProjCapitalizedHis, dig.As(new(model.IProjCapitalizedHis)))
+	container.Provide(imodel.NewProjCapitalizedInterest, dig.As(new(model.IProjCapitalizedInterest)))
+	container.Provide(imodel.NewProjCostBusiness, dig.As(new(model.IProjCostBusiness)))
+	container.Provide(imodel.NewProjCostHis, dig.As(new(model.IProjCostHis)))
+	container.Provide(imodel.NewProjCostItem, dig.As(new(model.IProjCostItem)))
+	container.Provide(imodel.NewProjDeliveryStandard, dig.As(new(model.IProjDeliveryStandard)))
+	container.Provide(imodel.NewProjExpendCost, dig.As(new(model.IProjExpendCost)))
+	container.Provide(imodel.NewProjExpenditureTime, dig.As(new(model.IProjExpenditureTime)))
+	container.Provide(imodel.NewProjExpenditure, dig.As(new(model.IProjExpenditure)))
+	container.Provide(imodel.NewProjFile, dig.As(new(model.IProjFile)))
+	container.Provide(imodel.NewProjIncomeCalculation, dig.As(new(model.IProjIncomeCalculation)))
+	container.Provide(imodel.NewProjSalesHis, dig.As(new(model.IProjSalesHis)))
+	container.Provide(imodel.NewProjSalesPlan, dig.As(new(model.IProjSalesPlan)))
+	container.Provide(imodel.NewTaxCalculation, dig.As(new(model.ITaxCalculation)))
 	return nil
 }

@@ -91,7 +91,7 @@ func (a *Statistic) QueryProject(ctx context.Context, params schema.ProjectStati
 	}
 
 	var list entity.ProjectStatistics
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -125,7 +125,7 @@ func (a *Statistic) QueryIncomeClassification(ctx context.Context, params schema
 	db = db.Group("asset_type")
 
 	var list entity.IncomeClassificationStatistics
-	_, err := WrapPageQuery(db, nil, &list)
+	_, err := WrapPageQueryNC(db, nil, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

@@ -1,0 +1,86 @@
+{
+    "struct_name": "ProjSalesPlan",
+    "comment": "项目销售计划",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"   
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        },
+        {
+            "struct_field_name": "Year",
+            "comment": "年度",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "Quarter",
+            "comment": "季度",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "SaleArea",
+            "comment": "销售面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+        },
+        {
+            "struct_field_name": "ContractAmount",
+            "comment": "合同额度",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+        },
+        {
+            "struct_field_name": "Payback",
+            "comment": "销售回款",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+        },
+        {
+            "struct_field_name": "TaxPrise",
+            "comment": "销售税额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+        },
+        {
+            "struct_field_name": "AveragePrise",
+            "comment": "均价",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"  
+            
+        },
+        {   
+            "struct_field_name": "Principal",
+            "comment": "负责人",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"  
+        },
+        {
+            "struct_field_name": "ProjIncomeID",
+            "comment": "项目收益测算ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;" 
+            
+        },
+        {
+            "struct_field_name": "ProjBusinessID",
+            "comment": "项目业态ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"    
+        }
+    ]
+}

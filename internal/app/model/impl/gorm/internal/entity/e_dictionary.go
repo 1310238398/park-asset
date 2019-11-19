@@ -8,7 +8,7 @@ import (
 
 // GetDictionaryDB 字典管理
 func GetDictionaryDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Dictionary{})
+	return getDBWithModelPlus(ctx, defDB, Dictionary{})
 }
 
 // SchemaDictionary 字典管理

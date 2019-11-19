@@ -1,0 +1,164 @@
+{
+    "struct_name": "PcProject",
+    "comment": "成本项目管理",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "项目名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+        },
+        {
+            "struct_field_name": "Creator",
+            "comment": "创建人",
+            "struct_field_type": "string",
+            "gorm_options": "size:100;index;"
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        },
+        {
+            "struct_field_name": "ParentID",
+            "comment": "父级ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ParentPath",
+            "comment": "父级路经",
+            "struct_field_type": "string",
+            "gorm_options": "size:518;index;"
+        },
+        {
+            "struct_field_name": "BuildingCoverage",
+            "comment": "建筑密度",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "SlagVolume",
+            "comment": "渣土工程量",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "FloorArea",
+            "comment": "建筑面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "CivilAirDefenseArea",
+            "comment": "人防面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },        {
+            "struct_field_name": "Type",
+            "comment": "项目类型(1:住宅 2:写字楼)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },        {
+            "struct_field_name": "CoverArea",
+            "comment": "占地面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "Address",
+            "comment": "项目地址",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;"
+        },
+        {
+            "struct_field_name": "UndergroundFloorArea",
+            "comment": "地下建筑面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "GroundFloorArea",
+            "comment": "地上建筑面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+        },
+        {
+            "struct_field_name": "UndergroundVolumeRate",
+            "comment": "地下容积率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+
+        },
+        {
+            "struct_field_name": "GroundVolumeRate",
+            "comment": "地上容积率",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+
+        },
+        {
+            "struct_field_name": "SaleArea",
+            "comment": "可售面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+
+        },
+        {
+            "struct_field_name": "StartTime",
+            "comment": "项目开始时间",
+            "struct_field_type": "time.Time",
+            "gorm_options": "type:date;"
+      
+        },
+        {
+            "struct_field_name": "EndTime",
+            "comment": "项目结束时间",
+            "struct_field_type": "time.Time",
+            "gorm_options": "type:date;"      
+
+        },
+        {
+            "struct_field_name": "TotalUsingArea",
+            "comment": "总用地面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+
+        },
+        {
+            "struct_field_name": "ConstructionArea",
+            "comment": "建设用地面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"
+
+        },
+        {
+            "struct_field_name": "OrgID",
+            "comment": "项目所属子公司",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+
+        },
+        {
+            "struct_field_name": "PlotID",
+            "comment": "所属地块",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+ 
+        },
+        {
+            "struct_field_name": "Location",
+            "comment": "项目地址(经纬度)",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;"
+        }
+
+    ]
+}

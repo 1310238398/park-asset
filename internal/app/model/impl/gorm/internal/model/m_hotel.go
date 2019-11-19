@@ -56,7 +56,7 @@ func (a *Hotel) Query(ctx context.Context, params schema.HotelQueryParam, opts .
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Hotels
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

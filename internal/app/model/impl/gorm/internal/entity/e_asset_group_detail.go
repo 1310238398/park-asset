@@ -8,7 +8,7 @@ import (
 
 // GetAssetGroupDetailDB 资产组明细管理
 func GetAssetGroupDetailDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, AssetGroupDetail{})
+	return getDBWithModelPlus(ctx, defDB, AssetGroupDetail{})
 }
 
 // SchemaAssetGroupDetail 资产组明细管理

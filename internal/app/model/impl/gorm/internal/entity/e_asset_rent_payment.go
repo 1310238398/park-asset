@@ -8,7 +8,7 @@ import (
 
 // GetAssetRentPaymentDB 资产租金缴费明细
 func GetAssetRentPaymentDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, AssetRentPayment{})
+	return getDBWithModelPlus(ctx, defDB, AssetRentPayment{})
 }
 
 // SchemaAssetRentPayment 资产租金缴费明细
