@@ -196,6 +196,38 @@ export default {
         })
       );
     },
+    *createPro({ payload }, { call, put }) {
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+
+      const params = { ...payload };
+      
+
+      let response;
+     
+        response = yield call(projectManageService.createPro, params);
+      
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.record_id && response.record_id !== '') {
+        message.success('保存成功');
+        yield put({
+          type: 'changeFormVisible',
+          payload: false,
+        });
+        yield put({
+          type: 'fetch',
+        });
+      }
+    }
+    
   },
   reducers: {
     saveData(state, { payload }) {

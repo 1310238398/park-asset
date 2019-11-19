@@ -204,9 +204,6 @@ export default {
         })
       );
     },
-
-
-
     // 成本核算的接口
     // 查看详情
     *redirectDetail({ payload }, { put }) {
@@ -221,6 +218,8 @@ export default {
         })
       );
     },
+    
+    
     
   },
   reducers: {

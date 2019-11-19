@@ -45,19 +45,21 @@ export default class Step1 extends PureComponent {
           return;
         }
         const formData = { ...values };
-        if (formData.photo && formData.photo.length > 0) {
-          formData.photo = formData.photo.join('');
+        if (formData.file && formData.file.length > 0) {
+          formData.file = formData.file.join('');
         } else {
-          formData.photo = '';
+          formData.file = '';
         }
   
-        if (formData.asset_type && formData.asset_type.length > 0) {
-          formData.asset_type = formData.asset_type.join(',');
-        } else {
-          formData.asset_type = '';
-        }
 
+        // 这块怎么知道执行成功好进行跳转切换
+        this.dispatch({
+          type: 'projectManage/createPro',
+          payload: formData,
+        });
         console.log("formData "+ JSON.stringify(formData));
+
+
       //  onSubmit(formData);
 
            // 新增  这块不明白
@@ -68,7 +70,7 @@ export default class Step1 extends PureComponent {
           //    if (nextHandler) nextHandler();
           //  }
 
-          message.success('保存成功');
+         // message.success('保存成功');
           if (nextHandler) nextHandler();
       });
    
@@ -91,66 +93,6 @@ export default class Step1 extends PureComponent {
       },
     };
     return (
-
-
-// building_coverage	number($double)
-// 建筑密度
-
-// civil_air_defense_area	number($double)
-// 人防面积
-
-// construction_area	number($double)
-// 建设用地面积
-
-// cover_area	number($double)
-// 占地面积
-
-// creator	string
-// 创建人
-
-
-
-// floor_area	number($double)
-// 建筑面积
-
-// ground_floor_area	number($double)
-// 地上建筑面积
-
-// ground_volume_rate	number($double)
-// 地上容积率
-
-// location	string
-// 项目地址(经纬度)
-
-// memo	string
-// 备注
-
-
-
-
-
-// parent_id	string
-// 父级ID
-
-// parent_path	string
-// 父级路经
-
-
-// record_id	string
-// 记录ID
-
-// sale_area	number($double)
-// 可售面积
-
-// slag_volume	number($double)
-// 渣土工程量
-
-
-// underground_floor_area	number($double)
-// 地下建筑面积
-
-// underground_volume_rate	number($double)
-// 地下容积率
       <Form>
       <Row>
         <Col span={12}>
