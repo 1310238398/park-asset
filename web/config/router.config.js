@@ -194,7 +194,21 @@ export default [
               component: './AssetTypeData/AssetHotelData/AssetNumPlate/AssetSubDoor',
             },
         ],
-      }
+      },
+      //基础设定-系统设定
+      {
+        path : 'systemset',
+        routes: [  
+          {//业态管理
+            path : '/systemset/formatManage',
+            component : './SystemSetting/FormatParameter/FormatManage',
+          },
+          {
+            path : "/systemset/taxManage",
+            component : './SystemSetting/TaxParameter/TaxManage',
+          }
+        ]
+      },
     ],
   },
   {
