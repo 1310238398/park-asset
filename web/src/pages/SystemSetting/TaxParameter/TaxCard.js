@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Modal, Form, Row, Col, Input, InputNumber } from 'antd';
+import { Modal, Form, Row, Col, Input, InputNumber, Radio } from 'antd';
 
+import { create } from '@/services/taxManage';
 
 @Form.create()
 class TaxCard extends PureComponent {
@@ -9,6 +10,9 @@ class TaxCard extends PureComponent {
     componentWillMount() {
 
         const { info } = this.props;
+        if(info){
+            console.log("请求接口");
+        }
         // TODO 重新请求数据
         this.setState({ info: info });
 
@@ -17,11 +21,23 @@ class TaxCard extends PureComponent {
     onOKClick = () => {
         // TODO 调取Service
         // 关闭弹窗
-        const { onSave, form } = this.props;
+        const { onSave, form, info } = this.props;
         form.validateFields((err, values) => {
-            if(!err) {
-                console.log(values);
+            if(err){
+                return;
             }
+
+            const submitInfo = { ...values };
+            submitInfo.type = parseInt(submitInfo.type,10);
+
+            console.log(submitInfo);
+
+            if(info){
+                console.log("编辑");
+            }else{
+                console.log("添加");
+            }
+            
         })
         onSave(true);
     }
@@ -77,6 +93,25 @@ class TaxCard extends PureComponent {
                                     initialValue: info ?  info.tax_rate : 0,
                                     rules: [{ required: true, message: '请输入税目税率' }],
                                 })(<InputNumber placeholder="请输入税目税率" />)}
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Form.Item {...formItemLayout} label="含税计算">
+                                {getFieldDecorator('type', {
+                                    initialValue: info ? info.type.toString() : '1',
+                                    rules: [
+                                        {
+                                            required: true,
+                                        },
+                                    ],
+                                })(
+                                    <Radio.Group>
+                                        <Radio value="1">是</Radio>
+                                        <Radio value="2">否</Radio>
+                                    </Radio.Group>
+                                )}
                             </Form.Item>
                         </Col>
                     </Row>

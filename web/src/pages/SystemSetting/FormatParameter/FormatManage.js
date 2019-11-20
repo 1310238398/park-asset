@@ -6,6 +6,8 @@ import FormatCard from './FormatCard';
 
 import styles from './FormatManage.less';
 
+import { queryList, del } from '@/services/formatManage';
+
 @Form.create()
 class FormatManage extends PureComponent {
     state = {
@@ -15,50 +17,33 @@ class FormatManage extends PureComponent {
         editInfo : null,
         data: {
             list: [
-                {
-                    record_id: "1",
-                    name: "住宅地上（10层）",
-                    desc: "描述1",
-                    loaction: "1",
-                    is_belong: "2"
-                },
-                {
-                    record_id: "2",
-                    name: "住宅地上（10层）",
-                    desc: "描述2",
-                    loaction: "1",
-                    is_belong: "2"
-                },
-                {
-                    record_id: "3",
-                    name: "住宅地上（10层）",
-                    desc: "描述3",
-                    loaction: "1",
-                    is_belong: "2"
-                },
-                {
-                    record_id: "4",
-                    name: "住宅地上（10层）",
-                    desc: "描述4",
-                    loaction: "1",
-                    is_belong: "2"
-                },
-                {
-                    record_id: "5",
-                    name: "住宅地上（10层）",
-                    desc: "描述5",
-                    loaction: "1",
-                    is_belong: "2"
-                },
-
             ],
             pagination: {
-                total: 5,
-                current: 1,
-                // pageSize: 10
             }
         }
     };
+
+    componentWillMount(){
+        //请求接口
+        queryList().then(res=>{
+            if(res && res.error){
+                console.log(res.error.message);
+                return;
+            }else{
+                this.setState( { data : res } );
+            }
+        });
+    }
+
+    getList = () => {
+        queryList().then(res=>{
+            if(res && res.error){
+                console.log(res.error.message);
+            }else{
+                this.setState( { data : res } );
+            }
+        });
+    }
 
     clearSelectRows = () => {
         const { selectedRowKeys } = this.state;
@@ -80,65 +65,68 @@ class FormatManage extends PureComponent {
         }
     };
 
-    //搜索
-    handleSearchFormSubmit = e => {
-        if (e) {
-            e.preventDefault();
-        }
-        const { form } = this.props;
+    // //搜索
+    // handleSearchFormSubmit = e => {
+    //     if (e) {
+    //         e.preventDefault();
+    //     }
+    //     const { form } = this.props;
 
-        form.validateFields((err,values) => {
-            if(!err) {
-                console.log(values)
-            }
-        })
-    }
+    //     form.validateFields((err,values) => {
+    //         if(!err) {
+    //             console.log(values)
+    //         }
+    //     })
+    // }
 
-    //重置搜索内容
-    handleResetFormClick = () => {
-        const { form } = this.props;
-        form.resetFields();
-    };
+    // //重置搜索内容
+    // handleResetFormClick = () => {
+    //     const { form } = this.props;
+    //     form.resetFields();
+    // };
 
-    //搜索render
-    renderSearchForm() {
-        const {
-            form: { getFieldDecorator },
-        } = this.props;
-        return (
-            <Form layout="inline" onSubmit={this.handleSearchFormSubmit}>
-                <Row gutter={16}>
-                    <Col md={6} sm={24}>
-                        <Form.Item label="业态名称">
-                            {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-                        </Form.Item>
-                    </Col>
-                    <Col md={6} sm={24}>
-                        <div style={{ overflow: 'hidden' }}>
-                            <span style={{ marginBottom: 24 }}>
-                                <Button type="primary" htmlType="submit">
-                                    查询
-                                </Button>
-                                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
-                                    重置
-                                </Button>
-                            </span>
-                        </div>
-                    </Col>
-                </Row>
-            </Form>
-        );
-    }
+    // //搜索render
+    // renderSearchForm() {
+    //     const {
+    //         form: { getFieldDecorator },
+    //     } = this.props;
+    //     return (
+    //         <Form layout="inline" onSubmit={this.handleSearchFormSubmit}>
+    //             <Row gutter={16}>
+    //                 <Col md={6} sm={24}>
+    //                     <Form.Item label="业态名称">
+    //                         {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+    //                     </Form.Item>
+    //                 </Col>
+    //                 <Col md={6} sm={24}>
+    //                     <div style={{ overflow: 'hidden' }}>
+    //                         <span style={{ marginBottom: 24 }}>
+    //                             <Button type="primary" htmlType="submit">
+    //                                 查询
+    //                             </Button>
+    //                             <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
+    //                                 重置
+    //                             </Button>
+    //                         </span>
+    //                     </div>
+    //                 </Col>
+    //             </Row>
+    //         </Form>
+    //     );
+    // }
 
     handleAddClick = () => {  //新建操作
+        this.clearSelectRows();
         this.setState({ formVisible : true });
     };
 
     onSave = (saved = false) => {
         if(saved){
             //为true，进行保存了，重新拉取列表，进行数据的更新
+            this.getList();
         }
-        this.setState({ formVisible : false,editInfo : null})
+        this.setState({ formVisible : false,editInfo : null});
+        this.clearSelectRows();
     }
 
     //编辑按钮
@@ -150,15 +138,23 @@ class FormatManage extends PureComponent {
     handleDelClick = () => {
         const { selectedRows } = this.state;
         Modal.confirm({
-            title: `确定删除【项目数据：${selectedRows[0].name}】？`,
+            title: `确定删除该业态？`,
             okText: '确认',
             okType: 'danger',
             cancelText: '取消',
-            onOk: this.handleDelOKClick.bind(this, selectedRows[0].record_id),
+            onOk: this.handleDelOKClick.bind(this, selectedRows[0]),
         });
     };
-    handleDelOKClick(id) {
-        console.log("删除", id);
+    handleDelOKClick(params) {
+        del(params).then( res => {
+            if( res && res.status == "OK" ){
+                this.getList();
+            }else{
+                if(res && res.error){
+                    console.log(res.error.message);
+                }
+            }
+        });
         this.clearSelectRows();
     }
 
@@ -173,19 +169,25 @@ class FormatManage extends PureComponent {
                 width: 100,
             },
             {
-                title: '描述',
-                dataIndex: 'desc',
-                width: 200,
-            },
-            {
                 title: '所在区域',
-                dataIndex: 'loaction',
+                dataIndex: 'is_underground',
                 width: 150,
+                render : data =>{
+                    return data == 1 ? "地下" : ( data == 2 ? "地上" : "错误数据");
+                }
             },
             {
                 title: '属于人防',
-                dataIndex: 'is_belong',
+                dataIndex: 'is_civil_defense',
                 width: 150,
+                render: data =>{
+                    return data == 1 ? "是" : ( data == 2 ? "否" : "错误数据");
+                }
+            },
+            {
+                title: '描述',
+                dataIndex: 'memo',
+                width: 200,
             },
         ];
 
@@ -196,19 +198,21 @@ class FormatManage extends PureComponent {
             ...pagination
         };
         const breadcrumbList = [
-            { title: '业态管理' },
-            { title: '业态管理管理', href: '/systemset/systemset' },
+            { title : "基础设定"},
+            { title: '系统设定' },
+            // { title: '业态管理', href: '/systemset/systemset' },
+            { title: '业态管理' }
         ];
 
         return (
-            <PageHeaderLayout title="地块管理" breadcrumbList={breadcrumbList}>
+            <PageHeaderLayout title="业态管理" breadcrumbList={breadcrumbList}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
-                        <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
+                        {/* <div className={styles.tableListForm}>{this.renderSearchForm()}</div> */}
                         <div className={styles.tableListOperator}>
                             <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
                                 新建
-                        </PButton>
+                            </PButton>
                             {
                                 selectedRows.length === 1 && [
                                     <PButton
@@ -218,7 +222,7 @@ class FormatManage extends PureComponent {
                                         onClick={() => this.handleEditClick()}
                                     >
                                         编辑
-                                  </PButton>,
+                                    </PButton>,
                                     <PButton
                                         key="del"
                                         code="del"

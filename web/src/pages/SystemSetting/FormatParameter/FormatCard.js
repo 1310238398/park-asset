@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Form, Input, Modal, Row, Col, Radio } from 'antd';
 
+import { create, get, update } from '@/services/formatManage';
+
 @Form.create()
 class FormatCard extends PureComponent {
 
@@ -8,23 +10,47 @@ class FormatCard extends PureComponent {
 
     componentWillMount(){
         const { editInfo } = this.props;
-        //重新请求数据
-
-        this.setState({ info: editInfo });
+        if(editInfo){
+            //重新请求数据
+            get(editInfo).then(res=>{
+                if(res && res.error){
+                    console.log(res.error.message);
+                }else{
+                    this.setState({ info: res });
+                }
+            })
+        }else{
+            this.setState({ info: editInfo });
+        }
     }
 
     onOKClick = () => {
-        const { form, onSave } = this.props;
+        const { form, onSave, editInfo } = this.props;
     
         form.validateFieldsAndScroll((err, values) => {
-          if (!err) {
-            console.log(values);
-          }else{
-              // TODO 调取Service
-              // 如果有问题，提示信息
-          }
+            if (err) {
+                return;
+            }
+            const tempInfo  = { ...values };
+            tempInfo.is_underground = parseInt(tempInfo.is_underground,10);
+            tempInfo.is_civil_defense = parseInt(tempInfo.is_civil_defense,10);
+            if(editInfo){ //  修改
+                tempInfo.record_id = editInfo.record_id;
+                update(tempInfo).then(res=>{
+                    if(res && res.error){
+                        console.log(res.error.message);
+                    }
+                    onSave(true);
+                })
+            }else{  // 添加
+                create(tempInfo).then(res=>{
+                    if(res && res.error){
+                        console.log(res.error.message);
+                    }
+                    onSave(true);
+               });
+            }
         });
-        onSave(true);
     };
     onCancel = () => {
         const { onSave } = this.props;
@@ -66,18 +92,18 @@ class FormatCard extends PureComponent {
                                     rules: [
                                         {
                                             required: true,
-                                            message: '请输入地块名称',
+                                            message: '请输入业态名称',
                                         },
                                     ],
-                                })(<Input placeholder="请输入地块名称" />)}
+                                })(<Input placeholder="请输入业态名称" />)}
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item {...formItemLayout} label="所在区域">
-                                {getFieldDecorator('loaction', {
-                                    initialValue: info ? info.loaction.toString() : '1',
+                                {getFieldDecorator('is_underground', {
+                                    initialValue: info ? info.is_underground.toString() : '1',
                                     rules: [
                                         {
                                             required: true,
@@ -85,8 +111,8 @@ class FormatCard extends PureComponent {
                                     ],
                                 })(
                                     <Radio.Group>
-                                        <Radio value="1">地上</Radio>
-                                        <Radio value="2">地下</Radio>
+                                        <Radio value="1">地下</Radio>
+                                        <Radio value="2">地上</Radio>
                                     </Radio.Group>
                                 )}
                             </Form.Item>
@@ -95,8 +121,8 @@ class FormatCard extends PureComponent {
                     <Row>
                         <Col span={12}>
                             <Form.Item {...formItemLayout} label="属于人防">
-                                {getFieldDecorator('is_belong', {
-                                    initialValue: info ? info.is_belong.toString() : '1',
+                                {getFieldDecorator('is_civil_defense', {
+                                    initialValue: info ? info.is_civil_defense.toString() : '1',
                                     rules: [
                                         {
                                             required: true,
@@ -113,9 +139,9 @@ class FormatCard extends PureComponent {
                     </Row>
                     <Row>
                         <Col span={12}>
-                            <Form.Item {...formItemLayout} label="业态描述">
-                                {getFieldDecorator('desc', {
-                                    initialValue: info ? info.desc : "",
+                            <Form.Item {...formItemLayout} label="备注">
+                                {getFieldDecorator('memo', {
+                                    initialValue: info ? info.memo : "",
                                 })(<Input.TextArea rows={5} placeholder="请输入备注" />)}
                             </Form.Item>
                         </Col>

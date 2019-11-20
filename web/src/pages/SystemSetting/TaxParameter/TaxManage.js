@@ -6,6 +6,8 @@ import TaxCard from './TaxCard';
 
 import styles from './TaxManage.less';
 
+import { query } from '@/services/taxManage';
+
 @Form.create()
 class TaxManage extends PureComponent {
 
@@ -16,51 +18,41 @@ class TaxManage extends PureComponent {
         editInfo: null,
         data: {
             list: [
-                {
-                    record_id: "1",
-                    name: "增值税销项税",
-                    tax_rate: 9,
-                    memo: "备注1"
-                },
-                {
-                    record_id: "2",
-                    name: "增值税进项税-安装",
-                    tax_rate: 9,
-                    memo: ""
-                },
-                {
-                    record_id: "3",
-                    name: "增值税进项税-甲供材料及设备",
-                    tax_rate: 13,
-                    memo: ""
-                },
-                {
-                    record_id: "4",
-                    name: "增值税进项税-开发间接费",
-                    tax_rate: 6,
-                    memo: ""
-                },
-                {
-                    record_id: "5",
-                    name: "增值税进项税-设计、勘察",
-                    tax_rate: 6,
-                    memo: ""
-                }
+                // {
+                //     record_id: "1",
+                //     name: "增值税销项税",
+                //     tax_rate: 9,
+                //     type : 1, 
+                //     memo: "备注1"
+                // },
             ],
             pagination:
             {
-                total: 5,
-                current: 1,
-                pageSize: 10
+
             }
         }
 
     }
 
+    componentWillMount(){
+        this.getList();
+    }
+
+    getList = () => {
+        query().then(res=>{
+            if(res && res.error){
+                console.log(res.error.message);
+            }else{
+                console.log(res);
+                this.setState( { data : res } );
+            }
+        })
+    }
 
     //新建操作，改变form visible 
     handleAddClick = () => {
         this.setState({ formVisible: true });
+        this.clearSelectRows();
     }
 
     onEdit = () => {
@@ -75,84 +67,84 @@ class TaxManage extends PureComponent {
         this.setState({ formVisible: false, editInfo: null });
     }
 
-    //搜索框
-    handleSearchFormSubmit = e => {
-        if (e) {
-            e.preventDefault();
-        }
-        const { form } = this.props;
+    // //搜索框
+    // handleSearchFormSubmit = e => {
+    //     if (e) {
+    //         e.preventDefault();
+    //     }
+    //     const { form } = this.props;
 
-        form.validateFields((err,values) => {
-            if(!err) {
-                console.log(values)
-            }
-        })
-    };
+    //     form.validateFields((err,values) => {
+    //         if(!err) {
+    //             console.log(values)
+    //         }
+    //     })
+    // };
 
-    handleResetFormClick = () => {
-        const { form } = this.props;
+    // handleResetFormClick = () => {
+    //     const { form } = this.props;
 
-        form.resetFields();
-    }
+    //     form.resetFields();
+    // }
 
-    renderSearchForm() {
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 12 },
-                md: { span: 6 },
-                lg: { span: 8 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 12 },
-                md: { span: 6 },
-                lg: { span: 12 },
-            },
-        };
-        const col = {
-            sm: 24,
-            md: 6,
-        };
-        const {
-            form : { getFieldDecorator },
-        } = this.props
-        return (
-            <Form layout="inline" onSubmit={this.handleSearchFormSubmit}>
-                <Row gutter={16}>
-                    <Col {...col}>
-                        <Form.Item {...formItemLayout} label="税目名称">
-                            {
-                                getFieldDecorator("name")(<Input placeholder="请输入"></Input>)
-                            }
-                        </Form.Item>
-                    </Col>
-                    <Col {...col}>
-                        <Form.Item {...formItemLayout} label="税率">
-                            {/* <Input placeholder="请输入"></Input> */}
-                            {
-                                getFieldDecorator("tax_rate")(<Input placeholder="请输入"></Input>)
-                            }
-                        </Form.Item>
-                    </Col>
-                    <Col {...col} offset={1}>
-                        <Form.Item>
-                            <div style={{ overflow: 'hidden' }}>
-                                <span style={{ marginBottom: 24 }}>
-                                    <Button type="primary" htmlType="submit">
-                                        查询
-                                    </Button>
-                                    <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
-                                        重置
-                                    </Button>
-                                </span>
-                            </div>
-                        </Form.Item>
-                    </Col>
-                </Row>
-            </Form>
-        )
-    }
+    // renderSearchForm() {
+    //     const formItemLayout = {
+    //         labelCol: {
+    //             xs: { span: 24 },
+    //             sm: { span: 12 },
+    //             md: { span: 6 },
+    //             lg: { span: 8 },
+    //         },
+    //         wrapperCol: {
+    //             xs: { span: 24 },
+    //             sm: { span: 12 },
+    //             md: { span: 6 },
+    //             lg: { span: 12 },
+    //         },
+    //     };
+    //     const col = {
+    //         sm: 24,
+    //         md: 6,
+    //     };
+    //     const {
+    //         form : { getFieldDecorator },
+    //     } = this.props
+    //     return (
+    //         <Form layout="inline" onSubmit={this.handleSearchFormSubmit}>
+    //             <Row gutter={16}>
+    //                 <Col {...col}>
+    //                     <Form.Item {...formItemLayout} label="税目名称">
+    //                         {
+    //                             getFieldDecorator("name")(<Input placeholder="请输入"></Input>)
+    //                         }
+    //                     </Form.Item>
+    //                 </Col>
+    //                 <Col {...col}>
+    //                     <Form.Item {...formItemLayout} label="税率">
+    //                         {/* <Input placeholder="请输入"></Input> */}
+    //                         {
+    //                             getFieldDecorator("tax_rate")(<Input placeholder="请输入"></Input>)
+    //                         }
+    //                     </Form.Item>
+    //                 </Col>
+    //                 <Col {...col} offset={1}>
+    //                     <Form.Item>
+    //                         <div style={{ overflow: 'hidden' }}>
+    //                             <span style={{ marginBottom: 24 }}>
+    //                                 <Button type="primary" htmlType="submit">
+    //                                     查询
+    //                                 </Button>
+    //                                 <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
+    //                                     重置
+    //                                 </Button>
+    //                             </span>
+    //                         </div>
+    //                     </Form.Item>
+    //                 </Col>
+    //             </Row>
+    //         </Form>
+    //     )
+    // }
 
     clearSelectRows = () => {
         const { selectedRowKeys } = this.state;
@@ -178,8 +170,9 @@ class TaxManage extends PureComponent {
     render() {
 
         const breadcrumbList = [
-            { title: "税目管理" },
-            { title: "税目管理管理" }
+            { title : "基础设定"},
+            { title: "系统设定" },
+            { title: "税目管理" }
         ]
 
         const columns = [
@@ -193,6 +186,14 @@ class TaxManage extends PureComponent {
                 dataIndex: "tax_rate",
                 width: 100,
                 render: data => `${data}%`
+            },
+            {
+                title: "含税计算",
+                dataIndex : "type",
+                width : 80,
+                render : data => {
+                    return data == 1 ? "是" : ( data == 2 ? "否" : "错误数据");
+                }
             },
             {
                 title: "备注",
@@ -211,10 +212,10 @@ class TaxManage extends PureComponent {
         };
 
         return (
-            <PageHeaderLayout title="地块管理" breadcrumbList={breadcrumbList}>
+            <PageHeaderLayout title="税目管理" breadcrumbList={breadcrumbList}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
-                        <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
+                        {/* <div className={styles.tableListForm}>{this.renderSearchForm()}</div> */}
                         <div className={styles.tableListOperator}>
                             <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
                                 新建
