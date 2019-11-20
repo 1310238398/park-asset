@@ -35,7 +35,7 @@ func (a *Asset) Query(ctx context.Context, params schema.AssetQueryParam, opts .
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Assets
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

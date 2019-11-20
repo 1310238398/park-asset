@@ -6,9 +6,10 @@ import (
 	"path/filepath"
 
 	"gxt-park-assets/internal/app/config"
-	"gxt-park-assets/internal/app/model/impl/gorm"
+	igorm "gxt-park-assets/internal/app/model/impl/gorm"
 	"gxt-park-assets/pkg/gormplus"
 
+	"github.com/jinzhu/gorm"
 	"go.uber.org/dig"
 )
 
@@ -28,9 +29,9 @@ func InitStore(container *dig.Container) (func(), error) {
 			db.Close()
 		}
 
-		gorm.SetTablePrefix(cfg.Gorm.TablePrefix)
+		igorm.SetTablePrefix(cfg.Gorm.TablePrefix)
 		if cfg.Gorm.AutoMigrate {
-			err = gorm.AutoMigrate(db)
+			err = igorm.AutoMigrate(db)
 			if err != nil {
 				return nil, err
 			}
@@ -41,7 +42,12 @@ func InitStore(container *dig.Container) (func(), error) {
 			return db
 		})
 
-		gorm.Inject(container)
+		// 输入gorm.DB
+		container.Provide(func() *gorm.DB {
+			return db.GetDB()
+		})
+
+		igorm.Inject(container)
 	default:
 		return nil, errors.New("unknown store")
 	}

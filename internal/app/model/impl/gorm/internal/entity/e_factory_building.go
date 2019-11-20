@@ -8,7 +8,7 @@ import (
 
 // GetFactoryBuildingDB 厂房管理
 func GetFactoryBuildingDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, FactoryBuilding{})
+	return getDBWithModelPlus(ctx, defDB, FactoryBuilding{})
 }
 
 // SchemaFactoryBuilding 厂房管理

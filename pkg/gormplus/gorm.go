@@ -51,6 +51,11 @@ type DB struct {
 	*gorm.DB
 }
 
+// GetDB 获取gorm存储
+func (d *DB) GetDB() *gorm.DB {
+	return d.DB
+}
+
 // FindPage 查询分页数据
 func (d *DB) FindPage(db *gorm.DB, pageIndex, pageSize int, out interface{}) (int, error) {
 	var count int

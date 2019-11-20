@@ -8,7 +8,7 @@ import (
 
 // GetCarChangerDB 车改商管理
 func GetCarChangerDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, CarChanger{})
+	return getDBWithModelPlus(ctx, defDB, CarChanger{})
 }
 
 // SchemaCarChanger 车改商管理

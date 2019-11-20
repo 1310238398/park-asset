@@ -8,7 +8,7 @@ import (
 
 // GetTenantCustomerDB 租户信息管理
 func GetTenantCustomerDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, TenantCustomer{})
+	return getDBWithModelPlus(ctx, defDB, TenantCustomer{})
 }
 
 // SchemaTenantCustomer 租户信息管理

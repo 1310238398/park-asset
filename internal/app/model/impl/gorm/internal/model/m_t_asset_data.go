@@ -43,7 +43,7 @@ func (a *TAssetData) Query(ctx context.Context, params schema.TAssetDataQueryPar
 
 	opt := a.getQueryOption(opts...)
 	var list entity.TAssetDatas
-	pr, err := WrapPageQuery(db, opt.PageParam, &list)
+	pr, err := WrapPageQueryNC(db, opt.PageParam, &list)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

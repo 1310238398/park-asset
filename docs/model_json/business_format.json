@@ -1,0 +1,37 @@
+{
+    "struct_name": "BusinessFormat",
+    "comment": "业态",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "业态名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+        },
+        {
+            "struct_field_name": "ISUnderground",
+            "comment": "是否位于地下(1:是2:否)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "ISCivilDefense",
+            "comment": "是否属于人防(1:是2:否)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"   
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        }
+
+    ]
+}

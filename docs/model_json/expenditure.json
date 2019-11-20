@@ -1,0 +1,27 @@
+{
+    "struct_name": "Expenditure",
+    "comment": "支出节点",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "支出节点名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+
+        },
+        {
+            "struct_field_name": "Category",
+            "comment": "工作类别(大纲 里程碑 一级 二级)",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;"
+ 
+        }
+
+    ]
+}

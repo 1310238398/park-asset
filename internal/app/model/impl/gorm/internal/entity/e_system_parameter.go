@@ -8,7 +8,7 @@ import (
 
 // GetSystemParameterDB 系统参数管理
 func GetSystemParameterDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, SystemParameter{})
+	return getDBWithModelPlus(ctx, defDB, SystemParameter{})
 }
 
 // SchemaSystemParameter 系统参数管理

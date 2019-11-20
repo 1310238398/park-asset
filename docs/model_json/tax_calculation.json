@@ -1,0 +1,48 @@
+{
+    "struct_name": "TaxCalculation",
+    "comment": "税目计算表",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Category",
+            "comment": "类别",
+            "struct_field_type": "string",
+            "gorm_options": "size:50;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "税目名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;index;" 
+        },
+        {
+            "struct_field_name": "CalculationFormula",
+            "comment": "计算公式",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;" 
+        },
+        {
+            "struct_field_name": "Type",
+            "comment": "税率类型(1:含税计算 2:不含税计算)",
+            "struct_field_type": "int",
+            "gorm_options": "index;"  
+        },
+        {
+            "struct_field_name": "TaxRate",
+            "comment": "税率",
+            "struct_field_type": "int",
+            "gorm_options": ""  
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:1024;"
+        }
+    ]
+}

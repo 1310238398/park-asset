@@ -8,7 +8,7 @@ import (
 
 // GetAssetDB 资产管理
 func GetAssetDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Asset{})
+	return getDBWithModelPlus(ctx, defDB, Asset{})
 }
 
 // SchemaAsset 资产管理

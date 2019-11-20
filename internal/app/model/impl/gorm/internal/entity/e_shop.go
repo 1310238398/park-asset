@@ -8,7 +8,7 @@ import (
 
 // GetShopDB 商铺管理
 func GetShopDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Shop{})
+	return getDBWithModelPlus(ctx, defDB, Shop{})
 }
 
 // SchemaShop 商铺管理

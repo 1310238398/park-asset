@@ -8,7 +8,7 @@ import (
 
 // GetOrganizationDB 组织机构管理
 func GetOrganizationDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Organization{})
+	return getDBWithModelPlus(ctx, defDB, Organization{})
 }
 
 // SchemaOrganization 组织机构管理

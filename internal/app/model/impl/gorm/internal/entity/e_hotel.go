@@ -8,7 +8,7 @@ import (
 
 // GetHotelDB 酒店管理
 func GetHotelDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Hotel{})
+	return getDBWithModelPlus(ctx, defDB, Hotel{})
 }
 
 // SchemaHotel 酒店管理

@@ -1,0 +1,31 @@
+{
+    "struct_name": "ProjBusinessFormat",
+    "comment": "项目业态",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "成本项目ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"   
+            
+        },
+        {
+            "struct_field_name": "BusinessFormatID",
+            "comment": "业态ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"  
+        },
+        {
+            "struct_field_name": "FloorArea",
+            "comment": "建筑面积",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"   
+        }
+    ]
+}

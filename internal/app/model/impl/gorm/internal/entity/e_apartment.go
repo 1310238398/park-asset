@@ -8,7 +8,7 @@ import (
 
 // GetApartmentDB 公寓管理
 func GetApartmentDB(ctx context.Context, defDB *gormplus.DB) *gormplus.DB {
-	return getDBWithModel(ctx, defDB, Apartment{})
+	return getDBWithModelPlus(ctx, defDB, Apartment{})
 }
 
 // SchemaApartment 公寓管理
