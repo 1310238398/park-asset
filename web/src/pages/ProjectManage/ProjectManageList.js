@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Select,Descriptions } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, Select,Descriptions,Menu, Dropdown } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import ProjectManageCard from './ProjectManageCard';
@@ -66,6 +66,18 @@ class ProjectManageList extends PureComponent {
       },
     });
   };
+
+  editPro = (item, index) => {
+    this.dispatch({
+      type: 'projectManage/loadForm',
+      payload: {
+        type: 'E',
+        id: item.record_id,
+        currentIndex: index,
+      },
+    });
+    
+  }
 
   handleDelClick = item => {
     Modal.confirm({
@@ -217,7 +229,7 @@ class ProjectManageList extends PureComponent {
               {getFieldDecorator('name')(<Input placeholder="请输入项目名称" />)}
             </Form.Item>
           </Col>
-          <Col md={6} sm={24}>
+          {/* <Col md={6} sm={24}>
             <Form.Item label="资产类型">
               {getFieldDecorator('asset_type')(
                 <DicSelect
@@ -228,7 +240,7 @@ class ProjectManageList extends PureComponent {
                 />
               )}
             </Form.Item>
-          </Col>
+          </Col> */}
           <Col md={6} sm={24}>
             <Form.Item label="项目类型">
               {getFieldDecorator('project_type')(
@@ -293,6 +305,28 @@ class ProjectManageList extends PureComponent {
   
       </Descriptions>); };
 
+getMenu = (record) => {
+     
+  return (
+  <Menu >
+    <Menu.Item  onClick={() => this.editPro(record, 0)}>
+      
+       基本信息
+      
+    </Menu.Item>
+  
+    <Menu.Item onClick={() => this.editPro(record, 1)}>
+    
+       项目业态
+      
+    </Menu.Item>
+    <Menu.Item onClick={() => this.editPro(record, 2)}>
+    
+   交付标准
+   
+ </Menu.Item>
+  </Menu>);
+};
   render() {
     const {
       loading,
@@ -304,14 +338,7 @@ class ProjectManageList extends PureComponent {
     const { selectedRowKeys, selectedRows } = this.state;
 
     const columns = [
-      {
-        title: '项目图片',
-        dataIndex: 'photo',
-        width: 100,
-        render: value => {
-          return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
-        },
-      },
+      
       {
         title: '项目名称',
         dataIndex: 'name',
@@ -328,14 +355,7 @@ class ProjectManageList extends PureComponent {
         dataIndex: 'address',
         width: 150,
       },
-      {
-        title: '项目资产类型',
-        dataIndex: 'asset_type',
-        width: 150,
-        render: value => {
-          return <DicShow pcode="pa$#atype" code={value.split(',')} />;
-        },
-      },
+    
     ];
 
     const paginationProps = {
@@ -349,6 +369,7 @@ class ProjectManageList extends PureComponent {
       { title: '项目管理' },
       { title: '项目管理', href: '/project/projectmanage' },
     ];
+
 
 
     
@@ -367,14 +388,16 @@ class ProjectManageList extends PureComponent {
                 新建
               </PButton>
               {selectedRows.length === 1 && [
+               <Dropdown overlay={() => this.getMenu(selectedRows[0])} placement="bottomCenter">
                 <PButton
                   key="edit"
                   code="edit"
                   icon="edit"
-                  onClick={() => this.handleEditClick(selectedRows[0])}
+                 // onClick={() => this.handleEditClick(selectedRows[0])}
                 >
                   编辑
-                </PButton>,
+                </PButton>
+                 </Dropdown>,
                 <PButton
                   key="del"
                   code="del"

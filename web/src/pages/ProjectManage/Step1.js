@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Modal, Row, Col, Select, Radio, DatePicker, message } from 'antd';
+import { createPro, updateProInfo } from '@/services/projectManage';
+import { Form, Input, Modal, Row, Col, Select, Radio, DatePicker, message , InputNumber} from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -16,7 +18,10 @@ export default class Step1 extends PureComponent {
     super(props);
     const { callback } = this.props;
     callback(this.formSubmit);
+   
   }
+
+
 
   state = {
     formData: {},
@@ -38,40 +43,56 @@ export default class Step1 extends PureComponent {
   formSubmit = () => {
    
     console.log("Step1");
-      const { form, onSubmit ,nextHandler} = this.props;
+      const { form, onSubmit ,nextHandler,
+      
+        projectManage: { formID, formType },
+      } = this.props;
+     
+
+      console.log("formType "+ formType);
+      console.log("formID "+ formID);
   
       form.validateFieldsAndScroll(async (err, values) => {
         if (err) {
           return;
         }
         const formData = { ...values };
-        if (formData.file && formData.file.length > 0) {
-          formData.file = formData.file.join('');
+        if (formData.files && formData.files.length > 0) {
+          formData.files = formData.files.join('');
         } else {
-          formData.file = '';
+          formData.files = [];
         }
+
+        formData.type = parseInt(formData.type);
   
-
-        // 这块怎么知道执行成功好进行跳转切换
         this.dispatch({
-          type: 'projectManage/createPro',
-          payload: formData,
+          type: 'projectManage/changeNewFormVisible',
+          payload: true,
         });
-        console.log("formData "+ JSON.stringify(formData));
+        let response;
+        const params = { ...formData };
+        if (formType === 'E') {
+          params.record_id = formID;
+          response = await updateProInfo(params);
+          if (response && response.record_id) {
+            message.success('保存成功');
+           // idHandler(response.column_id);
+            if (nextHandler) nextHandler();
+          }
+        
+        }
+        else if (formType === 'A') {
+          response =   await createPro(params);
+
+          if (response && response.record_id) {
+            message.success('保存成功');
+           // idHandler(response.column_id);
+            if (nextHandler) nextHandler();
+          }
+        }
 
 
-      //  onSubmit(formData);
-
-           // 新增  这块不明白
-          //  const response = await columns.submitColumnAdd(formData);
-          //  if (response && response.column_id) {
-          //    message.success('保存成功');
-          //    idHandler(response.column_id);
-          //    if (nextHandler) nextHandler();
-          //  }
-
-         // message.success('保存成功');
-          if (nextHandler) nextHandler();
+        
       });
    
   };
@@ -98,7 +119,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
           <Form.Item {...formItemLayout} label="项目名称">
             {getFieldDecorator('name', {
-              //initialValue: formData.name,
+              initialValue: formData.name,
               rules: [
                 {
                   required: true,
@@ -111,11 +132,11 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
             <Form.Item {...formItemLayout} label="项目类型">
               {getFieldDecorator('type', {
-              //initialValue: formData.name,
+              initialValue: formData.type +"",
               rules: [
                 {
                   required: true,
-                  message: '请输入项目类型',
+                  message: '请选择项目类型',
                 },
               ],
               })(
@@ -134,7 +155,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
           <Form.Item {...formItemLayout} label="项目地址">
             {getFieldDecorator('address', {
-             // initialValue: formData.address,
+              initialValue: formData.address,
               rules: [
                 {
                   required: true,
@@ -147,7 +168,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
           <Form.Item {...formItemLayout} label="所属地块">
             {getFieldDecorator('plot_id', {
-             // initialValue: formData.plot_id,
+              initialValue: formData.plot_id,
               rules: [
                 {
                   required: true,
@@ -173,7 +194,7 @@ export default class Step1 extends PureComponent {
           {/* 嵌入高德地图--经纬度 */}
           <Form.Item {...formItemLayout} label="所属公司">
             {getFieldDecorator('org_id', {
-              //initialValue: formData.org_id,
+              initialValue: formData.org_id,
               rules: [
                 {
                   required: true,
@@ -196,7 +217,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
         <Form.Item {...formItemLayout} label="总用地面积(km²)">
             {getFieldDecorator('total_using_area', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.total_using_area,
               rules: [
                 {
                   required: true,
@@ -204,7 +225,7 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入总用地面积" />
+              <InputNumber placeholder="请输入总用地面积" />
             )}
           </Form.Item>
         </Col>
@@ -213,7 +234,7 @@ export default class Step1 extends PureComponent {
       <Col span={12}>
           <Form.Item {...formItemLayout} label="项目开始时间">
             {getFieldDecorator('start_time', {
-             // initialValue: formData.asset_type,
+              initialValue: moment(formData.start_time),
               rules: [
                 {
                   required: true,
@@ -222,11 +243,11 @@ export default class Step1 extends PureComponent {
               ],
             })(
               <DatePicker 
-              showTime
+              //showTime
               
               style={{width:"100%"}}
               placeholder="请选择开始时间"
-              format="YYYY-M-D HH:mm"
+              format="YYYY-MM-DD"
              // locale={locale}
               />
             
@@ -236,7 +257,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
           <Form.Item {...formItemLayout} label="项目结束时间">
             {getFieldDecorator('end_time', {
-             // initialValue: formData.asset_type,
+              initialValue: moment(formData.end_time),
               rules: [
                 {
                   required: true,
@@ -245,10 +266,10 @@ export default class Step1 extends PureComponent {
               ],
             })(
               <DatePicker 
-               showTime
+              // showTime
                style={{width:"100%"}}
               placeholder="请选择结束时间"
-              format="YYYY-M-D HH:mm"
+              format="YYYY-MM-DD"
               //locale={locale}
                />
             
@@ -260,7 +281,7 @@ export default class Step1 extends PureComponent {
       <Col span={12}>
       <Form.Item {...formItemLayout} label="地上建筑面积(km²)">
             {getFieldDecorator('ground_floor_area', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.ground_floor_area,
               rules: [
                 {
                   required: true,
@@ -268,14 +289,14 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入地上建筑面积" />
+              <InputNumber placeholder="请输入地上建筑面积" />
             )}
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item {...formItemLayout} label="地下建筑面积(km²)">
             {getFieldDecorator('underground_floor_area', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.underground_floor_area,
               rules: [
                 {
                   required: true,
@@ -283,7 +304,7 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入地下建筑面积" />
+              <InputNumber placeholder="请输入地下建筑面积" />
             )}
           </Form.Item>
         </Col>
@@ -292,7 +313,7 @@ export default class Step1 extends PureComponent {
       <Col span={12}>
           <Form.Item {...formItemLayout} label="地上容积率">
             {getFieldDecorator('ground_volume_rate', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.ground_volume_rate,
               rules: [
                 {
                   required: true,
@@ -300,14 +321,14 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入地上容积率" />
+              <InputNumber placeholder="请输入地上容积率" />
             )}
           </Form.Item>
         </Col> 
         <Col span={12}>
           <Form.Item {...formItemLayout} label="地下容积率">
             {getFieldDecorator('underground_volume_rate', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.underground_volume_rate,
               rules: [
                 {
                   required: true,
@@ -315,7 +336,7 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入地下容积率" />
+              <InputNumber placeholder="请输入地下容积率" />
             )}
           </Form.Item>
         </Col> 
@@ -325,7 +346,7 @@ export default class Step1 extends PureComponent {
       <Col span={12}>
           <Form.Item {...formItemLayout} label="可确权面积(km²)">
             {getFieldDecorator('identi_area', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.identi_area,
               rules: [
                 {
                   required: true,
@@ -333,14 +354,14 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入可确权面积" />
+              <InputNumber placeholder="请输入可确权面积" />
             )}
           </Form.Item>
         </Col> 
         <Col span={12}>
           <Form.Item {...formItemLayout} label="可售面积(km²)">
             {getFieldDecorator('sale_area', {
-             // initialValue: formData.asset_type,
+              initialValue: formData.sale_area,
               rules: [
                 {
                   required: true,
@@ -348,7 +369,7 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <Input placeholder="请输入可售面积" />
+              <InputNumber placeholder="请输入可售面积" />
             )}
           </Form.Item>
         </Col> 
@@ -360,7 +381,7 @@ export default class Step1 extends PureComponent {
           <Form.Item {...formItemLayout} label="项目相关证书">
           <span style={{ color: 'red' }}>（图片上传格式jpg,jpeg,png）</span>
             {getFieldDecorator('files', {
-             // initialValue: formData.photo ? [formData.photo] : '',
+              initialValue: formData.files ? [formData.files] : '',
               rules: [
                 {
                   required: false,

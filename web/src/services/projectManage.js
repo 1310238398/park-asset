@@ -5,13 +5,38 @@ const router = 'projects';
 const proRouter = 'statistics/project/name';
 
 const pro_router = 'pc-projects';
+const proj_business_formats = 'proj-business-formats';
 // 成本核算的接口
 export async function createPro(params) {
   // /api/v1/
-  return request(`/api/v1/${pro_router}`, {
+  return request(`/v1/${pro_router}`, {
     method: 'POST',
     body: params,
   });
+}
+
+// 查询项目概况项目树状列表
+export async function queryList(params) {
+  return request(`/v1/${pro_router}?${stringify(params)}`);
+ 
+}
+// 查询项目详情
+export async function getProInfo(params) {
+  return request(`/v1/${pro_router}/${params.record_id}`);
+}
+// 更新项目资料
+export async function updateProInfo(params) {
+
+  return request(`/v1/${pro_router}/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
+// 查询项目的业态数据
+
+export async function getProFormat(params) {
+  return request(`/v1/${proj_business_formats}/?q=page${params.record_id}`);
 }
 
 
