@@ -8,7 +8,7 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 @connect(state => ({
-  //projectManage: state.projectManage,
+  projectManage: state.projectManage,
 }))
 @Form.create()
 export default class Step2 extends PureComponent {
@@ -26,25 +26,10 @@ export default class Step2 extends PureComponent {
     treeData: [],
     yetai : [
       {
-        code: "a",
+        record_id: "a",
         name: "住宅"
       },
-      {
-        code: "b",
-        name:"地上车位"
-      },
-      {
-        code:"c",
-        name:"地下车库"
-      },
-      {
-        code:"d",
-        name:"写字楼"
-      },
-      {
-        code:"e",
-        name:"公寓"
-      }
+     
     ]
    
   };
@@ -106,11 +91,14 @@ export default class Step2 extends PureComponent {
 
   render() {
     const {
-     // projectManage: { formData, companyList, poltList },
+      projectManage: { businessFormat  },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
-    const {yetai} = this.state;
+ 
+   
+
+   
  
     const formItemLayout = {
       labelCol: {
@@ -131,7 +119,7 @@ export default class Step2 extends PureComponent {
           <Col span={4} style={{textAlign:"right"}}><span style={{lineHeight:"40px"}}>选择相关业态：&nbsp;&nbsp;&nbsp;</span></Col>
           <Col span={20}>
           {
-                yetai.map((item, index) => 
+                businessFormat&&businessFormat.map((item, index) => 
                 <Row
                 style={{
                   height: '59px',
@@ -142,25 +130,25 @@ export default class Step2 extends PureComponent {
               >
                 <Col span={4}>
                 <Form.Item {...formItemLayout} label="" >
-                {getFieldDecorator(item.code, {
+                {getFieldDecorator(item.record_id, {
                  // initialValue: item.name,
                 
                 
-                })( <Checkbox value={item.name} >{item.name}</Checkbox>)}
+                })( <Checkbox value={item.record_id} >{item.name}</Checkbox>)}
                   </Form.Item>
                   
                 </Col>
                 <Col span={12}>
                 <Form.Item {...formItemLayout} label="建筑面积">
-                {getFieldDecorator(item.code+"mj", {
+                {getFieldDecorator(item.record_id+"mj", {
                  // initialValue: formData.address,
                   rules: [
                     {
-                      required: getFieldValue(item.code),
+                      required: getFieldValue(item.record_id),
                       message: '请输入建筑面积',
                     },
                   ],
-                })(<Input  disabled={!getFieldValue(item.code)} placeholder="请输入建筑面积" />)}
+                })(<Input  disabled={!getFieldValue(item.record_id)} placeholder="请输入建筑面积" />)}
               </Form.Item>
                 </Col>
               </Row>)

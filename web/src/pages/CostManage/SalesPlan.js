@@ -71,8 +71,8 @@ class EditableCell extends React.Component {
   }
 }
 @connect(state => ({
-  costAccount: state.costAccount,
-  loading: state.loading.models.costAccount,
+  salesPlan: state.salesPlan,
+  loading: state.loading.models.salesPlan,
 }))
 // 销售计划页面
 @Form.create()
@@ -87,22 +87,63 @@ class SalesPlan extends PureComponent {
         total_contract_price: 0,
         repayment_amount: 0,
       },
-      {
-        key: '2',
-        name: '住宅地上17层',
-        area: 100.0,
-        unit_price: 1,
-        total_contract_price: 0,
-        repayment_amount: 0,
-      },
-      {
-        key: '3',
-        name: '地下车位',
-        area: 100.0,
-        unit_price: 1,
-        total_contract_price: 0,
-        repayment_amount: 0,
-      },
+//       average_prise	number($double)
+// 均价
+
+// contract_amount	number($double)
+// 合同额度
+
+// memo	string
+// 备注
+
+// payback	number($double)
+// 销售回款
+
+// principal	string
+// 负责人
+
+// proj_business_id	string
+// 项目业态ID
+
+// proj_business_name	string
+// 项目业态名称
+
+// proj_income_id	string
+// 项目收益测算ID
+
+// project_id	string
+// 成本项目ID
+
+// quarter	integer($int32)
+// 季度
+
+// record_id	string
+// 记录ID
+
+// sale_area	number($double)
+// 销售面积
+
+// tax_prise	number($double)
+// 销售税额
+
+// year	integer($int32)
+// 年度
+      // {
+      //   key: '2',
+      //   name: '住宅地上17层',
+      //   area: 100.0,
+      //   unit_price: 1,
+      //   total_contract_price: 0,
+      //   repayment_amount: 0,
+      // },
+      // {
+      //   key: '3',
+      //   name: '地下车位',
+      //   area: 100.0,
+      //   unit_price: 1,
+      //   total_contract_price: 0,
+      //   repayment_amount: 0,
+      // },
     ],
     editingKey: '',
 
@@ -117,14 +158,14 @@ class SalesPlan extends PureComponent {
         align: 'center',
       },
       {
-        title: '面积(万m²)',
+        title: '销售面积(万m²)',
         dataIndex: 'area',
         width: '10%',
         align: 'center',
         editable: true,
       },
       {
-        title: '单价(万元)',
+        title: '销售单价(万元)',
         dataIndex: 'unit_price',
         width: '15%',
         align: 'center',
@@ -256,7 +297,7 @@ class SalesPlan extends PureComponent {
 
   handleAddClick = () => {
     const {
-      costAccount: { addSalesPlanVisible },
+      salesPlan: { addSalesPlanVisible },
     } = this.props;
     console.log('handleAddClick');
     // this.dispatch({
@@ -267,11 +308,10 @@ class SalesPlan extends PureComponent {
     //   },
     // });
     this.dispatch({
-      type: 'costAccount/changeSalesPlanFormVisible',
+      type: 'salesPlan/changeSalesPlanFormVisible',
       payload: true,
     });
 
-    console.log('是否可见' + addSalesPlanVisible);
   };
   render() {
     const {
@@ -319,6 +359,7 @@ class SalesPlan extends PureComponent {
             <FormItem
               {...formItemLayout}
               label="年份"
+              labelAlign='left'
               style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
               {getFieldDecorator('year', {
@@ -347,6 +388,7 @@ class SalesPlan extends PureComponent {
             <FormItem
               {...formItemLayout}
               label="季度"
+              labelAlign='left'
               style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
               {getFieldDecorator('quarter', {})(

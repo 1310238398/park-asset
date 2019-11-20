@@ -1,9 +1,10 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import * as projectManageService from '@/services/projectManage';
-
+import * as costAccountService from '@/services/costAccount';
+import * as projectManageService from '@/services/projectManage'
+// 成本核算
 export default {
-  namespace: 'projectManage',
+  namespace: 'costAccount',
   state: {
     search: {},
     pagination: {},
@@ -13,23 +14,19 @@ export default {
     },
     submitting: false,
     formTitle: '',
-    formID: '',  // 项目ID
-    formType:'',
-    formVisible: false,
-    newFormVisible: false,
-    currentIndex: 0, // 编辑页面当前所在页面索引
-    formData: {}, // 一条数据详情
-    businessFormat:[ ], // 项目的业态数据
-    allBusinessFormat:[], 
-    deliveryStandard:{}, // 项目的交付标准
+    formID: '',
+    formVisible:false,
+    addSalesPlanVisible: false,
+    formData: {},
     companyList: [],
     poltList: [],
+  
   },
-  // 调service  call 调service函数 put 调reducer函数 select 
+  // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
-        //q: 'page',
+        q: 'page',
       };
 
       if (search) {
@@ -58,101 +55,81 @@ export default {
         }
       }
 
-      const response = yield call(projectManageService.queryList, params);
+      const response = yield call(projectManageService.query, params);
       yield put({
         type: 'saveData',
         payload: response,
       });
     },
-    *loadForm({ payload }, { put, select }) {
-      if (payload.type === 'E') {
-      yield put({
-        type: 'saveCurrentIndex',
-        payload: payload.currentIndex,
+    *loadForm({ payload }, { put }) {
+      if (payload.type === 'addSalesPlan') {
 
-      });
-      let index =  yield select(state => state.projectManage.currentIndex);
-    
-
-      yield put({
-        type: 'changeNewFormVisible',
-        payload: true,
-      });
-      }
-      else if (payload.type === 'A') {
-
+        console.log("新增销售计划页面");
         yield put({
-          type: 'changeNewFormVisible',
+          type: 'changeSalesPlanFormVisible',
           payload: true,
         });
-      }
-     
 
-      yield [
-        put({
-          type: 'saveFormType',
-          payload: payload.type,
-        }),
-        put({
-          type: 'saveFormTitle',
-          payload: '新建项目',
-        }),
-        put({
-          type: 'saveFormID',
-          payload: '',
-        }),
-      
-        put({
-          type: 'saveFormData',
-          payload: {},
-        }),
-      ];
-
-      if (payload.type === 'E') {
         yield [
           put({
+            type: 'saveFormType',
+            payload: payload.type,
+          }),
+          put({
             type: 'saveFormTitle',
-            payload: '编辑项目',
+            payload: '新增销售计划',
           }),
           put({
             type: 'saveFormID',
-            payload: payload.id,
+            payload: '',
           }),
-         
           put({
-            type: 'fetchForm',
-            payload: { record_id: payload.id },
+            type: 'saveFormData',
+            payload: {},
           }),
         ];
-      }
+       
+
+
+      } 
+      // else if (payload.type === 'A') {
+      //   yield put({
+      //     type: 'changeNewFormVisible',
+      //     payload: true,
+      //   });
+      // }
+
+    
+
+      // if (payload.type === 'E') {
+      //   yield [
+      //     put({
+      //       type: 'saveFormTitle',
+      //       payload: '编辑项目',
+      //     }),
+      //     put({
+      //       type: 'saveFormID',
+      //       payload: payload.id,
+      //     }),
+      //     // 请求数据
+      //     put({
+      //       type: 'fetchForm',
+      //       payload: { record_id: payload.id },
+      //     }),
+      //   ];
+      // }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(projectManageService.getProInfo, payload);
+      const response = yield call(projectManageService.get, payload);
       if (response && response.asset_type) {
         response.asset_type = response.asset_type.split(',');
       }
-
       yield [
         put({
           type: 'saveFormData',
           payload: response,
         }),
       ];
-
-      const response_format = yield call(projectManageService.getProFormat, payload);
-
-      if (response_format && response_format.status === 200 && response_format.list) {
-      yield [
-        put({
-          type: 'saveFormatData',
-          payload: response_format.list,
-          }),
-        ];
-      }
-      
-
-      // 交付标准
-
     },
     *submit({ payload }, { call, put, select }) {
       yield put({
@@ -179,7 +156,7 @@ export default {
       if (response.record_id && response.record_id !== '') {
         message.success('保存成功');
         yield put({
-          type: 'changeNewFormVisible',
+          type: 'changeFormVisible',
           payload: false,
         });
         yield put({
@@ -221,39 +198,28 @@ export default {
         routerRedux.push({
           pathname: '/assetdatamaint/assetdatamaintlist',
           query: {
-          recordID: payload.record_id,
+            recordID: payload.record_id,
             type: payload.asset_type,
-          },  
+          },
         })
       );
     },
-    *createPro({ payload }, { call, put }) {
-
-      yield put({
-        type: 'changeSubmitting',
-        payload: true,
-      });
-
-      const params = { ...payload };
-      let response;
-      response = yield call(projectManageService.createPro, params);
-      
-      yield put({
-        type: 'changeSubmitting',
-        payload: false,
-      });
-
-      if (response.record_id && response.record_id !== '') {
-        message.success('保存成功');
-        yield put({
-          type: 'changeFormVisible',
-          payload: false,
-        });
-        yield put({
-          type: 'fetch',
-        });
-      }
-    }
+    // 成本核算的接口
+    // 查看详情
+    *redirectDetail({ payload }, { put }) {
+     
+      yield put(
+        routerRedux.push({
+          pathname: '/cost/detail',
+          query: {
+            key: payload.key,
+           
+          },
+        })
+      );
+    },
+    
+    
     
   },
   reducers: {
@@ -269,6 +235,10 @@ export default {
     changeFormVisible(state, { payload }) {
       return { ...state, formVisible: payload };
     },
+    changeSalesPlanFormVisible(state, { payload }) {
+      console.log("修改新增计划的状态");
+      return { ...state, addSalesPlanVisible: payload};
+    },
     changeNewFormVisible(state, { payload }) {
       return { ...state, newFormVisible: payload };
     },
@@ -281,13 +251,6 @@ export default {
     saveFormID(state, { payload }) {
       return { ...state, formID: payload };
     },
-    saveCurrentIndex(state, { payload }) {
-      return { ...state, currentIndex: payload };
-    },
-    saveFormatData(state, { payload }) {
-      return { ...state, businessFormat: payload };
-    },
-    
     saveFormData(state, { payload }) {
       return { ...state, formData: payload };
     },
