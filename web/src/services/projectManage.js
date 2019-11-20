@@ -39,6 +39,16 @@ export async function getProFormat(params) {
   return request(`/v1/${proj_business_formats}/?q=page${params.record_id}`);
 }
 
+// 更新项目的业态 
+
+export async function updateProFormat(params) {
+
+  return request(`/v1/${proj_business_formats}/update_list`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
 
 export async function query(params) {
   return request(`/v1/${router}?${stringify(params)}`);

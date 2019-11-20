@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as projectManageService from '@/services/projectManage';
+import * as formatManageService from '@/services/formatManage';
 
 export default {
   namespace: 'projectManage',
@@ -13,19 +14,20 @@ export default {
     },
     submitting: false,
     formTitle: '',
-    formID: '',  // 项目ID
-    formType:'',
+    formID: '', // 项目ID
+    formType: '',
     formVisible: false,
     newFormVisible: false,
     currentIndex: 0, // 编辑页面当前所在页面索引
     formData: {}, // 一条数据详情
-    businessFormat:[ ], // 项目的业态数据
-    allBusinessFormat:[], 
-    deliveryStandard:{}, // 项目的交付标准
+    businessFormat: [], // 项目的业态数据
+
+    allBusinessFormat: [], // 所有的业态列表
+    deliveryStandard: {}, // 项目的交付标准
     companyList: [],
     poltList: [],
   },
-  // 调service  call 调service函数 put 调reducer函数 select 
+  // 调service  call 调service函数 put 调reducer函数 select
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
@@ -66,27 +68,22 @@ export default {
     },
     *loadForm({ payload }, { put, select }) {
       if (payload.type === 'E') {
-      yield put({
-        type: 'saveCurrentIndex',
-        payload: payload.currentIndex,
-
-      });
-      let index =  yield select(state => state.projectManage.currentIndex);
-    
-
-      yield put({
-        type: 'changeNewFormVisible',
-        payload: true,
-      });
-      }
-      else if (payload.type === 'A') {
+        yield put({
+          type: 'saveCurrentIndex',
+          payload: payload.currentIndex,
+        });
+        let index = yield select(state => state.projectManage.currentIndex);
 
         yield put({
           type: 'changeNewFormVisible',
           payload: true,
         });
+      } else if (payload.type === 'A') {
+        yield put({
+          type: 'changeNewFormVisible',
+          payload: true,
+        });
       }
-     
 
       yield [
         put({
@@ -101,7 +98,7 @@ export default {
           type: 'saveFormID',
           payload: '',
         }),
-      
+
         put({
           type: 'saveFormData',
           payload: {},
@@ -118,7 +115,7 @@ export default {
             type: 'saveFormID',
             payload: payload.id,
           }),
-         
+
           put({
             type: 'fetchForm',
             payload: { record_id: payload.id },
@@ -126,12 +123,11 @@ export default {
         ];
       }
     },
-    *fetchForm({ payload }, { call, put }) {
+    *fetchForm({ payload }, { call, put, select }) {
       const response = yield call(projectManageService.getProInfo, payload);
       if (response && response.asset_type) {
         response.asset_type = response.asset_type.split(',');
       }
-
       yield [
         put({
           type: 'saveFormData',
@@ -141,18 +137,56 @@ export default {
 
       const response_format = yield call(projectManageService.getProFormat, payload);
 
-      if (response_format && response_format.status === 200 && response_format.list) {
-      yield [
-        put({
-          type: 'saveFormatData',
-          payload: response_format.list,
+      if (response_format && response_format.list) {
+        yield [
+          put({
+            type: 'saveFormatData',
+            payload: response_format.list,
           }),
         ];
       }
-      
+
+      // 查询所有业态
+      const all_format = yield call(formatManageService.queryList, {});
+      if (all_format && all_format.list) {
+        yield [
+          put({
+            type: 'saveAllFormatData',
+            payload: all_format.list,
+          }),
+        ];
+      }
+
+      // 修改allFormatData
+      const allBusinessFormat = yield select(state => state.projectManage.allBusinessFormat);
+      const businessFormat = yield select(state => state.projectManage.businessFormat);
+
+      for (let i = 0; i < allBusinessFormat.length; i++) {
+        console.log('hhhhhh');
+        for (let j = 0; j < businessFormat.length; j++) {
+          console.log('rrrrr');
+          if (allBusinessFormat[i].record_id === businessFormat[j].business_format_id) {
+            allBusinessFormat[i].checked = true;
+            console.log('选择');
+          }
+
+          if (j === businessFormat.length - 1) {
+            allBusinessFormat[i].checked = false;
+            console.log('未选择');
+          }
+        }
+      }
+
+      yield [
+        put({
+          type: 'saveAllFormatData',
+          payload: [...allBusinessFormat],
+        }),
+      ];
+
+      console.log('所有业态 ' + JSON.stringify(allBusinessFormat));
 
       // 交付标准
-
     },
     *submit({ payload }, { call, put, select }) {
       yield put({
@@ -221,14 +255,13 @@ export default {
         routerRedux.push({
           pathname: '/assetdatamaint/assetdatamaintlist',
           query: {
-          recordID: payload.record_id,
+            recordID: payload.record_id,
             type: payload.asset_type,
-          },  
+          },
         })
       );
     },
     *createPro({ payload }, { call, put }) {
-
       yield put({
         type: 'changeSubmitting',
         payload: true,
@@ -237,7 +270,7 @@ export default {
       const params = { ...payload };
       let response;
       response = yield call(projectManageService.createPro, params);
-      
+
       yield put({
         type: 'changeSubmitting',
         payload: false,
@@ -253,8 +286,9 @@ export default {
           type: 'fetch',
         });
       }
-    }
-    
+    },
+
+   
   },
   reducers: {
     saveData(state, { payload }) {
@@ -287,7 +321,9 @@ export default {
     saveFormatData(state, { payload }) {
       return { ...state, businessFormat: payload };
     },
-    
+    saveAllFormatData(state, { payload }) {
+      return { ...state, allBusinessFormat: payload };
+    },
     saveFormData(state, { payload }) {
       return { ...state, formData: payload };
     },

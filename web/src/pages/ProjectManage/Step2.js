@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import {  updateProFormat } from '@/services/projectManage';
 import { Form, Input, Modal, Row, Col, Select, Radio, message, Checkbox } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
@@ -25,10 +26,18 @@ export default class Step2 extends PureComponent {
     formData: {},
     treeData: [],
     yetai : [
-      {
-        record_id: "a",
-        name: "住宅"
-      },
+     {
+       name:"业态1",
+       record_id: "a",
+       checked: true,
+       floor_area:55
+     },
+     {
+      name:"业态1",
+      record_id: "b",
+      checked: false,
+      floor_area:66
+    }
      
     ]
    
@@ -45,31 +54,37 @@ export default class Step2 extends PureComponent {
     dispatch(action);
   };
 
+
+
   formSubmit = () => {
     console.log('Step2');
-    const { form, onSubmit, nextHandler } = this.props;
+    const { form, onSubmit, nextHandler,
+    projectManage:{allBusinessFormat}
+    } = this.props;
 
-    form.validateFieldsAndScroll((err, values) => {
+    form.validateFieldsAndScroll(async (err, values) => {
       if (err) {
 
 
         return;
       }
       const formData = { ...values };
+
+      console.log("fromData "+ JSON.stringify(formData));
       
       let hasDataCount = 0;
-      for (let i = 0; i < this.state.yetai.length; i++) {
+      for (let i = 0; i < allBusinessFormat.length; i++) {
 
-        let item = this.state.yetai[i];
-        if (formData[item.code]) {
+        let item = allBusinessFormat[i];
+        if (formData[item.record_id]) {
           hasDataCount++;
 
         }
         
-        console.log(formData[item.code]);
-        console.log(formData[item.code+"mj"]);
+        console.log(formData[item.record_id]);
+        console.log(formData[item.record_id+"mj"]);
        
-        if (i == (this.state.yetai.length - 1) && hasDataCount == 0) {
+        if (i == (allBusinessFormat.length - 1) && hasDataCount == 0) {
           message.warning('请至少选择一个业态');
 
           return;
@@ -77,28 +92,63 @@ export default class Step2 extends PureComponent {
 
       }
 
+      // 处理界面数据达到接口要求
+     
+
      
     
       // onSubmit(formData);
-      console.log(form.getFieldsValue());
-      
-
-      console.log(formData);
-      message.success('保存成功');
+      let res = await updateProFormat(this.formatData(formData));
+      if (res && res.status === "OK") {
+         message.success('保存成功');
       if (nextHandler) nextHandler();
+      }
+
+     
     });
   };
 
+  // 将formData原始数据整理成接口需要的数据
+
+formatData(forData) {
+  const { 
+    projectManage:{allBusinessFormat, formID}
+    } = this.props;
+  let temp =[];
+  for (let i = 0; i < allBusinessFormat.length; i++) {
+
+  
+   
+    if (forData[allBusinessFormat[i].record_id]!== undefined && forData[allBusinessFormat[i].record_id] === true) {
+
+      allBusinessFormat[i].floor_area = forData[allBusinessFormat[i].record_id+"mj"];
+      allBusinessFormat[i].checked = undefined;
+      allBusinessFormat[i].project_id = formID;
+      allBusinessFormat[i].business_format_id = allBusinessFormat[i].record_id;
+
+      temp.push( allBusinessFormat[i]);
+    }
+  }
+
+  console.log("temp "+ JSON.stringify(temp));
+
+  return temp;
+
+
+}
+  getCheckChange(event) {
+    console.log("event "+ JSON.stringify(event));
+
+  }
+
   render() {
     const {
-      projectManage: { businessFormat  },
+      projectManage: { businessFormat, allBusinessFormat  },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
+    const { yetai } = this.state;
  
-   
-
-   
  
     const formItemLayout = {
       labelCol: {
@@ -119,7 +169,7 @@ export default class Step2 extends PureComponent {
           <Col span={4} style={{textAlign:"right"}}><span style={{lineHeight:"40px"}}>选择相关业态：&nbsp;&nbsp;&nbsp;</span></Col>
           <Col span={20}>
           {
-                businessFormat&&businessFormat.map((item, index) => 
+               allBusinessFormat && allBusinessFormat.map((item, index) => 
                 <Row
                 style={{
                   height: '59px',
@@ -131,17 +181,17 @@ export default class Step2 extends PureComponent {
                 <Col span={4}>
                 <Form.Item {...formItemLayout} label="" >
                 {getFieldDecorator(item.record_id, {
-                 // initialValue: item.name,
+                 valuePropName: 'checked',
+                 initialValue: item.checked,
                 
-                
-                })( <Checkbox value={item.record_id} >{item.name}</Checkbox>)}
+                })( <Checkbox    onChange={() => {}}>{item.name}</Checkbox>)}
                   </Form.Item>
                   
                 </Col>
                 <Col span={12}>
                 <Form.Item {...formItemLayout} label="建筑面积">
                 {getFieldDecorator(item.record_id+"mj", {
-                 // initialValue: formData.address,
+                  initialValue: item.floor_area,
                   rules: [
                     {
                       required: getFieldValue(item.record_id),
