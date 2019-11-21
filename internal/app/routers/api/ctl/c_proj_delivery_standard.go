@@ -62,7 +62,7 @@ func (a *ProjDeliveryStandard) query(c *gin.Context) {
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param projectID query string  true "项目ID"
-// @Success 200 []schema.ProjDeliveryStandard "查询结果：{list:列表数据}"
+// @Success 200 []schema.ProjDeliveryStandard "列表数据"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
@@ -80,7 +80,7 @@ func (a *ProjDeliveryStandard) queryTree(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResList(c, result)
+	ginplus.ResSuccess(c, result)
 }
 
 // Get 查询指定数据

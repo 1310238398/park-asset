@@ -22,22 +22,30 @@ type ProjCostItem struct {
 	ProjCostItemBll bll.IProjCostItem
 }
 
+func (a *ProjCostItem) Query(c *gin.Context) {
+	q := c.Query("q")
+	switch q {
+	case "tree":
+		a.queryTree(c)
+	default:
+		a.queryTree(c)
+	}
+}
+
 // Query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
-// @Success 200 []schema.ProjCostItem "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Success 200 []schema.ProjCostItemShow "数据列表"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-cost-items
-func (a *ProjCostItem) Query(c *gin.Context) {
+// @Router GET /api/v1/proj-cost-items?q=tree
+func (a *ProjCostItem) queryTree(c *gin.Context) {
 	var params schema.ProjCostItemQueryParam
 
-	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params, schema.ProjCostItemQueryOptions{
-		PageParam: ginplus.GetPaginationParam(c),
-	})
+	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -49,7 +57,7 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 // @Summary 查询指定数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 schema.ProjCostItem
+// @Success 200 schema.ProjCostItemShow
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
