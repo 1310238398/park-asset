@@ -329,7 +329,7 @@ func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*s
 			return err
 		}
 		for _, v := range item.BusinessList {
-			err = a.ProjCostBusinessModel.Create(*v)
+			err := a.ProjCostBusinessModel.Create(ctx, *v)
 			if err != nil {
 				return err
 			}
