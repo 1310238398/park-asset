@@ -21,7 +21,7 @@ func (a SchemaProjCostBusiness) ToProjCostBusiness() *ProjCostBusiness {
 		RecordID:       &a.RecordID,
 		ProjBusinessID: &a.ProjBusinessID,
 		ProjCostID:     &a.ProjCostID,
-		UnitPrise:      &a.UnitPrise,
+		UnitPrice:      &a.UnitPrice,
 	}
 	return item
 }
@@ -32,7 +32,7 @@ type ProjCostBusiness struct {
 	RecordID       *string  `gorm:"column:record_id;size:36;index;"`        // 记录ID
 	ProjBusinessID *string  `gorm:"column:proj_business_id;size:36;index;"` // 项目业态ID
 	ProjCostID     *string  `gorm:"column:proj_cost_id;size:36;index;"`     // 项目成本项ID
-	UnitPrise      *float64 `gorm:"column:unit_prise;type:decimal(20,4);"`  // 单价
+	UnitPrice      *float64 `gorm:"column:unit_price;type:decimal(20,4);"`  // 单价
 }
 
 func (a ProjCostBusiness) String() string {
@@ -50,7 +50,7 @@ func (a ProjCostBusiness) ToSchemaProjCostBusiness() *schema.ProjCostBusiness {
 		RecordID:       *a.RecordID,
 		ProjBusinessID: *a.ProjBusinessID,
 		ProjCostID:     *a.ProjCostID,
-		UnitPrise:      *a.UnitPrise,
+		UnitPrice:      *a.UnitPrice,
 	}
 	return item
 }

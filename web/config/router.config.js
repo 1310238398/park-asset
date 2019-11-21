@@ -195,13 +195,27 @@ export default [
             },
         ],
       },
+      //基础设定-系统设定
+      {
+        path : 'systemset',
+        routes: [  
+          {//业态管理
+            path : '/systemset/formatManage',
+            component : './SystemSetting/FormatParameter/FormatManage',
+          },
+          {
+            path : "/systemset/taxManage",
+            component : './SystemSetting/TaxParameter/TaxManage',
+          }
+        ]
+      },
       // 成本管理
       {
 
         path: '/cost',
         routes: [
-          // { path: '/system/menu', component: './Menu/MenuList' },
-          // { path: '/system/role', component: './Role/RoleList' },
+          { path: '/cost/list', component: './CostManage/CostAccountList' },
+          { path: '/cost/detail', component: './CostManage/CostAccountDetail'},
           // { path: '/system/user', component: './User/UserList' },
           // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
         ],

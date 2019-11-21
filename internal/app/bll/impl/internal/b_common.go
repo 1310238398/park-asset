@@ -80,18 +80,51 @@ func DefaultSystemParameterValue(ctx context.Context, mSystemParameter model.ISy
 	return val
 }
 
-// CalcuTax 计算税额 taxRate税率  calcuType (1:含税计算 2:含税计算) amount缴税基数
-func CalcuTax(ctx context.Context, calcuType int, taxRate, amount float64) float64 {
-	if calcuType == 1 {
-		tax := amount / (1.0 + 0.01*taxRate) * taxRate
-		return util.FloatRoundFormat(tax)
-
+// GetCostTemplate 获取成本模板
+func GetCostTemplate(ctx context.Context, mCostItem model.ICostItem) (schema.CostItems, error) {
+	ps := schema.CostItemQueryParam{}
+	cir, err := mCostItem.Query(ctx, ps)
+	if err != nil {
+		return nil, err
 	}
 
-	if calcuType == 2 {
-		tax := amount * taxRate
-		return util.FloatRoundFormat(tax)
+	result := schema.CostItems{}
+	for _, v := range cir.Data {
+		if v.ParentID == "" {
+			result = append(result, v)
+		} else {
+			for _, k := range cir.Data {
+				if k.RecordID == v.ParentID {
+					k.Children = append(k.Children, k)
+				}
+				break
+			}
+		}
+	}
+	return result, nil
+}
+
+// GetTaxPrice 计算税金
+func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, price float64, taxID string, taxRate float64) (float64, float64, error) {
+	//TODO 土增计税
+
+	//取税
+	tax, err := mTaxCalculation.Get(ctx, taxID)
+	if err != nil {
+		return 0, 0, err
+	}
+	var taxPrice float64
+	if taxRate == 0 {
+		taxRate = tax.TaxRate
 	}
 
-	return 0
+	//特别计税
+
+	//计税
+	if tax.Type == 1 {
+		taxPrice = price * taxRate / (1 + taxRate)
+	} else if tax.Type == 2 {
+		taxPrice = price * taxRate
+	}
+	return taxPrice, taxRate, nil
 }

@@ -12,6 +12,7 @@ type ICostItem interface {
 	Query(ctx context.Context, params schema.CostItemQueryParam, opts ...schema.CostItemQueryOptions) (*schema.CostItemQueryResult, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.CostItemQueryOptions) (*schema.CostItem, error)
+
 	// 创建数据
 	Create(ctx context.Context, item schema.CostItem) error
 	// 更新数据

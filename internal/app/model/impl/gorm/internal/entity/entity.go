@@ -84,3 +84,8 @@ func getDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 func getDBWithModel(ctx context.Context, defDB *gorm.DB, m interface{}) *gorm.DB {
 	return getDB(ctx, defDB).Model(m)
 }
+
+// GetDB 获取数据库
+func GetDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDB(ctx, defDB)
+}

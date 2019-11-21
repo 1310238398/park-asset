@@ -8,6 +8,10 @@ import (
 
 // IProjCostItem 项目成本项业务逻辑接口
 type IProjCostItem interface {
+	// 成本项目初始化
+	Init(ctx context.Context, projectID string) error
+	// 查询树结构
+	QueryTree(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error)
 	// 查询数据
 	Query(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItemQueryResult, error)
 	// 查询指定数据

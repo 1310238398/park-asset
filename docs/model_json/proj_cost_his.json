@@ -30,14 +30,14 @@
 
         },
         {
-            "struct_field_name": "TaxPrise",
+            "struct_field_name": "TaxPrice",
             "comment": "缴税税额",
             "struct_field_type": "float64",
             "gorm_options": "type:decimal(20,4);"
  
         },
         {
-            "struct_field_name": "Prise",
+            "struct_field_name": "Price",
             "comment": "价格",
             "struct_field_type": "float64",
             "gorm_options": "type:decimal(20,4);"
