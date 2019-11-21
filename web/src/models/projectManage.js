@@ -147,7 +147,7 @@ export default {
       }
 
       // 查询所有业态
-      const all_format = yield call(formatManageService.queryList, {});
+      const all_format = yield call(formatManageService.queryListNotPage, {});
       if (all_format && all_format.list) {
         yield [
           put({

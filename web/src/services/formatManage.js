@@ -4,6 +4,9 @@ import request from '../utils/request';
 const router = 'business-formats';
 
 export async function queryList(){
+    return request(`/v1/${router}`);
+}
+export async function queryListNotPage(){
     return request(`/v1/${router}?q=list`);
 }
 
