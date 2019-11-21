@@ -27,8 +27,12 @@ type PcProject struct {
 	TotalUsingArea        float64   `json:"total_using_area" swaggo:"false,总用地面积"`        // 总用地面积
 	ConstructionArea      float64   `json:"construction_area" swaggo:"false,建设用地面积"`      // 建设用地面积
 	OrgID                 string    `json:"org_id" swaggo:"false,项目所属子公司"`                // 项目所属子公司
+	OrgName               string    `json:"org_name" swaggo:"false,项目所属子公司名称"`            // 项目所属子公司名称
 	PlotID                string    `json:"plot_id" swaggo:"false,所属地块"`                  // 所属地块
+	PlotName              string    `json:"plot_name" swaggo:"false,所属地块名称"`              // 所属地块名称
 	Location              string    `json:"location" swaggo:"false,项目地址(经纬度)"`            // 项目地址(经纬度)
+	IdentiArea            float64   `json:"identi_area" swaggo:"false,可确权面积"`             // 可确权面积
+	Files                 ProjFiles `json:"files"  swaggo:"false,文件列表"`                   // 文件列表
 }
 
 // PcProjectQueryParam 查询条件
@@ -52,3 +56,67 @@ type PcProjectQueryResult struct {
 
 // PcProjects 成本项目管理列表
 type PcProjects []*PcProject
+
+// ToOrgIDs 转换为组织机构ID列表
+func (a PcProjects) ToOrgIDs() []string {
+	var orgIDs []string
+
+	for _, item := range a {
+		exists := false
+		for _, orgID := range orgIDs {
+			if orgID == item.OrgID {
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
+			orgIDs = append(orgIDs, item.OrgID)
+		}
+	}
+
+	return orgIDs
+}
+
+// FillOrgData 填充组织机构数据
+func (a PcProjects) FillOrgData(m map[string]*Organization) PcProjects {
+	for i, item := range a {
+		if v, ok := m[item.OrgID]; ok {
+			a[i].OrgName = v.Name
+		}
+	}
+
+	return a
+}
+
+// ToPlotIDs 转换为地块ID列表
+func (a Projects) ToPlotIDs() []string {
+	var plotIDs []string
+
+	for _, item := range a {
+		exists := false
+		for _, plotID := range plotIDs {
+			if plotID == item.PlotID {
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
+			plotIDs = append(plotIDs, item.PlotID)
+		}
+	}
+
+	return plotIDs
+}
+
+// FillPlotData 填充地块数据
+func (a PcProjects) FillPlotData(m map[string]*Plot) PcProjects {
+	for i, item := range a {
+		if v, ok := m[item.PlotID]; ok {
+			a[i].PlotName = v.Name
+		}
+	}
+
+	return a
+}

@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjSalesPlan 创建项目销售计划存储实例
@@ -30,6 +31,22 @@ func (a *ProjSalesPlan) getQueryOption(opts ...schema.ProjSalesPlanQueryOptions)
 // Query 查询数据
 func (a *ProjSalesPlan) Query(ctx context.Context, params schema.ProjSalesPlanQueryParam, opts ...schema.ProjSalesPlanQueryOptions) (*schema.ProjSalesPlanQueryResult, error) {
 	db := entity.GetProjSalesPlanDB(ctx, a.db)
+
+	if v := params.Year; v != 0 {
+		db = db.Where("year = ?", v)
+	}
+
+	if v := params.ProjBusinessID; v != "" {
+		db = db.Where("businesss_id = ?", v)
+	}
+
+	if v := params.ProjIncomeID; v != "" {
+		db = db.Where("proj_income_id = ?", v)
+	}
+
+	if v := params.Quarter; v != 0 {
+		db = db.Where("quarter = ? ", v)
+	}
 
 	db = db.Order("id DESC")
 

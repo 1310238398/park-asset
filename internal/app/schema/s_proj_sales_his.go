@@ -10,8 +10,8 @@ type ProjSalesHis struct {
 	SaleArea       float64 `json:"sale_area" swaggo:"false,销售面积"`          // 销售面积
 	ContractAmount float64 `json:"contract_amount" swaggo:"false,合同额度"`    // 合同额度
 	Payback        float64 `json:"payback" swaggo:"false,销售回款"`            // 销售回款
-	TaxPrise       float64 `json:"tax_prise" swaggo:"false,销售税额"`          // 销售税额
-	AveragePrise   float64 `json:"average_prise" swaggo:"false,均价"`        // 均价
+	TaxPrice       float64 `json:"tax_price" swaggo:"false,销售税额"`          // 销售税额
+	AveragePrice   float64 `json:"average_price" swaggo:"false,均价"`        // 均价
 	Principal      string  `json:"principal" swaggo:"false,负责人"`           // 负责人
 	ProjIncomeID   string  `json:"proj_income_id" swaggo:"false,项目收益测算ID"` // 项目收益测算ID
 	ProjBusinessID string  `json:"proj_business_id" swaggo:"false,项目业态ID"` // 项目业态ID

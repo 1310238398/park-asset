@@ -11,10 +11,12 @@ type BusinessFormat struct {
 
 // BusinessFormatQueryParam 查询条件
 type BusinessFormatQueryParam struct {
-	LikeName       string // 业态名称(模糊查询)
-	ISUnderground  int    // 是否位于地下(1:是2:否)
-	ISCivilDefense int    // 是否属于人防(1:是2:否)
-	RecordID       string // 业态ID
+	LikeName       string   // 业态名称(模糊查询)
+	ISUnderground  int      // 是否位于地下(1:是2:否)
+	ISCivilDefense int      // 是否属于人防(1:是2:否)
+	RecordID       string   // 业态ID
+	RecordIDs      []string // 业态ID列表
+
 }
 
 // BusinessFormatQueryOptions 查询可选参数项
@@ -30,3 +32,12 @@ type BusinessFormatQueryResult struct {
 
 // BusinessFormats 业态列表
 type BusinessFormats []*BusinessFormat
+
+// ToMap 转化为键值映射
+func (a BusinessFormats) ToMap() map[string]*BusinessFormat {
+	m := make(map[string]*BusinessFormat, len(a))
+	for _, item := range a {
+		m[item.RecordID] = item
+	}
+	return m
+}

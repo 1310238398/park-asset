@@ -79,3 +79,19 @@ func DefaultSystemParameterValue(ctx context.Context, mSystemParameter model.ISy
 	}
 	return val
 }
+
+// CalcuTax 计算税额 taxRate税率  calcuType (1:含税计算 2:含税计算) amount缴税基数
+func CalcuTax(ctx context.Context, calcuType int, taxRate, amount float64) float64 {
+	if calcuType == 1 {
+		tax := amount / (1.0 + 0.01*taxRate) * taxRate
+		return util.FloatRoundFormat(tax)
+
+	}
+
+	if calcuType == 2 {
+		tax := amount * taxRate
+		return util.FloatRoundFormat(tax)
+	}
+
+	return 0
+}

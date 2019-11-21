@@ -26,8 +26,8 @@ func (a SchemaProjSalesHis) ToProjSalesHis() *ProjSalesHis {
 		SaleArea:       &a.SaleArea,
 		ContractAmount: &a.ContractAmount,
 		Payback:        &a.Payback,
-		TaxPrise:       &a.TaxPrise,
-		AveragePrise:   &a.AveragePrise,
+		TaxPrice:       &a.TaxPrice,
+		AveragePrice:   &a.AveragePrice,
 		Principal:      &a.Principal,
 		ProjIncomeID:   &a.ProjIncomeID,
 		ProjBusinessID: &a.ProjBusinessID,
@@ -46,11 +46,12 @@ type ProjSalesHis struct {
 	SaleArea       *float64 `gorm:"column:sale_area;type:decimal(20,4);"`       // 销售面积
 	ContractAmount *float64 `gorm:"column:contract_amount;type:decimal(20,4);"` // 合同额度
 	Payback        *float64 `gorm:"column:payback;type:decimal(20,4);"`         // 销售回款
-	TaxPrise       *float64 `gorm:"column:tax_prise;type:decimal(20,4);"`       // 销售税额
-	AveragePrise   *float64 `gorm:"column:average_prise;type:decimal(20,4);"`   // 均价
+	TaxPrice       *float64 `gorm:"column:tax_price;type:decimal(20,4);"`       // 销售税额
+	AveragePrice   *float64 `gorm:"column:average_price;type:decimal(20,4);"`   // 均价
 	Principal      *string  `gorm:"column:principal;size:200;index;"`           // 负责人
 	ProjIncomeID   *string  `gorm:"column:proj_income_id;size:36;index;"`       // 项目收益测算ID
 	ProjBusinessID *string  `gorm:"column:proj_business_id;size:36;index;"`     // 项目业态ID
+
 }
 
 func (a ProjSalesHis) String() string {
@@ -73,8 +74,8 @@ func (a ProjSalesHis) ToSchemaProjSalesHis() *schema.ProjSalesHis {
 		SaleArea:       *a.SaleArea,
 		ContractAmount: *a.ContractAmount,
 		Payback:        *a.Payback,
-		TaxPrise:       *a.TaxPrise,
-		AveragePrise:   *a.AveragePrise,
+		TaxPrice:       *a.TaxPrice,
+		AveragePrice:   *a.AveragePrice,
 		Principal:      *a.Principal,
 		ProjIncomeID:   *a.ProjIncomeID,
 		ProjBusinessID: *a.ProjBusinessID,

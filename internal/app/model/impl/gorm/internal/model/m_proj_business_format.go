@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjBusinessFormat 创建项目业态存储实例
@@ -30,6 +31,18 @@ func (a *ProjBusinessFormat) getQueryOption(opts ...schema.ProjBusinessFormatQue
 // Query 查询数据
 func (a *ProjBusinessFormat) Query(ctx context.Context, params schema.ProjBusinessFormatQueryParam, opts ...schema.ProjBusinessFormatQueryOptions) (*schema.ProjBusinessFormatQueryResult, error) {
 	db := entity.GetProjBusinessFormatDB(ctx, a.db)
+
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
+
+	if v := params.BusinessFormatID; v != "" {
+		db = db.Where("business_format_id = ?", v)
+	}
+
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN (?)", v)
+	}
 
 	db = db.Order("id DESC")
 

@@ -297,11 +297,13 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			// 注册/api/v1/proj-business-formats
 			gProjBusinessFormat := v1.Group("proj-business-formats")
 			{
-				gProjBusinessFormat.GET("", cProjBusinessFormat.Query)
+				gProjBusinessFormat.GET("", cProjBusinessFormat.QueryList)
 				gProjBusinessFormat.GET(":id", cProjBusinessFormat.Get)
 				gProjBusinessFormat.POST("", cProjBusinessFormat.Create)
 				gProjBusinessFormat.PUT(":id", cProjBusinessFormat.Update)
 				gProjBusinessFormat.DELETE(":id", cProjBusinessFormat.Delete)
+				gProjBusinessFormat.POST("update_list", cProjBusinessFormat.UpdateList)
+
 			}
 
 			// 注册/api/v1/proj-capitalized-his
@@ -432,6 +434,9 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjSalesPlan.POST("", cProjSalesPlan.Create)
 				gProjSalesPlan.PUT(":id", cProjSalesPlan.Update)
 				gProjSalesPlan.DELETE(":id", cProjSalesPlan.Delete)
+				gProjSalesPlan.POST("list", cProjSalesPlan.CreateList)
+				gProjSalesPlan.POST("delete_list", cProjSalesPlan.DeleteList)
+
 			}
 
 			// 注册/api/v1/tax-calculations

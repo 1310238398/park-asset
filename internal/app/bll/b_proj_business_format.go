@@ -18,4 +18,6 @@ type IProjBusinessFormat interface {
 	Update(ctx context.Context, recordID string, item schema.ProjBusinessFormat) (*schema.ProjBusinessFormat, error)
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 批量更新
+	UpdateList(ctx context.Context, projectID string, items schema.ProjBusinessFormats) error
 }

@@ -1,10 +1,11 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewPcProject 创建成本项目管理控制器
@@ -26,14 +27,19 @@ type PcProject struct {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param name query string false "名称"
+// @Param org_id query string false "项目所属公司ID"
+// @Param plot_id query string false "地块ID"
 // @Success 200 []schema.PcProject "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/pc-projects
+// @Router GET /api/v1/pc-projects?q=page
 func (a *PcProject) Query(c *gin.Context) {
 	var params schema.PcProjectQueryParam
-
+	params.LikeName = c.Query("name")
+	params.OrgID = c.Query("org_id")
+	params.PlotID = c.Query("plot_id")
 	result, err := a.PcProjectBll.Query(ginplus.NewContext(c), params, schema.PcProjectQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})

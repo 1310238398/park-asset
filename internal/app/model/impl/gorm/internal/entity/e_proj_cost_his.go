@@ -27,6 +27,8 @@ func (a SchemaProjCostHis) ToProjCostHis() *ProjCostHis {
 		Memo:         &a.Memo,
 		Principal:    &a.Principal,
 		ProjIncomeID: &a.ProjIncomeID,
+		ParentID:     &a.ParentID,
+		ParentPath:   &a.ParentPath,
 	}
 	return item
 }
@@ -43,6 +45,9 @@ type ProjCostHis struct {
 	Memo         *string  `gorm:"column:memo;size:1024;"`               // 备注
 	Principal    *string  `gorm:"column:principal;size:200;index;"`     // 负责人
 	ProjIncomeID *string  `gorm:"column:proj_income_id;size:36;index;"` // 项目收益测算ID
+	ParentID     *string  `gorm:"column:parent_id;36;index;"`           // 父级ID
+	ParentPath   *string  `gorm:"column:parent_path;518;index;"`        // 父级路径
+
 }
 
 func (a ProjCostHis) String() string {
@@ -66,6 +71,8 @@ func (a ProjCostHis) ToSchemaProjCostHis() *schema.ProjCostHis {
 		Memo:         *a.Memo,
 		Principal:    *a.Principal,
 		ProjIncomeID: *a.ProjIncomeID,
+		ParentID:     *a.ParentID,
+		ParentPath:   *a.ParentPath,
 	}
 	return item
 }

@@ -11,6 +11,8 @@ type ProjCostHis struct {
 	Memo         string  `json:"memo" swaggo:"false,备注"`                 // 备注
 	Principal    string  `json:"principal" swaggo:"false,负责人"`           // 负责人
 	ProjIncomeID string  `json:"proj_income_id" swaggo:"false,项目收益测算ID"` // 项目收益测算ID
+	ParentID     string  `json:"parent_id" swaggo:"false,父级ID"`          // 父级ID
+	ParentPath   string  `json:"parent_path" swaggo:"false,父级路径"`        // 父级路经
 }
 
 // ProjCostHisQueryParam 查询条件

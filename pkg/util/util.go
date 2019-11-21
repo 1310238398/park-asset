@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -71,4 +72,21 @@ func FillZero(i int) string {
 		return fmt.Sprintf("0%d", i)
 	}
 	return fmt.Sprintf("%d", i)
+}
+
+// FormatAmount 格式化金额
+func FormatAmount(f float64) string {
+	if f == 0 {
+		return "0"
+	}
+	return fmt.Sprintf("%.2f", f)
+}
+
+// FloatRoundFormat 四舍五入保留两位小数
+func FloatRoundFormat(f float64) float64 {
+	if f == 0 {
+		return 0
+	}
+	f1, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", f), 64)
+	return f1
 }
