@@ -257,11 +257,19 @@ class CostAccountList extends PureComponent {
     console.log(this.state.expandHang);
   };
 
-  goToDetail(item) {
+  goToDetail(item, type1) {
+    // type V 查看  E 编辑
+
+    
     this.dispatch({
       type: 'costAccount/redirectDetail',
-      payload: item,
+      payload: {
+        item: item,
+         operType: type1
+      },
+    
     });
+
 
   }
  
@@ -315,11 +323,11 @@ class CostAccountList extends PureComponent {
         
           return !record.isPro ? null:(  
             <div>
-            <PButton   code="edit"  onClick={() => {}}>
+            <PButton   code="edit"  onClick={() => {this.goToDetail(record, 'E');}}>
               编辑
             </PButton>
             
-              <PButton  code="view" style={{ marginLeft: 8 }} onClick={() => {this.goToDetail(record);}}>
+              <PButton  code="view" style={{ marginLeft: 8 }} onClick={() => {this.goToDetail(record, 'V');}}>
               查看
               </PButton>
           

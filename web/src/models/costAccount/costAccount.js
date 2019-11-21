@@ -15,6 +15,7 @@ export default {
     submitting: false,
     formTitle: '',
     formID: '',
+    formType:'E', // "E" 编辑 "V" 查看
     formVisible:false,
     addSalesPlanVisible: false,
     formData: {},
@@ -206,17 +207,27 @@ export default {
     },
     // 成本核算的接口
     // 查看详情
-    *redirectDetail({ payload }, { put }) {
+    *redirectDetail({ payload , operType}, { put }) {
      
+     
+
       yield put(
         routerRedux.push({
           pathname: '/cost/detail',
           query: {
-            key: payload.key,
+            key: payload.item.key,
            
           },
         })
       );
+
+      yield put(
+        {
+          type: 'saveFormType',
+          payload: payload.operType,
+        }
+      );
+
     },
     
     

@@ -3,10 +3,10 @@ import request from '../utils/request';
 
 const router = 'business-formats';
 
-export async function queryList(){
+export async function queryList() {
     return request(`/v1/${router}`);
 }
-export async function queryListNotPage(){
+export async function queryListNotPage() {
     return request(`/v1/${router}?q=list`);
 }
 
@@ -14,7 +14,7 @@ export async function get(params) {
     return request(`/v1/${router}/${params.record_id}`);
 }
 
-export async function create(params){
+export async function create(params) {
     return request(`/v1/${router}`, {
         method: 'POST',
         body: params,

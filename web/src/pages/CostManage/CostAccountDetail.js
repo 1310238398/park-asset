@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Tabs, Card, message } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import SalesPlan from './SalesPlan';
+import CostList from './CostList';
 import AddNewSalesPlan from './AddNewSalesPlan';
 
 const { TabPane } = Tabs;
@@ -30,6 +31,9 @@ export default class CostAccountDetail extends PureComponent {
       },
     } = this.props;
     console.log('传入的key ' + key);
+    // 初始化Tab1的数据
+
+
   }
 
   dispatch = action => {
@@ -68,8 +72,13 @@ export default class CostAccountDetail extends PureComponent {
     this.clearSelectRows();
   };
 
+  changeTab(param) {
+    console.log("changeTab");
+    console.log(param);
+  }
+
   render() {
-    const breadcrumbList = [{ title: '项目管理' }, { title: '项目详情', href: '/cost/detail' }];
+    const breadcrumbList = [{ title: '成本管理' }, { title: '成本核算', href:'/cost/list' },{ title: '项目详情', href: '/cost/detail' }];
     return (
       <PageHeaderLayout
         title="项目详情"
@@ -77,12 +86,12 @@ export default class CostAccountDetail extends PureComponent {
         //content={this.renderContent()}
       >
         <Card bordered={false}>
-          <Tabs defaultActiveKey="3" onChange={this.callback}>
+          <Tabs defaultActiveKey="1" onChange={this.callback} onChange={this.changeTab}>
             <TabPane tab="收益测算" key="1">
               Content of Tab Pane 1
             </TabPane>
             <TabPane tab="成本核算" key="2">
-              Content of Tab Pane 2
+              <CostList></CostList>
             </TabPane>
             <TabPane tab="销售计划" key="3" style={{minHeight: 500, maxHeight: 500}}>
              <SalesPlan></SalesPlan>
