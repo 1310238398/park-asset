@@ -6,8 +6,8 @@ type ProjCostHis struct {
 	CostID       string  `json:"cost_id" swaggo:"false,成本项ID"`           // 成本项ID
 	ProjectID    string  `json:"project_id" swaggo:"false,项目ID"`         // 项目ID
 	TaxRate      int     `json:"tax_rate" swaggo:"false,税率"`             // 税率
-	TaxPrise     float64 `json:"tax_prise" swaggo:"false,缴税税额"`          // 缴税税额
-	Prise        float64 `json:"prise" swaggo:"false,价格"`                // 价格
+	TaxPrice     float64 `json:"tax_price" swaggo:"false,缴税税额"`          // 缴税税额
+	Price        float64 `json:"price" swaggo:"false,价格"`                // 价格
 	Memo         string  `json:"memo" swaggo:"false,备注"`                 // 备注
 	Principal    string  `json:"principal" swaggo:"false,负责人"`           // 负责人
 	ProjIncomeID string  `json:"proj_income_id" swaggo:"false,项目收益测算ID"` // 项目收益测算ID

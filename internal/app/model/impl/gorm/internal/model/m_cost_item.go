@@ -32,6 +32,14 @@ func (a *CostItem) getQueryOption(opts ...schema.CostItemQueryOptions) schema.Co
 func (a *CostItem) Query(ctx context.Context, params schema.CostItemQueryParam, opts ...schema.CostItemQueryOptions) (*schema.CostItemQueryResult, error) {
 	db := entity.GetCostItemDB(ctx, a.db)
 
+	if v := params.Name; v != "" {
+		db = db.Where("name=?", v)
+	}
+
+	if v := params.ParentID; v != "" {
+		db = db.Where("parent_id=?", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

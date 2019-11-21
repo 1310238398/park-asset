@@ -35,14 +35,14 @@ type ProjCostItem struct {
 func (a *ProjCostItem) Query(c *gin.Context) {
 	var params schema.ProjCostItemQueryParam
 
-	result, err := a.ProjCostItemBll.Query(ginplus.NewContext(c), params, schema.ProjCostItemQueryOptions{
+	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params, schema.ProjCostItemQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResPage(c, result.Data, result.PageResult)
+	ginplus.ResSuccess(c, result)
 }
 
 // Get 查询指定数据
