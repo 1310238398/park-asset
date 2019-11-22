@@ -82,15 +82,6 @@ func FormatAmount(f float64) string {
 	return fmt.Sprintf("%.2f", f)
 }
 
-// FloatRoundFormat 四舍五入保留两位小数
-func FloatRoundFormat(f float64) float64 {
-	if f == 0 {
-		return 0
-	}
-	f1, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", f), 64)
-	return f1
-}
-
 // BoolToInt 布尔转int
 func BoolToInt(b bool) int {
 	if b {
@@ -98,4 +89,8 @@ func BoolToInt(b bool) int {
 	} else {
 		return 0
 	}
+// Float保留两位小数
+func DecimalFloat64(value float64) float64 {
+	value, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", value), 64)
+	return value
 }

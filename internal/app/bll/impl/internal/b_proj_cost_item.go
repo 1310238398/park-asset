@@ -181,6 +181,14 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 		return nil, err
 	}
 
+	// 获取项目业态面积
+	pbfqp := schema.ProjBusinessFormatQueryParam{}
+	pbfqp.ProjectID = params.ProjectID
+	pbfqr, err := a.ProjBusinessFormatModel.Query(ctx, pbfqp)
+	if err != nil {
+		return nil, err
+	}
+
 	//整理列表
 	result := schema.ProjCostItemShows{}
 	for _, v := range shows {
@@ -210,11 +218,19 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 			}
 		}
 		if b && !hasc {
+			t.Editable = true
 			ps := schema.ProjCostBusinessQueryParam{}
 			ps.ProjCostID = t.RecordID
 			pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
 			if err != nil {
 				return b, err
+			}
+			for _, v := range pcbqr.Data {
+				for _, w := range pbfqr.Data {
+					if v.ProjBusinessID == w.RecordID {
+						v.Price = util.DecimalFloat64(v.UnitPrice * w.FloorArea)
+					}
+				}
 			}
 			t.BusinessList = pcbqr.Data
 		}
@@ -226,76 +242,6 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 	}
 
 	return result, nil
-
-	// if v.RecordID != "" {
-	// 		//填写各业态单价
-	// 		ps := schema.ProjCostBusinessQueryParam{}
-	// 		ps.ProjCostID = v.RecordID
-	// 		pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		v.BusinessList = pcbqr.Data
-	// 	}
-
-	// // 获取模板
-	// temp, err := GetCostTemplate(ctx, a.CostItemModel)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// //获取列表
-	// pciqr, err := a.ProjCostItemModel.Query(ctx, params)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// //整合数据
-	// var check func(t *schema.CostItem) *schema.ProjCostItemShow
-
-	// check = func(t *schema.CostItem) *schema.ProjCostItemShow {
-	// 	var show *schema.ProjCostItemShow
-	// 	var b = false
-	// 	show.CostID = t.RecordID
-	// 	show.Label = t.Label
-	// 	show.Name = t.Name
-	// 	show.CalculateType = t.CalculateType
-	// 	show.TaxID = t.TaxID
-
-	// 	for _, v := range pciqr.Data {
-	// 		if v.CostID == t.RecordID {
-	// 			b = true
-	// 			show.RecordID = v.RecordID
-	// 			show.ProjectID = v.ProjectID
-	// 			show.Price = v.Price
-	// 			show.TaxPrice = v.TaxPrice
-	// 			show.TaxRate = v.TaxRate
-	// 			break
-	// 		}
-	// 	}
-
-	// 	if len(t.Children) > 0 { //如果有下级
-	// 		for _, v := range t.Children {
-	// 			item := check(v)
-	// 			show.Children = append(show.Children, item)
-	// 		}
-	// 	} else if b {
-	// 		ps := schema.ProjCostBusinessQueryParam{}
-	// 		ps.ProjCostID = show.RecordID
-	// 		pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
-	// 		if err != nil {
-	// 			return show
-	// 		}
-	// 		show.BusinessList = pcbqr.Data
-	// 	}
-
-	// 	return show
-	// }
-	// result := []*schema.ProjCostItemShow{}
-	// for _, v := range temp {
-	// 	item := check(v)
-	// 	result = append(result, item)
-	// }
-
 }
 
 func (a *ProjCostItem) Query(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItemQueryResult, error) {
@@ -325,15 +271,28 @@ func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*s
 		if err := a.ProjCostItemModel.Create(ctx, item); err != nil {
 			return err
 		}
+		//验证成本项
+		costItem, err := a.CostItemModel.Get(ctx, item.CostID)
+		if err != nil {
+			return err
+		} else if costItem == nil {
+			//直接删除
+			return errors.New("未找到模板")
+		}
+
+		if costItem.CalculateType == 1 {
+			for _, v := range item.BusinessList {
+				err := a.ProjCostBusinessModel.Create(ctx, *v)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
 		if err := a.renew(ctx, item.ProjectID); err != nil {
 			return err
 		}
-		for _, v := range item.BusinessList {
-			err := a.ProjCostBusinessModel.Create(ctx, *v)
-			if err != nil {
-				return err
-			}
-		}
+
 		return nil
 	})
 	if err != nil {
@@ -345,33 +304,134 @@ func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*s
 
 // Update 更新数据
 func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.ProjCostItem) (*schema.ProjCostItem, error) {
-	oldItem, err := a.ProjCostItemModel.Get(ctx, recordID)
-	if err != nil {
-		return nil, err
-	} else if oldItem == nil {
-		return nil, errors.ErrNotFound
-	}
+	err := ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		oldItem, err := a.ProjCostItemModel.Get(ctx, recordID)
+		if err != nil {
+			return err
+		} else if oldItem == nil {
+			return errors.ErrNotFound
+		}
 
-	err = a.ProjCostItemModel.Update(ctx, recordID, item)
+		//验证成本项
+		costItem, err := a.CostItemModel.Get(ctx, oldItem.CostID)
+		if err != nil {
+			return err
+		} else if costItem == nil {
+			//直接删除
+			return a.ProjCostItemModel.Delete(ctx, recordID)
+		}
+
+		if costItem.Name == "资本化利息" {
+			return errors.New("资本化利息不能更新")
+		}
+
+		if costItem.CalculateType == 1 { //更新业态单价
+
+			//更新业态信息
+			//旧业态信息列表
+			ps := schema.ProjCostBusinessQueryParam{}
+			ps.ProjCostID = item.RecordID
+			pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
+			if err != nil {
+				return err
+			}
+			oldm := map[string]int{}
+			for _, v := range pcbqr.Data {
+				oldm[v.RecordID] = 0
+			}
+			for _, v := range item.BusinessList { //整理成本项下各业态信息
+				var b = true
+				for _, w := range pcbqr.Data {
+					if w.ProjBusinessID == v.ProjBusinessID && w.ProjCostID == v.ProjCostID {
+						if w.UnitPrice != v.UnitPrice { //更新业态单价
+							w.UnitPrice = v.UnitPrice
+							w.ProjBusinessID = v.ProjBusinessID
+							if err := a.ProjCostBusinessModel.Update(ctx, w.RecordID, *w); err != nil {
+								return err
+							}
+						}
+						b = false
+						oldm[w.RecordID] = 1
+						break
+					}
+				}
+				if b { //需要新增业态信息
+					pcb := schema.ProjCostBusiness{}
+					pcb.ProjBusinessID = v.ProjBusinessID
+					pcb.ProjCostID = v.ProjCostID
+					pcb.UnitPrice = v.UnitPrice
+					if err := a.ProjCostBusinessModel.Create(ctx, pcb); err != nil {
+						return err
+					}
+				}
+				//删除旧业态信息
+				for k, v := range oldm {
+					if v == 0 {
+						if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+		if err := a.ProjCostItemModel.Update(ctx, recordID, item); err != nil {
+			return err
+		}
+		if err := a.renew(ctx, oldItem.ProjectID); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	return a.getUpdate(ctx, recordID)
+	return a.getUpdate(ctx, item.RecordID)
+
 }
 
 // Delete 删除数据
 func (a *ProjCostItem) Delete(ctx context.Context, recordID string) error {
-	oldItem, err := a.ProjCostItemModel.Get(ctx, recordID)
-	if err != nil {
-		return err
-	} else if oldItem == nil {
-		return errors.ErrNotFound
-	}
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		oldItem, err := a.ProjCostItemModel.Get(ctx, recordID)
+		if err != nil {
+			return err
+		} else if oldItem == nil {
+			return errors.ErrNotFound
+		}
+		//验证成本项
+		costItem, err := a.CostItemModel.Get(ctx, oldItem.CostID)
+		if err != nil {
+			return err
+		} else if costItem == nil {
+			//直接删除
+			return a.ProjCostItemModel.Delete(ctx, recordID)
+		}
+		if costItem.Label == 1 {
+			return errors.New("成本科目不能删除")
+		}
 
-	return a.ProjCostItemModel.Delete(ctx, recordID)
+		if err := a.ProjCostItemModel.Delete(ctx, recordID); err != nil {
+			return err
+		}
+
+		//删除业态
+		ps := schema.ProjCostBusinessQueryParam{}
+		ps.ProjCostID = recordID
+		pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
+		if err != nil {
+			return err
+		}
+		for _, v := range pcbqr.Data {
+			if err := a.ProjCostBusinessModel.Delete(ctx, v.RecordID); err != nil {
+				return err
+			}
+		}
+		return a.renew(ctx, oldItem.ProjectID)
+	})
+
 }
 
-// 刷新项目成本项
+// Renew 刷新项目成本项(重新进行统计计算)
 func (a *ProjCostItem) Renew(ctx context.Context, projectID string) error {
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		return a.renew(ctx, projectID)
@@ -409,6 +469,11 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 	if err != nil {
 		return err
 	}
+	//计算总面积
+	var projectArea float64
+	for _, v := range pbfqr.Data {
+		projectArea += v.FloorArea
+	}
 
 	// 整理数据
 	var check func(t *schema.ProjCostItemShow) (bool, float64, float64, error)
@@ -436,14 +501,14 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 		}
 		if !hasc { //没有下级，整理各个业态信息
 			if t.CalculateType == 1 { //单价算总价
+				//更新业态信息
+				//旧业态信息列表
 				ps := schema.ProjCostBusinessQueryParam{}
 				ps.ProjCostID = t.RecordID
 				pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
 				if err != nil {
 					return b, t.Price, t.TaxPrice, err
 				}
-				//更新业态信息
-				//旧业态信息列表
 				oldm := map[string]int{}
 				for _, v := range pcbqr.Data {
 					oldm[v.RecordID] = 0
@@ -459,23 +524,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						}
 					}
 					if b { //需要新增业态信息
-						item := schema.ProjCostBusiness{}
-						item.ProjBusinessID = v.RecordID
-						item.ProjCostID = t.RecordID
-						cbqp := schema.CostBusinessQueryParam{}
-						cbqp.CostID = t.CostID
-						cbqp.BusinessID = v.BusinessFormatID
-						cbqr, err := a.CostBusinessModel.Query(ctx, cbqp)
-						if err != nil {
-							return b, t.Price, t.TaxPrice, err
-						}
-						if len(cbqr.Data) == 1 {
-							item.UnitPrice = cbqr.Data[0].UnitPrice
-						}
-						if err := a.ProjCostBusinessModel.Create(ctx, item); err != nil {
-							return b, t.Price, t.TaxPrice, err
-						}
-						price += item.UnitPrice * v.FloorArea
+						//不进行新增业态信息
 					}
 					//删除旧业态信息
 					for k, v := range oldm {
@@ -486,8 +535,54 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						}
 					}
 				}
-			} else {
+			} else { //总价算单价
 				price = t.Price
+				unitprice := util.DecimalFloat64(price / projectArea)
+				//更新业态信息
+				//旧业态信息列表
+				ps := schema.ProjCostBusinessQueryParam{}
+				ps.ProjCostID = t.RecordID
+				pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
+				if err != nil {
+					return b, t.Price, t.TaxPrice, err
+				}
+				oldm := map[string]int{}
+				for _, v := range pcbqr.Data {
+					oldm[v.RecordID] = 0
+				}
+				for _, v := range pbfqr.Data { //整理成本项下各业态信息
+					var b = true
+					for _, w := range pcbqr.Data {
+						if w.ProjBusinessID == v.RecordID {
+							if w.UnitPrice != unitprice { //更新业态单价
+								w.UnitPrice = unitprice
+								if err := a.ProjCostBusinessModel.Update(ctx, w.RecordID, *w); err != nil {
+									return b, t.Price, t.TaxPrice, err
+								}
+							}
+							b = false
+							oldm[w.RecordID] = 1
+							break
+						}
+					}
+					if b { //需要新增业态信息
+						item := schema.ProjCostBusiness{}
+						item.ProjBusinessID = v.RecordID
+						item.ProjCostID = t.RecordID
+						item.UnitPrice = unitprice
+						if err := a.ProjCostBusinessModel.Create(ctx, item); err != nil {
+							return b, t.Price, t.TaxPrice, err
+						}
+					}
+					//删除旧业态信息
+					for k, v := range oldm {
+						if v == 0 {
+							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
+								return b, t.Price, t.TaxPrice, err
+							}
+						}
+					}
+				}
 			}
 
 			tax, _, err = GetTaxPrice(ctx, a.TaxCalculationModel, price, t.TaxID, t.TaxRate)
@@ -495,7 +590,8 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 				return b, t.Price, t.TaxPrice, err
 			}
 		}
-
+		price = util.DecimalFloat64(price)
+		tax = util.DecimalFloat64(tax)
 		//比对成本项数值
 		if t.Price != price || t.TaxPrice != tax {
 			//更新成本项
