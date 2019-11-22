@@ -25,9 +25,43 @@ const EditableRow = ({ form, index, ...props }) => (
 const EditableFormRow = Form.create()(EditableRow);
 
 class EditableCell extends React.Component {
+
+  state = {
+     toposNode:[
+       "税种1",
+       "税种2",
+       "税种3"
+     ]
+  }
+  renderToposNode = (data) => {
+    let ret = [];
+    ret = data.map(obj => {
+        return (<Select.Option key={obj} value={obj}>{obj}</Select.Option>)
+    })
+    return ret;
+}
   getInput = () => {
+    let handleChange = (value) => {
+      console.log(value);
+  }
     if (this.props.inputType === 'number') {
       return <InputNumber />;
+    }
+    else if (this.props.inputType === 'select') {
+      const { toposNode } = this.state;
+      return  (
+        <div>
+            <Select 
+                //mode="multiple"
+                style={{width: 120}}
+
+                onBlur={handleChange}
+               // onChange={handleChange}
+            >
+                {this.renderToposNode(toposNode)}
+            </Select>
+        </div>
+    )
     }
     return <Input />;
   };
@@ -196,6 +230,11 @@ class CostList extends PureComponent {
 
   save(form, key) {
     form.validateFields((error, row) => {
+
+      console.log("row ");
+      console.log(row);
+
+      row.rate = row.rate.format();
     
       if (error) {
         return;
@@ -297,7 +336,7 @@ class CostList extends PureComponent {
       if (eitem.editable) {
         eitem.onCell = record => ({
           record,
-          inputType: 'number',
+          inputType: "number",//eitem.dataIndex === 'rate'? 'select':'number',
           dataIndex: item.dataIndex,
           title: item.title,
           editing: this.isEditing(record),
@@ -365,7 +404,8 @@ class CostList extends PureComponent {
         //  ellipsis: true,
         align: 'center',
         editable: true,
-        fixed: 'right'
+        fixed: 'right',
+      
       },
       {
         title: '税金',

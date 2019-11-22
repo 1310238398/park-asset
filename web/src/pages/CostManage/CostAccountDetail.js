@@ -51,7 +51,7 @@ export default class CostAccountDetail extends PureComponent {
       
     } else if (key === "2") {
       // 成本核算
-      console.log('调用fetch请求');
+    
       this.dispatch({
         type: 'costList/fetch',
         payload: {

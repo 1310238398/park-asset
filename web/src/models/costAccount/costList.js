@@ -14,8 +14,6 @@ export default {
 
     *fetch({ payload }, { call, put, select }) {
       const params = { ...payload };
-      console.log("请求成本项列表");
-
       const response = yield call(costAccountService.queryCostList, params);
 
       yield put({
