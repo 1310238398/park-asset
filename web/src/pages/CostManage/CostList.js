@@ -196,9 +196,7 @@ class CostList extends PureComponent {
 
   save(form, key) {
     form.validateFields((error, row) => {
-      console.log('enenen  ');
-      console.log(row);
-
+    
       if (error) {
         return;
       }

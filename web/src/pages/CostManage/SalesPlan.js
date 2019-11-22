@@ -391,7 +391,7 @@ class SalesPlan extends PureComponent {
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),
-          handleSave: this.handleSave,
+         // handleSave: this.handleSave,
         }),
       };
     });

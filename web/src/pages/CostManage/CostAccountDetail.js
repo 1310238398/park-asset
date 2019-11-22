@@ -13,6 +13,8 @@ import DicSelect from '@/components/DictionaryNew/DicSelect';
 @connect(state => ({
   //projectManage: state.projectManage,
   salesPlan: state.salesPlan,
+  costAccount: state.costAccount,
+  costList: state.costList,
 }))
 export default class CostAccountDetail extends PureComponent {
   constructor(props) {
@@ -20,20 +22,18 @@ export default class CostAccountDetail extends PureComponent {
   }
 
   state = {
-    formData: {},
-    treeData: [],
+   pro_id:'',
   };
 
   componentDidMount() {
     const {
       location: {
-        query: { key },
+        query: { key, operType },
       },
     } = this.props;
-    console.log('传入的key ' + key);
+    console.log('传入的项目ID ' + key);
+    this.setState({pro_id: key});
     // 初始化Tab1的数据
-
-
   }
 
   dispatch = action => {
@@ -41,16 +41,31 @@ export default class CostAccountDetail extends PureComponent {
     dispatch(action);
   };
 
-  callback(key) {
-    console.log("Tab callback");
-    //message.success("你点击了Tab "+ key);
-  }
+  callback = key => {
+    const {
+      pro_id
+    } = this.state;
+ 
+
+    if (key === "1") {
+      
+    } else if (key === "2") {
+      // 成本核算
+      console.log('调用fetch请求');
+      this.dispatch({
+        type: 'costList/fetch',
+        payload: {
+          project_id: pro_id,
+        },
+      });
+    } else if (key === "3") {
+    } else if (key === "4") {
+    } else if (key === "5") {
+    }
+  };
   renderDataForm() {
     return (
-      <AddNewSalesPlan
-        onCancel={this.handleDataFormCancel}
-        onSubmit={this.handleDataFormSubmit}
-      />
+      <AddNewSalesPlan onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />
     );
   }
 
@@ -59,12 +74,9 @@ export default class CostAccountDetail extends PureComponent {
       type: 'salesPlan/changeSalesPlanFormVisible',
       payload: false,
     });
-
-    
-
   };
   handleDataFormSubmit = data => {
-    console.log("哈哈哈2");
+    console.log('哈哈哈2');
     this.dispatch({
       type: 'costAccount/submit',
       payload: data,
@@ -72,13 +84,12 @@ export default class CostAccountDetail extends PureComponent {
     this.clearSelectRows();
   };
 
-  changeTab(param) {
-    console.log("changeTab");
-    console.log(param);
-  }
-
   render() {
-    const breadcrumbList = [{ title: '成本管理' }, { title: '成本核算', href:'/cost/list' },{ title: '项目详情', href: '/cost/detail' }];
+    const breadcrumbList = [
+      { title: '成本管理' },
+      { title: '成本核算', href: '/cost/list' },
+      { title: '项目详情', href: '/cost/detail' },
+    ];
     return (
       <PageHeaderLayout
         title="项目详情"
@@ -86,15 +97,15 @@ export default class CostAccountDetail extends PureComponent {
         //content={this.renderContent()}
       >
         <Card bordered={false}>
-          <Tabs defaultActiveKey="1" onChange={this.callback} onChange={this.changeTab}>
+          <Tabs defaultActiveKey="1" onChange={this.callback}>
             <TabPane tab="收益测算" key="1">
               Content of Tab Pane 1
             </TabPane>
             <TabPane tab="成本核算" key="2">
               <CostList></CostList>
             </TabPane>
-            <TabPane tab="销售计划" key="3" style={{minHeight: 500, maxHeight: 500}}>
-             <SalesPlan></SalesPlan>
+            <TabPane tab="销售计划" key="3" style={{ minHeight: 500, maxHeight: 500 }}>
+              <SalesPlan></SalesPlan>
             </TabPane>
             <TabPane tab="成本支出节点" key="4">
               Content of Tab Pane 3
@@ -102,14 +113,12 @@ export default class CostAccountDetail extends PureComponent {
             <TabPane tab="资本化利息" key="5">
               Content of Tab Pane 3
             </TabPane>
-             <TabPane tab="土地增值税" key="6">
+            <TabPane tab="土地增值税" key="6">
               Content of Tab Pane 3
             </TabPane>
           </Tabs>
         </Card>
-        {
-          this.renderDataForm()
-        }
+        {this.renderDataForm()}
       </PageHeaderLayout>
     );
   }

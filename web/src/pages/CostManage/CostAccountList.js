@@ -52,7 +52,7 @@ for (let i = 0; i < 3; i++) {
   });
 }
 @connect(state => ({
- // projectManage: state.projectManage,
+  projectManage: state.projectManage,
   costAccount: state.costAccount,
   loading: state.loading.models.costAccount,  //加载中效果
 }))
@@ -67,16 +67,14 @@ class CostAccountList extends PureComponent {
       // selectedRows: [],
       expandHang: [],
       expandedRowKeys: [],
-      
-    
   };
   componentDidMount() {
     // 调接口
-    // this.dispatch({
-    //   type: 'costAccount/fetch',
-    //   search: {},
-    //   pagination: {},
-    // });
+    this.dispatch({
+      type: 'projectManage/fetch',
+      search: {},
+      pagination: {},
+    });
     this.dispatch({
       type: 'costAccount/queryCompany',
     });
@@ -84,7 +82,6 @@ class CostAccountList extends PureComponent {
       type: 'costAccount/queryPlotList',
     });
 
-   
   }
 
 
@@ -279,7 +276,7 @@ class CostAccountList extends PureComponent {
   render() {
     const {
       loading,
-      costAccount: {
+      projectManage: {
         data: { list, pagination },
       },
     } = this.props;
@@ -321,8 +318,7 @@ class CostAccountList extends PureComponent {
         render: (text, record) => {
           const { editingKey } = this.state;
         
-          return !record.isPro ? null:(  
-            <div>
+          return <div>
             <PButton   code="edit"  onClick={() => {this.goToDetail(record, 'E');}}>
               编辑
             </PButton>
@@ -335,7 +331,7 @@ class CostAccountList extends PureComponent {
          
             </div>
           
-          );
+         
         },
       },
       
@@ -378,7 +374,7 @@ class CostAccountList extends PureComponent {
                 loading={loading}
                 rowKey={record => record.key}
                 expandedRowKeys={this.state.expandedRowKeys}
-                dataSource={data}
+                dataSource={list}//{data}
                 columns={columns}
                 pagination={false}//{paginationProps}
                 scroll={{ y: 500}}
