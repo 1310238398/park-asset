@@ -66,6 +66,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		// 用户身份授权
 		g.Use(middleware.UserAuthMiddleware(
 			a,
+			cUser.UserBll,
 			middleware.AllowMethodAndPathPrefixSkipper(
 				middleware.JoinRouter("GET", "/api/v1/pub/login"),
 				middleware.JoinRouter("GET", "/api/v1/pub/statistics"),

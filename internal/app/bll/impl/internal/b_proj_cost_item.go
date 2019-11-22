@@ -181,6 +181,14 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 		return nil, err
 	}
 
+	// 获取项目业态面积
+	pbfqp := schema.ProjBusinessFormatQueryParam{}
+	pbfqp.ProjectID = params.ProjectID
+	pbfqr, err := a.ProjBusinessFormatModel.Query(ctx, pbfqp)
+	if err != nil {
+		return nil, err
+	}
+
 	//整理列表
 	result := schema.ProjCostItemShows{}
 	for _, v := range shows {
@@ -216,6 +224,13 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 			pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
 			if err != nil {
 				return b, err
+			}
+			for _, v := range pcbqr.Data {
+				for _, w := range pbfqr.Data {
+					if v.ProjBusinessID == w.RecordID {
+						v.Price = util.DecimalFloat64(v.UnitPrice * w.FloorArea)
+					}
+				}
 			}
 			t.BusinessList = pcbqr.Data
 		}
@@ -306,6 +321,10 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			return a.ProjCostItemModel.Delete(ctx, recordID)
 		}
 
+		if costItem.Name == "资本化利息" {
+			return errors.New("资本化利息不能更新")
+		}
+
 		if costItem.CalculateType == 1 { //更新业态单价
 
 			//更新业态信息
@@ -323,7 +342,7 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			for _, v := range item.BusinessList { //整理成本项下各业态信息
 				var b = true
 				for _, w := range pcbqr.Data {
-					if w.RecordID == v.RecordID {
+					if w.ProjBusinessID == v.ProjBusinessID && w.ProjCostID == v.ProjCostID {
 						if w.UnitPrice != v.UnitPrice { //更新业态单价
 							w.UnitPrice = v.UnitPrice
 							w.ProjBusinessID = v.ProjBusinessID

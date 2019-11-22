@@ -44,6 +44,7 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 // @Router GET /api/v1/proj-cost-items?q=tree
 func (a *ProjCostItem) queryTree(c *gin.Context) {
 	var params schema.ProjCostItemQueryParam
+	params.ProjectID = c.Query("project_id")
 
 	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
