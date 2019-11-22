@@ -31,7 +31,7 @@ export default {
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
-        //q: 'page',
+        q: 'page',
       };
 
       if (search) {
