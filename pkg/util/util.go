@@ -89,7 +89,9 @@ func BoolToInt(b bool) int {
 	} else {
 		return 0
 	}
-// Float保留两位小数
+}
+
+// DecimalFloat64 保留两位小数
 func DecimalFloat64(value float64) float64 {
 	value, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", value), 64)
 	return value
