@@ -5,7 +5,8 @@ type ProjCostBusiness struct {
 	RecordID       string  `json:"record_id" swaggo:"false,记录ID"`          // 记录ID
 	ProjBusinessID string  `json:"proj_business_id" swaggo:"false,项目业态ID"` // 项目业态ID
 	ProjCostID     string  `json:"proj_cost_id" swaggo:"false,项目成本项ID"`    // 项目成本项ID
-	UnitPrise      float64 `json:"unit_prise" swaggo:"false,单价"`           // 单价
+	UnitPrice      float64 `json:"unit_price" swaggo:"false,单价"`           // 单价
+	Price          float64 `json:"price" swaggo:"false,总价"`                //总价
 }
 
 // ProjCostBusinessQueryParam 查询条件

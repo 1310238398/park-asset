@@ -22,7 +22,7 @@
 
         },
         {
-            "struct_field_name": "UnitPrise",
+            "struct_field_name": "UnitPrice",
             "comment": "单价",
             "struct_field_type": "float64",
             "gorm_options": "type:decimal(20,4);"
