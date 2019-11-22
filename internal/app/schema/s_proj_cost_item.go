@@ -32,7 +32,8 @@ type ProjCostItemShow struct {
 	Principal      string              `json:"principal" swaggo:"false,负责人"`                        // 负责人
 	ProjIncomeID   string              `json:"proj_income_id" swaggo:"false,项目收益测算ID"`              // 项目收益测算ID
 	BusinessList   []*ProjCostBusiness `json:"business_list" swaggo:"false,成本下业态列表"`                // 成本下业态列表
-	Children       []*ProjCostItemShow `json:"children" swaggo:"fasle,下级成本项"`                       //下级成本项
+	Children       []*ProjCostItemShow `json:"children,omitempty" swaggo:"fasle,下级成本项"`             //下级成本项
+	Editable       bool                `json:"editable" swaggo:"false,可编辑"`
 }
 
 // ProjCostItemQueryParam 查询条件
