@@ -70,7 +70,6 @@ func (a *BusinessFormat) QueryPage(c *gin.Context) {
 // @Router GET /api/v1/business-formats?q=list
 func (a *BusinessFormat) QueryList(c *gin.Context) {
 	var params schema.BusinessFormatQueryParam
-
 	params.LikeName = c.Query("name")
 	result, err := a.BusinessFormatBll.Query(ginplus.NewContext(c), params)
 	if err != nil {

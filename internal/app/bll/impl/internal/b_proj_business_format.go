@@ -117,12 +117,20 @@ func (a *ProjBusinessFormat) update(ctx context.Context, projectID string, list 
 		return err
 	}
 
-	addItems := a.compareFile(ctx, list, result.Data)
-	delItems := a.compareFile(ctx, result.Data, list)
+	delIDs := result.Data.ToProjBusinessIDs()
 
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		// 删除
+		for _, recordID := range delIDs {
+			err := a.ProjBusinessFormatModel.Delete(ctx, recordID)
+			if err != nil {
+				return err
+			}
+
+		}
+
 		// 新增
-		for _, item := range addItems {
+		for _, item := range list {
 			item.RecordID = util.MustUUID()
 			err := a.ProjBusinessFormatModel.Create(ctx, *item)
 			if err != nil {
@@ -130,27 +138,7 @@ func (a *ProjBusinessFormat) update(ctx context.Context, projectID string, list 
 			}
 
 		}
-		// 删除
-		for _, item := range delItems {
-			err := a.ProjBusinessFormatModel.Delete(ctx, item.RecordID)
-			if err != nil {
-				return err
-			}
 
-		}
-		// 更新
-		for _, item := range list {
-			if item.RecordID == "" {
-				continue
-			}
-			newItem := item
-			newItem.FloorArea = item.FloorArea
-			err = a.ProjBusinessFormatModel.Update(ctx, item.RecordID, *newItem)
-			if err != nil {
-				return err
-			}
-
-		}
 		return nil
 	})
 

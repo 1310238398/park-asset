@@ -10,9 +10,9 @@ type CostItem struct {
 	TaxID         string      `json:"tax_id" swaggo:"false,税目ID"`                          // 税目ID
 	Status        int         `json:"status" swaggo:"false,状态(1:启用2:停用)"`                  // 状态(1:启用2:停用)
 	Label         int         `json:"label" swaggo:"false,标签(1:成本科目 2:测算科目)"`              // 标签(1:成本科目 2:测算科目)
-	CalculateType int         `json:"calculate_type" swaggo:"false,计算方式(1.单价算总价,2.总价算单价)"` //计算方式(1.单价算总价,2.总价算单价)
-	InLandTax     int         `json:"in_land_tax" swaggo:"false,是否计入土地增值税(1.计入,2.不计入)"`    //是否计入土地增值税(1.计入,2.不计入)
-	Children      []*CostItem `json:"cost_item" swaggo:"false,下级列表"`                       //下级列表
+	CalculateType int         `json:"calculate_type" swaggo:"false,计算方式(1.单价算总价,2.总价算单价)"` // 计算方式(1.单价算总价,2.总价算单价)
+	InLandTax     int         `json:"in_land_tax" swaggo:"false,是否计入土地增值税(1.计入,2.不计入)"`    // 是否计入土地增值税(1.计入,2.不计入)
+	Children      []*CostItem `json:"children" swaggo:"false,下级列表"`                        // 下级列表
 }
 
 // CostItemQueryParam 查询条件

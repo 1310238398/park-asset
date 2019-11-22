@@ -90,3 +90,12 @@ func FloatRoundFormat(f float64) float64 {
 	f1, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", f), 64)
 	return f1
 }
+
+// BoolToInt 布尔转int
+func BoolToInt(b bool) int {
+	if b {
+		return 1
+	} else {
+		return 0
+	}
+}

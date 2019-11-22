@@ -65,3 +65,12 @@ func (a ProjBusinessFormats) ToBusinessIDs() []string {
 	}
 	return list
 }
+
+// ToProjBusinessIDs 转换为业态ID列表
+func (a ProjBusinessFormats) ToProjBusinessIDs() []string {
+	list := make([]string, len(a))
+	for _, item := range a {
+		list = append(list, item.RecordID)
+	}
+	return list
+}

@@ -42,6 +42,10 @@ func (a *PcProject) Query(ctx context.Context, params schema.PcProjectQueryParam
 		db = db.Where("plot_id = ?", v)
 	}
 
+	if v := params.OrgIDs; len(v) > 0 {
+		db = db.Where("org_id IN (?)", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

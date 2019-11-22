@@ -245,7 +245,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.GET("/statistics/company", cStatistic.QueryCompany)
 
 			// 注册/api/v1/business-formats 业态相关
-			gBusinessFormat := v1.Group("business_formats")
+			gBusinessFormat := v1.Group("business-formats")
 			{
 				gBusinessFormat.GET("", cBusinessFormat.Query)
 				gBusinessFormat.GET(":id", cBusinessFormat.Get)

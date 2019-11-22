@@ -106,3 +106,17 @@ func (a *ProjSalesPlan) Delete(ctx context.Context, recordID string) error {
 	}
 	return nil
 }
+
+// GenerateHis 生成历史版本
+func (a *ProjSalesPlan) GenerateHis(ctx context.Context, item schema.ProjSalesPlan) error {
+	db := entity.GetProjSalesPlanDB(ctx, a.db)
+	hisDB := entity.GetProjSalesHisDB(ctx, a.db)
+
+	subQuery := db.Select("*").Where("project_id = ?", item.ProjectID)
+
+	result := hisDB.Create(subQuery)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}

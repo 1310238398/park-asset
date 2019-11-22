@@ -80,7 +80,7 @@ func (a *ProjSalesPlan) Update(ctx context.Context, recordID string, item schema
 		return nil, errors.ErrNotFound
 	}
 
-	tax, err := a.getTax(ctx, "增值税销项税")
+	tax, err := a.getTax(ctx, item.TaxID)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,10 @@ func (a *ProjSalesPlan) Delete(ctx context.Context, recordID string) error {
 
 // CreateList 批量创建
 func (a *ProjSalesPlan) CreateList(ctx context.Context, items schema.ProjSalesPlans) error {
-	tax, err := a.getTax(ctx, "增值税销项税")
+	if len(items) == 0 {
+		return nil
+	}
+	tax, err := a.getTax(ctx, items[0].TaxID)
 	if err != nil {
 		return err
 	}
@@ -152,31 +155,37 @@ func (a *ProjSalesPlan) fillBusinName(ctx context.Context, list schema.ProjSales
 		return nil, err
 	}
 
-	businResult, err := a.BusinessFormatModel.Query(ctx, schema.BusinessFormatQueryParam{})
-	if err != nil {
-		return nil, err
-	}
-	list.FillData(projBusinResult.Data, businResult.Data.ToMap())
+	list.FillData(projBusinResult.Data.ToMap())
 
 	return list, nil
 
 }
 
+// 填充销售税额
 func (a *ProjSalesPlan) fillTax(ctx context.Context, tax *schema.TaxCalculation, item *schema.ProjSalesPlan) {
-	item.TaxPrice = CalcuTax(ctx, tax.Type, tax.TaxRate, item.Payback)
+	if tax.Type == 1 {
+		item.TaxPrice = item.Payback / (1 + tax.TaxRate) * tax.TaxRate
+	}
+	if tax.Type == 2 {
+		item.TaxPrice = item.Payback * tax.TaxRate
 
+	}
 }
 
 // getTax 获取税目
-func (a *ProjSalesPlan) getTax(ctx context.Context, taxName string) (*schema.TaxCalculation, error) {
-	result, err := a.TaxCalculationModel.Query(ctx, schema.TaxCalculationQueryParam{
-		Name: taxName,
-	})
+func (a *ProjSalesPlan) getTax(ctx context.Context, taxID string) (*schema.TaxCalculation, error) {
+	result, err := a.TaxCalculationModel.Get(ctx, taxID)
 	if err != nil {
 		return nil, err
-	} else if len(result.Data) != 1 {
+	} else if result == nil {
 		return nil, nil
 	}
 
-	return result.Data[0], nil
+	return result, nil
+}
+
+// GenerateHis 生成历史版本
+func (a *ProjSalesPlan) GenerateHis(ctx context.Context, incomeItem schema.ProjIncomeCalculation) error {
+	// TODO
+	return nil
 }

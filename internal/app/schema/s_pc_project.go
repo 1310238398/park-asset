@@ -37,10 +37,11 @@ type PcProject struct {
 
 // PcProjectQueryParam 查询条件
 type PcProjectQueryParam struct {
-	LikeName string // 项目名称(模糊查询)
-	Type     int    // 项目类型(1:住宅 2:写字楼)
-	OrgID    string // 项目所属子公司
-	PlotID   string // 所属地块
+	LikeName string   // 项目名称(模糊查询)
+	Type     int      // 项目类型(1:住宅 2:写字楼)
+	OrgID    string   // 项目所属子公司
+	PlotID   string   // 所属地块
+	OrgIDs   []string // 项目所属子公司
 }
 
 // PcProjectQueryOptions 查询可选参数项

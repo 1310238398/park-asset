@@ -1,6 +1,7 @@
 package ctl
 
 import (
+	"ant-smartpark/pkg/errors"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
@@ -23,7 +24,19 @@ type PcProject struct {
 }
 
 // Query 查询数据
-// @Summary 查询数据
+func (a *PcProject) Query(c *gin.Context) {
+	switch c.Query("q") {
+	case "list":
+		a.QueryList(c)
+	case "page":
+		a.QueryPage(c)
+	default:
+		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
+	}
+}
+
+// QueryPage 查询分页数据
+// @Summary 查询分页数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
@@ -35,7 +48,7 @@ type PcProject struct {
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/pc-projects?q=page
-func (a *PcProject) Query(c *gin.Context) {
+func (a *PcProject) QueryPage(c *gin.Context) {
 	var params schema.PcProjectQueryParam
 	params.LikeName = c.Query("name")
 	params.OrgID = c.Query("org_id")
@@ -48,6 +61,32 @@ func (a *PcProject) Query(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询列表数据
+// @Summary 查询列表数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param name query string false "名称"
+// @Param org_id query string false "项目所属公司ID"
+// @Param plot_id query string false "地块ID"
+// @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/pc-projects?q=list
+func (a *PcProject) QueryList(c *gin.Context) {
+	var params schema.PcProjectQueryParam
+	params.LikeName = c.Query("name")
+	params.OrgID = c.Query("org_id")
+	params.PlotID = c.Query("plot_id")
+	result, err := a.PcProjectBll.Query(ginplus.NewContext(c), params, schema.PcProjectQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result)
 }
 
 // Get 查询指定数据
