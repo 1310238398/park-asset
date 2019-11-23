@@ -161,11 +161,11 @@ formatData(forData) {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 6 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 },
+        sm: { span: 18 },
       },
     };
 
@@ -186,7 +186,7 @@ formatData(forData) {
                   alignItems: 'center',
                 }}
               >
-                <Col span={4}>
+                <Col span={6}>
                 <Form.Item {...formItemLayout} label="" >
                 {getFieldDecorator(item.record_id, {
                  valuePropName: 'checked',

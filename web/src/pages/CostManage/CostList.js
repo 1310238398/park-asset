@@ -15,6 +15,7 @@ import {
   InputNumber,
 } from 'antd';
 import styles from './CostAccount.less';
+
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
 const EditableRow = ({ form, index, ...props }) => (
@@ -27,41 +28,41 @@ const EditableFormRow = Form.create()(EditableRow);
 class EditableCell extends React.Component {
 
   state = {
-     toposNode:[
-       "税种1",
-       "税种2",
-       "税种3"
-     ]
+    toposNode: [
+      "税种1",
+      "税种2",
+      "税种3"
+    ]
   }
   renderToposNode = (data) => {
     let ret = [];
     ret = data.map(obj => {
-        return (<Select.Option key={obj} value={obj}>{obj}</Select.Option>)
+      return (<Select.Option key={obj} value={obj}>{obj}</Select.Option>)
     })
     return ret;
-}
+  }
   getInput = () => {
     let handleChange = (value) => {
       console.log(value);
-  }
+    }
     if (this.props.inputType === 'number') {
       return <InputNumber />;
     }
     else if (this.props.inputType === 'select') {
       const { toposNode } = this.state;
-      return  (
+      return (
         <div>
-            <Select 
-                //mode="multiple"
-                style={{width: 120}}
+          <Select
+            //mode="multiple"
+            style={{ width: 120 }}
 
-                onBlur={handleChange}
-               // onChange={handleChange}
-            >
-                {this.renderToposNode(toposNode)}
-            </Select>
+            onBlur={handleChange}
+          // onChange={handleChange}
+          >
+            {this.renderToposNode(toposNode)}
+          </Select>
         </div>
-    )
+      )
     }
     return <Input />;
   };
@@ -94,8 +95,8 @@ class EditableCell extends React.Component {
             })(this.getInput())}
           </Form.Item>
         ) : (
-          children
-        )}
+            children
+          )}
       </td>
     );
   };
@@ -106,7 +107,7 @@ class EditableCell extends React.Component {
 }
 
 @connect(state => ({
-  // salesPlan: state.salesPlan,
+  projectManage: state.projectManage,
   costAccount: state.costAccount,
   loading: state.loading.models.salesPlan,
 }))
@@ -117,16 +118,46 @@ class CostList extends PureComponent {
       {
         record_id: '001',
         name: '成本科目1',
+        cost_id: "001", // 成本项ID
+        cost_parent_id: "", //成本项父级ID
+        cost_parent_path: "",//成本项父级路经 具体到父级ID
+
+        calculate_type: 0,// 计算方式 1
+        label: 1,//标签(1:成本科目 2:测算科目)科目类别
+        price: 0, // 成本项价格
+        project_id: "abc",// 成本项所属项目的ID
+        tax_price: 0, // 缴税税额
+        tax_rate: 0,//税率
+
 
         children: [
           {
-            record_id: '001/001',
+            record_id: '001-001',
             name: '成本科目101',
+            cost_id: "001-001", // 成本项ID
+            cost_parent_id: "001", //成本项父级ID
+            cost_parent_path: "001",//成本项父级路经 具体到父级ID
 
+            calculate_type: 0,// 计算方式 1
+            label: 1,//标签(1:成本科目 2:测算科目)科目类别
+            price: 0, // 成本项价格
+            project_id: "abc",// 成本项所属项目的ID
+            tax_price: 0, // 缴税税额
+            tax_rate: 0,//税率
             children: [
               {
-                record_id: '001/001/001',
+                record_id: '001-001-001',
                 name: '成本科目10101',
+                cost_id: "001-001-001", // 成本项ID
+                cost_parent_id: "001-001", //成本项父级ID
+                cost_parent_path: "001/001-001",//成本项父级路经 具体到父级ID
+
+                calculate_type: 0,// 计算方式 1
+                label: 1,//标签(1:成本科目 2:测算科目)科目类别
+                price: 0, // 成本项价格
+                project_id: "abc",// 成本项所属项目的ID
+                tax_price: 0, // 缴税税额
+                tax_rate: 0,//税率
                 unit01: 10,
                 unit02: 11,
                 unit03: 12,
@@ -139,8 +170,18 @@ class CostList extends PureComponent {
             ],
           },
           {
-            record_id: '001/002',
+            record_id: '001-002',
             name: '成本科目102',
+            cost_id: "001-002", // 成本项ID
+            cost_parent_id: "001", //成本项父级ID
+            cost_parent_path: "001",//成本项父级路经 具体到父级ID
+
+            calculate_type: 0,// 计算方式 1
+            label: 2,//标签(1:成本科目 2:测算科目)科目类别
+            price: 0, // 成本项价格
+            project_id: "abc",// 成本项所属项目的ID
+            tax_price: 0, // 缴税税额
+            tax_rate: 0,//税率
             unit01: 10,
             unit02: 11,
             unit03: 12,
@@ -151,76 +192,44 @@ class CostList extends PureComponent {
         ],
       },
     ],
-    formatUnitPriceData: [
-      {
-        title: '业态1',
-        dataIndex: 'unit01',
-        //key: 'companyAddress',
-        align: 'center',
-        editable: true,
-        width: 150,
-      },
-      {
-        title: '业态2',
-        dataIndex: 'unit02',
-        //key: 'companyAddress',
-        align: 'center',
-        editable: true,
-        width: 150,
-      },
-      {
-        title: '业态3',
-        dataIndex: 'unit03',
-        //key: 'companyAddress',
-        align: 'center',
-        editable: true,
-        width: 150,
-      },
-      {
-        title: '业态4',
-        dataIndex: 'unit04',
-        //key: 'companyAddress',
-        align: 'center',
-        editable: true,
-        width: 150,
-      },
-    ],
-    formatTotalPriceData: [
-      {
-        title: '业态1',
-        dataIndex: 'total01',
-       
-        align: 'center',
-        width: 150,
-      },
-      {
-        title: '业态2',
-        dataIndex: 'total02',
-        
-        align: 'center',
-        width: 150,   
-      },
-      {
-        title: '业态3',
-        dataIndex: 'total03',
-        //key: 'companyAddress',
-        align: 'center',
-        width: 150,
-        
-      },
-      {
-        title: '业态4',
-        dataIndex: 'total04',
-        //key: 'companyAddress',
-        align: 'center',
-        width: 150,
-       
-      },
-    ],
+
+  
+   
+  
+ 
     editingKey: '',
   };
 
-  componentDidMount() {}
+
+
+
+  componentDidMount = async () => {
+    const {
+
+      pro_id,
+      projectManage:{businessFormat}
+
+    } = this.props;
+    
+    this.dispatch({
+      type: 'costList/fetch',
+      payload: {
+        project_id: pro_id,
+      },
+    });
+
+    console.log(" costList页面 接受的pro_id " + pro_id);
+    
+  }
+
+  renderFuc= (text, record) => {
+
+    if (record.label === 1) {
+      return <span style={{ color: "red" }}>{text}</span>;
+    } else {
+      return <span >{text}</span>;
+    }
+  }
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -229,13 +238,11 @@ class CostList extends PureComponent {
   isEditing = record => record.record_id === this.state.editingKey;
 
   save(form, key) {
+    // key包含cost_id的路径
     form.validateFields((error, row) => {
 
       console.log("row ");
       console.log(row);
-
-      row.rate = row.rate.format();
-    
       if (error) {
         return;
       }
@@ -252,7 +259,7 @@ class CostList extends PureComponent {
 
       if (keys.length == 1) {
         console.log('keys  1');
-        let index = newData1.findIndex(item => key === item.record_id);
+        let index = newData1.findIndex(item => key === item.cost_id);
         if (index > -1) {
           const item = newData[index];
           newData.splice(index, 1, {
@@ -270,16 +277,16 @@ class CostList extends PureComponent {
 
       for (let i = 0; i < keys.length; i++) {
         let keychild = '';
-        for (let n = 0; n < i; n++) {
-          keychild = keychild + keys[n] + '/';
-        }
-        keychild = keychild + keys[i];
+        // for (let n = 0; n < i; n++) {
+        //   keychild = keychild + keys[n] + '/';
+        // }
+        keychild = keys[i];
         console.log('keychild ' + keychild);
-        index_ = newData1.findIndex(item => keychild === item.record_id);
+        index_ = newData1.findIndex(item => keychild === item.cost_id);
         console.log('keychild ' + keychild);
         console.log('index_ ' + index_);
 
-        if (index_ > -1 && i === keys.length - 1 && key === keychild) {
+        if (index_ > -1 && i === keys.length - 1) {
           console.log('更新数据');
           const item = newData1[index_];
           console.log('被更新的数据 ' + JSON.stringify(item));
@@ -296,8 +303,8 @@ class CostList extends PureComponent {
         if (
           index_ > -1 &&
           newData1[index_].children &&
-          newData1[index_].children.length > 0 &&
-          key != keychild
+          newData1[index_].children.length > 0 && i < (keys.length - 1)
+
         ) {
           console.log('进入下一层');
           newData1 = newData1[index_].children;
@@ -305,19 +312,7 @@ class CostList extends PureComponent {
         }
       }
 
-      // const index = newData.findIndex(item => key === item.record_id);
-      // if (index > -1) {
-      //   const item = newData[index];
-      //   newData.splice(index, 1, {
-      //     ...item,
-      //     ...row,
-      //   });
-      //   this.setState({ data: newData, editingKey: '' });
-      // } else {
-      //   newData.push(row);
-      //   this.setState({ data: newData, editingKey: '' });
 
-      // }
     });
   }
   edit(key) {
@@ -358,14 +353,92 @@ class CostList extends PureComponent {
       costAccount: { formType },
     } = this.props;
 
-    const { formatTotalPriceData, formatUnitPriceData, tableData, editingKey } = this.state;
+    const {   tableData, editingKey } = this.state;
 
     const components = {
       body: {
-       // row: EditableFormRow,
+        // row: EditableFormRow,
         cell: EditableCell,
       },
     };
+
+    const formatTotalPriceData = [
+      {
+        title: '业态1',
+        dataIndex: 'total01',
+
+        align: 'center',
+        width: 150,
+        render: this.renderFuc,
+      },
+      {
+        title: '业态2',
+        dataIndex: 'total02',
+
+        align: 'center',
+        width: 150,
+        render:this.renderFuc
+      },
+      {
+        title: '业态3',
+        dataIndex: 'total03',
+        //key: 'companyAddress',
+        align: 'center',
+        width: 150,
+        render: this.renderFuc
+
+      },
+      {
+        title: '业态4',
+        dataIndex: 'total04',
+        //key: 'companyAddress',
+        align: 'center',
+        width: 150,
+        render: this.renderFuc
+
+      },
+    ];
+
+    const formatUnitPriceData=
+    
+    [
+      {
+        title: '业态1',
+        dataIndex: 'unit01',
+        //key: 'companyAddress',
+        align: 'center',
+        editable: true,
+        width: 150,
+        render: this.renderFuc,
+      },
+      {
+        title: '业态2',
+        dataIndex: 'unit02',
+        //key: 'companyAddress',
+        align: 'center',
+        editable: true,
+        width: 150,
+        render: this.renderFuc
+      },
+      {
+        title: '业态3',
+        dataIndex: 'unit03',
+        //key: 'companyAddress',
+        align: 'center',
+        editable: true,
+        width: 150,
+        render: this.renderFuc
+      },
+      {
+        title: '业态4',
+        dataIndex: 'unit04',
+        //key: 'companyAddress',
+        align: 'center',
+        editable: true,
+        width: 150,
+        render: this.renderFuc
+      },
+    ];
 
     // 可编辑权限看到的标题
     const columns = [
@@ -376,18 +449,28 @@ class CostList extends PureComponent {
         ellipsis: true,
         align: 'center',
         fixed: 'left',
+        render: (text, record) => {
+
+          if (record.label === 1) {
+            return <span style={{ color: "red" }}>{text}</span>;
+          } else {
+            return <span >{text}</span>;
+          }
+        }
       },
       {
         title: '单价',
         children: formatUnitPriceData,
+
         // editable: true,
       },
 
       {
         title: '总价',
         children: formatTotalPriceData,
+
       },
-     
+
       {
         title: '汇总',
         dataIndex: 'total',
@@ -395,7 +478,15 @@ class CostList extends PureComponent {
         //  ellipsis: true,
         align: 'center',
         editable: true,
-        fixed: 'right'
+        fixed: 'right',
+        render: (text, record) => {
+
+          if (record.label === 1) {
+            return <span style={{ color: "red" }}>{text}</span>;
+          } else {
+            return <span >{text}</span>;
+          }
+        }
       },
       {
         title: '税率',
@@ -405,7 +496,15 @@ class CostList extends PureComponent {
         align: 'center',
         editable: true,
         fixed: 'right',
-      
+        render: (text, record) => {
+
+          if (record.label === 1) {
+            return <span style={{ color: "red" }}>{text}</span>;
+          } else {
+            return <span >{text}</span>;
+          }
+        }
+
       },
       {
         title: '税金',
@@ -414,7 +513,13 @@ class CostList extends PureComponent {
         align: 'center',
         render: (text, record) => {
           if (record.rate && record.total) {
-            return <span>{record.rate * record.total}</span>;
+            if (record.label === 1) {
+              return <span style={{ color: "red" }}>{record.rate * record.total}</span>;
+            }
+            else {
+              return <span >{record.rate * record.total}</span>;
+            }
+
           } else {
             return '';
           }
@@ -427,7 +532,7 @@ class CostList extends PureComponent {
         key: 'operation',
         width: 150,
         align: 'center',
-        fixed:'right',
+        fixed: 'right',
         render: (text, record) => {
           const { editingKey } = this.state;
           const editable = this.isEditing(record);
@@ -437,7 +542,7 @@ class CostList extends PureComponent {
               <span>
                 <EditableContext.Consumer>
                   {form => (
-                    <a onClick={() => this.save(form, record.record_id)} style={{ marginRight: 8 }}>
+                    <a onClick={() => this.save(form, record.cost_parent_path + "/" + record.cost_id)} style={{ marginRight: 8 }}>
                       保存
                     </a>
                   )}
@@ -447,12 +552,12 @@ class CostList extends PureComponent {
                 </Popconfirm>
               </span>
             ) : (
-              <div>
-                <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)}>
-                  编辑
+                <div>
+                  <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)}>
+                    编辑
                 </a>
-              </div>
-            )
+                </div>
+              )
           ) : null;
         },
       },
@@ -477,7 +582,7 @@ class CostList extends PureComponent {
         title: '总价',
         children: formatTotalPriceData,
       },
-     
+
       {
         title: '汇总',
         dataIndex: 'total',
@@ -514,19 +619,19 @@ class CostList extends PureComponent {
 
     return (
       <EditableContext.Provider value={this.props.form}>
-      <Table
-        components={components}
-        bordered
-        loading={loading}
-        rowKey={record => record.record_id}
-        dataSource={tableData}
-        columns={formType === 'E' ? ecolumns : formType === 'V' ? view_columns : null} //{view_columns}
-        pagination={false}
-        scroll={{ y: 500, x: 'calc(700px + 50%)' }}
-        rowClassName="editable-row"
-        rowClassName={() => 'editable-row'}
-        style={{ maxHeight: 500 }}
-      />
+        <Table
+          components={components}
+          bordered
+          loading={loading}
+          rowKey={record => record.record_id}
+          dataSource={tableData}
+          columns={formType === 'E' ? ecolumns : formType === 'V' ? view_columns : null} //{view_columns}
+          pagination={false}
+          scroll={{ y: 500, x: 'calc(700px + 50%)' }}
+          rowClassName="editable-row"
+          rowClassName={() => 'editable-row'}
+          style={{ maxHeight: 500 }}
+        />
       </EditableContext.Provider>
     );
   }

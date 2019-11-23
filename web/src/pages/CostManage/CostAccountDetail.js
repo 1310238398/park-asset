@@ -5,6 +5,8 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import SalesPlan from './SalesPlan';
 import CostList from './CostList';
 import AddNewSalesPlan from './AddNewSalesPlan';
+import  IncomeMeasure  from "./IncomeMeasure";
+import CostExpenseNode from "./CostExpenseNode";
 
 const { TabPane } = Tabs;
 
@@ -50,14 +52,7 @@ export default class CostAccountDetail extends PureComponent {
     if (key === "1") {
       
     } else if (key === "2") {
-      // 成本核算
-    
-      this.dispatch({
-        type: 'costList/fetch',
-        payload: {
-          project_id: pro_id,
-        },
-      });
+      
     } else if (key === "3") {
     } else if (key === "4") {
     } else if (key === "5") {
@@ -90,6 +85,7 @@ export default class CostAccountDetail extends PureComponent {
       { title: '成本核算', href: '/cost/list' },
       { title: '项目详情', href: '/cost/detail' },
     ];
+    const { pro_id} = this.state;
     return (
       <PageHeaderLayout
         title="项目详情"
@@ -99,16 +95,16 @@ export default class CostAccountDetail extends PureComponent {
         <Card bordered={false}>
           <Tabs defaultActiveKey="1" onChange={this.callback}>
             <TabPane tab="收益测算" key="1">
-              Content of Tab Pane 1
+            <IncomeMeasure></IncomeMeasure>
             </TabPane>
             <TabPane tab="成本核算" key="2">
-              <CostList></CostList>
+              <CostList  pro_id={pro_id}></CostList>
             </TabPane>
             <TabPane tab="销售计划" key="3" style={{ minHeight: 500, maxHeight: 500 }}>
               <SalesPlan></SalesPlan>
             </TabPane>
             <TabPane tab="成本支出节点" key="4">
-              Content of Tab Pane 3
+             <CostExpenseNode></CostExpenseNode>
             </TabPane>
             <TabPane tab="资本化利息" key="5">
               Content of Tab Pane 3
