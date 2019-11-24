@@ -53,7 +53,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'd',
+        id: 'f',
         name: '写字楼',
         average_prise: 0,
         sale_area: 0,
@@ -61,7 +61,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'e',
+        id: 'g',
         name: '公寓',
         average_prise: 0,
         sale_area: 0,
@@ -69,7 +69,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'd',
+        id: 'h',
         name: '写字楼',
         average_prise: 0,
         sale_area: 0,
@@ -77,7 +77,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'e',
+        id: 'i',
         name: '公寓',
         average_prise: 0,
         sale_area: 0,

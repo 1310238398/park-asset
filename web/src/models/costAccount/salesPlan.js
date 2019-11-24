@@ -8,58 +8,15 @@ export default {
     search: {},
     pagination: {},
     // 销售计划列表
-    data: [
-// average_prise	number($double)
-// 均价
-
-// contract_amount	number($double)
-// 合同额度
-
-// memo	string
-// 备注
-
-// payback	number($double)
-// 销售回款
-
-// principal	string
-// 负责人
-
-// proj_business_id	string
-// 项目业态ID
-
-// proj_business_name	string
-// 项目业态名称
-
-// proj_income_id	string
-// 项目收益测算ID
-
-// project_id	string
-// 成本项目ID
-
-// quarter	integer($int32)
-// 季度
-
-// record_id	string
-// 记录ID
-
-// sale_area	number($double)
-// 销售面积
-
-// tax_prise	number($double)
-// 销售税额
-
-// year	integer($int32)
-// 年度
-
-    ]
+    data: [], //所有年份所有季度的
      
-    ,
+    displayList:[],// 需要根据用户的筛选条件，自己重构数据值
     submitting: false,
     formTitle: '',
     formID: '',
    
     addSalesPlanVisible: false,
-    formData: {},
+    //formData: {},
   
   },
   // 调service  call 调service函数 put 调reducer函数 select 暂存
@@ -95,7 +52,7 @@ export default {
         }
       }
 
-      const response = yield call(projectManageService.query, params);
+      const response = yield call(costAccountService.querySalesPlan, params);
       yield put({
         type: 'saveData',
         payload: response,
@@ -211,39 +168,7 @@ export default {
         yield put({ type: 'fetch' });
       }
     },
-    *queryCompany(_, { call, put }) {
-      const params = {
-        q: 'company',
-      };
-      const response = yield call(projectManageService.companySecond, params);
-      const result = response.list ? response.list : [];
-      yield put({
-        type: 'saveDataCompany',
-        payload: result,
-      });
-    },
-    *queryPlotList(_, { call, put }) {
-      const params = {
-        q: 'list',
-      };
-      const response = yield call(projectManageService.PoltList, params);
-      const result = response.list ? response.list : [];
-      yield put({
-        type: 'savePolt',
-        payload: result,
-      });
-    },
-    *redirectBuilings({ payload }, { put }) {
-      yield put(
-        routerRedux.push({
-          pathname: '/assetdatamaint/assetdatamaintlist',
-          query: {
-            recordID: payload.record_id,
-            type: payload.asset_type,
-          },
-        })
-      );
-    },
+   
 
 
 
@@ -266,6 +191,9 @@ export default {
   reducers: {
     saveData(state, { payload }) {
       return { ...state, data: payload };
+    },
+    saveDisplayList(state, { payload }) {
+      return { ...state, displayList: payload };
     },
     saveSearch(state, { payload }) {
       return { ...state, search: payload };
