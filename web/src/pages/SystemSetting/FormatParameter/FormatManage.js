@@ -6,7 +6,8 @@ import FormatCard from './FormatCard';
 
 import styles from './FormatManage.less';
 
-import { queryList, del } from '@/services/formatManage';
+import { queryList, del,} from '@/services/formatManage';
+//getList
 
 @Form.create()
 class FormatManage extends PureComponent {
@@ -24,8 +25,10 @@ class FormatManage extends PureComponent {
     };
 
     componentWillMount(){
+
+        const params = { q : "page", current : 1 };
         //请求接口
-        queryList().then(res=>{
+        queryList(params).then(res=>{
             if(res && res.error){
                 console.log(res.error.message);
                 return;
@@ -33,10 +36,19 @@ class FormatManage extends PureComponent {
                 this.setState( { data : res } );
             }
         });
+        // const temp = { q : "list"};
+        // getList(temp).then(res =>{
+        //     if(res && res.error){
+        //         console.log(res.error.message);
+        //         return;
+        //     }else{
+        //         console.log(res);
+        //     }
+        // })
     }
 
-    getList = () => {
-        queryList().then(res=>{
+    getList = params => {
+        queryList(params).then(res=>{
             if(res && res.error){
                 console.log(res.error.message);
             }else{
@@ -121,9 +133,16 @@ class FormatManage extends PureComponent {
     };
 
     onSave = (saved = false) => {
+        const { 
+            data : {
+                pagination : { current, pageSize }
+            }
+        } = this.state;
+
+        const params = { q : "page", current : current, pageSize : pageSize };
         if(saved){
             //为true，进行保存了，重新拉取列表，进行数据的更新
-            this.getList();
+            this.getList(params);
         }
         this.setState({ formVisible : false,editInfo : null});
         this.clearSelectRows();
@@ -146,9 +165,17 @@ class FormatManage extends PureComponent {
         });
     };
     handleDelOKClick(params) {
+        const { 
+            data : {
+                pagination : { current }
+            }
+        } = this.state;
+
+        const param = { q : "page", current : current, pagesize : pageSize };
+
         del(params).then( res => {
             if( res && res.status == "OK" ){
-                this.getList();
+                this.getList(param);
             }else{
                 if(res && res.error){
                     console.log(res.error.message);
@@ -156,6 +183,14 @@ class FormatManage extends PureComponent {
             }
         });
         this.clearSelectRows();
+    }
+
+    onTableChange = pagination =>{
+        console.log("current",pagination.current);
+        console.log("pagesize",pagination.pageSize);
+
+        const params = { q : "page", current : pagination.current, pageSize : pagination.pageSize };
+        this.getList(params);
     }
 
    
@@ -231,7 +266,7 @@ class FormatManage extends PureComponent {
                                         onClick={() => this.handleDelClick()}
                                     >
                                         删除
-                                  </PButton>,
+                                    </PButton>,
                                 ]
                             }
                         </div>
@@ -245,6 +280,7 @@ class FormatManage extends PureComponent {
                                 dataSource={list}
                                 rowKey={record => record.record_id}
                                 pagination={paginationProps}
+                                onChange = {this.onTableChange}
                             // size="small"
                             />
                         </div>

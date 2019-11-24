@@ -1,11 +1,14 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
-import { async } from 'q';
 
 const router = 'tax-calculations';
 
-export async function query(){
-    return request(`/v1/${router}`);
+export async function query(params){
+    return request(`/v1/${router}?${stringify(params)}`);
+}
+
+export async function get(params){
+    return request(`/v1/${router}/${params.record_id}`);
 }
 
 export async function create(params){
@@ -13,4 +16,17 @@ export async function create(params){
         method : 'POST',
         body : params,
     })
+}
+
+export async function update(params){
+    return request(`/v1/${router}/${params.record_id}`, {
+        method: 'PUT',
+        body: params,
+    });
+}
+
+export async function del(params) {
+    return request(`/v1/${router}/${params.record_id}`, {
+      method: 'DELETE',
+    });
 }

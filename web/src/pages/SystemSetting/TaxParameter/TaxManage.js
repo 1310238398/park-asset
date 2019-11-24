@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Card, Row, Col, Form, Input, Button, Table } from 'antd';
+import { Card, Row, Col, Form, Input, Button, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import TaxCard from './TaxCard';
 
 import styles from './TaxManage.less';
 
-import { query } from '@/services/taxManage';
+import { query, del } from '@/services/taxManage';
 
 @Form.create()
 class TaxManage extends PureComponent {
@@ -18,13 +18,6 @@ class TaxManage extends PureComponent {
         editInfo: null,
         data: {
             list: [
-                // {
-                //     record_id: "1",
-                //     name: "增值税销项税",
-                //     tax_rate: 9,
-                //     type : 1, 
-                //     memo: "备注1"
-                // },
             ],
             pagination:
             {
@@ -35,15 +28,15 @@ class TaxManage extends PureComponent {
     }
 
     componentWillMount(){
-        this.getList();
+        const params = { q : "page", current : 1};
+        this.getList(params);
     }
 
-    getList = () => {
-        query().then(res=>{
+    getList = (params) => {
+        query(params).then(res=>{
             if(res && res.error){
                 console.log(res.error.message);
             }else{
-                console.log(res);
                 this.setState( { data : res } );
             }
         })
@@ -61,10 +54,51 @@ class TaxManage extends PureComponent {
     }
 
     onSave = (saved = false) => {
+        const {
+            data : {
+                pagination : { current, pageSize }
+            }
+        } = this.state;
+
+        const params = { q : "page", current : current, pageSize : pageSize}
         if (saved) {
-            // TODO 重新拉取列表           
+            // TODO 重新拉取列表     
+            this.getList(params);      
         }
         this.setState({ formVisible: false, editInfo: null });
+        this.clearSelectRows();
+    }
+    //删除按钮
+    handleDelClick = () => {
+        const { selectedRows } = this.state;
+        Modal.confirm({
+            title: `确定删除该税目？`,
+            okText: '确认',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: this.handleDelOKClick.bind(this, selectedRows[0]),
+        });
+    };
+
+    handleDelOKClick(params) {
+        const { 
+            data : {
+                pagination : { current, pageSize }
+            }
+        } = this.state;
+
+        const param = { q : "page", current : current, pageSize : pageSize };
+
+        del(params).then( res => {
+            if( res && res.status == "OK" ){
+                this.getList(param);
+            }else{
+                if(res && res.error){
+                    console.log(res.error.message);
+                }
+            }
+        });
+        this.clearSelectRows();
     }
 
     // //搜索框
@@ -166,6 +200,10 @@ class TaxManage extends PureComponent {
             });
         }
     };
+    onTableChange = pagination =>{
+        const params = { q : "page", current : pagination.current, pageSize : pagination.pageSize };
+        this.getList(params);
+    }
 
     render() {
 
@@ -225,7 +263,7 @@ class TaxManage extends PureComponent {
                                     <PButton key='edit' code="edit" icon="edit" type="edit" onClick={() => { this.onEdit() }}>
                                         编辑
                                     </PButton>,
-                                    <PButton key="del" code="del" icon="delete" type="danger">
+                                    <PButton key="del" code="del" icon="delete" type="danger" onClick = {() => { this.handleDelClick() }}>
                                         删除
                                     </PButton>
                                 ]
@@ -238,6 +276,7 @@ class TaxManage extends PureComponent {
                                 columns={columns}
                                 dataSource={list}
                                 pagination={paginationProps}
+                                onChange = {this.onTableChange}
                             />
                         </div>
                     </div>

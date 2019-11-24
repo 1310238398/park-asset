@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Modal, Form, Row, Col, Input, InputNumber, Radio } from 'antd';
 
-import { create } from '@/services/taxManage';
+import { create, get, update } from '@/services/taxManage';
 
 @Form.create()
 class TaxCard extends PureComponent {
@@ -12,9 +12,17 @@ class TaxCard extends PureComponent {
         const { info } = this.props;
         if(info){
             console.log("请求接口");
+            // TODO 重新请求数据
+            get(info).then(res=>{
+                if(res && res.error){
+                    console.log(res.error.message);
+                }else{
+                    this.setState({ info: res });
+                }
+            })
+        }else{
+            this.setState({ info: info });
         }
-        // TODO 重新请求数据
-        this.setState({ info: info });
 
     }
 
@@ -29,17 +37,25 @@ class TaxCard extends PureComponent {
 
             const submitInfo = { ...values };
             submitInfo.type = parseInt(submitInfo.type,10);
-
-            console.log(submitInfo);
-
             if(info){
+                submitInfo.record_id = info.record_id;
                 console.log("编辑");
+                update(submitInfo).then(res=>{
+                    if(res && res.error){
+                        console.log(res.error.message);
+                    }
+                    onSave(true);
+                });
             }else{
-                console.log("添加");
+                create(submitInfo).then(res => {
+                    if(res && res.error){
+                        console.log(res.error.message);
+                    }
+                    onSave(true);
+                });
             }
             
-        })
-        onSave(true);
+        });
     }
 
     onCancelClick = () => {
@@ -80,7 +96,12 @@ class TaxCard extends PureComponent {
                             <Form.Item {...formItemLayout} label="税目名称">                               
                                 {getFieldDecorator('name', {
                                     initialValue: info ?  info.name : '',
-                                    rules: [{ required: true, message: '请输入税目名称' }],
+                                    rules: [
+                                        { 
+                                            required: true, 
+                                            message: '请输入税目名称' 
+                                        }
+                                    ],
                                 })(<Input placeholder="请输入税目名称" />)}
                             </Form.Item>
 
@@ -91,7 +112,12 @@ class TaxCard extends PureComponent {
                             <Form.Item {...formItemLayout} label="税目税率">
                                 {getFieldDecorator('tax_rate', {
                                     initialValue: info ?  info.tax_rate : 0,
-                                    rules: [{ required: true, message: '请输入税目税率' }],
+                                    rules: [
+                                        { 
+                                            required: true, 
+                                            message: '请输入税目税率' 
+                                        }
+                                    ],
                                 })(<InputNumber placeholder="请输入税目税率" />)}
                             </Form.Item>
                         </Col>
@@ -120,7 +146,11 @@ class TaxCard extends PureComponent {
                             <Form.Item {...formItemLayout} label="税目描述">
                                 {getFieldDecorator('memo', {
                                     initialValue:  info ?  info.memo : '',
-                                    rules: [{message: '请输入税目描述' }],
+                                    rules: [
+                                        {
+                                            message: '请输入税目描述' 
+                                        }
+                                    ],
                                 })(<Input.TextArea rows={5} placeholder="请输入税目描述" />)}
                             </Form.Item>
                         </Col>
