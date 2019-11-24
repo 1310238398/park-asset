@@ -22,6 +22,12 @@ export async function createSalesPlan(params) {
   });
 }
 
+
+// 成本核算列表相关接口
+// 查询成本核算列表
+export async function queryCostList(params) {
+  return request(`/v1/proj-cost-items?q=tree&${stringify(params)}`);
+}
 // export async function query(params) {
 //   return request(`/v1/${router}?${stringify(params)}`);
 // }

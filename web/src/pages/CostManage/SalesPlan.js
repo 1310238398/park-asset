@@ -72,6 +72,7 @@ class EditableCell extends React.Component {
 }
 @connect(state => ({
   salesPlan: state.salesPlan,
+  costAccount: state.costAccount,
   loading: state.loading.models.salesPlan,
 }))
 // 销售计划页面
@@ -202,6 +203,7 @@ class SalesPlan extends PureComponent {
             <span>
               <EditableContext.Consumer>
                 {form => (
+
                   <a onClick={() => this.save(form, record.key)} style={{ marginRight: 8 }}>
                     保存
                   </a>
@@ -221,6 +223,49 @@ class SalesPlan extends PureComponent {
         },
       },
     ],
+
+    view_columns:[
+      {
+        title: '业态名称',
+        dataIndex: 'name',
+        width: '15%',
+        ellipsis: true,
+        align: 'center',
+      },
+      {
+        title: '销售面积(万m²)',
+        dataIndex: 'area',
+        width: '10%',
+        align: 'center',
+        editable: true,
+      },
+      {
+        title: '销售单价(万元)',
+        dataIndex: 'unit_price',
+        width: '15%',
+        align: 'center',
+        editable: true,
+      },
+      {
+        title: '合同额(万元)',
+        dataIndex: 'total_contract_price',
+        width: '15%',
+        align: 'center',
+
+        render: (text, record) => {
+          return <span>{record.area * record.unit_price}</span>;
+        },
+      },
+      {
+        title: '回款额(万元)',
+        dataIndex: 'repayment_amount',
+        width: '15%',
+        align: 'center',
+        editable: true,
+      },
+      
+    ],
+
   };
   componentDidMount() {}
 
@@ -268,11 +313,13 @@ class SalesPlan extends PureComponent {
 
   save(form, key) {
     console.log('要保存数据的key ' + key);
+   
     form.validateFields((error, row) => {
       if (error) {
         return;
       }
       const newData = [...this.state.data];
+    
       const index = newData.findIndex(item => key === item.key);
       if (index > -1) {
         const item = newData[index];
@@ -284,7 +331,11 @@ class SalesPlan extends PureComponent {
       } else {
         newData.push(row);
         this.setState({ data: newData, editingKey: '' });
+
+        
       }
+
+      console.log('保存后的数据 '+ JSON.stringify(this.state.data));
     });
   }
   edit(key) {
@@ -317,8 +368,9 @@ class SalesPlan extends PureComponent {
     const {
       loading,
       form: { getFieldDecorator },
+      costAccount:{formType}
     } = this.props;
-    const { data, yearList, quarterList, editingKey, columns } = this.state;
+    const { data, yearList, quarterList, editingKey, columns, view_columns } = this.state;
 
     const components = {
       body: {
@@ -339,10 +391,16 @@ class SalesPlan extends PureComponent {
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),
-          handleSave: this.handleSave,
+         // handleSave: this.handleSave,
         }),
       };
     });
+
+    //console.log("column转换后 "+ JSON.stringify(columns2));
+
+    // const columns_view = view_columns.map(col => {
+
+    // });
     const formItemLayout = {
       labelCol: {
         span: 10,
@@ -423,7 +481,7 @@ class SalesPlan extends PureComponent {
             loading={loading}
             rowKey={record => record.key}
             dataSource={data}
-            columns={columns2}
+            columns={formType === "E" ? columns2 : (formType === 'V' ? view_columns: null)} //{view_columns}
             pagination={false}
             scroll={{ y: 500 }}
             rowClassName="editable-row"

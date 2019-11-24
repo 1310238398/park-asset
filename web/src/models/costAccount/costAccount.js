@@ -14,7 +14,8 @@ export default {
     },
     submitting: false,
     formTitle: '',
-    formID: '',
+    formID: '', // 当前选中的项目ID
+    formType:'E', // "E" 编辑 "V" 查看
     formVisible:false,
     addSalesPlanVisible: false,
     formData: {},
@@ -25,6 +26,7 @@ export default {
   // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
+     
       let params = {
         q: 'page',
       };
@@ -206,17 +208,33 @@ export default {
     },
     // 成本核算的接口
     // 查看详情
-    *redirectDetail({ payload }, { put }) {
-     
+    *redirectDetail({ payload , operType}, { put }) {
       yield put(
         routerRedux.push({
           pathname: '/cost/detail',
           query: {
-            key: payload.key,
-           
+            key: payload.item.record_id, // 这块需要改
           },
         })
+ 
       );
+
+      put(
+        {
+          type: 'saveFormID',
+          payload: payload.item.record_id,
+        }
+      );
+
+      put(
+        {
+          type: 'saveFormType',
+          payload: payload.operType,
+        }
+      );
+
+     
+
     },
     
     

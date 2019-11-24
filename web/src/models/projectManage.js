@@ -22,7 +22,7 @@ export default {
     formData: {}, // 一条数据详情
     businessFormat: [], // 项目的业态数据
 
-    allBusinessFormat: [], // 所有的业态列表
+    allBusinessFormat: [], // 所有的业态列表(渲染界面用)
     deliveryStandard: {}, // 项目的交付标准
     companyList: [],
     poltList: [],
@@ -31,7 +31,7 @@ export default {
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
       let params = {
-        //q: 'page',
+        q: 'page',
       };
 
       if (search) {
@@ -123,7 +123,7 @@ export default {
         ];
       }
     },
-    *fetchForm({ payload }, { call, put, select }) {
+    *fetchForm({ payload }, { call, put, select}) {
       const response = yield call(projectManageService.getProInfo, payload);
       if (response && response.asset_type) {
         response.asset_type = response.asset_type.split(',');
@@ -148,26 +148,30 @@ export default {
 
       // 查询所有业态
       const all_format = yield call(formatManageService.queryListNotPage, {});
-      if (all_format && all_format.list) {
+      const responseAll = all_format.list||[];
+    
         yield [
           put({
             type: 'saveAllFormatData',
-            payload: all_format.list,
+            payload:responseAll,
           }),
+         
         ];
-      }
+      
 
       // 修改allFormatData
       const allBusinessFormat = yield select(state => state.projectManage.allBusinessFormat);
       const businessFormat = yield select(state => state.projectManage.businessFormat);
 
       for (let i = 0; i < allBusinessFormat.length; i++) {
-        console.log('hhhhhh');
+        console.log('第一层');
         for (let j = 0; j < businessFormat.length; j++) {
-          console.log('rrrrr');
+          console.log('第二层');
           if (allBusinessFormat[i].record_id === businessFormat[j].business_format_id) {
             allBusinessFormat[i].checked = true;
+            allBusinessFormat[i].floor_area = businessFormat[j].floor_area;
             console.log('选择');
+            break;
           }
 
           if (j === businessFormat.length - 1) {
@@ -184,10 +188,16 @@ export default {
         }),
       ];
 
-      console.log('所有业态 ' + JSON.stringify(allBusinessFormat));
+      console.log("修改完后 ");
+      console.log(allBusinessFormat);
+
+      
+
+    
 
       // 交付标准
     },
+
     *submit({ payload }, { call, put, select }) {
       yield put({
         type: 'changeSubmitting',
@@ -287,6 +297,7 @@ export default {
         });
       }
     },
+  
 
    
   },
