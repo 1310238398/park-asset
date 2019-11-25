@@ -18,12 +18,12 @@ type SchemaLandAppreciationTax schema.LandAppreciationTax
 // ToLandAppreciationTax 转换为土地增值税实体
 func (a SchemaLandAppreciationTax) ToLandAppreciationTax() *LandAppreciationTax {
 	item := &LandAppreciationTax{
-		RecordID:        &a.RecordID,
-		SaledArea:       &a.SaledArea,
-		ValueAdded:      &a.ValueAdded,
-		ValueAddedRate:  &a.ValueAddedRate,
-		Tax:             &a.Tax,
-		SaledWithoutTax: &a.SaledWithoutTax,
+		// RecordID:        &a.RecordID,
+		// SaledArea:       &a.SaledArea,
+		// ValueAdded:      &a.ValueAdded,
+		// ValueAddedRate:  &a.ValueAddedRate,
+		// Tax:             &a.Tax,
+		// SaledWithoutTax: &a.SaledWithoutTax,
 	}
 	return item
 }
@@ -31,12 +31,16 @@ func (a SchemaLandAppreciationTax) ToLandAppreciationTax() *LandAppreciationTax 
 // LandAppreciationTax 土地增值税实体
 type LandAppreciationTax struct {
 	CostModel
-	RecordID        *string  `gorm:"column:record_id;size:36;index;"`              // 记录ID
-	SaledArea       *float64 `gorm:"column:saled_area;type:decimal(20,4);"`        // 销售面积
-	ValueAdded      *float64 `gorm:"column:value_added;type:decimal(20,4);"`       // 增值额
-	ValueAddedRate  *float64 `gorm:"column:value_added_rate;type:decimal(20,4);"`  // 增值率
-	Tax             *float64 `gorm:"column:tax;type:decimal(20,4);"`               // 土地增值税
-	SaledWithoutTax *float64 `gorm:"column:saled_without_tax;type:decimal(20,4);"` // 不含税销售收入
+	RecordID       *string  `gorm:"column:record_id;size:36;index;"`             // 记录ID
+	ProjectID      *string  `gorm:"column:project_id;size:36;index;"`            // 项目ID
+	Income         *float64 `gorm:"column:"income;type:decimal(20,4);"`          // 不含税销售收入
+	Cost           *float64 `gorm:"column:cost;type:decimal(20,4);"`             // 扣除项金额
+	AdditionalTax  *float64 `gorm:"column:additional_tax;type:decimal(20,4);"`   // 附加税
+	FinanceAddRate *float64 `gorm:"column:finance_add_rate;type:decimal(20,4);"` // 财务费用附加率
+	ManageAddRate  *float64 `gorm:"column:manage_add_rate;type:decimal(20,4);"`  // 管理费用附加率
+	CostAddRate    *float64 `gorm:"column:cost_add_rate;type:decimal(20,4);"`    // 成本附加率
+	Rate           *float64 `gorm:"column:rate;type:decimal(20,4);"`             // 适用税率
+	Tax            *float64 `gorm:"column:tax;type:decimal(20,4);"`              // 土地增值税
 }
 
 func (a LandAppreciationTax) String() string {
@@ -51,12 +55,12 @@ func (a LandAppreciationTax) TableName() string {
 // ToSchemaLandAppreciationTax 转换为土地增值税对象
 func (a LandAppreciationTax) ToSchemaLandAppreciationTax() *schema.LandAppreciationTax {
 	item := &schema.LandAppreciationTax{
-		RecordID:        *a.RecordID,
-		SaledArea:       *a.SaledArea,
-		ValueAdded:      *a.ValueAdded,
-		ValueAddedRate:  *a.ValueAddedRate,
-		Tax:             *a.Tax,
-		SaledWithoutTax: *a.SaledWithoutTax,
+		// RecordID:        *a.RecordID,
+		// SaledArea:       *a.SaledArea,
+		// ValueAdded:      *a.ValueAdded,
+		// ValueAddedRate:  *a.ValueAddedRate,
+		// Tax:             *a.Tax,
+		// SaledWithoutTax: *a.SaledWithoutTax,
 	}
 	return item
 }
