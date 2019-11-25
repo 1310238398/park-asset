@@ -22,7 +22,6 @@ type ProjCostItem struct {
 	ProjCostItemBll bll.IProjCostItem
 }
 
-
 func (a *ProjCostItem) Query(c *gin.Context) {
 	q := c.Query("q")
 	switch q {
@@ -47,9 +46,15 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 	var params schema.ProjCostItemQueryParam
 	params.ProjectID = c.Query("project_id")
 
-	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	err := a.ProjCostItemBll.Init(ginplus.NewContext(c), params.ProjectID)
 	if err != nil {
 		ginplus.ResError(c, err)
+		return
+	}
+
+	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	if err != nil {
+
 		return
 	}
 	if show := c.Query("show"); show == "map" {

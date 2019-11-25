@@ -60,7 +60,6 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 		if len(result.Data) > 0 {
 			return nil
 		}
-		return nil
 
 		// 获取项目业态面积
 		pbfqp := schema.ProjBusinessFormatQueryParam{}
@@ -97,7 +96,7 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 				return 0, 0, nil
 			}
 
-			if ci.Children != nil || len(ci.Children) == 0 { //没有下级
+			if ci.Children == nil || len(ci.Children) == 0 { //没有下级
 				item := schema.ProjCostItem{}
 				item.CostID = ci.RecordID
 				item.ProjectID = projectID
@@ -130,13 +129,12 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 				}
 
 				//保存成本
-				_, err = a.Create(ctx, item)
+				_, err = a.create(ctx, item)
 				if err != nil {
 					return 0, 0, err
 				}
 				return item.Price, item.TaxPrice, nil
 			} else { //存在下级
-
 				item := schema.ProjCostItem{}
 				item.CostID = ci.RecordID
 				item.ProjectID = projectID
@@ -150,7 +148,7 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 					item.TaxPrice += tax
 				}
 				//保存成本
-				_, err = a.Create(ctx, item)
+				_, err = a.create(ctx, item)
 				if err != nil {
 					return 0, 0, err
 				}
@@ -264,29 +262,41 @@ func (a *ProjCostItem) getUpdate(ctx context.Context, recordID string) (*schema.
 	return a.Get(ctx, recordID)
 }
 
+func (a *ProjCostItem) create(ctx context.Context, item schema.ProjCostItem) (string, error) {
+	item.RecordID = util.MustUUID()
+	//验证成本项
+	costItem, err := a.CostItemModel.Get(ctx, item.CostID)
+	if err != nil {
+		return "", err
+	} else if costItem == nil {
+		//直接删除
+		return "", errors.New("未找到模板")
+	}
+
+	if err := a.ProjCostItemModel.Create(ctx, item); err != nil {
+		return item.RecordID, err
+	}
+
+	if costItem.CalculateType == 1 {
+		for _, v := range item.BusinessList {
+			v.ProjCostID = item.RecordID
+			err := a.ProjCostBusinessModel.Create(ctx, *v)
+			if err != nil {
+				return "", err
+			}
+		}
+	}
+
+	return item.RecordID, nil
+}
+
 // Create 创建数据
 func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*schema.ProjCostItem, error) {
-	item.RecordID = util.MustUUID()
+	var recordID string
 	err := ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		if err := a.ProjCostItemModel.Create(ctx, item); err != nil {
+		var err error
+		if recordID, err = a.create(ctx, item); err != nil {
 			return err
-		}
-		//验证成本项
-		costItem, err := a.CostItemModel.Get(ctx, item.CostID)
-		if err != nil {
-			return err
-		} else if costItem == nil {
-			//直接删除
-			return errors.New("未找到模板")
-		}
-
-		if costItem.CalculateType == 1 {
-			for _, v := range item.BusinessList {
-				err := a.ProjCostBusinessModel.Create(ctx, *v)
-				if err != nil {
-					return err
-				}
-			}
 		}
 
 		if err := a.renew(ctx, item.ProjectID); err != nil {
@@ -299,7 +309,7 @@ func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*s
 		return nil, err
 	}
 
-	return a.getUpdate(ctx, item.RecordID)
+	return a.getUpdate(ctx, recordID)
 }
 
 // Update 更新数据
