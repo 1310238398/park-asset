@@ -22,6 +22,7 @@ type ProjCostItem struct {
 	ProjCostItemBll bll.IProjCostItem
 }
 
+
 func (a *ProjCostItem) Query(c *gin.Context) {
 	q := c.Query("q")
 	switch q {
@@ -32,7 +33,7 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 	}
 }
 
-// Query 查询数据
+// queryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
@@ -66,7 +67,7 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 // @Summary 查询指定数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 schema.ProjCostItemShow
+// @Success 200 schema.ProjCostItemShow "项目成本项"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"

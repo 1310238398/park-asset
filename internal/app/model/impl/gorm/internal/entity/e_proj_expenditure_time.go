@@ -23,7 +23,7 @@ func (a SchemaProjExpenditureTime) ToProjExpenditureTime() *ProjExpenditureTime 
 		Quarter:           &a.Quarter,
 		Month:             &a.Month,
 		Day:               &a.Day,
-		ExpenditureRate:   &a.ExpenditureRate,
+		ExpenditureAmount: &a.ExpenditureAmount,
 		ProjExpenditureID: &a.ProjExpenditureID,
 	}
 	return item
@@ -32,13 +32,13 @@ func (a SchemaProjExpenditureTime) ToProjExpenditureTime() *ProjExpenditureTime 
 // ProjExpenditureTime 项目支出节点时间表实体
 type ProjExpenditureTime struct {
 	CostModel
-	RecordID          *string `gorm:"column:record_id;size:36;index;"`           // 记录ID
-	Year              *int    `gorm:"column:year;index;"`                        // 年度
-	Quarter           *int    `gorm:"column:quarter;index;"`                     // 季度
-	Month             *int    `gorm:"column:month;index;"`                       // 月份
-	Day               *int    `gorm:"column:day;index;"`                         // 天
-	ExpenditureRate   *int    `gorm:"column:expenditure_rate;"`                  // 支出比例
-	ProjExpenditureID *string `gorm:"column:proj_expenditure_id;size:36;index;"` // 项目支出节点ID
+	RecordID          *string  `gorm:"column:record_id;size:36;index;"`              // 记录ID
+	Year              *int     `gorm:"column:year;index;"`                           // 年度
+	Quarter           *int     `gorm:"column:quarter;index;"`                        // 季度
+	Month             *int     `gorm:"column:month;index;"`                          // 月份
+	Day               *int     `gorm:"column:day;index;"`                            // 天
+	ExpenditureAmount *float64 `gorm:"column:expenditure_amount;type:decimal(20,4)"` // 支出比例
+	ProjExpenditureID *string  `gorm:"column:proj_expenditure_id;size:36;index;"`    // 项目支出节点ID
 }
 
 func (a ProjExpenditureTime) String() string {
@@ -58,7 +58,7 @@ func (a ProjExpenditureTime) ToSchemaProjExpenditureTime() *schema.ProjExpenditu
 		Quarter:           *a.Quarter,
 		Month:             *a.Month,
 		Day:               *a.Day,
-		ExpenditureRate:   *a.ExpenditureRate,
+		ExpenditureAmount: *a.ExpenditureAmount,
 		ProjExpenditureID: *a.ProjExpenditureID,
 	}
 	return item

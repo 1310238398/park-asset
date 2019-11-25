@@ -45,6 +45,14 @@ func (a *BusinessFormat) Query(ctx context.Context, params schema.BusinessFormat
 
 	}
 
+	if v := params.RecordID; v != "" {
+		db = db.Where("record_id = ?", v)
+	}
+
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN (?)", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

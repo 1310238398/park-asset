@@ -22,3 +22,5 @@
 /internal/app/test/data
 /docs/*.bak
 ~$*
+publish.sh
+start.sh

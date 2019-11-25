@@ -2,13 +2,13 @@ package schema
 
 // ProjExpenditureTime 项目支出节点时间表
 type ProjExpenditureTime struct {
-	RecordID          string `json:"record_id" swaggo:"false,记录ID"`               // 记录ID
-	Year              int    `json:"year" swaggo:"false,年度"`                      // 年度
-	Quarter           int    `json:"quarter" swaggo:"false,季度"`                   // 季度
-	Month             int    `json:"month" swaggo:"false,月份"`                     // 月份
-	Day               int    `json:"day" swaggo:"false,天"`                        // 天
-	ExpenditureRate   int    `json:"expenditure_rate" swaggo:"false,支出比例"`        // 支出比例
-	ProjExpenditureID string `json:"proj_expenditure_id" swaggo:"false,项目支出节点ID"` // 项目支出节点ID
+	RecordID          string  `json:"record_id" swaggo:"false,记录ID"`               // 记录ID
+	Year              int     `json:"year" swaggo:"false,年度"`                      // 年度
+	Quarter           int     `json:"quarter" swaggo:"false,季度"`                   // 季度
+	Month             int     `json:"month" swaggo:"false,月份"`                     // 月份
+	Day               int     `json:"day" swaggo:"false,天"`                        // 天
+	ExpenditureAmount float64 `json:"expenditure_amount" swaggo:"false,支出金额"`      // 支出金额
+	ProjExpenditureID string  `json:"proj_expenditure_id" swaggo:"false,项目支出节点ID"` // 项目支出节点ID
 }
 
 // ProjExpenditureTimeQueryParam 查询条件
@@ -18,6 +18,7 @@ type ProjExpenditureTimeQueryParam struct {
 	Month             int    // 月份
 	Day               int    // 天
 	ProjExpenditureID string // 项目支出节点ID
+	ProjectID         string // 项目ID
 }
 
 // ProjExpenditureTimeQueryOptions 查询可选参数项

@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewPcProject 创建成本项目管理存储实例
@@ -30,6 +31,20 @@ func (a *PcProject) getQueryOption(opts ...schema.PcProjectQueryOptions) schema.
 // Query 查询数据
 func (a *PcProject) Query(ctx context.Context, params schema.PcProjectQueryParam, opts ...schema.PcProjectQueryOptions) (*schema.PcProjectQueryResult, error) {
 	db := entity.GetPcProjectDB(ctx, a.db)
+
+	if v := params.LikeName; v != "" {
+		db = db.Where("name like ?", "%"+v+"%")
+	}
+	if v := params.OrgID; v != "" {
+		db = db.Where("org_id = ?", v)
+	}
+	if v := params.PlotID; v != "" {
+		db = db.Where("plot_id = ?", v)
+	}
+
+	if v := params.OrgIDs; len(v) > 0 {
+		db = db.Where("org_id IN (?)", v)
+	}
 
 	db = db.Order("id DESC")
 

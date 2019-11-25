@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjExpenditure 创建项目支出节点存储实例
@@ -30,6 +31,31 @@ func (a *ProjExpenditure) getQueryOption(opts ...schema.ProjExpenditureQueryOpti
 // Query 查询数据
 func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditureQueryParam, opts ...schema.ProjExpenditureQueryOptions) (*schema.ProjExpenditureQueryResult, error) {
 	db := entity.GetProjExpenditureDB(ctx, a.db)
+
+	if v := params.LikeName; v != "" {
+		db = db.Where("name like ?", "%"+v+"%")
+	}
+
+	if v := params.BeforeStartTime; !v.IsZero() {
+		db = db.Where("start_time  < ?", v)
+	}
+
+	if v := params.ExpenditureTimeType; v != 0 {
+		db = db.Where("expenditure_time_type = ?", v)
+	}
+
+	if v := params.ParentPath; v != "" {
+		db = db.Where("parent_path = ?", v)
+	}
+
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
+
+	if v := params.ParentID; v != "" {
+		db = db.Where("parent_id = ?", v)
+
+	}
 
 	db = db.Order("id DESC")
 

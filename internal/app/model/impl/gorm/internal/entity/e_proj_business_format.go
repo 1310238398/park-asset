@@ -22,6 +22,7 @@ func (a SchemaProjBusinessFormat) ToProjBusinessFormat() *ProjBusinessFormat {
 		ProjectID:        &a.ProjectID,
 		BusinessFormatID: &a.BusinessFormatID,
 		FloorArea:        &a.FloorArea,
+		Name:             &a.Name,
 	}
 	return item
 }
@@ -32,6 +33,7 @@ type ProjBusinessFormat struct {
 	RecordID         *string  `gorm:"column:record_id;size:36;index;"`          // 记录ID
 	ProjectID        *string  `gorm:"column:project_id;size:36;index;"`         // 成本项目ID
 	BusinessFormatID *string  `gorm:"column:business_format_id;size:36;index;"` // 业态ID
+	Name             *string  `gorm:"column:name;size:100;index;"`              // 项目业态名称
 	FloorArea        *float64 `gorm:"column:floor_area;type:decimal(20,4);"`    // 建筑面积
 }
 
@@ -51,6 +53,7 @@ func (a ProjBusinessFormat) ToSchemaProjBusinessFormat() *schema.ProjBusinessFor
 		ProjectID:        *a.ProjectID,
 		BusinessFormatID: *a.BusinessFormatID,
 		FloorArea:        *a.FloorArea,
+		Name:             *a.Name,
 	}
 	return item
 }

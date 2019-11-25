@@ -61,6 +61,25 @@ type ProjCostItemQueryResult struct {
 // ProjCostItems 项目成本项列表
 type ProjCostItems []*ProjCostItem
 
+// ToProjCostIDs 转换为项目成本项ID列表
+func (a ProjCostItems) ToProjCostIDs() []string {
+	l := make([]string, len(a))
+	for _, item := range a {
+		l = append(l, item.RecordID)
+	}
+
+	return l
+}
+
+// ToMap 转换为键值映射
+func (a ProjCostItems) ToMap() map[string]*ProjCostItem {
+	m := make(map[string]*ProjCostItem)
+	for _, item := range a {
+		m[item.RecordID] = item
+	}
+	return m
+}
+
 // ProjCostItemShows 项目成本项展示列表
 type ProjCostItemShows []*ProjCostItemShow
 
@@ -83,8 +102,8 @@ func (a *ProjCostItemShow) ToMap() map[string]interface{} {
 	result["proj_income_id"] = a.ProjIncomeID
 	result["editable"] = a.Editable
 	for _, v := range a.BusinessList {
-		result[fmt.Sprintf("%s-unitprice", v.ProjBusinessID)] = v.UnitPrice
-		result[fmt.Sprintf("%s-price", v.ProjBusinessID)] = v.Price
+		result[fmt.Sprintf("%s_unit", v.ProjBusinessID)] = v.UnitPrice
+		result[fmt.Sprintf("%s_total", v.ProjBusinessID)] = v.Price
 	}
 
 	children := []map[string]interface{}{}

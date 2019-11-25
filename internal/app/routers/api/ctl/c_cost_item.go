@@ -24,7 +24,7 @@ type CostItem struct {
 
 // Query 查询数据
 func (a *CostItem) Query(c *gin.Context) {
-	q := c.Query("query")
+	q := c.Query("q")
 	switch q {
 	case "list":
 		a.query(c)
