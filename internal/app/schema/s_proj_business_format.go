@@ -6,6 +6,7 @@ type ProjBusinessFormat struct {
 	ProjectID        string  `json:"project_id" swaggo:"false,成本项目ID"`       // 成本项目ID
 	BusinessFormatID string  `json:"business_format_id" swaggo:"false,业态ID"` // 业态ID
 	FloorArea        float64 `json:"floor_area" swaggo:"false,建筑面积"`         // 建筑面积
+	Name             string  `json:"name" swaggo:"false,业态名称"`               //业态名称
 }
 
 // ProjBusinessFormatQueryParam 查询条件

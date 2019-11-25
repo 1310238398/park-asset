@@ -6,6 +6,7 @@ type CostBusiness struct {
 	CostID     string  `json:"cost_id" swaggo:"false,成本项ID"`    // 成本项ID
 	BusinessID string  `json:"business_id" swaggo:"false,业态ID"` // 业态ID
 	UnitPrice  float64 `json:"unit_price" swaggo:"false,单价"`    // 单价
+	Name       string  `json:"name" swaggo:"false,业态名"`         // 业态名
 }
 
 // CostBusinessQueryParam 查询条件

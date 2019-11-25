@@ -10,20 +10,34 @@ import (
 )
 
 // NewProjBusinessFormat 创建项目业态
-func NewProjBusinessFormat(mProjBusinessFormat model.IProjBusinessFormat) *ProjBusinessFormat {
+func NewProjBusinessFormat(mProjBusinessFormat model.IProjBusinessFormat, mBusinessFormat model.IBusinessFormat) *ProjBusinessFormat {
 	return &ProjBusinessFormat{
 		ProjBusinessFormatModel: mProjBusinessFormat,
+		BusinessFormatModel:     mBusinessFormat,
 	}
 }
 
 // ProjBusinessFormat 项目业态业务逻辑
 type ProjBusinessFormat struct {
 	ProjBusinessFormatModel model.IProjBusinessFormat
+	BusinessFormatModel     model.IBusinessFormat
 }
 
 // Query 查询数据
 func (a *ProjBusinessFormat) Query(ctx context.Context, params schema.ProjBusinessFormatQueryParam, opts ...schema.ProjBusinessFormatQueryOptions) (*schema.ProjBusinessFormatQueryResult, error) {
-	return a.ProjBusinessFormatModel.Query(ctx, params, opts...)
+	result, err := a.ProjBusinessFormatModel.Query(ctx, params, opts...)
+	if err != nil {
+		return nil, err
+	}
+	//补充业态名
+	for _, v := range result.Data {
+		bf, err := a.BusinessFormatModel.Get(ctx, v.BusinessFormatID)
+		if err != nil {
+			return nil, err
+		}
+		v.Name = bf.Name
+	}
+	return result, err
 }
 
 // Get 查询指定数据
