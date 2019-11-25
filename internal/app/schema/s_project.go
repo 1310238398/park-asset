@@ -80,7 +80,7 @@ func (a Projects) FillOrgData(m map[string]*Organization) Projects {
 }
 
 // ToPlotIDs 转换为地块ID列表
-func (a Projects) ToPlotIDs() []string {
+func (a PcProjects) ToPlotIDs() []string {
 	var plotIDs []string
 
 	for _, item := range a {

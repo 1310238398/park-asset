@@ -2,14 +2,15 @@ package schema
 
 // Organization 组织机构管理
 type Organization struct {
-	RecordID   string `json:"record_id" swaggo:"false,记录ID"`
-	Name       string `json:"name" binding:"required" swaggo:"true,机构名称"`
-	OrgType    int    `json:"org_type" binding:"required" swaggo:"true,机构类型"`
-	Sequence   int    `json:"sequence" binding:"required" swaggo:"true,排序值（降序）"`
-	ParentID   string `json:"parent_id" swaggo:"false,父级ID"`
-	ParentPath string `json:"parent_path" swaggo:"false,父级路径"`
-	Memo       string `json:"memo" swaggo:"false,备注"`
-	Creator    string `json:"creator" swaggo:"false,创建者"`
+	RecordID   string     `json:"record_id" swaggo:"false,记录ID"`
+	Name       string     `json:"name" binding:"required" swaggo:"true,机构名称"`
+	OrgType    int        `json:"org_type" binding:"required" swaggo:"true,机构类型"`
+	Sequence   int        `json:"sequence" binding:"required" swaggo:"true,排序值（降序）"`
+	ParentID   string     `json:"parent_id" swaggo:"false,父级ID"`
+	ParentPath string     `json:"parent_path" swaggo:"false,父级路径"`
+	Memo       string     `json:"memo" swaggo:"false,备注"`
+	Creator    string     `json:"creator" swaggo:"false,创建者"`
+	Children   PcProjects `json:"children,omitempty" swaggo:"false,本组织下的项目列表"`
 }
 
 // OrganizationQueryParam 查询条件
@@ -78,6 +79,7 @@ type OrganizationTree struct {
 	ParentID   string               `json:"parent_id" swaggo:"false,父级ID"`
 	ParentPath string               `json:"parent_path" swaggo:"false,父级路径"`
 	Children   *[]*OrganizationTree `json:"children,omitempty" swaggo:"false,子级树"`
+	PcProjects PcProjects           `json:"pc_projects,omitempty" swaggo:"false,本组织下的项目列表"`
 }
 
 // OrganizationTrees 组织机构树列表
@@ -105,4 +107,16 @@ func (a OrganizationTrees) ToTree() []*OrganizationTree {
 		list = append(list, item)
 	}
 	return list
+}
+
+// FillPcProjects 填充项目信息
+func (a Organizations) FillPcProjects(items PcProjects) {
+	for _, orgItem := range a {
+		for _, projItem := range items {
+			if orgItem.RecordID == projItem.OrgID {
+				orgItem.Children = append(orgItem.Children, projItem)
+			}
+
+		}
+	}
 }

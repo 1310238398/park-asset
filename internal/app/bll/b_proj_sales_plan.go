@@ -18,4 +18,8 @@ type IProjSalesPlan interface {
 	Update(ctx context.Context, recordID string, item schema.ProjSalesPlan) (*schema.ProjSalesPlan, error)
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 批量创建
+	CreateList(ctx context.Context, items schema.ProjSalesPlans) error
+	// 批量删除
+	DeleteList(ctx context.Context, recordIDs []string) error
 }

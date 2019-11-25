@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewTaxCalculation 创建税目计算表存储实例
@@ -30,6 +31,18 @@ func (a *TaxCalculation) getQueryOption(opts ...schema.TaxCalculationQueryOption
 // Query 查询数据
 func (a *TaxCalculation) Query(ctx context.Context, params schema.TaxCalculationQueryParam, opts ...schema.TaxCalculationQueryOptions) (*schema.TaxCalculationQueryResult, error) {
 	db := entity.GetTaxCalculationDB(ctx, a.db)
+
+	if v := params.LikeName; v != "" {
+		db = db.Where("name like ?", "%"+v+"%")
+	}
+
+	if v := params.LikeName; v != "" {
+		db = db.Where("name = ?", v)
+	}
+
+	if v := params.Type; v > 0 {
+		db = db.Where("type = ?", v)
+	}
 
 	db = db.Order("id DESC")
 
