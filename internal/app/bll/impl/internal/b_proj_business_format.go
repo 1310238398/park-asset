@@ -24,7 +24,6 @@ type ProjBusinessFormat struct {
 	TransModel              model.ITrans
 	BusinessFormatModel     model.IBusinessFormat
 	ProjBusinessFormatModel model.IProjBusinessFormat
-	BusinessFormatModel     model.IBusinessFormat
 }
 
 // Query 查询数据
