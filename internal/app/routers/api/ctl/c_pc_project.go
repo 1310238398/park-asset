@@ -36,7 +36,6 @@ func (a *PcProject) Query(c *gin.Context) {
 		a.QueryPage(c)
 	case "tree":
 		a.QueryTree(c)
-
 	default:
 		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
 	}
@@ -106,17 +105,33 @@ func (a *PcProject) QueryList(c *gin.Context) {
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/pc-projects?q=tree
 func (a *PcProject) QueryTree(c *gin.Context) {
-	var params schema.OrganizationQueryParam
-	params.LikeName = c.Query("name")
-	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), params)
+	var (
+		pjParams  schema.PcProjectQueryParam
+		orgResult *schema.OrganizationQueryResult
+	)
+
+	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), schema.OrganizationQueryParam{})
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
+	pjParams.OrgIDs = orgResult.Data.ToRecordIDs()
 
-	pcResult, err := a.PcProjectBll.Query(ginplus.NewContext(c), schema.PcProjectQueryParam{
-		OrgIDs: orgResult.Data.ToRecordIDs(),
-	})
+	if !ginplus.CheckIsRootUser(c) {
+		orgResult, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
+		if err != nil {
+			ginplus.ResError(c, err)
+			return
+		}
+		pjParams.OrgIDs = orgResult.Data.ToRecordIDs()
+
+	}
+
+	pcResult, err := a.PcProjectBll.Query(ginplus.NewContext(c), pjParams)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
 
 	ginplus.ResList(c, orgResult.Data.ToProjectTrees().ToTree(pcResult.Data.ToProjectTrees()))
 }

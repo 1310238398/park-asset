@@ -38,6 +38,7 @@ func (a *ProjSalesPlan) Query(ctx context.Context, params schema.ProjSalesPlanQu
 	if err != nil {
 		return nil, err
 	}
+
 	result.Data, err = a.fillBusinName(ctx, result.Data)
 	if err != nil {
 		return nil, err
@@ -112,7 +113,7 @@ func (a *ProjSalesPlan) CreateList(ctx context.Context, items schema.ProjSalesPl
 	if len(items) == 0 {
 		return nil
 	}
-	tax, err := a.getTax(ctx, items[0].TaxID)
+	tax, err := a.getTax(ctx, "增值税销项税")
 	if err != nil {
 		return err
 	}
@@ -120,9 +121,13 @@ func (a *ProjSalesPlan) CreateList(ctx context.Context, items schema.ProjSalesPl
 		for _, item := range items {
 			item.RecordID = util.MustUUID()
 			a.fillTax(ctx, tax, item)
-			err := a.ProjSalesPlanModel.Create(ctx, *item)
+			err = a.checkExist(ctx, *item)
 			if err != nil {
-				return nil
+				return err
+			}
+			err = a.ProjSalesPlanModel.Create(ctx, *item)
+			if err != nil {
+				return err
 			}
 		}
 		return nil
@@ -148,7 +153,11 @@ func (a *ProjSalesPlan) DeleteList(ctx context.Context, recordIDs []string) erro
 
 // 填充销售计划对应业态名称
 func (a *ProjSalesPlan) fillBusinName(ctx context.Context, list schema.ProjSalesPlans) (schema.ProjSalesPlans, error) {
+	if len(list) == 0 {
+		return nil, nil
+	}
 	projBusinResult, err := a.ProjBusinessFormatModel.Query(ctx, schema.ProjBusinessFormatQueryParam{
+		ProjectID: list[0].ProjectID,
 		RecordIDs: list.ToProjBusinFormatIDs(),
 	})
 	if err != nil {
@@ -163,6 +172,9 @@ func (a *ProjSalesPlan) fillBusinName(ctx context.Context, list schema.ProjSales
 
 // 填充销售税额
 func (a *ProjSalesPlan) fillTax(ctx context.Context, tax *schema.TaxCalculation, item *schema.ProjSalesPlan) {
+	if tax == nil {
+		return
+	}
 	if tax.Type == 1 {
 		item.TaxPrice = item.Payback / (1 + tax.TaxRate) * tax.TaxRate
 	}
@@ -173,15 +185,34 @@ func (a *ProjSalesPlan) fillTax(ctx context.Context, tax *schema.TaxCalculation,
 }
 
 // getTax 获取税目
-func (a *ProjSalesPlan) getTax(ctx context.Context, taxID string) (*schema.TaxCalculation, error) {
-	result, err := a.TaxCalculationModel.Get(ctx, taxID)
+func (a *ProjSalesPlan) getTax(ctx context.Context, taxName string) (*schema.TaxCalculation, error) {
+	result, err := a.TaxCalculationModel.Query(ctx, schema.TaxCalculationQueryParam{
+		Name: taxName,
+	})
 	if err != nil {
 		return nil, err
-	} else if result == nil {
+	} else if len(result.Data) == 0 {
 		return nil, nil
 	}
 
-	return result, nil
+	return result.Data[0], nil
+}
+
+func (a *ProjSalesPlan) checkExist(ctx context.Context, item schema.ProjSalesPlan) error {
+	result, err := a.ProjSalesPlanModel.Query(ctx, schema.ProjSalesPlanQueryParam{
+		Year:           item.Year,
+		Quarter:        item.Quarter,
+		ProjBusinessID: item.ProjBusinessID,
+	}, schema.ProjSalesPlanQueryOptions{
+		PageParam: &schema.PaginationParam{PageIndex: -1},
+	})
+	if err != nil {
+		return err
+	} else if result.PageResult.Total > 0 {
+		return errors.ErrResourceExists
+	}
+
+	return nil
 }
 
 // GenerateHis 生成历史版本

@@ -108,15 +108,3 @@ func (a OrganizationTrees) ToTree() []*OrganizationTree {
 	}
 	return list
 }
-
-// FillPcProjects 填充项目信息
-func (a Organizations) FillPcProjects(items PcProjects) {
-	for _, orgItem := range a {
-		for _, projItem := range items {
-			if orgItem.RecordID == projItem.OrgID {
-				orgItem.Children = append(orgItem.Children, projItem)
-			}
-
-		}
-	}
-}

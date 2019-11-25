@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -36,6 +35,7 @@ type PcProject struct {
 	Location              string    `json:"location" swaggo:"false,项目地址(经纬度)"`            // 项目地址(经纬度)
 	IdentiArea            float64   `json:"identi_area" swaggo:"false,可确权面积"`             // 可确权面积
 	Files                 ProjFiles `json:"files"  swaggo:"false,文件列表"`                   // 文件列表
+
 }
 
 // PcProjectQueryParam 查询条件
@@ -45,6 +45,7 @@ type PcProjectQueryParam struct {
 	OrgID    string   // 项目所属子公司
 	PlotID   string   // 所属地块
 	OrgIDs   []string // 项目所属子公司
+
 }
 
 // PcProjectQueryOptions 查询可选参数项
@@ -64,7 +65,6 @@ type PcProjects []*PcProject
 // ToOrgIDs 转换为组织机构ID列表
 func (a PcProjects) ToOrgIDs() []string {
 	var orgIDs []string
-
 	for _, item := range a {
 		exists := false
 		for _, orgID := range orgIDs {
@@ -127,14 +127,18 @@ func (a PcProjects) FillPlotData(m map[string]*Plot) PcProjects {
 
 // PcProjectTree 项目树
 type PcProjectTree struct {
-	RecordID   string      `json:"record_id" swaggo:"false,记录ID"`   // 记录ID
-	Name       string      `json:"name" swaggo:"false,项目名称"`        // 项目名称
-	Creator    string      `json:"creator" swaggo:"false,创建人"`      // 创建人
-	Memo       string      `json:"memo" swaggo:"false,备注"`          // 备注
-	ParentID   string      `json:"parent_id" swaggo:"false,父级ID"`   // 父级ID
-	ParentPath string      `json:"parent_path" swaggo:"false,父级路经"` // 父级路经
-	OrgID      string      `json:"org_id" swaggo:"false,项目所属子公司"`   // 项目所属子公司
-	Children   interface{} `json:"children" swaggo:"false, 子级树"`    // 子级树
+	RecordID             string      `json:"record_id" swaggo:"false,记录ID"`                // 记录ID
+	Name                 string      `json:"name" swaggo:"false,组织或项目名称"`                  // 组织或项目名称
+	Creator              string      `json:"creator" swaggo:"false,创建人"`                   // 创建人
+	Memo                 string      `json:"memo" swaggo:"false,备注"`                       // 备注
+	ParentID             string      `json:"parent_id" swaggo:"false,父级ID"`                // 父级ID
+	ParentPath           string      `json:"parent_path" swaggo:"false,父级路经"`              // 父级路经
+	OrgID                string      `json:"org_id" swaggo:"false,项目所属子公司"`                // 项目所属子公司
+	Children             interface{} `json:"children" swaggo:"false, 子级树"`                 // 子级树
+	Type                 int         `json:"type" swaggo:"false,项目类型(1:住宅 2:写字楼)"`         // 项目类型(1:住宅 2:写字楼)
+	UndergroundFloorArea float64     `json:"underground_floor_area" swaggo:"false,地下建筑面积"` // 地下建筑面积
+	GroundFloorArea      float64     `json:"ground_floor_area" swaggo:"false,地上建筑面积"`      // 地上建筑面积
+
 }
 
 // PcProjectTrees 组织机构树列表
@@ -166,7 +170,10 @@ func (a PcProjectTrees) ToTree(items PcProjectTrees) PcProjectTrees {
 			continue
 		}
 
-		fmt.Println(item)
+		list = append(list, item)
+	}
+
+	for _, item := range a {
 		if pcitem, ok := mp[item.RecordID]; ok {
 			if item.Children == nil {
 				var children PcProjectTrees
@@ -179,7 +186,6 @@ func (a PcProjectTrees) ToTree(items PcProjectTrees) PcProjectTrees {
 			continue
 		}
 
-		list = append(list, item)
 	}
 
 	return list
@@ -204,38 +210,15 @@ func (a PcProjects) ToProjectTrees() PcProjectTrees {
 	list := make(PcProjectTrees, len(a))
 	for i, item := range a {
 		list[i] = &PcProjectTree{
-			RecordID:   item.RecordID,
-			Name:       item.Name,
-			ParentID:   item.ParentID,
-			ParentPath: item.ParentPath,
+			RecordID:             item.RecordID,
+			Name:                 item.Name,
+			ParentID:             item.ParentID,
+			ParentPath:           item.ParentPath,
+			OrgID:                item.OrgID,
+			Type:                 item.Type,
+			GroundFloorArea:      item.GroundFloorArea,
+			UndergroundFloorArea: item.UndergroundFloorArea,
 		}
 	}
 	return list
-}
-
-// FillProj 把项目作为树填充
-func (a PcProjectTrees) FillProj(items PcProjectTrees) PcProjectTrees {
-	mi := make(map[string]*PcProjectTree, len(items))
-	for _, item := range items {
-		mi[item.OrgID] = item
-	}
-
-	var list PcProjectTrees
-	for _, item := range a {
-		if pcitem, ok := mi[item.RecordID]; ok {
-			if item.Children == nil {
-				var children PcProjectTrees
-				children = append(children, pcitem)
-				item.Children = children
-				continue
-			}
-
-			item.Children = append(item.Children.(PcProjectTrees), pcitem)
-			continue
-		}
-
-		list = append(list, item)
-	}
-	return list
-
 }

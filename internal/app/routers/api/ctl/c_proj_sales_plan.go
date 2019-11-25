@@ -29,6 +29,8 @@ func (a *ProjSalesPlan) Query(c *gin.Context) {
 	switch c.Query("q") {
 	case "page":
 		a.QueryPage(c)
+	case "list":
+		a.QueryList(c)
 	default:
 		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
 	}
@@ -40,6 +42,8 @@ func (a *ProjSalesPlan) Query(c *gin.Context) {
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
 // @Param year query int false "年度"
+// @Param quarter query int false "季度"
+// @Param project_id query string false "项目ID"
 // @Success 200 []schema.ProjSalesPlan "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -51,7 +55,7 @@ func (a *ProjSalesPlan) QueryPage(c *gin.Context) {
 	params.Quarter = util.S(c.Query("quarter")).DefaultInt(0)
 	params.ProjBusinessID = c.Query("proj_business_id")
 	params.ProjIncomeID = c.Query("proj_income_id")
-
+	params.ProjectID = c.Query("project_id")
 	result, err := a.ProjSalesPlanBll.Query(ginplus.NewContext(c), params, schema.ProjSalesPlanQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
@@ -60,6 +64,32 @@ func (a *ProjSalesPlan) QueryPage(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param year query int false "年度"
+// @Param quarter query int false "季度"
+// @Param project_id query string false "项目ID"
+// @Success 200 []schema.ProjSalesPlan "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-sales-plans?q=list
+func (a *ProjSalesPlan) QueryList(c *gin.Context) {
+	var params schema.ProjSalesPlanQueryParam
+	params.Year = util.S(c.Query("year")).DefaultInt(0)
+	params.Quarter = util.S(c.Query("quarter")).DefaultInt(0)
+	params.ProjBusinessID = c.Query("proj_business_id")
+	params.ProjIncomeID = c.Query("proj_income_id")
+
+	result, err := a.ProjSalesPlanBll.Query(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result.Data)
 }
 
 // Get 查询指定数据
