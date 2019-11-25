@@ -18,4 +18,6 @@ type IProjSalesPlan interface {
 	Update(ctx context.Context, recordID string, item schema.ProjSalesPlan) error
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 生成历史版本
+	// GenerateHis(ctx context.Context, incomeItem schema.ProjIncomeCalculation) error
 }

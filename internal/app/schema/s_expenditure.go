@@ -2,9 +2,11 @@ package schema
 
 // Expenditure 支出节点
 type Expenditure struct {
-	RecordID string `json:"record_id" swaggo:"false,记录ID"`              // 记录ID
-	Name     string `json:"name" swaggo:"false,支出节点名称"`                 // 支出节点名称
-	Category string `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"` // 工作类别(大纲 里程碑 一级 二级)
+	RecordID   string `json:"record_id" swaggo:"false,记录ID"`              // 记录ID
+	Name       string `json:"name" swaggo:"false,支出节点名称"`                 // 支出节点名称
+	ParentID   string `json:"parent_id" swaggo:"false,父级ID"`              // 父级ID
+	ParentPath string `json:"parent_path" swaggo:"false,父级路经"`            // 父级路经
+	Category   string `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"` // 工作类别(大纲 里程碑 一级 二级)
 }
 
 // ExpenditureQueryParam 查询条件

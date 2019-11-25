@@ -74,7 +74,24 @@ func FillZero(i int) string {
 	return fmt.Sprintf("%d", i)
 }
 
-// Float保留两位小数
+// FormatAmount 格式化金额
+func FormatAmount(f float64) string {
+	if f == 0 {
+		return "0"
+	}
+	return fmt.Sprintf("%.2f", f)
+}
+
+// BoolToInt 布尔转int
+func BoolToInt(b bool) int {
+	if b {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+// DecimalFloat64 保留两位小数
 func DecimalFloat64(value float64) float64 {
 	value, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", value), 64)
 	return value

@@ -14,9 +14,10 @@ import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 @connect(state => ({
   //projectManage: state.projectManage,
-  salesPlan: state.salesPlan,
+ 
   costAccount: state.costAccount,
   costList: state.costList,
+   salesPlan: state.salesPlan,
 }))
 export default class CostAccountDetail extends PureComponent {
   constructor(props) {
@@ -24,18 +25,31 @@ export default class CostAccountDetail extends PureComponent {
   }
 
   state = {
-   pro_id:'',
+   pro_id:'fff',
+   formType:"", // E V
   };
 
-  componentDidMount() {
+  componentWillMount() {
     const {
       location: {
         query: { key, operType },
       },
     } = this.props;
-    console.log('传入的项目ID ' + key);
+    console.log('CostAccountDetail pro_id ' + key);
     this.setState({pro_id: key});
-    // 初始化Tab1的数据
+    this.setState({formType: operType});
+
+    //存储到model
+
+    this.dispatch({
+      type: 'costAccount/saveFormType',
+      payload: operType,
+    });
+
+    this.dispatch({
+      type: 'costAccount/saveFormID',
+      payload: key,
+    });
   }
 
   dispatch = action => {
@@ -52,6 +66,7 @@ export default class CostAccountDetail extends PureComponent {
     if (key === "1") {
       
     } else if (key === "2") {
+    
       
     } else if (key === "3") {
     } else if (key === "4") {
@@ -85,7 +100,7 @@ export default class CostAccountDetail extends PureComponent {
       { title: '成本核算', href: '/cost/list' },
       { title: '项目详情', href: '/cost/detail' },
     ];
-    const { pro_id} = this.state;
+    const { pro_id, formType} = this.state;
     return (
       <PageHeaderLayout
         title="项目详情"
@@ -93,12 +108,12 @@ export default class CostAccountDetail extends PureComponent {
         //content={this.renderContent()}
       >
         <Card bordered={false}>
-          <Tabs defaultActiveKey="1" onChange={this.callback}>
+          <Tabs defaultActiveKey="2" onChange={this.callback}>
             <TabPane tab="收益测算" key="1">
             <IncomeMeasure></IncomeMeasure>
             </TabPane>
             <TabPane tab="成本核算" key="2">
-              <CostList  pro_id={pro_id}></CostList>
+              <CostList  ></CostList>
             </TabPane>
             <TabPane tab="销售计划" key="3" style={{ minHeight: 500, maxHeight: 500 }}>
               <SalesPlan></SalesPlan>

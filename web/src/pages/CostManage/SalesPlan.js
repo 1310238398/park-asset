@@ -12,6 +12,7 @@ import {
   message,
   Divider,
   Button,
+  InputNumber
 } from 'antd';
 import styles from './CostAccount.less';
 const FormItem = Form.Item;
@@ -60,8 +61,8 @@ class EditableCell extends React.Component {
             })(this.getInput())}
           </Form.Item>
         ) : (
-          children
-        )}
+            children
+          )}
       </td>
     );
   };
@@ -81,70 +82,40 @@ class SalesPlan extends PureComponent {
   state = {
     data: [
       {
-        key: '1',
-        name: '住宅地上10层',
-        area: 100.0,
-        unit_price: 1,
-        total_contract_price: 0,
-        repayment_amount: 0,
+        record_id: "22233",// 记录ID
+        proj_business_id: "1",// 项目业态ID
+        proj_business_name: "业态名称",// 项目业态名称
+        sale_area: 0,// 销售面积
+
+        average_price: 0,// 均价
+
+        contract_amount: 0,// 合同额度
+
+        payback: 0,// 销售回款
+        project_id: "001",// 成本核算项目ID
+
+        quarter: 1,// 季度
+        tax_prise: 0,// 销售税额
+        year: 2019// 年度
       },
-//       average_prise	number($double)
-// 均价
+      {
+        record_id: "2223355",// 记录ID
+        proj_business_id: "2",// 项目业态ID
+        proj_business_name: "业态名称",// 项目业态名称
+        sale_area: 0,// 销售面积
 
-// contract_amount	number($double)
-// 合同额度
+        average_price: 0,// 均价
 
-// memo	string
-// 备注
+        contract_amount: 0,// 合同额度
 
-// payback	number($double)
-// 销售回款
+        payback: 0,// 销售回款
+        project_id: "001",// 成本核算项目ID
 
-// principal	string
-// 负责人
+        quarter: 1,// 季度
+        tax_prise: 0,// 销售税额
+        year: 2019// 年度
+      },
 
-// proj_business_id	string
-// 项目业态ID
-
-// proj_business_name	string
-// 项目业态名称
-
-// proj_income_id	string
-// 项目收益测算ID
-
-// project_id	string
-// 成本项目ID
-
-// quarter	integer($int32)
-// 季度
-
-// record_id	string
-// 记录ID
-
-// sale_area	number($double)
-// 销售面积
-
-// tax_prise	number($double)
-// 销售税额
-
-// year	integer($int32)
-// 年度
-      // {
-      //   key: '2',
-      //   name: '住宅地上17层',
-      //   area: 100.0,
-      //   unit_price: 1,
-      //   total_contract_price: 0,
-      //   repayment_amount: 0,
-      // },
-      // {
-      //   key: '3',
-      //   name: '地下车位',
-      //   area: 100.0,
-      //   unit_price: 1,
-      //   total_contract_price: 0,
-      //   repayment_amount: 0,
-      // },
     ],
     editingKey: '',
 
@@ -153,38 +124,38 @@ class SalesPlan extends PureComponent {
     columns: [
       {
         title: '业态名称',
-        dataIndex: 'name',
+        dataIndex: 'proj_business_name',
         width: '15%',
         ellipsis: true,
         align: 'center',
       },
       {
         title: '销售面积(万m²)',
-        dataIndex: 'area',
+        dataIndex: 'sale_area',
         width: '10%',
         align: 'center',
         editable: true,
       },
       {
         title: '销售单价(万元)',
-        dataIndex: 'unit_price',
+        dataIndex: 'average_price',
         width: '15%',
         align: 'center',
         editable: true,
       },
       {
         title: '合同额(万元)',
-        dataIndex: 'total_contract_price',
+        dataIndex: 'contract_amount',
         width: '15%',
         align: 'center',
 
         render: (text, record) => {
-          return <span>{record.area * record.unit_price}</span>;
+          return <span>{record.sale_area * record.average_price}</span>;
         },
       },
       {
         title: '回款额(万元)',
-        dataIndex: 'repayment_amount',
+        dataIndex: 'payback',
         width: '15%',
         align: 'center',
         editable: true,
@@ -204,70 +175,79 @@ class SalesPlan extends PureComponent {
               <EditableContext.Consumer>
                 {form => (
 
-                  <a onClick={() => this.save(form, record.key)} style={{ marginRight: 8 }}>
+                  <a onClick={() => this.save(form, record.proj_business_id)} style={{ marginRight: 8 }}>
                     保存
                   </a>
                 )}
               </EditableContext.Consumer>
-              <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel(record.key)}>
+              <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel(record.proj_business_id)}>
                 <a>取消</a>
               </Popconfirm>
             </span>
           ) : (
-            <div>
-              <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)}>
-                编辑
+              <div>
+                <a disabled={editingKey !== ''} onClick={() => this.edit(record.proj_business_id)}>
+                  编辑
               </a>
-            </div>
-          );
+              </div>
+            );
         },
       },
     ],
 
-    view_columns:[
+    view_columns: [
       {
         title: '业态名称',
-        dataIndex: 'name',
+        dataIndex: 'proj_business_name',
         width: '15%',
         ellipsis: true,
         align: 'center',
       },
       {
         title: '销售面积(万m²)',
-        dataIndex: 'area',
+        dataIndex: 'sale_area',
         width: '10%',
         align: 'center',
         editable: true,
       },
       {
         title: '销售单价(万元)',
-        dataIndex: 'unit_price',
+        dataIndex: 'average_price',
         width: '15%',
         align: 'center',
         editable: true,
       },
       {
         title: '合同额(万元)',
-        dataIndex: 'total_contract_price',
+        dataIndex: 'contract_amount',
         width: '15%',
         align: 'center',
 
         render: (text, record) => {
-          return <span>{record.area * record.unit_price}</span>;
+          return <span>{record.sale_area * record.average_price}</span>;
         },
       },
       {
         title: '回款额(万元)',
-        dataIndex: 'repayment_amount',
+        dataIndex: 'payback',
         width: '15%',
         align: 'center',
         editable: true,
       },
-      
+
     ],
 
   };
-  componentDidMount() {}
+  componentDidMount() {
+    console.log("销售计划页面初始化");
+
+     this.dispatch({
+        type: 'salesPlan/fetch',
+        search: {},
+        pagination: {},
+      });
+
+  }
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -309,18 +289,18 @@ class SalesPlan extends PureComponent {
     });
   };
 
-  isEditing = record => record.key === this.state.editingKey;
+  isEditing = record => record.proj_business_id === this.state.editingKey;
 
-  save(form, key) {
+  save(form, key) {  // key是项目业态id
     console.log('要保存数据的key ' + key);
-   
+
     form.validateFields((error, row) => {
       if (error) {
         return;
       }
       const newData = [...this.state.data];
-    
-      const index = newData.findIndex(item => key === item.key);
+
+      const index = newData.findIndex(item => key === item.proj_business_id);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
@@ -332,10 +312,10 @@ class SalesPlan extends PureComponent {
         newData.push(row);
         this.setState({ data: newData, editingKey: '' });
 
-        
+
       }
 
-      console.log('保存后的数据 '+ JSON.stringify(this.state.data));
+      console.log('保存后的数据 ' + JSON.stringify(this.state.data));
     });
   }
   edit(key) {
@@ -368,7 +348,7 @@ class SalesPlan extends PureComponent {
     const {
       loading,
       form: { getFieldDecorator },
-      costAccount:{formType}
+      costAccount: { formType }
     } = this.props;
     const { data, yearList, quarterList, editingKey, columns, view_columns } = this.state;
 
@@ -387,11 +367,11 @@ class SalesPlan extends PureComponent {
         ...col,
         onCell: record => ({
           record,
-          inputType: 'tyext', //col.dataIndex === 'age' ? 'number' : 'text',
+          inputType: 'number', //col.dataIndex === 'age' ? 'number' : 'text',
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),
-         // handleSave: this.handleSave,
+          // handleSave: this.handleSave,
         }),
       };
     });
@@ -432,7 +412,7 @@ class SalesPlan extends PureComponent {
                   placeholder="请选择年份"
                   // defaultValue="lucy"
                   style={{ width: 120 }}
-                  // onChange={this.handleSelectChange}
+                // onChange={this.handleSelectChange}
                 >
                   {yearList &&
                     yearList.map(item => (
@@ -454,7 +434,7 @@ class SalesPlan extends PureComponent {
                   placeholder="请选择季度"
                   // defaultValue="lucy"
                   style={{ width: 120 }}
-                  //  onChange={this.handleSelectChange}
+                //  onChange={this.handleSelectChange}
                 >
                   {quarterList &&
                     quarterList.map(item => (
@@ -479,9 +459,9 @@ class SalesPlan extends PureComponent {
           <Table
             components={components}
             loading={loading}
-            rowKey={record => record.key}
+            rowKey={record => record.proj_business_id}
             dataSource={data}
-            columns={formType === "E" ? columns2 : (formType === 'V' ? view_columns: null)} //{view_columns}
+            columns={formType === "E" ? columns2 : (formType === 'V' ? view_columns : null)} //{view_columns}
             pagination={false}
             scroll={{ y: 500 }}
             rowClassName="editable-row"
@@ -489,7 +469,7 @@ class SalesPlan extends PureComponent {
             style={{ maxHeight: 500 }}
           ></Table>
         </EditableContext.Provider>
-      
+
       </Form>
     );
   }

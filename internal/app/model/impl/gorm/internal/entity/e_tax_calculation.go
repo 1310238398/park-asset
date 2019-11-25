@@ -37,7 +37,7 @@ type TaxCalculation struct {
 	Name               *string  `gorm:"column:name;size:200;index;"`          // 税目名称
 	CalculationFormula *string  `gorm:"column:calculation_formula;size:200;"` // 计算公式
 	Type               *int     `gorm:"column:type;index;"`                   // 税率类型(1:含税计算 2:不含税计算)
-	TaxRate            *float64 `gorm:"column:tax_rate;"`                     // 税率
+	TaxRate            *float64 `gorm:"column:tax_rate; type:decimal(20,4)"`  // 税率
 	Memo               *string  `gorm:"column:memo;size:1024;"`               // 备注
 }
 

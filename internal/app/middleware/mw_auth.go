@@ -29,15 +29,16 @@ func UserAuthMiddleware(a auth.Auther, userBll bll.IUser, skipper ...SkipperFunc
 
 		if userID != "" {
 			c.Set(ginplus.UserIDKey, userID)
-		}
-		user, err := userBll.Get(c, userID)
-		if err != nil {
-			ginplus.ResError(c, errors.WithStack(err))
-			return
-		}
-		if user != nil {
-			//设置orgID
-			c.Set(ginplus.OrgIDKey, user.OrgID)
+			user, err := userBll.Get(c, userID)
+			if err != nil {
+				ginplus.ResError(c, errors.WithStack(err))
+				return
+			}
+			if user != nil {
+				//设置orgID
+				c.Set(ginplus.OrgIDKey, user.OrgID)
+			}
+
 		}
 
 		if len(skipper) > 0 && skipper[0](c) {

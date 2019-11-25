@@ -262,7 +262,7 @@ class CostAccountList extends PureComponent {
       type: 'costAccount/redirectDetail',
       payload: {
         item: item,
-         operType: type1
+        operType: type1
       },
     
     });

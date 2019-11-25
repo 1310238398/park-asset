@@ -1,13 +1,14 @@
 package ctl
 
 import (
-	"github.com/LyricTian/captcha"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/config"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/logger"
+
+	"github.com/LyricTian/captcha"
 	"github.com/gin-gonic/gin"
 )
 

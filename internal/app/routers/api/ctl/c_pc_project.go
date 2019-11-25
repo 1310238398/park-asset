@@ -1,16 +1,21 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
+	"ant-smartpark/pkg/errors"
 	"gxt-park-assets/internal/app/bll"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewPcProject 创建成本项目管理控制器
-func NewPcProject(bPcProject bll.IPcProject) *PcProject {
+func NewPcProject(bPcProject bll.IPcProject,
+	bOrganization bll.IOrganization,
+) *PcProject {
 	return &PcProject{
-		PcProjectBll: bPcProject,
+		PcProjectBll:    bPcProject,
+		OrganizationBll: bOrganization,
 	}
 }
 
@@ -18,22 +23,43 @@ func NewPcProject(bPcProject bll.IPcProject) *PcProject {
 // @Name PcProject
 // @Description 成本项目管理控制器
 type PcProject struct {
-	PcProjectBll bll.IPcProject
+	PcProjectBll    bll.IPcProject
+	OrganizationBll bll.IOrganization
 }
 
 // Query 查询数据
-// @Summary 查询数据
+func (a *PcProject) Query(c *gin.Context) {
+	switch c.Query("q") {
+	case "list":
+		a.QueryList(c)
+	case "page":
+		a.QueryPage(c)
+	case "tree":
+		a.QueryTree(c)
+
+	default:
+		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
+	}
+}
+
+// QueryPage 查询分页数据
+// @Summary 查询分页数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param name query string false "名称"
+// @Param org_id query string false "项目所属公司ID"
+// @Param plot_id query string false "地块ID"
 // @Success 200 []schema.PcProject "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/pc-projects
-func (a *PcProject) Query(c *gin.Context) {
+// @Router GET /api/v1/pc-projects?q=page
+func (a *PcProject) QueryPage(c *gin.Context) {
 	var params schema.PcProjectQueryParam
-
+	params.LikeName = c.Query("name")
+	params.OrgID = c.Query("org_id")
+	params.PlotID = c.Query("plot_id")
 	result, err := a.PcProjectBll.Query(ginplus.NewContext(c), params, schema.PcProjectQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
@@ -42,6 +68,57 @@ func (a *PcProject) Query(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询列表数据
+// @Summary 查询列表数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param name query string false "名称"
+// @Param org_id query string false "项目所属公司ID"
+// @Param plot_id query string false "地块ID"
+// @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/pc-projects?q=list
+func (a *PcProject) QueryList(c *gin.Context) {
+	var params schema.PcProjectQueryParam
+	params.LikeName = c.Query("name")
+	params.OrgID = c.Query("org_id")
+	params.PlotID = c.Query("plot_id")
+	result, err := a.PcProjectBll.Query(ginplus.NewContext(c), params, schema.PcProjectQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result)
+}
+
+// QueryTree 查询树状数据
+// @Summary 查询树状数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param name query string false "名称"
+// @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/pc-projects?q=tree
+func (a *PcProject) QueryTree(c *gin.Context) {
+	var params schema.OrganizationQueryParam
+	params.LikeName = c.Query("name")
+	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	pcResult, err := a.PcProjectBll.Query(ginplus.NewContext(c), schema.PcProjectQueryParam{
+		OrgIDs: orgResult.Data.ToRecordIDs(),
+	})
+
+	ginplus.ResList(c, orgResult.Data.ToProjectTrees().ToTree(pcResult.Data.ToProjectTrees()))
 }
 
 // Get 查询指定数据

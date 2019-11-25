@@ -61,6 +61,25 @@ type ProjCostItemQueryResult struct {
 // ProjCostItems 项目成本项列表
 type ProjCostItems []*ProjCostItem
 
+// ToProjCostIDs 转换为项目成本项ID列表
+func (a ProjCostItems) ToProjCostIDs() []string {
+	l := make([]string, len(a))
+	for _, item := range a {
+		l = append(l, item.RecordID)
+	}
+
+	return l
+}
+
+// ToMap 转换为键值映射
+func (a ProjCostItems) ToMap() map[string]*ProjCostItem {
+	m := make(map[string]*ProjCostItem)
+	for _, item := range a {
+		m[item.RecordID] = item
+	}
+	return m
+}
+
 // ProjCostItemShows 项目成本项展示列表
 type ProjCostItemShows []*ProjCostItemShow
 

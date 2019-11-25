@@ -206,19 +206,22 @@ class CostList extends PureComponent {
   componentDidMount = async () => {
     const {
 
-      pro_id,
-      projectManage:{businessFormat}
-
+     costAccount:{formID, formType},
+      projectManage:{businessFormat},
+ 
     } = this.props;
+
+  
     
     this.dispatch({
       type: 'costList/fetch',
       payload: {
-        project_id: pro_id,
+        project_id: formID,
       },
     });
 
-    console.log(" costList页面 接受的pro_id " + pro_id);
+    console.log(" costList页面 接受的pro_id " + formID);
+    console.log(" costList页面 接受的operType " + formType);
     
   }
 
@@ -251,11 +254,13 @@ class CostList extends PureComponent {
       let keys = [];
       keys = key.split('/');
       console.log(keys);
+   
+     
       let index_ = -1;
 
       let newData1 = [...newData];
 
-      console.log('keys ' + keys);
+      
 
       if (keys.length == 1) {
         console.log('keys  1');
@@ -349,7 +354,7 @@ class CostList extends PureComponent {
   render() {
     const {
       loading,
-      form: { getFieldDecorator },
+      form: { getFieldDecorator  },
       costAccount: { formType },
     } = this.props;
 
@@ -542,7 +547,7 @@ class CostList extends PureComponent {
               <span>
                 <EditableContext.Consumer>
                   {form => (
-                    <a onClick={() => this.save(form, record.cost_parent_path + "/" + record.cost_id)} style={{ marginRight: 8 }}>
+                    <a onClick={() => this.save(form, record.cost_parent_path !== "" ?  (record.cost_parent_path+ "/" + record.cost_id):( record.cost_id))} style={{ marginRight: 8 }}>
                       保存
                     </a>
                   )}
