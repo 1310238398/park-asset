@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import {  updateProFormat } from '@/services/projectManage';
-import { Form, Input, Modal, Row, Col, Select, Radio, message, Checkbox } from 'antd';
+import { Form, Input, Modal, Row, Col, Select, Radio, message, Checkbox, InputNumber } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
@@ -115,20 +115,25 @@ formatData(forData) {
     projectManage:{allBusinessFormat, formID}
     } = this.props;
   let temp =[];
-  for (let i = 0; i < allBusinessFormat.length; i++) {
+  let allBusinessFormat_ = [...allBusinessFormat];
+ 
+  for (let i = 0; i < allBusinessFormat_.length; i++) {
 
   
    
-    if (forData[allBusinessFormat[i].record_id]!== undefined && forData[allBusinessFormat[i].record_id] === true) {
+    if (forData[allBusinessFormat_[i].record_id]!== undefined && forData[allBusinessFormat_[i].record_id] === true) {
 
-      allBusinessFormat[i].floor_area = forData[allBusinessFormat[i].record_id+"mj"];
-      allBusinessFormat[i].checked = undefined;
-      allBusinessFormat[i].project_id = formID;
-      allBusinessFormat[i].business_format_id = allBusinessFormat[i].record_id;
+      allBusinessFormat_[i].floor_area = parseInt(forData[allBusinessFormat_[i].record_id+"mj"]);
+      allBusinessFormat_[i].checked = undefined;
+      allBusinessFormat_[i].project_id = formID;
+      allBusinessFormat_[i].business_format_id = allBusinessFormat_[i].record_id;
+      //allBusinessFormat_[i].record_id = '';
+      allBusinessFormat_[i].memo = undefined;
 
-      temp.push( allBusinessFormat[i]);
+      temp.push( allBusinessFormat_[i]);
     }
   }
+  temp = [...temp];
 
   console.log("temp "+ JSON.stringify(temp));
 
@@ -149,15 +154,18 @@ formatData(forData) {
     } = this.props;
     const { yetai } = this.state;
  
+    console.log("所有业态 ");
+    console.log(allBusinessFormat);
+
  
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 6 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 },
+        sm: { span: 18 },
       },
     };
 
@@ -178,7 +186,7 @@ formatData(forData) {
                   alignItems: 'center',
                 }}
               >
-                <Col span={4}>
+                <Col span={6}>
                 <Form.Item {...formItemLayout} label="" >
                 {getFieldDecorator(item.record_id, {
                  valuePropName: 'checked',
@@ -198,7 +206,7 @@ formatData(forData) {
                       message: '请输入建筑面积',
                     },
                   ],
-                })(<Input  disabled={!getFieldValue(item.record_id)} placeholder="请输入建筑面积" />)}
+                })(<InputNumber  disabled={!getFieldValue(item.record_id)} placeholder="请输入建筑面积"  style={{ width: 200}}/>)}
               </Form.Item>
                 </Col>
               </Row>)

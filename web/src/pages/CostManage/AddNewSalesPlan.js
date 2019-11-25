@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Modal, Row, Col, Tabs, Radio } from 'antd';
+import { Form, Input, Modal, Row, Col, Tabs, Radio, InputNumber } from 'antd';
 import { Item } from 'rc-menu';
 import styles from './CostAccount.less';
 const { TabPane } = Tabs;
@@ -53,7 +53,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'd',
+        id: 'f',
         name: '写字楼',
         average_prise: 0,
         sale_area: 0,
@@ -61,7 +61,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'e',
+        id: 'g',
         name: '公寓',
         average_prise: 0,
         sale_area: 0,
@@ -69,7 +69,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'd',
+        id: 'h',
         name: '写字楼',
         average_prise: 0,
         sale_area: 0,
@@ -77,7 +77,7 @@ class AddNewSalesPlan extends PureComponent {
         payback: 0,
       },
       {
-        id: 'e',
+        id: 'i',
         name: '公寓',
         average_prise: 0,
         sale_area: 0,
@@ -217,7 +217,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售面积" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={5}>
@@ -230,7 +230,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售单价" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={4}>
@@ -245,7 +245,7 @@ class AddNewSalesPlan extends PureComponent {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={6}>
                 <Form.Item {...formItemLayout} label="销售回款额">
                   {getFieldDecorator('1' + item.id + 'payback', {
                     initialValue: 0,
@@ -255,7 +255,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售回款" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -289,7 +289,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售面积" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={5}>
@@ -302,7 +302,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售单价" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={4}>
@@ -317,7 +317,7 @@ class AddNewSalesPlan extends PureComponent {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={6}>
                 <Form.Item {...formItemLayout} label="销售回款额">
                   {getFieldDecorator('2' + item.id + 'payback', {
                     initialValue: 0,
@@ -327,7 +327,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售回款" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -361,7 +361,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售面积" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={5}>
@@ -374,7 +374,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售单价" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={4}>
@@ -389,7 +389,7 @@ class AddNewSalesPlan extends PureComponent {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={6}>
                 <Form.Item {...formItemLayout} label="销售回款额">
                   {getFieldDecorator('3' + item.id + 'payback', {
                     initialValue: 0,
@@ -399,7 +399,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售回款" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -433,7 +433,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售面积" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={5}>
@@ -446,7 +446,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售单价" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
               <Col span={4}>
@@ -461,7 +461,7 @@ class AddNewSalesPlan extends PureComponent {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={6}>
                 <Form.Item {...formItemLayout} label="销售回款额">
                   {getFieldDecorator('4' + item.id + 'payback', {
                     initialValue: 0,
@@ -471,7 +471,7 @@ class AddNewSalesPlan extends PureComponent {
                     //     message: '请输入销售面积',
                     //   },
                     // ],
-                  })(<Input placeholder="请输入销售回款" style={{ width: 150 }} />)}
+                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
                 </Form.Item>
               </Col>
             </Row>

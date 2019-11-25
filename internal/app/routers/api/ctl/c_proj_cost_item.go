@@ -52,7 +52,15 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, result)
+	if show := c.Query("show"); show == "map" {
+		mapResult := []map[string]interface{}{}
+		for _, v := range result {
+			mapResult = append(mapResult, v.ToMap())
+		}
+		ginplus.ResSuccess(c, mapResult)
+	} else {
+		ginplus.ResSuccess(c, result)
+	}
 }
 
 // Get 查询指定数据
