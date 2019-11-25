@@ -36,7 +36,7 @@ export async function updateProInfo(params) {
 // 查询项目的业态数据
 
 export async function getProFormat(params) {
-  return request(`/v1/${proj_business_formats}/?q=page${params.record_id}`);
+  return request(`/v1/${proj_business_formats}/?q=list&project_id=${params.record_id}`);
 }
 
 // 更新项目的业态 

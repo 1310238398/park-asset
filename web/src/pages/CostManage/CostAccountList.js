@@ -8,6 +8,7 @@ import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 
+
 import styles from './CostAccount.less';
 //import { catchClause } from '@babel/types';
 const data = [];
@@ -224,12 +225,12 @@ class CostAccountList extends PureComponent {
     if (expanded) {
       console.log('true');
       console.log('push');
-      expandHang.push(record.key);
+      expandHang.push(record.record_id);
       expandHang.sort();
     } else {
       console.log('false');
       for (let i = 0; i < expandHang.length; i++) {
-        if (expandHang[i] === record.key) {
+        if (expandHang[i] === record.record_id) {
           if (i > 0) {
             console.log('pop');
             expandHang.splice(i, 1);
@@ -239,7 +240,7 @@ class CostAccountList extends PureComponent {
         }
         if (record.children) {
           for (let y = 0; y < record.children.length; y++) {
-            if (expandHang[i] === record.children[y].key) {
+            if (expandHang[i] === record.children[y].record_id) {
               console.log('hahah');
               delete expandHang[i];
             }
@@ -318,7 +319,7 @@ class CostAccountList extends PureComponent {
         render: (text, record) => {
           const { editingKey } = this.state;
         
-          return <div>
+          return record.org_id !== "" ? <div>
             <PButton   code="edit"  onClick={() => {this.goToDetail(record, 'E');}}>
               编辑
             </PButton>
@@ -330,6 +331,8 @@ class CostAccountList extends PureComponent {
            
          
             </div>
+            :
+            null
           
          
         },
@@ -372,7 +375,7 @@ class CostAccountList extends PureComponent {
                 // }}
              
                 loading={loading}
-                rowKey={record => record.key}
+                rowKey={record => record.record_id}
                 expandedRowKeys={this.state.expandedRowKeys}
                 dataSource={list}//{data}
                 columns={columns}
