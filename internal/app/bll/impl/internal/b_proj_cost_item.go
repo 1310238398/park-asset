@@ -196,7 +196,7 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 			result = append(result, v)
 		} else {
 			for _, k := range shows {
-				if k.CostID == v.CostID {
+				if k.CostID == v.CostParentID {
 					k.Children = append(k.Children, v)
 				}
 			}
