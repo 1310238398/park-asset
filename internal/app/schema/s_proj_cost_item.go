@@ -102,8 +102,8 @@ func (a *ProjCostItemShow) ToMap() map[string]interface{} {
 	result["proj_income_id"] = a.ProjIncomeID
 	result["editable"] = a.Editable
 	for _, v := range a.BusinessList {
-		result[fmt.Sprintf("%s-unitprice", v.ProjBusinessID)] = v.UnitPrice
-		result[fmt.Sprintf("%s-price", v.ProjBusinessID)] = v.Price
+		result[fmt.Sprintf("%s_unit", v.ProjBusinessID)] = v.UnitPrice
+		result[fmt.Sprintf("%s_total", v.ProjBusinessID)] = v.Price
 	}
 
 	children := []map[string]interface{}{}
