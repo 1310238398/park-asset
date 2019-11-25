@@ -29,6 +29,7 @@ func (a SchemaProjExpenditure) ToProjExpenditure() *ProjExpenditure {
 		ParentID:            &a.ParentID,
 		ParentPath:          &a.ParentPath,
 		TotalCost:           &a.TotalCost,
+		ISAccExpend:         &a.ISAccExpend,
 	}
 	return item
 }

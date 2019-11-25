@@ -18,6 +18,7 @@ type ProjExpenditureTimeQueryParam struct {
 	Month             int    // 月份
 	Day               int    // 天
 	ProjExpenditureID string // 项目支出节点ID
+	ProjectID         string // 项目ID
 }
 
 // ProjExpenditureTimeQueryOptions 查询可选参数项

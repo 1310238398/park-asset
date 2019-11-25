@@ -10,9 +10,12 @@ import (
 )
 
 // NewPcProject 创建成本项目管理控制器
-func NewPcProject(bPcProject bll.IPcProject) *PcProject {
+func NewPcProject(bPcProject bll.IPcProject,
+	bOrganization bll.IOrganization,
+) *PcProject {
 	return &PcProject{
-		PcProjectBll: bPcProject,
+		PcProjectBll:    bPcProject,
+		OrganizationBll: bOrganization,
 	}
 }
 
@@ -20,7 +23,8 @@ func NewPcProject(bPcProject bll.IPcProject) *PcProject {
 // @Name PcProject
 // @Description 成本项目管理控制器
 type PcProject struct {
-	PcProjectBll bll.IPcProject
+	PcProjectBll    bll.IPcProject
+	OrganizationBll bll.IOrganization
 }
 
 // Query 查询数据
@@ -30,6 +34,9 @@ func (a *PcProject) Query(c *gin.Context) {
 		a.QueryList(c)
 	case "page":
 		a.QueryPage(c)
+	case "tree":
+		a.QueryTree(c)
+
 	default:
 		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
 	}
@@ -87,6 +94,31 @@ func (a *PcProject) QueryList(c *gin.Context) {
 		return
 	}
 	ginplus.ResList(c, result)
+}
+
+// QueryTree 查询树状数据
+// @Summary 查询树状数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param name query string false "名称"
+// @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/pc-projects?q=tree
+func (a *PcProject) QueryTree(c *gin.Context) {
+	var params schema.OrganizationQueryParam
+	params.LikeName = c.Query("name")
+	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	pcResult, err := a.PcProjectBll.Query(ginplus.NewContext(c), schema.PcProjectQueryParam{
+		OrgIDs: orgResult.Data.ToRecordIDs(),
+	})
+
+	ginplus.ResList(c, orgResult.Data.ToProjectTrees().ToTree(pcResult.Data.ToProjectTrees()))
 }
 
 // Get 查询指定数据

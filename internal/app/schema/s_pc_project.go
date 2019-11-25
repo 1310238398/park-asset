@@ -1,6 +1,9 @@
 package schema
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // PcProject 成本项目管理
 type PcProject struct {
@@ -120,4 +123,119 @@ func (a PcProjects) FillPlotData(m map[string]*Plot) PcProjects {
 	}
 
 	return a
+}
+
+// PcProjectTree 项目树
+type PcProjectTree struct {
+	RecordID   string      `json:"record_id" swaggo:"false,记录ID"`   // 记录ID
+	Name       string      `json:"name" swaggo:"false,项目名称"`        // 项目名称
+	Creator    string      `json:"creator" swaggo:"false,创建人"`      // 创建人
+	Memo       string      `json:"memo" swaggo:"false,备注"`          // 备注
+	ParentID   string      `json:"parent_id" swaggo:"false,父级ID"`   // 父级ID
+	ParentPath string      `json:"parent_path" swaggo:"false,父级路经"` // 父级路经
+	OrgID      string      `json:"org_id" swaggo:"false,项目所属子公司"`   // 项目所属子公司
+	Children   interface{} `json:"children" swaggo:"false, 子级树"`    // 子级树
+}
+
+// PcProjectTrees 组织机构树列表
+type PcProjectTrees []*PcProjectTree
+
+// ToTree 转换为树形结构
+func (a PcProjectTrees) ToTree(items PcProjectTrees) PcProjectTrees {
+	mi := make(map[string]*PcProjectTree)
+	for _, item := range a {
+		mi[item.RecordID] = item
+	}
+
+	mp := make(map[string]*PcProjectTree, len(items))
+	for _, item := range items {
+		mp[item.OrgID] = item
+	}
+
+	var list PcProjectTrees
+	for _, item := range a {
+		if pitem, ok := mi[item.ParentID]; ok {
+			if pitem.Children == nil {
+				var children PcProjectTrees
+				children = append(children, item)
+				pitem.Children = children
+				continue
+			}
+
+			pitem.Children = append(pitem.Children.(PcProjectTrees), item)
+			continue
+		}
+
+		fmt.Println(item)
+		if pcitem, ok := mp[item.RecordID]; ok {
+			if item.Children == nil {
+				var children PcProjectTrees
+				children = append(children, pcitem)
+				item.Children = children
+				continue
+			}
+
+			item.Children = append(item.Children.(PcProjectTrees), pcitem)
+			continue
+		}
+
+		list = append(list, item)
+	}
+
+	return list
+}
+
+// ToProjectTrees 转换为组织机构项目
+func (a Organizations) ToProjectTrees() PcProjectTrees {
+	list := make(PcProjectTrees, len(a))
+	for i, item := range a {
+		list[i] = &PcProjectTree{
+			RecordID:   item.RecordID,
+			Name:       item.Name,
+			ParentID:   item.ParentID,
+			ParentPath: item.ParentPath,
+		}
+	}
+	return list
+}
+
+// ToProjectTrees 转换为项目
+func (a PcProjects) ToProjectTrees() PcProjectTrees {
+	list := make(PcProjectTrees, len(a))
+	for i, item := range a {
+		list[i] = &PcProjectTree{
+			RecordID:   item.RecordID,
+			Name:       item.Name,
+			ParentID:   item.ParentID,
+			ParentPath: item.ParentPath,
+		}
+	}
+	return list
+}
+
+// FillProj 把项目作为树填充
+func (a PcProjectTrees) FillProj(items PcProjectTrees) PcProjectTrees {
+	mi := make(map[string]*PcProjectTree, len(items))
+	for _, item := range items {
+		mi[item.OrgID] = item
+	}
+
+	var list PcProjectTrees
+	for _, item := range a {
+		if pcitem, ok := mi[item.RecordID]; ok {
+			if item.Children == nil {
+				var children PcProjectTrees
+				children = append(children, pcitem)
+				item.Children = children
+				continue
+			}
+
+			item.Children = append(item.Children.(PcProjectTrees), pcitem)
+			continue
+		}
+
+		list = append(list, item)
+	}
+	return list
+
 }

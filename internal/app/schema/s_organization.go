@@ -10,7 +10,7 @@ type Organization struct {
 	ParentPath string     `json:"parent_path" swaggo:"false,父级路径"`
 	Memo       string     `json:"memo" swaggo:"false,备注"`
 	Creator    string     `json:"creator" swaggo:"false,创建者"`
-	PcProjects PcProjects `json:"pc_projects,omitempty" swaggo:"false,本组织下的项目列表"`
+	Children   PcProjects `json:"children,omitempty" swaggo:"false,本组织下的项目列表"`
 }
 
 // OrganizationQueryParam 查询条件
@@ -57,7 +57,6 @@ func (a Organizations) ToTrees() OrganizationTrees {
 			Sequence:   item.Sequence,
 			ParentID:   item.ParentID,
 			ParentPath: item.ParentPath,
-			PcProjects: item.PcProjects,
 		}
 	}
 	return list
@@ -115,7 +114,7 @@ func (a Organizations) FillPcProjects(items PcProjects) {
 	for _, orgItem := range a {
 		for _, projItem := range items {
 			if orgItem.RecordID == projItem.OrgID {
-				orgItem.PcProjects = append(orgItem.PcProjects, projItem)
+				orgItem.Children = append(orgItem.Children, projItem)
 			}
 
 		}
