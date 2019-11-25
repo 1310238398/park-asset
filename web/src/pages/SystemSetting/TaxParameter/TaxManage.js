@@ -23,7 +23,8 @@ class TaxManage extends PureComponent {
             {
 
             }
-        }
+        },
+        loading : true,
 
     }
 
@@ -34,6 +35,7 @@ class TaxManage extends PureComponent {
 
     getList = (params) => {
         query(params).then(res=>{
+            this.setState({ loading : false });
             if(res && res.error){
                 console.log(res.error.message);
             }else{
@@ -62,6 +64,7 @@ class TaxManage extends PureComponent {
 
         const params = { q : "page", current : current, pageSize : pageSize}
         if (saved) {
+            this.setState({ loading : true });
             // TODO 重新拉取列表     
             this.getList(params);      
         }
@@ -81,6 +84,7 @@ class TaxManage extends PureComponent {
     };
 
     handleDelOKClick(params) {
+        this.setState({ loading : true });
         const { 
             data : {
                 pagination : { current, pageSize }
@@ -90,6 +94,7 @@ class TaxManage extends PureComponent {
         const param = { q : "page", current : current, pageSize : pageSize };
 
         del(params).then( res => {
+            this.setState({ loading : false });
             if( res && res.status == "OK" ){
                 this.getList(param);
             }else{
@@ -240,7 +245,7 @@ class TaxManage extends PureComponent {
             }
         ]
 
-        const { selectedRowKeys, selectedRows, data: {list ,pagination }, formVisible, editInfo } = this.state;
+        const { selectedRowKeys, selectedRows, data: {list ,pagination }, formVisible, editInfo, loading } = this.state;
 
         const paginationProps = {
             showSizeChanger: true,
@@ -277,6 +282,7 @@ class TaxManage extends PureComponent {
                                 dataSource={list}
                                 pagination={paginationProps}
                                 onChange = {this.onTableChange}
+                                loading = { loading }
                             />
                         </div>
                     </div>

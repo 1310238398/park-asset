@@ -21,7 +21,8 @@ class FormatManage extends PureComponent {
             ],
             pagination: {
             }
-        }
+        },
+        loading : true,
     };
 
     componentWillMount(){
@@ -35,20 +36,13 @@ class FormatManage extends PureComponent {
             }else{
                 this.setState( { data : res } );
             }
+            this.setState({ loading : false });
         });
-        // const temp = { q : "list"};
-        // getList(temp).then(res =>{
-        //     if(res && res.error){
-        //         console.log(res.error.message);
-        //         return;
-        //     }else{
-        //         console.log(res);
-        //     }
-        // })
     }
 
     getList = params => {
         queryList(params).then(res=>{
+            this.setState({ loading : false });
             if(res && res.error){
                 console.log(res.error.message);
             }else{
@@ -141,6 +135,7 @@ class FormatManage extends PureComponent {
 
         const params = { q : "page", current : current, pageSize : pageSize };
         if(saved){
+            this.setState({ loading : true });
             //为true，进行保存了，重新拉取列表，进行数据的更新
             this.getList(params);
         }
@@ -165,15 +160,17 @@ class FormatManage extends PureComponent {
         });
     };
     handleDelOKClick(params) {
+        this.setState({ loading : true });
         const { 
             data : {
-                pagination : { current }
+                pagination : { current, pageSize }
             }
         } = this.state;
 
-        const param = { q : "page", current : current, pagesize : pageSize };
+        const param = { q : "page", current : current, pageSize : pageSize };
 
         del(params).then( res => {
+            this.setState({ loading : false });
             if( res && res.status == "OK" ){
                 this.getList(param);
             }else{
@@ -196,7 +193,7 @@ class FormatManage extends PureComponent {
    
     //页面的render
     render() {
-        const { selectedRowKeys, selectedRows , data:{ list, pagination }, formVisible ,editInfo } = this.state;
+        const { selectedRowKeys, selectedRows , data:{ list, pagination }, formVisible ,editInfo, loading } = this.state;
         const columns = [
             {
                 title: '业态名称',
@@ -281,6 +278,7 @@ class FormatManage extends PureComponent {
                                 rowKey={record => record.record_id}
                                 pagination={paginationProps}
                                 onChange = {this.onTableChange}
+                                loading = {loading}
                             // size="small"
                             />
                         </div>
