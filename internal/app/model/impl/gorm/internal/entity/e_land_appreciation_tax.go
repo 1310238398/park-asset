@@ -33,7 +33,7 @@ type LandAppreciationTax struct {
 	CostModel
 	RecordID       *string  `gorm:"column:record_id;size:36;index;"`             // 记录ID
 	ProjectID      *string  `gorm:"column:project_id;size:36;index;"`            // 项目ID
-	Income         *float64 `gorm:"column:"income;type:decimal(20,4);"`          // 不含税销售收入
+	Income         *float64 `gorm:"column:income;type:decimal(20,4);"`           // 不含税销售收入
 	Cost           *float64 `gorm:"column:cost;type:decimal(20,4);"`             // 扣除项金额
 	AdditionalTax  *float64 `gorm:"column:additional_tax;type:decimal(20,4);"`   // 附加税
 	FinanceAddRate *float64 `gorm:"column:finance_add_rate;type:decimal(20,4);"` // 财务费用附加率
