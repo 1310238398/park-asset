@@ -95,9 +95,9 @@ func GetCostTemplate(ctx context.Context, mCostItem model.ICostItem) (schema.Cos
 		} else {
 			for _, k := range cir.Data {
 				if k.RecordID == v.ParentID {
-					k.Children = append(k.Children, k)
+					k.Children = append(k.Children, v)
+					break
 				}
-				break
 			}
 		}
 	}
@@ -112,6 +112,9 @@ func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, pri
 	tax, err := mTaxCalculation.Get(ctx, taxID)
 	if err != nil {
 		return 0, 0, err
+	}
+	if tax == nil {
+		return 0, 0, nil
 	}
 	var taxPrice float64
 	if taxRate == 0 {
