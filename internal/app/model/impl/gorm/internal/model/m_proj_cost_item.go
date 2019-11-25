@@ -55,7 +55,7 @@ func (a *ProjCostItem) QueryShow(ctx context.Context, params schema.ProjCostItem
 	db := entity.GetDB(ctx, a.db)
 	cit := "pc_cost_item"
 	pcit := "pc_proj_cost_item"
-	db = db.Table(cit).Joins(fmt.Sprintf("LEFT JOIN %s WHERE %s.record_id=%s.cost_id AND %s.deleted=NULL AND %s.project_id=?",
+	db = db.Table(cit).Joins(fmt.Sprintf("LEFT JOIN %s ON %s.record_id=%s.cost_id AND %s.deleted_at=NULL AND %s.project_id=?",
 		pcit, cit, pcit, pcit, pcit), params.ProjectID)
 	// select列表
 	selectlist := []string{
