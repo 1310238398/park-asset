@@ -115,7 +115,7 @@ export default class CostAccountDetail extends PureComponent {
             <TabPane tab="成本核算" key="2">
               <CostList  ></CostList>
             </TabPane>
-            <TabPane tab="销售计划" key="3" style={{ minHeight: 500, maxHeight: 500 }}>
+            <TabPane tab="销售计划" key="3" >
               <SalesPlan></SalesPlan>
             </TabPane>
             <TabPane tab="成本支出节点" key="4">

@@ -9,7 +9,10 @@ export default {
     search: {},
     pagination: {},
     // 销售计划列表
-    data: [], //所有年份所有季度的列表数据
+    data:{  
+      list: [],
+      pagination: {},
+    }, //所有年份所有季度的列表数据
     formatData:[
       // {
       //   proj_business_id: "a",// 项目业态ID
@@ -17,7 +20,7 @@ export default {
       // }
     ], // 所有的业态
      
-    displayList:[],// 需要根据用户的筛选条件，自己重构数据值
+   
     submitting: false,
     formTitle: '',
     formID: '',
@@ -30,7 +33,7 @@ export default {
   effects: {
     *fetch({ search, pagination, pro_id }, { call, put, select }) {
       let params = {
-        q: 'list',
+        q: 'page',
         project_id: pro_id,
       };
 
@@ -63,12 +66,9 @@ export default {
       const response = yield call(costAccountService.querySalesPlan, params);
       yield put({
         type: 'saveData',
-        payload: response.list,
+        payload: response,
       });
-      yield put({
-        type: 'saveDisplayList',
-        payload: response.list,
-      });
+     
       // 请求所有业态
       const response1 = yield call(getProFormat, { record_id: pro_id });
 
@@ -235,19 +235,24 @@ export default {
     },
     *del({ payload }, { call, put,select }) {
       const response = yield call(costAccountService.deletePlan, payload);
-      let displayList = yield select(state => state.salesPlan.displayList);
+      let data = yield select(state => state.salesPlan.data);
+      console.log("原来的data ");
+      console.log(data);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({
-           type: 'saveDisplayList',
-           payload:displayList.filter(item => item.record_id !== payload)
+           type: 'saveData',
+           payload:{
+             list: data.list.filter(item => item.record_id !== payload),
+             pagination: {total: data.pagination.total - 1, current: data.pagination.current, pageSize: data.pagination.pageSize}
+           }
       
       });
-      let data = yield select(state => state.salesPlan.data);
-      yield put({
-        type: 'saveData',
-        payload: data.filter(item => item.record_id !== payload)
-      });
+      // let data = yield select(state => state.salesPlan.data);
+      // yield put({
+      //   type: 'saveData',
+      //   payload: data.filter(item => item.record_id !== payload)
+      // });
 
       }
     },
@@ -274,9 +279,7 @@ export default {
     saveData(state, { payload }) {
       return { ...state, data: payload };
     },
-    saveDisplayList(state, { payload }) {
-      return { ...state, displayList: payload };
-    },
+    
     saveSearch(state, { payload }) {
       return { ...state, search: payload };
     },
