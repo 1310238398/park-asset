@@ -6,87 +6,32 @@ import styles from './CostAccount.less';
 const { TabPane } = Tabs;
 @connect(state => ({
   salesPlan: state.salesPlan,
+  costAccount: state.costAccount,
 }))
 @Form.create()
 class AddNewSalesPlan extends PureComponent {
   state = {
-    currentQuarter: 1,
-    yetai: [
+    quarterList: [
       {
-        id: 'a',
-        name: '住宅',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'b',
-        name: '地上车位测试长度测试长度',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'c',
-        name: '地下车库',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'd',
-        name: '写字楼',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'e',
-        name: '公寓',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'f',
-        name: '写字楼',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'g',
-        name: '公寓',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'h',
-        name: '写字楼',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-      {
-        id: 'i',
-        name: '公寓',
-        average_prise: 0,
-        sale_area: 0,
-        contract_amount: 0,
-        payback: 0,
-      },
-    ],
+        key: "1",
+        name: "第一季度",
 
-    quarterList: [1, 2, 3, 4],
+      },
+      {
+        key: "2",
+        name: "第二季度",
+
+      },
+      {
+        key: "3",
+        name: "第三季度",
+      },
+      {
+        key: "4",
+        name: "第四季度",
+      },
+
+    ],
   };
   componentDidMount() {
     // this.dispatch({
@@ -99,7 +44,8 @@ class AddNewSalesPlan extends PureComponent {
   };
 
   onOKClick = () => {
-    const { form, onSubmit } = this.props;
+    const { form, onSubmit, costAccount: { formID }, salesPlan: { formatData } } = this.props;
+    const { quarterList } = this.state;
     console.log('点击确定按钮 ');
 
     form.validateFieldsAndScroll((err, values) => {
@@ -109,14 +55,49 @@ class AddNewSalesPlan extends PureComponent {
       const formData = { ...values };
       console.log('formData ' + JSON.stringify(formData));
       //   onSubmit(formData);
+      const year = formData.year;
+      let submitData = [];
+
+      for (let m = 0; m < quarterList.length; m++) {
+        console.log("季度循环 " + m);
+        //let quarterData = [];
+
+        for (let i = 0; i < formatData.length; i++) {
+          console.log("业态循环 " + i);
+          let item = {};
+          item.year = parseInt(year);
+          item.proj_business_id = formatData[i].proj_business_id;
+          item.sale_area = formData[quarterList[m].key + formatData[i].proj_business_id + "sale_area"];
+
+          item.average_price = formData[quarterList[m].key + formatData[i].proj_business_id + "average_price"];
+          item.contract_amount = formData[quarterList[m].key + formatData[i].proj_business_id + "contract_amount"];
+          item.payback = formData[quarterList[m].key + formatData[i].proj_business_id + "payback"];
+          item.project_id = formID;
+          item.quarter = parseInt(quarterList[m].key);
+
+          submitData.push(item);
+        }
+
+        //submitData.push(quarterData);
+      }
+
+      console.log("创建计划需要提交的数据 ");
+      console.log(submitData);
+
+
+      this.dispatch({
+        type: 'salesPlan/createPlan',
+        payload: submitData,
+      });
+
     });
   };
 
-  
+
 
   render() {
     const {
-      salesPlan: { addSalesPlanVisible },
+      salesPlan: { addSalesPlanVisible, formatData },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
@@ -139,17 +120,14 @@ class AddNewSalesPlan extends PureComponent {
       labelCol: {
         // xs: { span: 24 },
         // sm: { span: 8 },
-        span: 1
+        span: 2
       },
       wrapperCol: {
         // xs: { span: 24 },
         // sm: { span: 16 },
-        span: 23,
+        span: 22,
       },
     };
-
-   
-    
 
     return (
       <Modal
@@ -169,317 +147,106 @@ class AddNewSalesPlan extends PureComponent {
         }}
       >
         <Form labelAlign="left">
-          <Row style={{display: 'flex', justifyContent: 'flex-start',marginLeft:25}}>
+          <Row style={{ display: 'flex', justifyContent: 'flex-start', marginLeft: 25 }}>
             <Col span={24}>
               <Form.Item {...formItemLayout2} label="年份" >
                 {getFieldDecorator('year', {
-                  // initialValue: item.sale_area,
-                  // rules: [
-                  //   {
-                  //     required: getFieldValue(item.code),
-                  //     message: '请输入销售面积',
-                  //   },
-                  // ],
+                  //initialValue: item.sale_area,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入年份',
+                    },
+                  ],
                 })(<Input placeholder="请输入年份" style={{ width: 150 }} />)}
               </Form.Item>
             </Col>
-         
+
           </Row>
 
-          <Tabs defaultActiveKey="3" onChange={this.callback} tabPosition="left"
-            
+          <Tabs defaultActiveKey="1" onChange={this.callback} tabPosition="left"
+
           >
-            <TabPane tab="第一季度" key="1">
-            {yetai.map((item, index) => (
-            <Row
-              align="middle"
-              style={{
-                height: '59px',
-                display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-            >
-              <Col span={4}>
-                <Form.Item  label="" wrapperCol={{span:24}}>
-                  {getFieldDecorator("1"+item.id, {
-                    // initialValue: item.name,
-                  })(<label>{item.name}</label>)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售面积">
-                  {getFieldDecorator("1" + item.id + 'sale_area', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售单价">
-                  {getFieldDecorator("1" + item.id + 'average_prise', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Form.Item {...formItemLayout} label="合同额">
-                  {getFieldDecorator("1" + item.id + 'contract_amount', {
-                     initialValue: 0,
-                  })(
-                    <label>
-                      {getFieldValue("1" +item.id + 'sale_area') *
-                        getFieldValue("1" +item.id + 'average_prise')}
-                    </label>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item {...formItemLayout} label="销售回款额">
-                  {getFieldDecorator('1' + item.id + 'payback', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-            </Row>
-          ))}
-            </TabPane>
-            <TabPane tab="第二季度" key="2">
-            {yetai.map((item, index) => (
-            <Row
-              align="middle"
-              style={{
-                height: '59px',
-                display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-            >
-              <Col span={4}>
-                <Form.Item  wrapperCol={{span:24}} label="">
-                  {getFieldDecorator("2"+item.id, {
-                    // initialValue: item.name,
-                  })(<label>{item.name}</label>)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售面积">
-                  {getFieldDecorator("2" + item.id + 'sale_area', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售单价">
-                  {getFieldDecorator("2" + item.id + 'average_prise', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Form.Item {...formItemLayout} label="合同额">
-                  {getFieldDecorator("2" + item.id + 'contract_amount', {
-                     initialValue: 0,
-                  })(
-                    <label>
-                      {getFieldValue("2" +item.id + 'sale_area') *
-                        getFieldValue("2" +item.id + 'average_prise')}
-                    </label>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item {...formItemLayout} label="销售回款额">
-                  {getFieldDecorator('2' + item.id + 'payback', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-            </Row>
-          ))}
-            </TabPane>
-            <TabPane tab="第三季度" key="3" >
-            {yetai.map((item, index) => (
-            <Row
-              align="middle"
-              style={{
-                height: '59px',
-                display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-            >
-              <Col span={4}>
-                <Form.Item  wrapperCol={{span:24}} label="">
-                  {getFieldDecorator("3"+item.id, {
-                    // initialValue: item.name,
-                  })(<label>{item.name}</label>)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售面积">
-                  {getFieldDecorator("3" + item.id + 'sale_area', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售单价">
-                  {getFieldDecorator("3" + item.id + 'average_prise', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Form.Item {...formItemLayout} label="合同额">
-                  {getFieldDecorator("3" + item.id + 'contract_amount', {
-                     initialValue: 0,
-                  })(
-                    <label>
-                      {getFieldValue("3" +item.id + 'sale_area') *
-                        getFieldValue("3" +item.id + 'average_prise')}
-                    </label>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item {...formItemLayout} label="销售回款额">
-                  {getFieldDecorator('3' + item.id + 'payback', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-            </Row>
-          ))}
-            </TabPane>
-            <TabPane tab="第四季度" key="4">
-            {yetai.map((item, index) => (
-            <Row
-              align="middle"
-              style={{
-                height: '59px',
-                display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-            >
-              <Col span={4}>
-                <Form.Item  wrapperCol={{span:24}} label="">
-                  {getFieldDecorator("4"+item.id, {
-                    // initialValue: item.name,
-                  })(<label>{item.name}</label>)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售面积">
-                  {getFieldDecorator("4" + item.id + 'sale_area', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item {...formItemLayout} label="销售单价">
-                  {getFieldDecorator("4" + item.id + 'average_prise', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Form.Item {...formItemLayout} label="合同额">
-                  {getFieldDecorator("4" + item.id + 'contract_amount', {
-                     initialValue: 0,
-                  })(
-                    <label>
-                      {getFieldValue("4" +item.id + 'sale_area') *
-                        getFieldValue("4" +item.id + 'average_prise')}
-                    </label>
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item {...formItemLayout} label="销售回款额">
-                  {getFieldDecorator('4' + item.id + 'payback', {
-                    initialValue: 0,
-                    // rules: [
-                    //   {
-                    //     required: getFieldValue(item.code),
-                    //     message: '请输入销售面积',
-                    //   },
-                    // ],
-                  })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
-                </Form.Item>
-              </Col>
-            </Row>
-          ))}
-            </TabPane>
-            
+            {
+              quarterList.map((quarter_item, index) =>
+                <TabPane tab={quarter_item.name} key={quarter_item.key}>
+                  {formatData.map((item, index) => (
+                    <Row
+                      align="middle"
+                      style={{
+                        height: '59px',
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                      }}
+                      key={item.proj_business_id}
+                      >
+                      <Col span={4}>
+                        <Form.Item label="" wrapperCol={{ span: 24 }}>
+                          {getFieldDecorator(quarter_item.key + item.proj_business_id, {
+                            // initialValue: item.name,
+                          })(<label>{item.proj_business_name}</label>)}
+                        </Form.Item>
+                      </Col>
+                      <Col span={5}>
+                        <Form.Item {...formItemLayout} label="销售面积">
+                          {getFieldDecorator(quarter_item.key + item.proj_business_id + 'sale_area', {
+                            initialValue: 0,
+                            // rules: [
+                            //   {
+                            //     required: getFieldValue(item.code),
+                            //     message: '请输入销售面积',
+                            //   },
+                            // ],
+                          })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
+                        </Form.Item>
+                      </Col>
+                      <Col span={5}>
+                        <Form.Item {...formItemLayout} label="销售单价">
+                          {getFieldDecorator(quarter_item.key + item.proj_business_id + 'average_price', {
+                            initialValue: 0,
+                            // rules: [
+                            //   {
+                            //     required: getFieldValue(item.code),
+                            //     message: '请输入销售面积',
+                            //   },
+                            // ],
+                          })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
+                        </Form.Item>
+                      </Col>
+                      <Col span={4}>
+                        <Form.Item {...formItemLayout} label="合同额">
+                          {getFieldDecorator(quarter_item.key + item.proj_business_id + 'contract_amount', {
+                            initialValue: 0,
+                          })(
+                            <label>
+                              {getFieldValue(quarter_item.key + item.proj_business_id + 'sale_area') *
+                                getFieldValue(quarter_item.key + item.proj_business_id + 'average_price')}
+                            </label>
+                          )}
+                        </Form.Item>
+                      </Col>
+                      <Col span={6}>
+                        <Form.Item {...formItemLayout} label="销售回款额">
+                          {getFieldDecorator(quarter_item.key + item.proj_business_id + 'payback', {
+                            initialValue: 0,
+                            // rules: [
+                            //   {
+                            //     required: getFieldValue(item.code),
+                            //     message: '请输入销售面积',
+                            //   },
+                            // ],
+                          })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  ))}
+                </TabPane>
+
+              )
+            }
           </Tabs>
-          
+
         </Form>
       </Modal>
     );
