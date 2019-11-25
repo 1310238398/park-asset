@@ -36,7 +36,25 @@ type ProjExpenditure struct {
 
 // Query 查询数据
 func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditureQueryParam, opts ...schema.ProjExpenditureQueryOptions) (*schema.ProjExpenditureQueryResult, error) {
-	return a.ProjExpenditureModel.Query(ctx, params, opts...)
+	result, err := a.ProjExpenditureModel.Query(ctx, params, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	// pCostResult, err := a.ProjCostItemModel.QueryShow(ctx, schema.ProjCostItemQueryParam{
+	// 	ProjectID: params.ProjectID,
+	// })
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// pExpend, a.ProjExpendCostModel.Query(ctx,schema.ProjExpendCostQueryParam{
+
+	// })
+
+	// result.Data.FillProjCostItem
+
+	return result, nil
 }
 
 // Get 查询指定数据
@@ -80,7 +98,7 @@ func (a *ProjExpenditure) Update(ctx context.Context, recordID string, item sche
 		return nil, errors.ErrNotFound
 	}
 
-	err = a.ProjExpenditureModel.Update(ctx, recordID, item)
+	err = a.update(ctx, item)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +112,19 @@ func (a *ProjExpenditure) Delete(ctx context.Context, recordID string) error {
 		return err
 	} else if oldItem == nil {
 		return errors.ErrNotFound
+	}
+
+	// return ExecTrans(ctx, a.TransModel func(ctx context.Context)error{
+
+	// })
+
+	err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, recordID)
+	if err != nil {
+		return err
+	}
+	err = a.ProjExpendCostModel.DeleteByProjExpendID(ctx, recordID)
+	if err != nil {
+		return err
 	}
 
 	return a.ProjExpenditureModel.Delete(ctx, recordID)
@@ -390,4 +421,37 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	return nil
 
+}
+
+func (a *ProjExpenditure) update(ctx context.Context, item schema.ProjExpenditure) error {
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		// 填充本次支出金额
+		err := a.fillProjCostsAmount(ctx, item)
+		if err != nil {
+			return err
+		}
+
+		err = a.ProjExpendCostModel.DeleteByProjExpendID(ctx, item.RecordID)
+		if err != nil {
+			return err
+		}
+
+		err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, item.RecordID)
+		if err != nil {
+			return err
+		}
+
+		// 创建对应成本项
+		err = a.createProjExpenCost(ctx, item)
+		if err != nil {
+			return err
+		}
+
+		// 创建对应支出时间表
+		err = a.createExpendTime(ctx, item)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }

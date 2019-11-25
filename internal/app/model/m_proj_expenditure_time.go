@@ -18,4 +18,6 @@ type IProjExpenditureTime interface {
 	Update(ctx context.Context, recordID string, item schema.ProjExpenditureTime) error
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 通过项目支出节点ID删除
+	DeleteByProjExpendID(ctx context.Context, projExpenditureID string) error
 }

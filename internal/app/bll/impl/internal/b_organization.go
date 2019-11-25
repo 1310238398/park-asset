@@ -67,11 +67,6 @@ func (a *Organization) Query(ctx context.Context, params schema.OrganizationQuer
 	if err != nil {
 		return nil, err
 	}
-	projResult, err := a.PcProjectModel.Query(ctx, schema.PcProjectQueryParam{
-		OrgIDs: result.Data.ToRecordIDs(),
-	})
-
-	result.Data.FillPcProjects(projResult.Data)
 	return result, nil
 }
 

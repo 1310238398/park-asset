@@ -115,3 +115,12 @@ func (a *ProjExpenditureTime) Delete(ctx context.Context, recordID string) error
 	}
 	return nil
 }
+
+// DeleteByProjExpendID 通过项目支出节点ID删除
+func (a *ProjExpenditureTime) DeleteByProjExpendID(ctx context.Context, projExpenditureID string) error {
+	result := entity.GetProjExpenditureTimeDB(ctx, a.db).Where("proj_expenditure_id=?", projExpenditureID).Delete(entity.ProjExpenditureTime{})
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}

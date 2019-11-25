@@ -18,6 +18,7 @@ type ProjExpenditure struct {
 	ParentPath          string            `json:"parent_path" swaggo:"false,父级路经"`                                                                                                // 父级路经
 	TotalCost           float64           `json:"total_cost" swaggo:"false,支出总额"`                                                                                                 // 支出总额
 	ProjCostItems       ProjCostItemShows `json:"proj_cost_items" swaggo:"false, 项目支出节点成本项列表"`                                                                                    // 项目支出节点成本项列表
+	Category            string            `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"`                                                                                     // 工作类别(大纲 里程碑 一级 二级)
 
 }
 
@@ -55,8 +56,8 @@ func (a ProjExpenditures) ToProjExpendIDs() []string {
 	return l
 }
 
-// FillProjItem 填充对应项目成本项
-func (a ProjExpenditures) FillProjItem(m map[string]*ProjCostItemShow, projExpendCostList ProjExpendCosts) {
+// FillProjCostItem 填充对应项目成本项
+func (a ProjExpenditures) FillProjCostItem(m map[string]*ProjCostItemShow, projExpendCostList ProjExpendCosts) {
 	for _, item := range a {
 		for _, projExpCostItem := range projExpendCostList {
 			if item.RecordID == projExpCostItem.ProjExpenditureID {
@@ -68,6 +69,12 @@ func (a ProjExpenditures) FillProjItem(m map[string]*ProjCostItemShow, projExpen
 		}
 	}
 }
+
+// func (a ProjExpenditures) FillCategory(m map[string]*Expenditure) {
+// 	for _, item := range a {
+
+// 	}
+// }
 
 // ProjExpenditureTree 项目支出节点
 type ProjExpenditureTree struct {

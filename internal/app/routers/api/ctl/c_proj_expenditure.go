@@ -41,11 +41,13 @@ func (a *ProjExpenditure) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param name query string false "项目支出节点名称(模糊查询)"
+// @Param project_id query string false "项目ID"
 // @Success 200 []schema.ProjExpenditure "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-expenditures
+// @Router GET /api/v1/proj-expenditures?q=page
 func (a *ProjExpenditure) QueryPage(c *gin.Context) {
 	var params schema.ProjExpenditureQueryParam
 	params.LikeName = c.Query("name")
@@ -63,13 +65,13 @@ func (a *ProjExpenditure) QueryPage(c *gin.Context) {
 // QueryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" 1
-// @Param pageSize query int true "分页大小" 10
+// @Param name query string false "项目支出节点名称(模糊查询)"
+// @Param project_id query string false "项目ID"
 // @Success 200 option.Interface "查询结果：{list:树结构列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-expenditures?tree
+// @Router GET /api/v1/proj-expenditures?q=tree
 func (a *ProjExpenditure) QueryTree(c *gin.Context) {
 	var params schema.ProjExpenditureQueryParam
 
