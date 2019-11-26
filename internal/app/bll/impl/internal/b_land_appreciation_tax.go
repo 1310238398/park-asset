@@ -22,6 +22,7 @@ type LandAppreciationTax struct {
 	LandAppreciationTaxModel model.ILandAppreciationTax
 	ProjSalesPlanModel       model.IProjSalesPlan
 	ProjCostItemModel        model.IProjCostItem
+	TaxCalculationModel      model.ITaxCalculation
 }
 
 // 更新项目的土地增值税
@@ -33,16 +34,80 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 	}
 	//创建新土地增值税
 	if item == nil {
-
-		return nil
+		item = new(schema.LandAppreciationTax)
+		item.RecordID = util.MustUUID()
+		item.FinanceAddRate = 0.05
+		item.ManageAddRate = 0.05
+		item.CostAddRate = 0.2
+		if err := a.LandAppreciationTaxModel.Create(ctx, *item); err != nil {
+			return nil
+		}
 	}
 	//获取销售收入
-	//获取扣除项金额
-	//获取附加税
-	//计算增值额及增值率
-	//确认适用税率
-	//计算土地增值税
+	pspqp := schema.ProjSalesPlanQueryParam{}
+	pspqp.ProjectID = projectID
+	pspqr, err := a.ProjSalesPlanModel.Query(ctx, pspqp)
+	if err != nil {
+		return err
+	}
+	if pspqr.Data == nil || len(pspqr.Data) == 0 {
+		return errors.New("缺少销售收入")
+	}
 
+	item.Income = 0
+	//获取扣除项金额
+	item.Cost = 0
+	//计算附加税
+	item.AdditionalTax = 0
+	//计算增值额及增值率
+	increase := item.Income -
+		item.Cost*(1+item.FinanceAddRate+item.ManageAddRate+item.CostAddRate) -
+		item.AdditionalTax
+	increaseRate := increase / item.Cost
+
+	//计算土地增值税
+	item.Tax = 0
+	var done float64  //已计税额
+	var doing float64 //当前计税额
+	//增值额未超过扣除项目金额50%的部分，税率为30%
+	if increaseRate <= 0.5 {
+		doing = increase
+	} else {
+		doing = item.Cost * 0.5
+	}
+	item.Tax += doing * 0.3
+	done += doing
+	//增值额超过扣除项目金额50%、未超过扣除项目金额100%的部分，税率为40%
+	if increaseRate > 0.5 {
+		if increaseRate <= 1.0 {
+			doing = increase - done
+		} else {
+			doing = item.Cost*1.0 - done
+		}
+		item.Tax += doing * 0.4
+		done += doing
+	}
+	//增值额超过扣除项目金额100%、未超过扣除项目金额200%的部分，税率为50%
+	if increaseRate > 1.0 {
+		if increaseRate <= 2.0 {
+			doing = increase - done
+		} else {
+			doing = item.Cost*2.0 - done
+		}
+		item.Tax += doing * 0.5
+		done += doing
+	}
+	//增值额超过扣除项目金额200%的部分，税率为60%
+	if increaseRate > 2.0 {
+		doing = increase - done
+		item.Tax += doing * 0.6
+		done += doing
+	}
+
+	//更新土地增值税
+	if err := a.LandAppreciationTaxModel.Update(ctx, item.RecordID, *item); err != nil {
+		return err
+	}
 	return nil
 }
 

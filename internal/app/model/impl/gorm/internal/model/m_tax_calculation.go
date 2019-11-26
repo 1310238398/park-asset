@@ -74,6 +74,20 @@ func (a *TaxCalculation) Get(ctx context.Context, recordID string, opts ...schem
 	return item.ToSchemaTaxCalculation(), nil
 }
 
+// GetByName 查询指定数据
+func (a *TaxCalculation) GetByName(ctx context.Context, name string) (*schema.TaxCalculation, error) {
+	db := entity.GetTaxCalculationDB(ctx, a.db).Where("name=?", name)
+	var item entity.TaxCalculation
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaTaxCalculation(), nil
+}
+
 // Create 创建数据
 func (a *TaxCalculation) Create(ctx context.Context, item schema.TaxCalculation) error {
 	TaxCalculation := entity.SchemaTaxCalculation(item).ToTaxCalculation()

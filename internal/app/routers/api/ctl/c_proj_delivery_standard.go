@@ -71,7 +71,7 @@ func (a *ProjDeliveryStandard) query(c *gin.Context) {
 func (a *ProjDeliveryStandard) queryTree(c *gin.Context) {
 	var params schema.ProjDeliveryStandardQueryParam
 	params.ProjectID = c.Query("projectID")
-	if params.ParentID == "" {
+	if params.ProjectID == "" {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return
 	}
