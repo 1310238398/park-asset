@@ -63,7 +63,7 @@ func (a *LandAppreciationTax) Get(ctx context.Context, recordID string, opts ...
 }
 
 // GetByProjectID 查询指定数据
-func (a *LandAppreciationTax) GetByProjectID(ctx context.Context, projectID string, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTax, error) {
+func (a *LandAppreciationTax) GetByProjectID(ctx context.Context, projectID string) (*schema.LandAppreciationTax, error) {
 	db := entity.GetLandAppreciationTaxDB(ctx, a.db).Where("project_id=?", projectID)
 	var item entity.LandAppreciationTax
 	ok, err := FindOne(ctx, db, &item)

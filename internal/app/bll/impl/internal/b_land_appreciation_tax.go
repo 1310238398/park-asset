@@ -31,7 +31,9 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 	if err != nil {
 		return err
 	}
+	//创建新土地增值税
 	if item == nil {
+
 		return nil
 	}
 	//获取销售收入
