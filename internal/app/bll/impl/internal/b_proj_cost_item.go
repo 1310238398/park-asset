@@ -322,6 +322,8 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			return errors.ErrNotFound
 		}
 
+		item.ProjectID = oldItem.ProjectID
+		item.CostID = oldItem.CostID
 		//验证成本项
 		costItem, err := a.CostItemModel.Get(ctx, oldItem.CostID)
 		if err != nil {

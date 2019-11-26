@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -124,8 +125,12 @@ func (a *ProjCostItem) Update(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-
-	nitem, err := a.ProjCostItemBll.Update(ginplus.NewContext(c), c.Param("id"), item)
+	recordID := c.Param("id")
+	if recordID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	nitem, err := a.ProjCostItemBll.Update(ginplus.NewContext(c), recordID, item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
