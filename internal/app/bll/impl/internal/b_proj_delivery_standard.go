@@ -154,6 +154,7 @@ func (a *ProjDeliveryStandard) Create(ctx context.Context, item schema.ProjDeliv
 	if err != nil {
 		return nil, err
 	}
+
 	return a.getUpdate(ctx, item.RecordID)
 }
 

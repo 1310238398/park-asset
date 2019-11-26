@@ -18,14 +18,15 @@ type SchemaCostItem schema.CostItem
 // ToCostItem 转换为成本项实体
 func (a SchemaCostItem) ToCostItem() *CostItem {
 	item := &CostItem{
-		RecordID:   &a.RecordID,
-		ParentID:   &a.ParentID,
-		ParentPath: &a.ParentPath,
-		Level:      &a.Level,
-		Name:       &a.Name,
-		TaxID:      &a.TaxID,
-		Status:     &a.Status,
-		Label:      &a.Label,
+		RecordID:      &a.RecordID,
+		ParentID:      &a.ParentID,
+		ParentPath:    &a.ParentPath,
+		Level:         &a.Level,
+		Name:          &a.Name,
+		TaxID:         &a.TaxID,
+		Status:        &a.Status,
+		Label:         &a.Label,
+		CalculateType: &a.CalculateType,
 	}
 	return item
 }

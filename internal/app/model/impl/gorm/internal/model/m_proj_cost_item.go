@@ -88,6 +88,7 @@ func (a *ProjCostItem) QueryShow(ctx context.Context, params schema.ProjCostItem
 		fmt.Sprintf("%s.principal AS principal", pcit),
 		fmt.Sprintf("%s.proj_income_id AS proj_income_id", pcit),
 	}
+
 	db = db.Select(strings.Join(selectlist, ","))
 	var list entity.ProjCostItemShows
 	if re := db.Find(&list); re.Error != nil {
