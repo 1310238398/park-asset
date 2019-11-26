@@ -289,7 +289,8 @@ class CostAccountList extends PureComponent {
         title: '组织机构/项目',
         dataIndex: 'name',
         width: "20%",
-        ellipsis: true
+        ellipsis: true,
+       
 
         // render: value => {
         //   return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
@@ -299,23 +300,37 @@ class CostAccountList extends PureComponent {
         title: '项目类型',
         dataIndex: 'type',
         width: "10%",
+        align:"center",
+        render: (text, record) => {
+          if (text === 1) {
+            return <div>住宅</div>
+
+          }
+          else if (text === 2) {
+            return <div>商业</div>
+          }
+
+        }
       },
       {
         title: '总建筑面积',
         dataIndex: 'floor_area',
         width: "15%",
+        align:"center",
       },
       { title: '项目收入', dataIndex: 'total_sale', width: "15%" },
       {
         title: '项目收益率',
         dataIndex: 'return_rate',
         width: "15%",
+        align:"center",
       },
       { // 非项目行 该单元格可以为null
         title: '操作',
         dataIndex: 'operation',
         key: 'operation',
         width: '15%',
+        align:"center",
         render: (text, record) => {
           const { editingKey } = this.state;
         

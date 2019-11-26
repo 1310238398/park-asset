@@ -259,35 +259,39 @@ class SalesPlan extends PureComponent {
     if (e) {
       e.preventDefault();
     }
+    console.log("handleSearchFormSubmit");
 
     const { form } = this.props;
     form.validateFields({ force: true }, (err, values) => {
+     
       if (err) {
         return;
-      }
+      } 
+      const { costAccount:{formID}} = this.props;
       const formData = { ...values };
       console.log('form数据  ' + JSON.stringify(formData));
 
-      // this.dispatch({
-      //   type: 'projectManage/fetch',
-      //   search: formData,
-      //   pagination: {},
-      // });
-      // this.clearSelectRows();
+      this.dispatch({
+        type: 'salesPlan/fetch',
+        search: formData,
+        pagination: {},
+        pro_id: formID,
+      });
+      //this.clearSelectRows();
     });
   };
 
   isEditing = record => record.record_id === this.state.editingKey;
 
   save(form, key) {  // key是项目业态id
-   const { salesPlan:{ data} } = this.props;
+   const { salesPlan:{ data:{list, pagination}} } = this.props;
     console.log('要保存数据的key ' + key);
 
     form.validateFields(async (error, row) => {
       if (error) {
         return;
       }
-      const newData = data;
+      const newData = list;
 
       const index = newData.findIndex(item => key === item.record_id);
       if (index > -1) {
@@ -305,7 +309,10 @@ class SalesPlan extends PureComponent {
           this.setState({  editingKey: '' });
           this.dispatch({
             type: 'salesPlan/saveData',
-            payload: newData,
+            payload:{
+              list: [...newData],
+              pagination: pagination
+            } ,
           });
 
         }
@@ -317,15 +324,12 @@ class SalesPlan extends PureComponent {
   }
 
   deletePlan(key) {
-  const { salesPlan:{displayList }} = this.props;
 
-  
   this.dispatch({
     type: 'salesPlan/del',
     payload: key,
   });
 
-  
 
   }
   edit(key) {
@@ -354,15 +358,33 @@ class SalesPlan extends PureComponent {
     });
 
   };
+
+  handleTableChange = pagination => {
+    this.dispatch({
+      type: 'salesPlan/fetch',
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
+    });
+    //this.clearSelectRows();
+  };
   render() {
     const {
       loading,
       form: { getFieldDecorator },
       costAccount: { formType },
-      salesPlan:{ displayList}
+      salesPlan:{ data:{list, pagination}}
     } = this.props;
 
     
+    const paginationProps = {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      showTotal: total => <span>共{total}条</span>,
+      ...pagination,
+    };
+
     const {yearList, quarterList, editingKey, columns, view_columns } = this.state;
     const components = {
       body: {
@@ -472,13 +494,15 @@ class SalesPlan extends PureComponent {
             components={components}
             loading={loading}
             rowKey={record => record.record_id}
-            dataSource={displayList}
+            dataSource={list}
             columns={formType === "E" ? columns2 : (formType === 'V' ? view_columns : null)} //{view_columns}
-            pagination={false}
-            scroll={{ y: 500 }}
+           // pagination={false}
+           pagination={paginationProps}
+           // scroll={{ y: 500 }}
             rowClassName="editable-row"
             rowClassName={() => 'editable-row'}
-            style={{ maxHeight: 500 }}
+            onChange={this.handleTableChange}
+           // style={{ maxHeight: 500 }}
           ></Table>
         </EditableContext.Provider>
 

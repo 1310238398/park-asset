@@ -104,7 +104,7 @@ class ProjectManageList extends PureComponent {
         pageSize: pagination.pageSize,
       },
     });
-    this.clearSelectRows();
+    this.clearSelectRows(); 
   };
 
   handleResetFormClick = () => {
