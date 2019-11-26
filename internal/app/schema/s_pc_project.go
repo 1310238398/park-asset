@@ -172,7 +172,7 @@ func (a PcProjectTrees) ToTree(items PcProjectTrees) PcProjectTrees {
 
 		list = append(list, item)
 	}
-
+	// 把项目作为子树填充
 	for _, item := range a {
 		if pcitem, ok := mp[item.RecordID]; ok {
 			if item.Children == nil {

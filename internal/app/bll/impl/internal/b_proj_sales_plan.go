@@ -43,7 +43,7 @@ func (a *ProjSalesPlan) Query(ctx context.Context, params schema.ProjSalesPlanQu
 	if err != nil {
 		return nil, err
 	}
-	return a.ProjSalesPlanModel.Query(ctx, params, opts...)
+	return result, nil
 }
 
 // Get 查询指定数据
@@ -81,7 +81,9 @@ func (a *ProjSalesPlan) Update(ctx context.Context, recordID string, item schema
 		return nil, errors.ErrNotFound
 	}
 
-	tax, err := a.getTax(ctx, item.TaxID)
+	newItem := oldItem
+
+	tax, err := a.getTax(ctx, "增值税销项税")
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +91,24 @@ func (a *ProjSalesPlan) Update(ctx context.Context, recordID string, item schema
 		a.fillTax(ctx, tax, &item)
 	}
 
-	err = a.ProjSalesPlanModel.Update(ctx, recordID, item)
+	switch {
+	case item.Payback > 0:
+		newItem.Payback = item.Payback
+		fallthrough
+	case item.ContractAmount > 0:
+		newItem.ContractAmount = item.Payback
+		fallthrough
+	case item.Principal != "":
+		newItem.Principal = item.Principal
+		fallthrough
+	case item.SaleArea > 0:
+		newItem.SaleArea = item.SaleArea
+		fallthrough
+	case item.AveragePrice > 0:
+		newItem.AveragePrice = item.AveragePrice
+	}
+
+	err = a.ProjSalesPlanModel.Update(ctx, recordID, *newItem)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +182,6 @@ func (a *ProjSalesPlan) fillBusinName(ctx context.Context, list schema.ProjSales
 	if err != nil {
 		return nil, err
 	}
-
 	list.FillData(projBusinResult.Data.ToMap())
 
 	return list, nil

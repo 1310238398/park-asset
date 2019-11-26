@@ -35,8 +35,6 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 // queryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" 1
-// @Param pageSize query int true "分页大小" 10
 // @Success 200 []schema.ProjCostItemShow "数据列表"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"

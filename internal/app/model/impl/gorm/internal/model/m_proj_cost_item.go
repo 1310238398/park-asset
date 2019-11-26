@@ -34,6 +34,19 @@ func (a *ProjCostItem) getQueryOption(opts ...schema.ProjCostItemQueryOptions) s
 func (a *ProjCostItem) Query(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItemQueryResult, error) {
 	db := entity.GetProjCostItemDB(ctx, a.db)
 
+	if v := params.CostID; v != "" {
+		db = db.Where("cost_id = ?", v)
+	}
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
+	if v := params.ProjIncomeID; v != "" {
+		db = db.Where("proj_income_id = ?", v)
+	}
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN(?)", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

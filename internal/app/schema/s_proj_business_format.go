@@ -39,7 +39,6 @@ func (a ProjBusinessFormats) FillData(list BusinessFormats) {
 	for _, item := range a {
 		for _, businItem := range list {
 			if item.BusinessFormatID == businItem.RecordID {
-				item.Name = businItem.Name
 				item.ISCivilDefense = businItem.ISCivilDefense
 				item.ISUnderground = businItem.ISUnderground
 				break
