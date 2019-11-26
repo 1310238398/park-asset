@@ -23,7 +23,7 @@ export default {
     businessFormat: [], // 项目的业态数据
 
     allBusinessFormat: [], // 所有的业态列表(渲染界面用)
-    deliveryStandard: {}, // 项目的交付标准
+    deliveryStandard: [], // 项目的交付标准
     companyList: [],
     poltList: [],
   },
@@ -72,7 +72,7 @@ export default {
           type: 'saveCurrentIndex',
           payload: payload.currentIndex,
         });
-        let index = yield select(state => state.projectManage.currentIndex);
+        //let index = yield select(state => state.projectManage.currentIndex);
 
         yield put({
           type: 'changeNewFormVisible',
@@ -85,25 +85,6 @@ export default {
         });
       }
 
-      yield [
-        put({
-          type: 'saveFormType',
-          payload: payload.type,
-        }),
-        put({
-          type: 'saveFormTitle',
-          payload: '新建项目',
-        }),
-        put({
-          type: 'saveFormID',
-          payload: '',
-        }),
-
-        put({
-          type: 'saveFormData',
-          payload: {},
-        }),
-      ];
 
       if (payload.type === 'E') {
         yield [
@@ -122,80 +103,171 @@ export default {
           }),
         ];
       }
-    },
-    *fetchForm({ payload }, { call, put, select}) {
-      const response = yield call(projectManageService.getProInfo, payload);
-      if (response && response.asset_type) {
-        response.asset_type = response.asset_type.split(',');
-      }
-      yield [
-        put({
-          type: 'saveFormData',
-          payload: response,
-        }),
-      ];
+      else if (payload.type === 'A') {
 
-      const response_format = yield call(projectManageService.getProFormat, payload);
 
-      if (response_format && response_format.list) {
         yield [
           put({
-            type: 'saveFormatData',
-            payload: response_format.list,
+            type: 'saveFormType',
+            payload: payload.type,
+          }),
+          put({
+            type: 'saveFormTitle',
+            payload: '新建项目',
+          }),
+          put({
+            type: 'saveFormID',
+            payload: '',
+          }),
+
+          put({
+            type: 'saveFormData',
+            payload: {},
+          }),
+          put({
+            type: 'fetchForm',
+            payload: { record_id: "" },
           }),
         ];
       }
+    },
+    *fetchForm({ payload }, { call, put, select }) {
 
-      // 查询所有业态
-      const all_format = yield call(formatManageService.queryListNotPage, {});
-      const responseAll = all_format.list||[];
-    
+      console.log("fetchForm  ");
+
+
+
+      if (payload.record_id === "") {
+        console.log("这是新建");
+        const all_format = yield call(formatManageService.queryListNotPage, {});
+        const responseAll = all_format.list || [];
+
         yield [
           put({
             type: 'saveAllFormatData',
-            payload:responseAll,
+            payload: responseAll,
           }),
-         
+
         ];
-      
+        let item = {
+          content: "请输入交付标准内容",
+          parent_id: "",
+          parent_path: "",
+          part: "请输入交付部位",
+          record_id: "",
 
-      // 修改allFormatData
-      const allBusinessFormat = yield select(state => state.projectManage.allBusinessFormat);
-      const businessFormat = yield select(state => state.projectManage.businessFormat);
+        }
+        yield [
+          put({
+            type: 'saveDeliveryStandard',
+            payload: [item],
+          }),
+        ];
 
-      for (let i = 0; i < allBusinessFormat.length; i++) {
-        console.log('第一层');
-        for (let j = 0; j < businessFormat.length; j++) {
-          console.log('第二层');
-          if (allBusinessFormat[i].record_id === businessFormat[j].business_format_id) {
-            allBusinessFormat[i].checked = true;
-            allBusinessFormat[i].floor_area = businessFormat[j].floor_area;
-            console.log('选择');
-            break;
+        return;
+
+      }
+      else {
+        console.log("这是编辑");
+        const response = yield call(projectManageService.getProInfo, payload);
+        // if (response && response.asset_type) {
+        //   response.asset_type = response.asset_type.split(',');
+        // }
+        yield [
+          put({
+            type: 'saveFormData',
+            payload: response,
+          }),
+        ];
+
+        const response_format = yield call(projectManageService.getProFormat, payload);
+
+        if (response_format && response_format.list) {
+          yield [
+            put({
+              type: 'saveFormatData',
+              payload: response_format.list,
+            }),
+          ];
+        }
+
+        // 查询所有业态
+        const all_format = yield call(formatManageService.queryListNotPage, {});
+        const responseAll = all_format.list || [];
+
+        yield [
+          put({
+            type: 'saveAllFormatData',
+            payload: responseAll,
+          }),
+
+        ];
+
+
+        // 修改allFormatData
+        const allBusinessFormat = yield select(state => state.projectManage.allBusinessFormat);
+        const businessFormat = yield select(state => state.projectManage.businessFormat);
+
+        for (let i = 0; i < allBusinessFormat.length; i++) {
+        
+          for (let j = 0; j < businessFormat.length; j++) {
+           
+            if (allBusinessFormat[i].record_id === businessFormat[j].business_format_id) {
+              allBusinessFormat[i].checked = true;
+              allBusinessFormat[i].floor_area = businessFormat[j].floor_area;
+              
+              break;
+            }
+
+            if (j === businessFormat.length - 1) {
+              allBusinessFormat[i].checked = false;
+             
+            }
           }
+        }
 
-          if (j === businessFormat.length - 1) {
-            allBusinessFormat[i].checked = false;
-            console.log('未选择');
+        yield [
+          put({
+            type: 'saveAllFormatData',
+            payload: [...allBusinessFormat],
+          }),
+        ];
+
+       
+
+
+        // 交付标准
+
+        let response_standard = yield call(projectManageService.queryProStandard, payload.record_id);
+
+        if (response_standard && response_standard.length === 0) {
+
+          let item = {
+            content: "请输入交付标准内容",
+            parent_id: "",
+            parent_path: "",
+            part: "请输入交付部位",
+            record_id: "",
+
           }
+          yield [
+            put({
+              type: 'saveDeliveryStandard',
+              payload: [item],
+            }),
+          ];
+
+        }
+        else if (response_standard && response_standard.length > 0) {
+          yield [
+            put({
+              type: 'saveDeliveryStandard',
+              payload: response_standard,
+            }),
+          ];
         }
       }
 
-      yield [
-        put({
-          type: 'saveAllFormatData',
-          payload: [...allBusinessFormat],
-        }),
-      ];
-
-      console.log("修改完后 ");
-      console.log(allBusinessFormat);
-
-      
-
-    
-
-      // 交付标准
     },
 
     *submit({ payload }, { call, put, select }) {
@@ -297,9 +369,10 @@ export default {
         });
       }
     },
-  
 
-   
+
+
+
   },
   reducers: {
     saveData(state, { payload }) {
@@ -327,6 +400,7 @@ export default {
       return { ...state, formID: payload };
     },
     saveCurrentIndex(state, { payload }) {
+    
       return { ...state, currentIndex: payload };
     },
     saveFormatData(state, { payload }) {
@@ -338,6 +412,10 @@ export default {
     saveFormData(state, { payload }) {
       return { ...state, formData: payload };
     },
+    saveDeliveryStandard(state, { payload }) {
+      return { ...state, deliveryStandard: payload };
+    },
+
     changeSubmitting(state, { payload }) {
       return { ...state, submitting: payload };
     },

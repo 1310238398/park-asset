@@ -115,84 +115,84 @@ class EditableCell extends React.Component {
 @Form.create()
 class CostList extends PureComponent {
   state = {
-    // tableData: [
-    //   {
-    //     record_id: '001',
-    //     name: '成本科目1',
-    //     cost_id: "001", // 成本项ID
-    //     cost_parent_id: "", //成本项父级ID
-    //     cost_parent_path: "",//成本项父级路经 具体到父级ID
+    tableData: [
+      {
+        record_id: '001',
+        name: '成本科目1',
+        cost_id: "001", // 成本项ID
+        cost_parent_id: "", //成本项父级ID
+        cost_parent_path: "",//成本项父级路经 具体到父级ID
 
-    //     calculate_type: 0,// 计算方式 1
-    //     label: 1,//标签(1:成本科目 2:测算科目)科目类别
-    //     price: 0, // 成本项价格
-    //     project_id: "abc",// 成本项所属项目的ID
-    //     tax_price: 0, // 缴税税额
-    //     tax_rate: 0,//税率
+        calculate_type: 0,// 计算方式 1
+        label: 1,//标签(1:成本科目 2:测算科目)科目类别
+        price: 0, // 成本项价格
+        project_id: "abc",// 成本项所属项目的ID
+        tax_price: 0, // 缴税税额
+        tax_rate: 0,//税率
 
 
-    //     children: [
-    //       {
-    //         record_id: '001-001',
-    //         name: '成本科目101',
-    //         cost_id: "001-001", // 成本项ID
-    //         cost_parent_id: "001", //成本项父级ID
-    //         cost_parent_path: "001",//成本项父级路经 具体到父级ID
+        children: [
+          {
+            record_id: '001-001',
+            name: '成本科目101',
+            cost_id: "001-001", // 成本项ID
+            cost_parent_id: "001", //成本项父级ID
+            cost_parent_path: "001",//成本项父级路经 具体到父级ID
 
-    //         calculate_type: 0,// 计算方式 1
-    //         label: 1,//标签(1:成本科目 2:测算科目)科目类别
-    //         price: 0, // 成本项价格
-    //         project_id: "abc",// 成本项所属项目的ID
-    //         tax_price: 0, // 缴税税额
-    //         tax_rate: 0,//税率
-    //         children: [
-    //           {
-    //             record_id: '001-001-001',
-    //             name: '成本科目10101',
-    //             cost_id: "001-001-001", // 成本项ID
-    //             cost_parent_id: "001-001", //成本项父级ID
-    //             cost_parent_path: "001/001-001",//成本项父级路经 具体到父级ID
+            calculate_type: 0,// 计算方式 1
+            label: 1,//标签(1:成本科目 2:测算科目)科目类别
+            price: 0, // 成本项价格
+            project_id: "abc",// 成本项所属项目的ID
+            tax_price: 0, // 缴税税额
+            tax_rate: 0,//税率
+            children: [
+              {
+                record_id: '001-001-001',
+                name: '成本科目10101',
+                cost_id: "001-001-001", // 成本项ID
+                cost_parent_id: "001-001", //成本项父级ID
+                cost_parent_path: "001/001-001",//成本项父级路经 具体到父级ID
+                editable: true,
+                calculate_type: 0,// 计算方式 1
+                label: 1,//标签(1:成本科目 2:测算科目)科目类别
+                price: 0, // 成本项价格
+                project_id: "abc",// 成本项所属项目的ID
+                tax_price: 0, // 缴税税额
+                tax_rate: 0,//税率
+                unit01: 10,
+                unit02: 11,
+                unit03: 12,
 
-    //             calculate_type: 0,// 计算方式 1
-    //             label: 1,//标签(1:成本科目 2:测算科目)科目类别
-    //             price: 0, // 成本项价格
-    //             project_id: "abc",// 成本项所属项目的ID
-    //             tax_price: 0, // 缴税税额
-    //             tax_rate: 0,//税率
-    //             unit01: 10,
-    //             unit02: 11,
-    //             unit03: 12,
+                unit04: 13,
 
-    //             unit04: 13,
+                rate: 0.09,
+                total: 100.0,
+              },
+            ],
+          },
+          {
+            record_id: '001-002',
+            name: '成本科目102',
+            cost_id: "001-002", // 成本项ID
+            cost_parent_id: "001", //成本项父级ID
+            cost_parent_path: "001",//成本项父级路经 具体到父级ID
 
-    //             rate: 0.09,
-    //             total: 100.0,
-    //           },
-    //         ],
-    //       },
-    //       {
-    //         record_id: '001-002',
-    //         name: '成本科目102',
-    //         cost_id: "001-002", // 成本项ID
-    //         cost_parent_id: "001", //成本项父级ID
-    //         cost_parent_path: "001",//成本项父级路经 具体到父级ID
-
-    //         calculate_type: 0,// 计算方式 1
-    //         label: 2,//标签(1:成本科目 2:测算科目)科目类别
-    //         price: 0, // 成本项价格
-    //         project_id: "abc",// 成本项所属项目的ID
-    //         tax_price: 0, // 缴税税额
-    //         tax_rate: 0,//税率
-    //         unit01: 10,
-    //         unit02: 11,
-    //         unit03: 12,
-    //         unit04: 13,
-    //         rate: 0.09,
-    //         total: 100.0,
-    //       },
-    //     ],
-    //   },
-    // ],
+            calculate_type: 0,// 计算方式 1
+            label: 2,//标签(1:成本科目 2:测算科目)科目类别
+            price: 0, // 成本项价格
+            project_id: "abc",// 成本项所属项目的ID
+            tax_price: 0, // 缴税税额
+            tax_rate: 0,//税率
+            unit01: 10,
+            unit02: 11,
+            unit03: 12,
+            unit04: 13,
+            rate: 0.09,
+            total: 100.0,
+          },
+        ],
+      },
+    ],
 
   
    
@@ -243,6 +243,7 @@ class CostList extends PureComponent {
 
   save(form, key) {
     const { costList:{ data } }  = this.props;
+    //const { tableData } = this.state;
     // key包含cost_id的路径
     form.validateFields(async (error, row) => {
 
@@ -251,7 +252,7 @@ class CostList extends PureComponent {
       if (error) {
         return;
       }
-      const newData = [...data];
+      const newData =[...data];
 
       let keys = [];
       keys = key.split('/');
@@ -268,31 +269,29 @@ class CostList extends PureComponent {
         console.log('keys  1');
         let index = newData1.findIndex(item => key === item.cost_id);
         if (index > -1) {
-          const item = newData1[index];
-          newData1.splice(index, 1, {
+          const item = newData[index];
+          row.record_id = item.record_id;
+          newData.splice(index, 1, {
             ...item,
             ...row,
           });
 
           let response ;
-          row.record_id = item.record_id;
+          
           response = await updateCostItem(row);
           if (response.record_id && response.record_id !== "") {
             message.success('更新成功');
             this.setState({  editingKey: '' });
             this.dispatch({
               type: 'costList/saveData',
-              payload: newData1,
+              payload: newData,
             });
           }
 
           
           
         } 
-        // else {
-        //   newData.push(row);
-        //   this.setState({  editingKey: '' });
-        // }
+       
 
         return;
       }
@@ -311,6 +310,7 @@ class CostList extends PureComponent {
         if (index_ > -1 && i === keys.length - 1) {
           console.log('更新数据');
           const item = newData1[index_];
+          row.record_id = item.record_id;
           console.log('被更新的数据 ' + JSON.stringify(item));
           console.log('row 要更新的数据 ' + JSON.stringify(row));
           newData1.splice(index_, 1, {
@@ -318,17 +318,17 @@ class CostList extends PureComponent {
             ...row,
           });
           
-
+        
           let response ;
-          row.record_id = item.record_id;
+         
           response = await updateCostItem(row);
           if (response.record_id && response.record_id !== "") {
             message.success('更新成功');
             this.setState({  editingKey: '' });
-            this.dispatch({
-              type: 'costList/saveData',
-              payload: newData1,
-            });
+            // this.dispatch({
+            //   type: 'costList/saveData',
+            //   payload: newData1,
+            // });
           }
 
          
@@ -388,7 +388,7 @@ class CostList extends PureComponent {
       costList:{formatTotalPriceData,  formatUnitPriceData, data}
     } = this.props;
 
-    const {  editingKey } = this.state;
+    const {  editingKey, tableData } = this.state;
 
     const components = {
       body: {
@@ -448,8 +448,20 @@ class CostList extends PureComponent {
         width: 100,
         //  ellipsis: true,
         align: 'center',
-        editable: true,
+      //  editable: true,
         fixed: 'right',
+        render : (text, record) => {
+          //1.单价算总价,2.总价算单价
+          if (record.calculate_type ===  1) {
+
+          editable: true;
+          }
+          else if (record.calculate_type ===  2) {
+
+           
+
+          }
+        }
        
       },
       {
@@ -491,7 +503,7 @@ class CostList extends PureComponent {
           const { editingKey } = this.state;
           const editable = this.isEditing(record);
 
-          return record.children === undefined ? (
+          return record.editable ? (
             editable ? (
               <div style={{width: "100%", textAlign: "center"}}>
                 <EditableContext.Consumer>
