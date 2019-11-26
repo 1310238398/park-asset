@@ -58,7 +58,7 @@ func (a *ProjDeliveryStandard) UpdateList(ctx context.Context, projectID string,
 				pds.RecordID = item.RecordID
 			}
 			//处理下级
-			for _, v := range pds.Children {
+			for _, v := range *pds.Children {
 				v.ParentID = pds.RecordID
 				if err := update(v); err != nil {
 					return err
@@ -134,10 +134,16 @@ func (a *ProjDeliveryStandard) toTree(data schema.ProjDeliveryStandards) schema.
 			result = append(result, v)
 		} else {
 			for _, k := range data {
-				if k.RecordID == v.ParentID {
-					k.Children = append(k.Children, k)
+				if v.ParentID == k.RecordID {
+					if k.Children == nil {
+						var children []*schema.ProjDeliveryStandard
+						children = append(children, v)
+						k.Children = &children
+						continue
+					}
+					*k.Children = append(*k.Children, v)
 				}
-				break
+				continue
 			}
 		}
 	}
@@ -172,10 +178,21 @@ func (a *ProjDeliveryStandard) Update(ctx context.Context, recordID string, item
 		return nil, errors.ErrNotFound
 	}
 
-	err = a.ProjDeliveryStandardModel.Update(ctx, recordID, item)
+	newItem := oldItem
+
+	switch {
+	case item.Content != "":
+		newItem.Content = item.Content
+		fallthrough
+	case item.Part != "":
+		newItem.Part = item.Part
+	}
+
+	err = a.ProjDeliveryStandardModel.Update(ctx, recordID, *newItem)
 	if err != nil {
 		return nil, err
 	}
+
 	return a.getUpdate(ctx, recordID)
 }
 

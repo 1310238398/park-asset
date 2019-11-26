@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjDeliveryStandard 创建成本项目交付标准存储实例
@@ -30,6 +31,9 @@ func (a *ProjDeliveryStandard) getQueryOption(opts ...schema.ProjDeliveryStandar
 // Query 查询数据
 func (a *ProjDeliveryStandard) Query(ctx context.Context, params schema.ProjDeliveryStandardQueryParam, opts ...schema.ProjDeliveryStandardQueryOptions) (*schema.ProjDeliveryStandardQueryResult, error) {
 	db := entity.GetProjDeliveryStandardDB(ctx, a.db)
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
 
 	db = db.Order("id DESC")
 

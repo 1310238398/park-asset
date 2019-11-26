@@ -425,35 +425,54 @@ func (a *ProjExpenditure) update(ctx context.Context, recordID string, item sche
 			return errors.ErrNotFound
 		}
 
+		newItem := oldItem
+		switch {
+		case !item.StartTime.IsZero():
+			newItem.StartTime = item.StartTime
+			fallthrough
+		case !item.EndTime.IsZero():
+			newItem.EndTime = item.EndTime
+			fallthrough
+		case len(item.ProjCostItems) > 0:
+			newItem.ProjCostItems = item.ProjCostItems
+			fallthrough
+		case item.ExpendRate > 0:
+			newItem.ExpendRate = item.ExpendRate
+			fallthrough
+		case item.ExpenditureTimeType > 0:
+			newItem.ExpenditureTimeType = item.ExpenditureTimeType
+
+		}
+
 		// 填充本次支出金额
 		err = a.fillProjCostsAmount(ctx, item)
 		if err != nil {
 			return err
 		}
 
-		err = a.ProjExpendCostModel.DeleteByProjExpendID(ctx, item.RecordID)
+		err = a.ProjExpendCostModel.DeleteByProjExpendID(ctx, recordID)
 		if err != nil {
 			return err
 		}
 
-		err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, item.RecordID)
+		err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, recordID)
 		if err != nil {
 			return err
 		}
 
 		// 创建对应成本项
-		err = a.createProjExpenCost(ctx, item)
+		err = a.createProjExpenCost(ctx, *newItem)
 		if err != nil {
 			return err
 		}
 
 		// 创建对应支出时间表
-		err = a.createExpendTime(ctx, item)
+		err = a.createExpendTime(ctx, *newItem)
 		if err != nil {
 			return err
 		}
 
-		err = a.ProjExpenditureModel.Update(ctx, recordID, item)
+		err = a.ProjExpenditureModel.Update(ctx, recordID, *newItem)
 		if err != nil {
 			return err
 		}
