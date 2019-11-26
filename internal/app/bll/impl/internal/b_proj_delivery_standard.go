@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"gxt-park-assets/internal/app/bll"
 
 	"gxt-park-assets/internal/app/errors"
@@ -108,22 +107,24 @@ func (a *ProjDeliveryStandard) getUpdate(ctx context.Context, recordID string) (
 	return a.Get(ctx, recordID)
 }
 
-func (a *ProjDeliveryStandard) getPath(ctx context.Context, recordID string) (string, error) {
-	result := recordID
-	for {
-		item, err := a.Get(ctx, recordID)
-		if err != nil {
-			return "", err
-		}
-		if item == nil {
-			return result, nil
-		}
-		if item.ParentID == "" || item.ParentID == recordID {
-			return result, nil
-		}
-		recordID = item.ParentID
-		result = fmt.Sprintf("%s/%s", recordID, result)
+func (a *ProjDeliveryStandard) getPath(ctx context.Context, parentID string) (string, error) {
+	if parentID == "" {
+		return "", nil
 	}
+
+	pitem, err := a.ProjDeliveryStandardModel.Get(ctx, parentID)
+	if err != nil {
+		return "", err
+	} else if pitem == nil {
+		return "", errors.ErrInvalidParent
+	}
+
+	var parentPath string
+	if v := pitem.ParentPath; v != "" {
+		parentPath = v + "/"
+	}
+	parentPath = parentPath + pitem.RecordID
+	return parentPath, nil
 }
 
 func (a *ProjDeliveryStandard) toTree(data schema.ProjDeliveryStandards) schema.ProjDeliveryStandards {
@@ -145,12 +146,16 @@ func (a *ProjDeliveryStandard) toTree(data schema.ProjDeliveryStandards) schema.
 
 // Create 创建数据
 func (a *ProjDeliveryStandard) Create(ctx context.Context, item schema.ProjDeliveryStandard) (*schema.ProjDeliveryStandard, error) {
-	item.RecordID = util.MustUUID()
-	err := a.ProjDeliveryStandardModel.Create(ctx, item)
+	parentPath, err := a.getPath(ctx, item.ParentID)
 	if err != nil {
+
 		return nil, err
 	}
-	item.ParentPath, err = a.getPath(ctx, item.ParentID)
+
+	item.ParentPath = parentPath
+	item.RecordID = util.MustUUID()
+
+	err = a.ProjDeliveryStandardModel.Create(ctx, item)
 	if err != nil {
 		return nil, err
 	}
