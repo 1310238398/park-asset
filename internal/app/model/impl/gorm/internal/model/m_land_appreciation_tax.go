@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewLandAppreciationTax 创建土地增值税存储实例
@@ -50,6 +51,20 @@ func (a *LandAppreciationTax) Query(ctx context.Context, params schema.LandAppre
 // Get 查询指定数据
 func (a *LandAppreciationTax) Get(ctx context.Context, recordID string, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTax, error) {
 	db := entity.GetLandAppreciationTaxDB(ctx, a.db).Where("record_id=?", recordID)
+	var item entity.LandAppreciationTax
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaLandAppreciationTax(), nil
+}
+
+// GetByProjectID 查询指定数据
+func (a *LandAppreciationTax) GetByProjectID(ctx context.Context, projectID string, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTax, error) {
+	db := entity.GetLandAppreciationTaxDB(ctx, a.db).Where("project_id=?", projectID)
 	var item entity.LandAppreciationTax
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {

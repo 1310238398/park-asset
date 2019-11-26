@@ -18,12 +18,16 @@ type SchemaLandAppreciationTax schema.LandAppreciationTax
 // ToLandAppreciationTax 转换为土地增值税实体
 func (a SchemaLandAppreciationTax) ToLandAppreciationTax() *LandAppreciationTax {
 	item := &LandAppreciationTax{
-		// RecordID:        &a.RecordID,
-		// SaledArea:       &a.SaledArea,
-		// ValueAdded:      &a.ValueAdded,
-		// ValueAddedRate:  &a.ValueAddedRate,
-		// Tax:             &a.Tax,
-		// SaledWithoutTax: &a.SaledWithoutTax,
+		RecordID:       &a.RecordID,
+		ProjectID:      &a.ProjectID,
+		Income:         &a.Income,
+		Cost:           &a.Cost,
+		AdditionalTax:  &a.AdditionalTax,
+		FinanceAddRate: &a.FinanceAddRate,
+		ManageAddRate:  &a.ManageAddRate,
+		CostAddRate:    &a.CostAddRate,
+		Rate:           &a.Rate,
+		Tax:            &a.Tax,
 	}
 	return item
 }
@@ -55,12 +59,16 @@ func (a LandAppreciationTax) TableName() string {
 // ToSchemaLandAppreciationTax 转换为土地增值税对象
 func (a LandAppreciationTax) ToSchemaLandAppreciationTax() *schema.LandAppreciationTax {
 	item := &schema.LandAppreciationTax{
-		// RecordID:        *a.RecordID,
-		// SaledArea:       *a.SaledArea,
-		// ValueAdded:      *a.ValueAdded,
-		// ValueAddedRate:  *a.ValueAddedRate,
-		// Tax:             *a.Tax,
-		// SaledWithoutTax: *a.SaledWithoutTax,
+		RecordID:       *a.RecordID,
+		ProjectID:      *a.ProjectID,
+		Income:         *a.Income,
+		Cost:           *a.Cost,
+		AdditionalTax:  *a.AdditionalTax,
+		FinanceAddRate: *a.FinanceAddRate,
+		ManageAddRate:  *a.ManageAddRate,
+		CostAddRate:    *a.CostAddRate,
+		Rate:           *a.Rate,
+		Tax:            *a.Tax,
 	}
 	return item
 }

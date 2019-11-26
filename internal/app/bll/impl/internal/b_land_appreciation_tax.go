@@ -18,7 +18,30 @@ func NewLandAppreciationTax(mLandAppreciationTax model.ILandAppreciationTax) *La
 
 // LandAppreciationTax 土地增值税业务逻辑
 type LandAppreciationTax struct {
+	Trans                    model.ITrans
 	LandAppreciationTaxModel model.ILandAppreciationTax
+	ProjSalesPlanModel       model.IProjSalesPlan
+	ProjCostItemModel        model.IProjCostItem
+}
+
+// 更新项目的土地增值税
+func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error {
+	//获取土地增值税
+	item, err := a.LandAppreciationTaxModel.GetByProjectID(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	if item == nil {
+		return nil
+	}
+	//获取销售收入
+	//获取扣除项金额
+	//获取附加税
+	//计算增值额及增值率
+	//确认适用税率
+	//计算土地增值税
+
+	return nil
 }
 
 // Query 查询数据
