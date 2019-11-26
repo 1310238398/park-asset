@@ -322,6 +322,8 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			return errors.ErrNotFound
 		}
 
+		item.ProjectID = oldItem.ProjectID
+		item.CostID = oldItem.CostID
 		//验证成本项
 		costItem, err := a.CostItemModel.Get(ctx, oldItem.CostID)
 		if err != nil {
@@ -395,7 +397,7 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 	if err != nil {
 		return nil, err
 	}
-	return a.getUpdate(ctx, item.RecordID)
+	return a.getUpdate(ctx, recordID)
 
 }
 
@@ -464,7 +466,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 			result = append(result, v)
 		} else {
 			for _, k := range shows {
-				if k.CostID == v.CostID {
+				if k.CostID == v.CostParentID {
 					k.Children = append(k.Children, v)
 				}
 			}

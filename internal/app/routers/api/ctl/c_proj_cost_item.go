@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -35,8 +36,8 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 // queryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" 1
-// @Param pageSize query int true "分页大小" 10
+// @Param projectID query string true "项目ID"
+// @Param show query string true "展示方式" map
 // @Success 200 []schema.ProjCostItemShow "数据列表"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -44,7 +45,7 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 // @Router GET /api/v1/proj-cost-items?q=tree
 func (a *ProjCostItem) queryTree(c *gin.Context) {
 	var params schema.ProjCostItemQueryParam
-	params.ProjectID = c.Query("project_id")
+	params.ProjectID = c.Query("projectID")
 
 	err := a.ProjCostItemBll.Init(ginplus.NewContext(c), params.ProjectID)
 	if err != nil {
@@ -126,8 +127,12 @@ func (a *ProjCostItem) Update(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-
-	nitem, err := a.ProjCostItemBll.Update(ginplus.NewContext(c), c.Param("id"), item)
+	recordID := c.Param("id")
+	if recordID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	nitem, err := a.ProjCostItemBll.Update(ginplus.NewContext(c), recordID, item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
