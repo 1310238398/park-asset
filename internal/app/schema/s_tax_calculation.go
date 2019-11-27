@@ -15,6 +15,7 @@ type TaxCalculation struct {
 type TaxCalculationQueryParam struct {
 	Category string // 类别
 	Name     string // 税目名称
+	LikeName string // 税目名称
 	Type     int    // 税率类型(1:含税计算 2:不含税计算)
 }
 

@@ -12,11 +12,14 @@ import (
 // NewOrganization 创建组织机构管理
 func NewOrganization(mOrganization model.IOrganization,
 	mTrans model.ITrans,
-	mUser model.IUser) *Organization {
+	mUser model.IUser,
+	mPcProject model.IPcProject,
+) *Organization {
 	return &Organization{
 		OrganizationModel: mOrganization,
 		TransModel:        mTrans,
 		UserModel:         mUser,
+		PcProjectModel:    mPcProject,
 	}
 }
 
@@ -25,6 +28,7 @@ type Organization struct {
 	OrganizationModel model.IOrganization
 	UserModel         model.IUser
 	TransModel        model.ITrans
+	PcProjectModel    model.IPcProject
 }
 
 // QueryCompany 查询用户的二级子公司
@@ -59,7 +63,11 @@ func (a *Organization) QueryCompany(ctx context.Context, userID string) (*schema
 
 // Query 查询数据
 func (a *Organization) Query(ctx context.Context, params schema.OrganizationQueryParam, opts ...schema.OrganizationQueryOptions) (*schema.OrganizationQueryResult, error) {
-	return a.OrganizationModel.Query(ctx, params, opts...)
+	result, err := a.OrganizationModel.Query(ctx, params, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 // Get 查询指定数据

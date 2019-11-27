@@ -60,7 +60,6 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 		if len(result.Data) > 0 {
 			return nil
 		}
-		return nil
 
 		// 获取项目业态面积
 		pbfqp := schema.ProjBusinessFormatQueryParam{}
@@ -97,7 +96,7 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 				return 0, 0, nil
 			}
 
-			if ci.Children != nil || len(ci.Children) == 0 { //没有下级
+			if ci.Children == nil || len(ci.Children) == 0 { //没有下级
 				item := schema.ProjCostItem{}
 				item.CostID = ci.RecordID
 				item.ProjectID = projectID
@@ -130,13 +129,12 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 				}
 
 				//保存成本
-				_, err = a.Create(ctx, item)
+				_, err = a.create(ctx, item)
 				if err != nil {
 					return 0, 0, err
 				}
 				return item.Price, item.TaxPrice, nil
 			} else { //存在下级
-
 				item := schema.ProjCostItem{}
 				item.CostID = ci.RecordID
 				item.ProjectID = projectID
@@ -150,7 +148,7 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 					item.TaxPrice += tax
 				}
 				//保存成本
-				_, err = a.Create(ctx, item)
+				_, err = a.create(ctx, item)
 				if err != nil {
 					return 0, 0, err
 				}
@@ -196,12 +194,11 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 			result = append(result, v)
 		} else {
 			for _, k := range shows {
-				if k.CostID == v.CostID {
+				if k.CostID == v.CostParentID {
 					k.Children = append(k.Children, v)
 				}
 			}
 		}
-
 	}
 	var check func(t *schema.ProjCostItemShow) (bool, error)
 
@@ -264,29 +261,41 @@ func (a *ProjCostItem) getUpdate(ctx context.Context, recordID string) (*schema.
 	return a.Get(ctx, recordID)
 }
 
+func (a *ProjCostItem) create(ctx context.Context, item schema.ProjCostItem) (string, error) {
+	item.RecordID = util.MustUUID()
+	//验证成本项
+	costItem, err := a.CostItemModel.Get(ctx, item.CostID)
+	if err != nil {
+		return "", err
+	} else if costItem == nil {
+		//直接删除
+		return "", errors.New("未找到模板")
+	}
+
+	if err := a.ProjCostItemModel.Create(ctx, item); err != nil {
+		return item.RecordID, err
+	}
+
+	if costItem.CalculateType == 1 {
+		for _, v := range item.BusinessList {
+			v.ProjCostID = item.RecordID
+			err := a.ProjCostBusinessModel.Create(ctx, *v)
+			if err != nil {
+				return "", err
+			}
+		}
+	}
+
+	return item.RecordID, nil
+}
+
 // Create 创建数据
 func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*schema.ProjCostItem, error) {
-	item.RecordID = util.MustUUID()
+	var recordID string
 	err := ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		if err := a.ProjCostItemModel.Create(ctx, item); err != nil {
+		var err error
+		if recordID, err = a.create(ctx, item); err != nil {
 			return err
-		}
-		//验证成本项
-		costItem, err := a.CostItemModel.Get(ctx, item.CostID)
-		if err != nil {
-			return err
-		} else if costItem == nil {
-			//直接删除
-			return errors.New("未找到模板")
-		}
-
-		if costItem.CalculateType == 1 {
-			for _, v := range item.BusinessList {
-				err := a.ProjCostBusinessModel.Create(ctx, *v)
-				if err != nil {
-					return err
-				}
-			}
 		}
 
 		if err := a.renew(ctx, item.ProjectID); err != nil {
@@ -299,7 +308,7 @@ func (a *ProjCostItem) Create(ctx context.Context, item schema.ProjCostItem) (*s
 		return nil, err
 	}
 
-	return a.getUpdate(ctx, item.RecordID)
+	return a.getUpdate(ctx, recordID)
 }
 
 // Update 更新数据
@@ -312,6 +321,8 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			return errors.ErrNotFound
 		}
 
+		item.ProjectID = oldItem.ProjectID
+		item.CostID = oldItem.CostID
 		//验证成本项
 		costItem, err := a.CostItemModel.Get(ctx, oldItem.CostID)
 		if err != nil {
@@ -385,7 +396,7 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 	if err != nil {
 		return nil, err
 	}
-	return a.getUpdate(ctx, item.RecordID)
+	return a.getUpdate(ctx, recordID)
 
 }
 
@@ -454,7 +465,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 			result = append(result, v)
 		} else {
 			for _, k := range shows {
-				if k.CostID == v.CostID {
+				if k.CostID == v.CostParentID {
 					k.Children = append(k.Children, v)
 				}
 			}
@@ -495,7 +506,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 			}
 			if i {
 				price += pr
-				tax += tax
+				tax += ta
 				hasc = true
 			}
 		}
@@ -509,9 +520,9 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 				if err != nil {
 					return b, t.Price, t.TaxPrice, err
 				}
-				oldm := map[string]int{}
+				oldm := map[string]bool{}
 				for _, v := range pcbqr.Data {
-					oldm[v.RecordID] = 0
+					oldm[v.RecordID] = true
 				}
 				for _, v := range pbfqr.Data { //整理成本项下各业态信息
 					var b = true
@@ -519,7 +530,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						if w.ProjBusinessID == v.RecordID {
 							price += w.UnitPrice * v.FloorArea
 							b = false
-							oldm[w.RecordID] = 1
+							oldm[w.RecordID] = false
 							break
 						}
 					}
@@ -528,7 +539,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 					}
 					//删除旧业态信息
 					for k, v := range oldm {
-						if v == 0 {
+						if v {
 							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
 								return b, t.Price, t.TaxPrice, err
 							}
@@ -546,9 +557,9 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 				if err != nil {
 					return b, t.Price, t.TaxPrice, err
 				}
-				oldm := map[string]int{}
+				oldm := map[string]bool{}
 				for _, v := range pcbqr.Data {
-					oldm[v.RecordID] = 0
+					oldm[v.RecordID] = true
 				}
 				for _, v := range pbfqr.Data { //整理成本项下各业态信息
 					var b = true
@@ -561,7 +572,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 								}
 							}
 							b = false
-							oldm[w.RecordID] = 1
+							oldm[w.RecordID] = false
 							break
 						}
 					}
@@ -576,7 +587,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 					}
 					//删除旧业态信息
 					for k, v := range oldm {
-						if v == 0 {
+						if v {
 							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
 								return b, t.Price, t.TaxPrice, err
 							}

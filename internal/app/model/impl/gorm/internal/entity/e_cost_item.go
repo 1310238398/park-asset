@@ -18,14 +18,16 @@ type SchemaCostItem schema.CostItem
 // ToCostItem 转换为成本项实体
 func (a SchemaCostItem) ToCostItem() *CostItem {
 	item := &CostItem{
-		RecordID:   &a.RecordID,
-		ParentID:   &a.ParentID,
-		ParentPath: &a.ParentPath,
-		Level:      &a.Level,
-		Name:       &a.Name,
-		TaxID:      &a.TaxID,
-		Status:     &a.Status,
-		Label:      &a.Label,
+		RecordID:      &a.RecordID,
+		ParentID:      &a.ParentID,
+		ParentPath:    &a.ParentPath,
+		Level:         &a.Level,
+		Name:          &a.Name,
+		TaxID:         &a.TaxID,
+		Status:        &a.Status,
+		Label:         &a.Label,
+		CalculateType: &a.CalculateType,
+		InLandTax:     &a.InLandTax,
 	}
 	return item
 }
@@ -41,8 +43,8 @@ type CostItem struct {
 	TaxID         *string `gorm:"column:tax_id;size:36;index;"`       // 税目ID
 	Status        *int    `gorm:"column:status;index;"`               // 状态(1:启用2:停用)
 	Label         *int    `gorm:"column:label;index;"`                // 标签(1:成本科目 2:测算科目)
-	CalculateType *int    `gorm:"column:calculate_type"`              //计算方式(1.单价算总价,2.总价算单价)
-	InLandTax     *int    `gorm:"column:in_land_tax"`                 //是否计入土地增值税(1.计入,2.不计入)
+	CalculateType *int    `gorm:"column:calculate_type;"`             //计算方式(1.单价算总价,2.总价算单价)
+	InLandTax     *int    `gorm:"column:in_land_tax;"`                //是否计入土地增值税(1.计入,2.不计入)
 }
 
 func (a CostItem) String() string {

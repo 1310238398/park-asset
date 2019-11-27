@@ -32,6 +32,25 @@ func (a *ProjSalesHis) getQueryOption(opts ...schema.ProjSalesHisQueryOptions) s
 func (a *ProjSalesHis) Query(ctx context.Context, params schema.ProjSalesHisQueryParam, opts ...schema.ProjSalesHisQueryOptions) (*schema.ProjSalesHisQueryResult, error) {
 	db := entity.GetProjSalesHisDB(ctx, a.db)
 
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
+	if v := params.Year; v != 0 {
+		db = db.Where("year = ?", v)
+	}
+
+	if v := params.ProjBusinessID; v != "" {
+		db = db.Where("proj_business_id = ?", v)
+	}
+
+	if v := params.ProjIncomeID; v != "" {
+		db = db.Where("proj_income_id = ?", v)
+	}
+
+	if v := params.Quarter; v != 0 {
+		db = db.Where("quarter = ? ", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

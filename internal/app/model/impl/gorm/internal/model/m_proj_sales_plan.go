@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjSalesPlan 创建项目销售计划存储实例
@@ -30,6 +31,25 @@ func (a *ProjSalesPlan) getQueryOption(opts ...schema.ProjSalesPlanQueryOptions)
 // Query 查询数据
 func (a *ProjSalesPlan) Query(ctx context.Context, params schema.ProjSalesPlanQueryParam, opts ...schema.ProjSalesPlanQueryOptions) (*schema.ProjSalesPlanQueryResult, error) {
 	db := entity.GetProjSalesPlanDB(ctx, a.db)
+
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
+	if v := params.Year; v != 0 {
+		db = db.Where("year = ?", v)
+	}
+
+	if v := params.ProjBusinessID; v != "" {
+		db = db.Where("proj_business_id = ?", v)
+	}
+
+	if v := params.ProjIncomeID; v != "" {
+		db = db.Where("proj_income_id = ?", v)
+	}
+
+	if v := params.Quarter; v != 0 {
+		db = db.Where("quarter = ? ", v)
+	}
 
 	db = db.Order("id DESC")
 
@@ -84,6 +104,20 @@ func (a *ProjSalesPlan) Update(ctx context.Context, recordID string, item schema
 // Delete 删除数据
 func (a *ProjSalesPlan) Delete(ctx context.Context, recordID string) error {
 	result := entity.GetProjSalesPlanDB(ctx, a.db).Where("record_id=?", recordID).Delete(entity.ProjSalesPlan{})
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+// GenerateHis 生成历史版本
+func (a *ProjSalesPlan) GenerateHis(ctx context.Context, item schema.ProjSalesPlan) error {
+	db := entity.GetProjSalesPlanDB(ctx, a.db)
+	hisDB := entity.GetProjSalesHisDB(ctx, a.db)
+
+	subQuery := db.Select("*").Where("project_id = ?", item.ProjectID)
+
+	result := hisDB.Create(subQuery)
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}

@@ -104,7 +104,7 @@ class ProjectManageList extends PureComponent {
         pageSize: pagination.pageSize,
       },
     });
-    this.clearSelectRows();
+    this.clearSelectRows(); 
   };
 
   handleResetFormClick = () => {
@@ -309,18 +309,18 @@ getMenu = (record) => {
      
   return (
   <Menu >
-    <Menu.Item  onClick={() => this.editPro(record, 0)}>
+    <Menu.Item  onClick={() => this.editPro(record, 0)} key="1">
       
        基本信息
       
     </Menu.Item>
   
-    <Menu.Item onClick={() => this.editPro(record, 1)}>
+    <Menu.Item onClick={() => this.editPro(record, 1)} key="2">
     
        项目业态
       
     </Menu.Item>
-    <Menu.Item onClick={() => this.editPro(record, 2)}>
+    <Menu.Item onClick={() => this.editPro(record, 2)} key="3">
     
    交付标准
    

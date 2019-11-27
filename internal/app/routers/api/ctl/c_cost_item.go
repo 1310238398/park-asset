@@ -24,7 +24,7 @@ type CostItem struct {
 
 // Query 查询数据
 func (a *CostItem) Query(c *gin.Context) {
-	q := c.Query("query")
+	q := c.Query("q")
 	switch q {
 	case "list":
 		a.query(c)
@@ -61,9 +61,8 @@ func (a *CostItem) query(c *gin.Context) {
 // queryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" 1
-// @Param pageSize query int true "分页大小" 10
-// @Success 200 []schema.CostItem "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Param show query string true "展示方式" map
+// @Success 200 []schema.CostItem "查询结果：列表数据"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"

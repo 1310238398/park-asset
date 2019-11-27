@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjExpenditureTime 创建项目支出节点时间表存储实例
@@ -30,6 +31,31 @@ func (a *ProjExpenditureTime) getQueryOption(opts ...schema.ProjExpenditureTimeQ
 // Query 查询数据
 func (a *ProjExpenditureTime) Query(ctx context.Context, params schema.ProjExpenditureTimeQueryParam, opts ...schema.ProjExpenditureTimeQueryOptions) (*schema.ProjExpenditureTimeQueryResult, error) {
 	db := entity.GetProjExpenditureTimeDB(ctx, a.db)
+
+	if v := params.ProjExpenditureID; v != "" {
+		db = db.Where("proj_expenditure_id = ?", v)
+	}
+
+	if v := params.Year; v != 0 {
+		db = db.Where("year = ?", v)
+	}
+
+	if v := params.Quarter; v != 0 {
+		db = db.Where("quarter = ?", v)
+	}
+
+	if v := params.Month; v != 0 {
+		db = db.Where("month = ?", v)
+	}
+
+	if v := params.Day; v != 0 {
+		db = db.Where("day = ?", v)
+	}
+
+	if v := params.ProjectID; v != "" {
+		sub := entity.GetProjExpenditureDB(ctx, a.db).Select("record_id").Where("project_id = ?", v).SubQuery()
+		db = db.Where("proj_expenditure_id IN (?)", sub)
+	}
 
 	db = db.Order("id DESC")
 
@@ -84,6 +110,15 @@ func (a *ProjExpenditureTime) Update(ctx context.Context, recordID string, item 
 // Delete 删除数据
 func (a *ProjExpenditureTime) Delete(ctx context.Context, recordID string) error {
 	result := entity.GetProjExpenditureTimeDB(ctx, a.db).Where("record_id=?", recordID).Delete(entity.ProjExpenditureTime{})
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+// DeleteByProjExpendID 通过项目支出节点ID删除
+func (a *ProjExpenditureTime) DeleteByProjExpendID(ctx context.Context, projExpenditureID string) error {
+	result := entity.GetProjExpenditureTimeDB(ctx, a.db).Where("proj_expenditure_id=?", projExpenditureID).Delete(entity.ProjExpenditureTime{})
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}

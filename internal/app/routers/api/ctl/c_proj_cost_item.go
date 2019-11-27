@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -32,11 +33,11 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 	}
 }
 
-// Query 查询数据
+// queryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" 1
-// @Param pageSize query int true "分页大小" 10
+// @Param projectID query string true "项目ID"
+// @Param show query string true "展示方式" map
 // @Success 200 []schema.ProjCostItemShow "数据列表"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -44,11 +45,17 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 // @Router GET /api/v1/proj-cost-items?q=tree
 func (a *ProjCostItem) queryTree(c *gin.Context) {
 	var params schema.ProjCostItemQueryParam
-	params.ProjectID = c.Query("project_id")
+	params.ProjectID = c.Query("projectID")
+
+	err := a.ProjCostItemBll.Init(ginplus.NewContext(c), params.ProjectID)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
 
 	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
-		ginplus.ResError(c, err)
+
 		return
 	}
 	if show := c.Query("show"); show == "map" {
@@ -66,7 +73,7 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 // @Summary 查询指定数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 schema.ProjCostItemShow
+// @Success 200 schema.ProjCostItemShow "项目成本项"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
@@ -120,8 +127,12 @@ func (a *ProjCostItem) Update(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-
-	nitem, err := a.ProjCostItemBll.Update(ginplus.NewContext(c), c.Param("id"), item)
+	recordID := c.Param("id")
+	if recordID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	nitem, err := a.ProjCostItemBll.Update(ginplus.NewContext(c), recordID, item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return

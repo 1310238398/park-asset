@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewTaxCalculation 创建税目计算表存储实例
@@ -31,6 +32,18 @@ func (a *TaxCalculation) getQueryOption(opts ...schema.TaxCalculationQueryOption
 func (a *TaxCalculation) Query(ctx context.Context, params schema.TaxCalculationQueryParam, opts ...schema.TaxCalculationQueryOptions) (*schema.TaxCalculationQueryResult, error) {
 	db := entity.GetTaxCalculationDB(ctx, a.db)
 
+	if v := params.LikeName; v != "" {
+		db = db.Where("name like ?", "%"+v+"%")
+	}
+
+	if v := params.LikeName; v != "" {
+		db = db.Where("name = ?", v)
+	}
+
+	if v := params.Type; v > 0 {
+		db = db.Where("type = ?", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)
@@ -50,6 +63,20 @@ func (a *TaxCalculation) Query(ctx context.Context, params schema.TaxCalculation
 // Get 查询指定数据
 func (a *TaxCalculation) Get(ctx context.Context, recordID string, opts ...schema.TaxCalculationQueryOptions) (*schema.TaxCalculation, error) {
 	db := entity.GetTaxCalculationDB(ctx, a.db).Where("record_id=?", recordID)
+	var item entity.TaxCalculation
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaTaxCalculation(), nil
+}
+
+// GetByName 查询指定数据
+func (a *TaxCalculation) GetByName(ctx context.Context, name string) (*schema.TaxCalculation, error) {
+	db := entity.GetTaxCalculationDB(ctx, a.db).Where("name=?", name)
 	var item entity.TaxCalculation
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {

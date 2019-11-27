@@ -42,8 +42,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewProjCostHis)
 	container.Provide(NewProjCostItem)
 	container.Provide(NewProjDeliveryStandard)
-	container.Provide(NewProjExpendCost)
-	container.Provide(NewProjExpenditureTime)
 	container.Provide(NewProjExpenditure)
 	container.Provide(NewProjFile)
 	container.Provide(NewProjIncomeCalculation)

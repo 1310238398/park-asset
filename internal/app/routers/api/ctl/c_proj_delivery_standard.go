@@ -23,6 +23,7 @@ type ProjDeliveryStandard struct {
 	ProjDeliveryStandardBll bll.IProjDeliveryStandard
 }
 
+// Query 查询数据
 func (a *ProjDeliveryStandard) Query(c *gin.Context) {
 	q := c.Query("q")
 	switch q {
@@ -35,7 +36,7 @@ func (a *ProjDeliveryStandard) Query(c *gin.Context) {
 	}
 }
 
-// Query 查询数据
+// query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
@@ -70,7 +71,7 @@ func (a *ProjDeliveryStandard) query(c *gin.Context) {
 func (a *ProjDeliveryStandard) queryTree(c *gin.Context) {
 	var params schema.ProjDeliveryStandardQueryParam
 	params.ProjectID = c.Query("projectID")
-	if params.ParentID == "" {
+	if params.ProjectID == "" {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return
 	}
@@ -80,6 +81,7 @@ func (a *ProjDeliveryStandard) queryTree(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
+
 	ginplus.ResSuccess(c, result)
 }
 
@@ -130,7 +132,7 @@ func (a *ProjDeliveryStandard) Create(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Param body body schema.ProjDeliveryStandard true
-// @Success 200
+// @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"

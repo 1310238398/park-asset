@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as costAccountService from '@/services/costAccount';
+import { getProFormat} from '@/services/projectManage';
 // 成本核算:销售计划
 export default {
   namespace: 'salesPlan',
@@ -8,9 +9,18 @@ export default {
     search: {},
     pagination: {},
     // 销售计划列表
-    data: [], //所有年份所有季度的
+    data:{  
+      list: [],
+      pagination: {},
+    }, //所有年份所有季度的列表数据
+    formatData:[
+      // {
+      //   proj_business_id: "a",// 项目业态ID
+      //   proj_business_name: "住宅",// 项目业态名称
+      // }
+    ], // 所有的业态
      
-    displayList:[],// 需要根据用户的筛选条件，自己重构数据值
+   
     submitting: false,
     formTitle: '',
     formID: '',
@@ -21,9 +31,10 @@ export default {
   },
   // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
-    *fetch({ search, pagination }, { call, put, select }) {
+    *fetch({ search, pagination, pro_id }, { call, put, select }) {
       let params = {
         q: 'page',
+        project_id: pro_id,
       };
 
       if (search) {
@@ -33,7 +44,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.projectManage.search);
+        const s = yield select(state => state.salesPlan.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -46,7 +57,7 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.projectManage.pagination);
+        const p = yield select(state => state.salesPlan.pagination);
         if (p) {
           params = { ...params, ...p };
         }
@@ -57,6 +68,31 @@ export default {
         type: 'saveData',
         payload: response,
       });
+     
+      // 请求所有业态
+      const response1 = yield call(getProFormat, { record_id: pro_id });
+
+      if (response1 && response1.list) {
+
+        let formatTemp = [];
+      
+
+        for (let i = 0; i < response1.list.length; i++) {
+
+          let item = {};
+          item.proj_business_id = response1.list[i].record_id;
+          item.proj_business_name = response1.list[i].name;
+          formatTemp.push(item);
+        }
+
+        yield put({
+          type: 'saveFormatData',
+          payload: formatTemp,
+        });
+      
+
+      }
+
     },
     *loadForm({ payload }, { put }) {
       if (payload.type === 'addSalesPlan') {
@@ -116,18 +152,19 @@ export default {
       //   ];
       // }
     },
-    *fetchForm({ payload }, { call, put }) {
-      const response = yield call(projectManageService.get, payload);
-      if (response && response.asset_type) {
-        response.asset_type = response.asset_type.split(',');
-      }
-      yield [
-        put({
-          type: 'saveFormData',
-          payload: response,
-        }),
-      ];
-    },
+    // *fetchForm({ payload }, { call, put }) {
+    //   const response = yield call(projectManageService.get, payload);
+    //   if (response && response.asset_type) {
+    //     response.asset_type = response.asset_type.split(',');
+    //   }
+    //   yield [
+    //     put({
+    //       type: 'saveFormData',
+    //       payload: response,
+    //     }),
+    //   ];
+    // },
+    
     *submit({ payload }, { call, put, select }) {
       yield put({
         type: 'changeSubmitting',
@@ -135,11 +172,11 @@ export default {
       });
 
       const params = { ...payload };
-      const formType = yield select(state => state.projectManage.formType);
+      const formType = yield select(state => state.salesPlan.formType);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.projectManage.formID);
+        params.record_id = yield select(state => state.salesPlan.formID);
         response = yield call(projectManageService.update, params);
       } else {
         response = yield call(projectManageService.create, params);
@@ -153,7 +190,7 @@ export default {
       if (response.record_id && response.record_id !== '') {
         message.success('保存成功');
         yield put({
-          type: 'changeFormVisible',
+          type: 'changeSalesPlanFormVisible',
           payload: false,
         });
         yield put({
@@ -161,17 +198,64 @@ export default {
         });
       }
     },
-    *del({ payload }, { call, put }) {
-      const response = yield call(projectManageService.del, payload);
+    *createPlan({ payload }, { call, put, select }) {
+      yield put({
+        type: 'changeSubmitting',
+        payload: true,
+      });
+     // const params = { ...payload };
+     
+
+      let response;
+      
+        response = yield call(costAccountService.createSalesPlan, payload);
+      
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      });
+
+      if (response.status === "OK") {
+        message.success('保存成功');
+        yield put({
+          type: 'changeSalesPlanFormVisible',
+          payload: false,
+        });
+        yield put({
+          type: 'fetch',
+        });
+      }
+
+    },
+    *updatePlan({payload},{call}) { 
+      let response;
+      
+     response = yield call(costAccountService.updateSalesPlan, payload);  
+    },
+    *del({ payload }, { call, put,select }) {
+      const response = yield call(costAccountService.deletePlan, payload);
+      let data = yield select(state => state.salesPlan.data);
+      console.log("原来的data ");
+      console.log(data);
       if (response.status === 'OK') {
         message.success('删除成功');
-        yield put({ type: 'fetch' });
+        yield put({
+           type: 'saveData',
+           payload:{
+             list: data.list.filter(item => item.record_id !== payload),
+             pagination: {total: data.pagination.total - 1, current: data.pagination.current, pageSize: data.pagination.pageSize}
+           }
+      
+      });
+      // let data = yield select(state => state.salesPlan.data);
+      // yield put({
+      //   type: 'saveData',
+      //   payload: data.filter(item => item.record_id !== payload)
+      // });
+
       }
     },
-   
-
-
-
     // 成本核算的接口
     // 查看详情
     *redirectDetail({ payload }, { put }) {
@@ -189,12 +273,13 @@ export default {
     
   },
   reducers: {
+    saveFormatData(state, { payload }) {
+      return { ...state, formatData: payload };
+    },
     saveData(state, { payload }) {
       return { ...state, data: payload };
     },
-    saveDisplayList(state, { payload }) {
-      return { ...state, displayList: payload };
-    },
+    
     saveSearch(state, { payload }) {
       return { ...state, search: payload };
     },

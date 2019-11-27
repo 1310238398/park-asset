@@ -11,6 +11,7 @@ type ProjCostItem struct {
 	CostID       string              `json:"cost_id" swaggo:"false,成本项ID"`           // 成本项ID
 	TaxRate      float64             `json:"tax_rate" swaggo:"false,税率"`             // 税率
 	TaxPrice     float64             `json:"tax_price" swaggo:"false,缴税税额"`          // 缴税税额
+	Name         string              `json:"name" swaggo:"false,项目成本项名称"`            // 名称
 	Price        float64             `json:"price" swaggo:"false,成本项价格"`             // 成本项价格
 	Memo         string              `json:"memo" swaggo:"false,备注"`                 // 备注
 	Principal    string              `json:"principal" swaggo:"false,负责人"`           // 负责人
@@ -42,9 +43,11 @@ type ProjCostItemShow struct {
 
 // ProjCostItemQueryParam 查询条件
 type ProjCostItemQueryParam struct {
-	CostID       string // 成本项ID
-	ProjectID    string // 项目ID
-	ProjIncomeID string // 项目收益测算ID
+	CostID       string   // 成本项ID
+	ProjectID    string   // 项目ID
+	ProjIncomeID string   // 项目收益测算ID
+	RecordIDs    []string // 项目成本项ID列表
+	InLandTax    int      // 是否计入土增
 }
 
 // ProjCostItemQueryOptions 查询可选参数项
@@ -60,6 +63,25 @@ type ProjCostItemQueryResult struct {
 
 // ProjCostItems 项目成本项列表
 type ProjCostItems []*ProjCostItem
+
+// ToProjCostIDs 转换为项目成本项ID列表
+func (a ProjCostItems) ToProjCostIDs() []string {
+	l := make([]string, len(a))
+	for _, item := range a {
+		l = append(l, item.RecordID)
+	}
+
+	return l
+}
+
+// ToMap 转换为键值映射
+func (a ProjCostItems) ToMap() map[string]*ProjCostItem {
+	m := make(map[string]*ProjCostItem)
+	for _, item := range a {
+		m[item.RecordID] = item
+	}
+	return m
+}
 
 // ProjCostItemShows 项目成本项展示列表
 type ProjCostItemShows []*ProjCostItemShow
@@ -83,8 +105,8 @@ func (a *ProjCostItemShow) ToMap() map[string]interface{} {
 	result["proj_income_id"] = a.ProjIncomeID
 	result["editable"] = a.Editable
 	for _, v := range a.BusinessList {
-		result[fmt.Sprintf("%s-unitprice", v.ProjBusinessID)] = v.UnitPrice
-		result[fmt.Sprintf("%s-price", v.ProjBusinessID)] = v.Price
+		result[fmt.Sprintf("%s_unit", v.ProjBusinessID)] = v.UnitPrice
+		result[fmt.Sprintf("%s_total", v.ProjBusinessID)] = v.Price
 	}
 
 	children := []map[string]interface{}{}

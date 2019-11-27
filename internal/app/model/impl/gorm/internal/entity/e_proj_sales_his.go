@@ -51,6 +51,7 @@ type ProjSalesHis struct {
 	Principal      *string  `gorm:"column:principal;size:200;index;"`           // 负责人
 	ProjIncomeID   *string  `gorm:"column:proj_income_id;size:36;index;"`       // 项目收益测算ID
 	ProjBusinessID *string  `gorm:"column:proj_business_id;size:36;index;"`     // 项目业态ID
+
 }
 
 func (a ProjSalesHis) String() string {

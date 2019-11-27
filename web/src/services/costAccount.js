@@ -9,25 +9,78 @@ const sales_plan = 'proj-sales-plans';
 // 查询所有的已有的销售计划
 export async function querySalesPlan(params) {
 
- // /api/v1/proj-sales-plans
-  return request(`/api/v1/${sales_plan}?${stringify(params)}`);
+  // /api/v1/proj-sales-plans
+  return request(`/v1/${sales_plan}?${stringify(params)}`);
 }
 //创建新的销售计划
 export async function createSalesPlan(params) {
 
- // /api/v1/proj-sales-plans/list
-  return request(`/api/v1/${sales_plan}/list`, {
+  // /api/v1/proj-sales-plans/list
+  return request(`/v1/${sales_plan}/list`, {
     method: 'POST',
     body: params,
   });
 }
+// 更新已有的销售计划
+export async function updateSalesPlan(params) {
+  // /api/v1/proj-sales-plans/{id}
+  return request(`/v1/${sales_plan}/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+// 删除某个季度的销售计划
+export async function deletePlan(params) {
+  // /api/v1/proj-sales-plans/{id}
+  return request(`/v1/${sales_plan}/${params}`, {
+    method: 'DELETE',
+  });
+}
+
 
 
 // 成本核算列表相关接口
 // 查询成本核算列表
 export async function queryCostList(params) {
-  return request(`/v1/proj-cost-items?q=tree&${stringify(params)}`);
+  return request(`/v1/proj-cost-items?q=tree&show=map&${stringify(params)}`);
 }
+
+// 更新成本项数据
+export async function updateCostItem(params) {
+  // /api/v1/proj-cost-items/{id}
+  return request(`/v1/proj-cost-items/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+// 启用成本项
+
+// 忽略成本项
+
+//成本支出节点相关接口
+// 查询项目下所有的成本支出节点列表
+export async function queryCostExpenditureList(record_id) {
+  //  /api/v1/proj-expenditures?q=tree
+  return request(`/v1/proj-expenditures?q=tree&project_id=${record_id}`);
+}
+// 创建新的成本支出节点
+export async function createCostNode(params) {
+  // /api/v1/proj-expenditures
+  return request(`/v1/proj-expenditures`, {
+    method: 'POST',
+    body: params,
+  });
+}
+// 更新节点
+export async function updateCostNode(params) {
+  // /api/v1/proj-expenditures/{id}
+  return request(`/v1/proj-expenditures/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+
+}
+
 // export async function query(params) {
 //   return request(`/v1/${router}?${stringify(params)}`);
 // }
