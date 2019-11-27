@@ -20,10 +20,13 @@ export default {
       // 请求所有的核算列表
       const response = yield call(costAccountService.queryCostList, params);
 
-      yield put({
+      if (response && response.length >=0) {
+        yield put({
         type: 'saveData',
         payload: response || [],
       });
+      }
+      
       const response1 = yield call(projectManage.getProFormat, { record_id: params.project_id });
 
       if (response1 && response1.list) {

@@ -29,9 +29,7 @@ export default class Step1 extends PureComponent {
   };
 
   componentDidMount() {
-    this.dispatch({
-      type: 'projectManage/queryCompany',
-    });
+   
   }
  
   dispatch = action => {
@@ -86,6 +84,11 @@ export default class Step1 extends PureComponent {
 
           if (response && response.record_id) {
             message.success('保存成功');
+
+            this.dispatch({
+              type: 'projectManage/saveFormID',
+              payload: response.record_id,
+            });
            // idHandler(response.column_id);
             if (nextHandler) nextHandler();
           }
@@ -103,6 +106,8 @@ export default class Step1 extends PureComponent {
       form: { getFieldDecorator },
       onCancel,
     } = this.props;
+
+    console.log("render Step1");
 
     const RadioGroup = Radio.Group;
     const formItemLayout = {
@@ -381,7 +386,7 @@ export default class Step1 extends PureComponent {
           <Form.Item {...formItemLayout} label="项目相关证书">
           <span style={{ color: 'red' }}>（图片上传格式jpg,jpeg,png）</span>
             {getFieldDecorator('files', {
-              initialValue: formData.files ? [formData.files] : '',
+             // initialValue: formData.files ? [formData.files] : '',
               rules: [
                 {
                   required: false,

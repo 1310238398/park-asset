@@ -7,42 +7,8 @@ import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 const FormItem = Form.Item;
 import * as menuService from '@/services/menu';
-const data = [];
-for (let i = 0; i < 5; i++) {
-  data.push({
-    key: i.toString(),
-    standard: `精装修 ${i}`,
+import { updateStandard, createStandard, deleteStandard } from '@/services/projectManage';
 
-    address: `大堂 ${i}`,
-    children: [
-      {
-        key: i.toString() + '-0',
-        standard: '精装修' + i.toString() + '-0',
-
-        address: '大堂' + i.toString() + '-0',
-        parent:i.toString()
-        
-      },
-      {
-        key: i.toString() + '-1',
-        standard: '精装修' + i.toString() + '-1',
-
-        address: '大堂' + i.toString() + '-1',
-        parent: i.toString(),
-        children: [
-          {
-            key: i.toString() + '-1-0',
-            standard: '精装修' + i.toString() + '-1-0',
-
-            address: '大堂' + i.toString() + '-1-0',
-            parent: i.toString() + '-1'
-            
-          },
-        ],
-      },
-    ],
-  });
-}
 const EditableContext = React.createContext();
 
 const EditableRow = ({ form, index, ...props }) => (
@@ -133,7 +99,17 @@ export default class Step3 extends PureComponent {
     const { callback } = this.props;
     callback(this.formSubmit);
     this.state = {
-      data,
+      defaultData:[
+        {
+          content	:"交付标准内容",
+          parent_id: "",
+          parent_path: "",
+          part:"交付部位",
+          record_id:"",
+
+        }
+      ],
+      
       editingKey: '',
 
       expandHang: [],
@@ -142,45 +118,20 @@ export default class Step3 extends PureComponent {
       //所有的二级key
       //所有的三级key
     };
-    // this.menu = (
-    //   <Menu onClick={this.addItem}>
-    //     <Menu.Item key="1">
-          
-    //        同级添加
-          
-    //     </Menu.Item>
-      
-    //     <Menu.Item key="2">
-        
-    //        下级添加
-          
-    //     </Menu.Item>
-    //   </Menu>
-    // );
+   
     this.columns = [
-      // {
-      //   title: 'name',
-      //   dataIndex: 'name',
-      //   width: '25%',
-      //   editable: true,
-      // },
-      // {
-      //   title: 'age',
-      //   dataIndex: 'age',
-      //   width: '15%',
-      //   editable: true,
-      // },
+     
       {
         title: '地块/部位',
-        dataIndex: 'address',
-        key: 'address',
+        dataIndex: 'part',
+       
         width: '30%',
         editable: true,
       },
       {
         title: '交付标准',
-        dataIndex: 'standard',
-        key: 'standard',
+        dataIndex: 'content',
+       
         width: '40%',
         editable: true,
       },
@@ -196,29 +147,30 @@ export default class Step3 extends PureComponent {
             <span>
               <EditableContext.Consumer>
                 {form => (
-                  <a onClick={() => this.save(form, record.key)} style={{ marginRight: 8 }}>
+                  <a onClick={() => this.save(form, record.parent_path !== "" ? (record.parent_path+"/"+ record.record_id) : record.record_id)} style={{ marginRight: 8 }}>
                     保存
                   </a>
                 )}
               </EditableContext.Consumer>
-              <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel(record.key)}>
+              <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel(record.record_id)}>
                 <a>取消</a>
               </Popconfirm>
             </span>
           ) : (
             <div >
-            <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)}>
+            <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)}>
               编辑
             </a>
             {/* 点击添加出现下拉菜单选择 同级添加还是 下级添加 */}
            
-            <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter">
-              <a  style={{ marginLeft: 8 }}  
+            <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter" disabled={editingKey !== ''}>
+              <a  style={{ marginLeft: 8 }} disabled={editingKey !== ''} 
              // onMouseEnter={() =>this.currentClickKey(record)}
               >添加</a> 
             </Dropdown>
-            <a style={{ marginLeft: 8 }}>删除</a>
-         
+            <Popconfirm title="确定删除?" onConfirm={() => this.deleteStandard(record)}>
+            <a style={{ marginLeft: 8 }} disabled={editingKey !== ''}>删除</a>
+            </Popconfirm>
             </div>
           );
         },
@@ -227,82 +179,97 @@ export default class Step3 extends PureComponent {
   }
 
   formSubmit = () => {
-    console.log('Step3');
+    console.log('Step3 formSubmit');
     const { form, onSubmit, nextHandler } = this.props;
+    if (nextHandler) nextHandler();
 
-    form.validateFieldsAndScroll((err, values) => {
-      if (err) {
-        return;
-      }
-      const formData = { ...values };
+    // form.validateFieldsAndScroll((err, values) => {
+    //   if (err) {
+    //     return;
+    //   }
+    //   const formData = { ...values };
 
-      console.log(this.state.data);
-      // 接口
-      message.success('保存成功');
-      if (nextHandler) nextHandler();
-    });
+    //   console.log(this.state.data);
+    //   // 接口
+    //   message.success('保存成功');
+    //   if (nextHandler) nextHandler();
+    // });
   };
 
-  isEditing = record => record.key === this.state.editingKey;
+  isEditing = record => record.record_id === this.state.editingKey;
 
   cancel = () => {
     this.setState({ editingKey: '' });
   };
 
+
+  createStandard(objList, row) {
+
+
+  }
   
   save(form, key) {
-    console.log('要保存数据的key ' + key);
-    // form.validateFields((error, row) => {
-    //   if (error) {
-    //     return;
-    //   }
-    //   const newData = [...this.state.data];
-    //   const index = newData.findIndex(item => key === item.key);
-    //   if (index > -1) {
-    //     const item = newData[index];
-    //     newData.splice(index, 1, {
-    //       ...item,
-    //       ...row,
-    //     });
-    //     this.setState({ data: newData, editingKey: '' });
-    //   } else {
-    //     newData.push(row);
-    //     this.setState({ data: newData, editingKey: '' });
-    //   }
+    const { projectManage:{formID, deliveryStandard }} = this.props;
+    console.log('要保存数据的父级路径  ' + key);
+   
+    
 
-    // });
-
-    form.validateFields((error, row) => {
+    form.validateFields( async (error, row) => {
       if (error) {
         return;
       }
-     // debugger;
-      const newData = [...this.state.data];
+
+      const newData = [...deliveryStandard];
+
+   
 
       let keys = [];
-      keys = key.split('-');
+      keys = key.split('/');
       console.log(keys);
       let index_ = -1;
 
       let newData1 = [...newData];
 
-      console.log("keys "+keys);
-      
+      console.log("keys ");
+      console.log(keys);
 
       if (keys.length == 1) {
         console.log("keys  1");
-       let index = newData1.findIndex(item => key === item.key);
+       let index = newData1.findIndex(item => key === item.record_id);
         if (index > -1) {
           const item = newData[index];
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-          });
-          this.setState({ data: newData, editingKey: '' });
-        } else {
-          newData.push(row);
-          this.setState({ data: newData, editingKey: '' });
-        }
+          row.project_id = formID;
+          let response ;
+          console.log("row 要更新的数据 ");
+          console.log(row);
+          if (key === "") {
+            row.parent_path= "";
+            row.parent_id = "";
+            response = await createStandard(row);
+          }
+          else {
+            row.record_id = item.record_id;
+            response = await updateStandard(row);
+          }
+
+          if (response.record_id && response.record_id !== "") {
+            message.success('成功');
+            row = {...response};
+    
+
+              newData.splice(index, 1, {
+                ...item,
+                ...row,
+              });
+              console.log(row)
+              this.dispatch({
+                type: 'projectManage/saveDeliveryStandard',
+                payload: newData,
+              });
+              this.setState({ editingKey: '' });
+            
+          }
+        } 
 
         return;
 
@@ -310,27 +277,57 @@ export default class Step3 extends PureComponent {
 
       for (let i = 0; i < keys.length; i++) {
         let keychild = '';
-        for (let n = 0; n < i; n++) {
-          keychild = keychild + keys[n] + '-';
-        }
-        keychild = keychild + keys[i];
+       
+        keychild =  keys[i];
         console.log('keychild ' + keychild);
-        index_ = newData1.findIndex(item => keychild === item.key);
-        console.log('keychild ' + keychild);
+        index_ = newData1.findIndex(item => keychild === item.record_id);
+       
         console.log('index_ ' + index_);
 
-        if (index_ > -1 && i === keys.length - 1 && (key === keychild)) {
+        if (index_ > -1 && i === keys.length - 1 ) {
           console.log("更新数据");
           const item = newData1[index_];
           console.log("被更新的数据 "+ JSON.stringify(item));
-          console.log("row 要更新的数据 "+ JSON.stringify(row));
-          newData1.splice(index_, 1, {
-            ...item,
-            ...row,
-          });
-          // 一级一级更新数据
-          this.setState({ editingKey: '' });
-          console.log('查看数据有没有变化 ' + JSON.stringify(this.state.data));
+          
+
+         
+          row.project_id = formID;
+          let response ;
+          console.log("row 要更新的数据 ");
+          console.log(row);
+          if (keychild === "") {
+            row.parent_path= key.substring(0,key.lastIndexOf("/"));
+            row.parent_id = keys[keys.length -2];
+            response = await createStandard(row);
+          }
+          else {
+            row.record_id = item.record_id;
+            response = await updateStandard(row);
+          }
+          
+          if (response.record_id && response.record_id !== "") {
+            message.success('成功');
+            row = {...response};
+            console.log(newData);
+            //let index = newData1.findIndex(item => key === item.record_id);
+           // if (index > -1) {
+             // const item = newData1[index];
+              newData1.splice(index_, 1, {
+                ...item,
+                ...row,
+              });
+             
+              this.dispatch({
+                type: 'projectManage/saveDeliveryStandard',
+                payload: newData,
+              });
+             this.setState({ editingKey: '' });
+           // } 
+          }
+        
+          
+          
+         
         }
 
         if (
@@ -353,6 +350,55 @@ export default class Step3 extends PureComponent {
     this.setState({ editingKey: key });
   }
 
+  deleteStandard = async (record) => {
+    const { projectManage:{ deliveryStandard }} = this.props;
+
+    let deliveryStandardData = [...deliveryStandard];
+
+    if (record.parent_path === "") {
+      let response ;
+      response = await deleteStandard(record.record_id);
+      if (response.status === "OK") {
+        message.success("删除成功");
+
+         deliveryStandardData = deliveryStandardData.filter(item => item.record_id !== record.record_id);
+         this.dispatch({
+          type: 'projectManage/saveDeliveryStandard',
+          payload: deliveryStandardData,
+        }); 
+      }
+      // 删除顶级节点
+     
+
+      return;
+
+    }
+    let parentItem = this.findItem(deliveryStandardData, record.parent_path);
+    let response ;
+    response = await deleteStandard(record.record_id);
+    if (response.status === "OK") {
+
+      message.success("删除成功");
+      if (parentItem.children && parentItem.children.length > 0) {
+        parentItem.children =  parentItem.children.filter(item => item.record_id !== record.record_id);
+        if (parentItem.children.length === 0) {
+          parentItem.children = null;
+        }
+        console.log("删除后的数据 ");
+        console.log(parentItem);
+        console.log(deliveryStandardData);
+
+        this.dispatch({
+          type: 'projectManage/saveDeliveryStandard',
+          payload: deliveryStandardData,
+        });
+
+      }
+
+    }
+
+  }
+
   componentDidMount() {}
 
   dispatch = action => {
@@ -361,7 +407,7 @@ export default class Step3 extends PureComponent {
   };
 
   getMenu = (record) => {
-    console.log("getMenu "+ JSON.stringify(record));
+  
     return (
     <Menu >
       <Menu.Item  onClick={() => this.brotherLevelAdd(record)}>
@@ -397,12 +443,12 @@ export default class Step3 extends PureComponent {
     if (expanded) {
       console.log('true');
       console.log('push');
-      expandHang.push(record.key);
+      expandHang.push(record.record_id);
       expandHang.sort();
     } else {
       console.log('false');
       for (let i = 0; i < expandHang.length; i++) {
-        if (expandHang[i] === record.key) {
+        if (expandHang[i] === record.record_id) {
           if (i > 0) {
             console.log('pop');
             expandHang.splice(i, 1);
@@ -412,7 +458,7 @@ export default class Step3 extends PureComponent {
         }
         if (record.children) {
           for (let y = 0; y < record.children.length; y++) {
-            if (expandHang[i] === record.children[y].key) {
+            if (expandHang[i] === record.children[y].record_id) {
               console.log('hahah');
               delete expandHang[i];
             }
@@ -427,56 +473,44 @@ export default class Step3 extends PureComponent {
     console.log(this.state.expandHang);
   };
 
-  // addItem = ({key}) => {
-  //   if (key === "1") {
-  //     // 同级添加
-  //     console.log("同级添加");
-  //     this.brotherLevelAdd();
-
-  //   }
-  //   else if (key === "2") {
-
-  //     //子级添加
-  //     console.log("子级添加");
-  //     this.childLevelAdd();
-  //   }
-  // }
+  
 
   // 同级添加
   brotherLevelAdd = (currentItem) => {
     console.log("brotherLevelAdd");
-    const {  data } = this.state;
-    if (currentItem.parent === undefined) {
+    const {  projectManage:{ deliveryStandard } } = this.props;
+
+    let deliveryStandardData = [...deliveryStandard];
+    if (currentItem.parent_path === "") {
       console.log("顶级添加");
       // 直接顶层添加
-      let count = data.length;
+     
       const newItem = {
-        key: count.toString(),
-        standard: "请输入标准内容",
+        record_id: "",
+        content: "请输入标准内容",
   
-        address: "请输入部位名称",
+        part: "请输入部位名称",
+        parent_path : "",
+        parent_id: "",
       };
-      data.push(newItem);
-      this.setState({
-        data: [...data],
-       
-       
+      deliveryStandardData.push(newItem);
+      this.dispatch({
+        type: 'projectManage/saveDeliveryStandard',
+        payload: deliveryStandardData,
       });
-
+      
       return;
     }
-    let item = this.findItem(data,currentItem.parent);  
+    let item = this.findItem(deliveryStandardData,currentItem.parent_path);  
+
     let count =  0;
-    if (item.children != undefined ) {
-      count = item.children.length;
-
-    }
-
     const newItem = {
-      key: item.key+"-"+count.toString(),
-      standard: "请输入标准内容",
+      record_id: "",
+      content: "请输入标准内容",
 
-      address: "请输入部位名称",
+      part: "请输入部位名称",
+      parent_id:item.record_id,
+      parent_path:item.parent_path !== "" ? item.parent_path+"/"+item.record_id : item.record_id,
     };
     if (item.children) {
       item.children.push(newItem);
@@ -486,33 +520,25 @@ export default class Step3 extends PureComponent {
       item.children.push(newItem);
     }
 
-    this.setState({
-      data: [...data],
-     
-     
-    });
   }
 
   //子级添加
   childLevelAdd = (currentItem) => {
-    const {  data , expandedRowKeys} = this.state;
+    const {  expandedRowKeys} = this.state;
+    const {  projectManage:{ deliveryStandard }  } = this.props;
 
     
    
     // 递归遍历
-      let item = this.findItem(data, currentItem.key);  
-       let count =  0;
-      if (item.children != undefined ) {
-        count = item.children.length;
-
-      }
+      let item = this.findItem(deliveryStandard, currentItem.parent_path+"/"+currentItem.record_id);  
     
-   
     const newItem = {
-      key: item.key+"-"+count.toString(),
-      standard: "请输入标准内容",
+      record_id: "",
+      content: "请输入标准内容",
 
-      address: "请输入部位名称",
+      part: "请输入部位名称",
+      parent_id: item.record_id,
+      parent_path:item.parent_path !== "" ?  (item.parent_path + "/"+ item.record_id) : item.record_id,
     };
     if (item.children) {
       item.children.push(newItem);
@@ -523,12 +549,12 @@ export default class Step3 extends PureComponent {
     }
     
     let expandKeys =[];
-    expandKeys.push(item.key);
+    expandKeys.push(item.record_id);
     for (let i in item.children) {
-      expandKeys.push(item.children[i].key);
+      expandKeys.push(item.children[i].record_id);
     }
     this.setState({
-      data: [...data],
+    
       expandedRowKeys:[...expandedRowKeys, ...expandKeys],
      // count: count + 1,
     });
@@ -541,25 +567,68 @@ export default class Step3 extends PureComponent {
 
   // 递归遍历(有问题)
   findItem(objList, key) {
-    console.log("findItem  "+key);
+    console.log("findItem 路径  "+key);
     console.log("objList "+ JSON.stringify(objList));
 
-    // 递归遍历
-    for (let i = 0; i < objList.length; i++) {
-      console.log("循环");
-      console.log("objList[i].key "+objList[i].key);
+    let keys =[];
+    keys = key.split("/");
+    console.log("keys   "+ keys);
 
-      if (key === objList[i].key) {
-        console.log("定位到对象 "+JSON.stringify(objList[i]));
-        return objList[i];
-       
-      }
-      else if (key.indexOf(objList[i].key) !== -1 &&  objList[i].children && objList[i].children.length > 0) {
+    // 递归遍历 
+    let index = -1;
+  //  let newData = [...objList];
+ 
+    for (let i = 0; i < keys.length; i++) {
+      let keychild = '';
+        // for (let n = 0; n < i; n++) {
+        //   keychild = keychild + keys[n] + '/';
+        // }
+        keychild =  keys[i];
+        index = objList.findIndex(item => keychild === item.record_id);
+        if (index > -1 && i === keys.length - 1) {
 
-        return this.findItem(objList[i].children, key);
-      }
+          console.log("找到了！！");
+           
 
+          return objList[index];
+        }
+        if (  index > -1 &&
+          objList[index].children &&
+          objList[index].children.length > 0 && i < (keys.length - 1)) {
+
+            console.log('进入下一层');
+            for (let m = 0; m < i; m++) {
+           let index_ =  key.indexOf("/");
+           key.slice(index+1);
+
+            }
+           
+            return this.findItem(objList[i].children, key);
+
+
+        }
     }
+ 
+    
+   
+    // for (let i = 0; i < objList.length; i++) {
+    //   console.log("循环");
+    //   console.log("objList[i].record_id "+objList[i].record_id);
+
+     
+
+    //   if (key === objList[i].record_id) {
+    //     console.log("定位到对象 "+JSON.stringify(objList[i]));
+    //     return objList[i];
+       
+    //   }
+    //   else if (key.indexOf(objList[i].record_id) !== -1 &&  objList[i].children && objList[i].children.length > 0) {
+
+    //     return this.findItem(objList[i].children, key);
+    //   }
+
+    // }
+  
   }
 
   handleAdd = () => {
@@ -594,12 +663,13 @@ export default class Step3 extends PureComponent {
   }
 
   render() {
-    //const { expandHang } = this.state;
-    // const {
+    const { defaultData } = this.state;
+    const {
 
-    //   form: { getFieldDecorator, getFieldValue },
-    //   onCancel,
-    // } = this.props;
+      //form: { getFieldDecorator, getFieldValue },
+      projectManage: { deliveryStandard },
+      onCancel,
+    } = this.props;
     // const {columns, data} = this.state;
 
     const formItemLayout = {
@@ -644,7 +714,7 @@ export default class Step3 extends PureComponent {
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),
-          handleSave: this.handleSave,
+         // handleSave: this.handleSave,
         }),
       };
     });
@@ -671,13 +741,13 @@ export default class Step3 extends PureComponent {
         <Table
           components={components}
           bordered
-          dataSource={this.state.data}
+          dataSource={deliveryStandard}
           columns={columns}
           rowClassName="editable-row"
           //expandRowByClick={true}
           expandedRowKeys={this.state.expandedRowKeys}
           // onExpand={record}
-          rowKey={record => record.key}
+          rowKey={record => record.record_id}
           //expandedRowRender={}
           onExpand={this.handleOnExpand}
           rowClassName={() => 'editable-row'}

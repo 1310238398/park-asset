@@ -44,9 +44,9 @@ export default class Step2 extends PureComponent {
   };
 
   componentDidMount() {
-    this.dispatch({
-      type: 'projectManage/queryCompany',
-    });
+    // this.dispatch({
+    //   type: 'projectManage/queryCompany',
+    // });
   }
 
   dispatch = action => {
