@@ -6,12 +6,15 @@ const router = 'business-formats';
 export async function queryList(params){
     return request(`/v1/${router}?${stringify(params)}`);
 }
+export async function queryListNotPage() {
+    return request(`/v1/${router}?q=list`);
+}
 
 export async function get(params) {
     return request(`/v1/${router}/${params.record_id}`);
 }
 
-export async function create(params){
+export async function create(params) {
     return request(`/v1/${router}`, {
         method: 'POST',
         body: params,

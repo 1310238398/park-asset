@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal, Form, Row, Col, Input, InputNumber, Radio } from 'antd';
+import { Modal, Form, Row, Col, Input, InputNumber, Radio,message } from 'antd';
 
 import { create, get, update } from '@/services/taxManage';
 
@@ -34,12 +34,20 @@ class TaxCard extends PureComponent {
             if(err){
                 return;
             }
-
             const submitInfo = { ...values };
+            // console.log(submitInfo.tax_rate);
+            // return;
+            // if(submitInfo.tax_rate < 0){
+            //     message.error("税率不能为负数");
+            //     return;
+            // }
+            // if(submitInfo.submitInfo > 100){
+            //     message.error("税率不能大于100");
+            //     return;
+            // }
             submitInfo.type = parseInt(submitInfo.type,10);
             if(info){
                 submitInfo.record_id = info.record_id;
-                console.log("编辑");
                 update(submitInfo).then(res=>{
                     if(res && res.error){
                         console.log(res.error.message);
@@ -54,7 +62,6 @@ class TaxCard extends PureComponent {
                     onSave(true);
                 });
             }
-            
         });
     }
 
@@ -111,14 +118,15 @@ class TaxCard extends PureComponent {
                         <Col span={12}>
                             <Form.Item {...formItemLayout} label="税目税率">
                                 {getFieldDecorator('tax_rate', {
-                                    initialValue: info ?  info.tax_rate : 0,
+                                    initialValue: info ?  info.tax_rate*100 : 0,
                                     rules: [
                                         { 
                                             required: true, 
                                             message: '请输入税目税率' 
                                         }
                                     ],
-                                })(<InputNumber placeholder="请输入税目税率" />)}
+                                })(<InputNumber min={0} max={100} formatter={value => `${value}%`}
+                                parser={value => value.replace('%', '')} placeholder="请输入税目税率" />)}
                             </Form.Item>
                         </Col>
                     </Row>

@@ -23,6 +23,19 @@ type CostItem struct {
 }
 
 // Query 查询数据
+func (a *CostItem) Query(c *gin.Context) {
+	q := c.Query("query")
+	switch q {
+	case "list":
+		a.query(c)
+	case "tree":
+		a.queryTree(c)
+	default:
+		a.query(c)
+	}
+}
+
+// query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
@@ -31,8 +44,8 @@ type CostItem struct {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/cost-items
-func (a *CostItem) Query(c *gin.Context) {
+// @Router GET /api/v1/cost-items?q=list
+func (a *CostItem) query(c *gin.Context) {
 	var params schema.CostItemQueryParam
 
 	result, err := a.CostItemBll.Query(ginplus.NewContext(c), params, schema.CostItemQueryOptions{
@@ -43,6 +56,35 @@ func (a *CostItem) Query(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// queryTree 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Success 200 []schema.CostItem "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/cost-items?q=tree
+func (a *CostItem) queryTree(c *gin.Context) {
+	var params schema.CostItemQueryParam
+
+	result, err := a.CostItemBll.QueryTree(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	if show := c.Query("show"); show == "map" {
+		mapResult := []map[string]interface{}{}
+		for _, v := range result {
+			mapResult = append(mapResult, v.ToMap())
+		}
+		ginplus.ResSuccess(c, mapResult)
+	} else {
+		ginplus.ResSuccess(c, result)
+	}
 }
 
 // Get 查询指定数据

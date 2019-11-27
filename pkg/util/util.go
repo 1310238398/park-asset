@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -71,4 +72,10 @@ func FillZero(i int) string {
 		return fmt.Sprintf("0%d", i)
 	}
 	return fmt.Sprintf("%d", i)
+}
+
+// Float保留两位小数
+func DecimalFloat64(value float64) float64 {
+	value, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", value), 64)
+	return value
 }

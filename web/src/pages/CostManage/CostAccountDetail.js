@@ -3,7 +3,11 @@ import { connect } from 'dva';
 import { Tabs, Card, message } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import SalesPlan from './SalesPlan';
+import CostList from './CostList';
 import AddNewSalesPlan from './AddNewSalesPlan';
+import  IncomeMeasure  from "./IncomeMeasure";
+import CostExpenseNode from "./CostExpenseNode";
+import LandValueAddedTax from './LandValueAddedTax'
 
 const { TabPane } = Tabs;
 
@@ -11,6 +15,10 @@ import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 @connect(state => ({
   //projectManage: state.projectManage,
+ 
+  costAccount: state.costAccount,
+  costList: state.costList,
+   salesPlan: state.salesPlan,
 }))
 export default class CostAccountDetail extends PureComponent {
   constructor(props) {
@@ -18,17 +26,31 @@ export default class CostAccountDetail extends PureComponent {
   }
 
   state = {
-    formData: {},
-    treeData: [],
+   pro_id:'fff',
+   formType:"", // E V
   };
 
-  componentDidMount() {
+  componentWillMount() {
     const {
       location: {
-        query: { key },
+        query: { key, operType },
       },
     } = this.props;
-    console.log('传入的key ' + key);
+    console.log('CostAccountDetail pro_id ' + key);
+    this.setState({pro_id: key});
+    this.setState({formType: operType});
+
+    //存储到model
+
+    this.dispatch({
+      type: 'costAccount/saveFormType',
+      payload: operType,
+    });
+
+    this.dispatch({
+      type: 'costAccount/saveFormID',
+      payload: key,
+    });
   }
 
   dispatch = action => {
@@ -36,30 +58,36 @@ export default class CostAccountDetail extends PureComponent {
     dispatch(action);
   };
 
-  callback(key) {
-    console.log("Tab callback");
-    //message.success("你点击了Tab "+ key);
-  }
+  callback = key => {
+    const {
+      pro_id
+    } = this.state;
+ 
+
+    if (key === "1") {
+      
+    } else if (key === "2") {
+    
+      
+    } else if (key === "3") {
+    } else if (key === "4") {
+    } else if (key === "5") {
+    }
+  };
   renderDataForm() {
     return (
-      <AddNewSalesPlan
-        onCancel={this.handleDataFormCancel}
-        onSubmit={this.handleDataFormSubmit}
-      />
+      <AddNewSalesPlan onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />
     );
   }
 
   handleDataFormCancel = () => {
     this.dispatch({
-      type: 'costAccount/changeSalesPlanFormVisible',
+      type: 'salesPlan/changeSalesPlanFormVisible',
       payload: false,
     });
-
-    
-
   };
   handleDataFormSubmit = data => {
-    console.log("哈哈哈2");
+    console.log('哈哈哈2');
     this.dispatch({
       type: 'costAccount/submit',
       payload: data,
@@ -68,7 +96,12 @@ export default class CostAccountDetail extends PureComponent {
   };
 
   render() {
-    const breadcrumbList = [{ title: '项目管理' }, { title: '项目详情', href: '/cost/detail' }];
+    const breadcrumbList = [
+      { title: '成本管理' },
+      { title: '成本核算', href: '/cost/list' },
+      { title: '项目详情', href: '/cost/detail' },
+    ];
+    const { pro_id, formType} = this.state;
     return (
       <PageHeaderLayout
         title="项目详情"
@@ -76,30 +109,29 @@ export default class CostAccountDetail extends PureComponent {
         //content={this.renderContent()}
       >
         <Card bordered={false}>
-          <Tabs defaultActiveKey="3" onChange={this.callback}>
+          <Tabs defaultActiveKey="2" onChange={this.callback}>
             <TabPane tab="收益测算" key="1">
-              Content of Tab Pane 1
+            <IncomeMeasure></IncomeMeasure>
             </TabPane>
             <TabPane tab="成本核算" key="2">
-              Content of Tab Pane 2
+              <CostList  ></CostList>
             </TabPane>
-            <TabPane tab="销售计划" key="3" style={{minHeight: 500, maxHeight: 500}}>
-             <SalesPlan></SalesPlan>
+            <TabPane tab="销售计划" key="3" style={{ minHeight: 500, maxHeight: 500 }}>
+              <SalesPlan></SalesPlan>
             </TabPane>
             <TabPane tab="成本支出节点" key="4">
-              Content of Tab Pane 3
+             <CostExpenseNode></CostExpenseNode>
             </TabPane>
             <TabPane tab="资本化利息" key="5">
               Content of Tab Pane 3
             </TabPane>
-             <TabPane tab="土地增值税" key="6">
-              Content of Tab Pane 3
+            <TabPane tab="土地增值税" key="6">
+              {/* Content of Tab Pane 3 */}
+              <LandValueAddedTax></LandValueAddedTax>
             </TabPane>
           </Tabs>
         </Card>
-        {
-          this.renderDataForm()
-        }
+        {this.renderDataForm()}
       </PageHeaderLayout>
     );
   }

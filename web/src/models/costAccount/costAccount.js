@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as costAccountService from '@/services/costAccount';
+import * as projectManageService from '@/services/projectManage'
 // 成本核算
 export default {
   namespace: 'costAccount',
@@ -13,15 +14,19 @@ export default {
     },
     submitting: false,
     formTitle: '',
-    formID: '',
-    formVisible:false,
+    formID: '', // 当前选中的项目ID
+    formType: 'E', // "E" 编辑 "V" 查看
+    formVisible: false,
     addSalesPlanVisible: false,
     formData: {},
-  
+    companyList: [],
+    poltList: [],
+
   },
   // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
+
       let params = {
         q: 'page',
       };
@@ -85,10 +90,10 @@ export default {
             payload: {},
           }),
         ];
-       
 
 
-      } 
+
+      }
       // else if (payload.type === 'A') {
       //   yield put({
       //     type: 'changeNewFormVisible',
@@ -96,7 +101,7 @@ export default {
       //   });
       // }
 
-    
+
 
       // if (payload.type === 'E') {
       //   yield [
@@ -201,24 +206,41 @@ export default {
         })
       );
     },
-
-
-
     // 成本核算的接口
     // 查看详情
     *redirectDetail({ payload }, { put }) {
+      console.log("type type  " + payload.operType);
      
       yield put(
         routerRedux.push({
           pathname: '/cost/detail',
           query: {
-            key: payload.key,
-           
+            key: payload.item.record_id,
+            operType: payload.operType,
+
           },
-        })
+        }),
+
       );
+      // yield put(
+      //   {
+      //     type: 'saveFormID',
+      //     payload: payload.item.record_id,
+      //   }
+      // );
+
+      // yield put(
+      //   {
+      //     type: 'saveFormType',
+      //     payload: payload.operType,
+      //   }
+      // );
+
+
     },
-    
+
+
+
   },
   reducers: {
     saveData(state, { payload }) {
@@ -235,7 +257,7 @@ export default {
     },
     changeSalesPlanFormVisible(state, { payload }) {
       console.log("修改新增计划的状态");
-      return { ...state, addSalesPlanVisible: payload};
+      return { ...state, addSalesPlanVisible: payload };
     },
     changeNewFormVisible(state, { payload }) {
       return { ...state, newFormVisible: payload };
@@ -244,6 +266,7 @@ export default {
       return { ...state, formTitle: payload };
     },
     saveFormType(state, { payload }) {
+      console.log("修改formType " + payload);
       return { ...state, formType: payload };
     },
     saveFormID(state, { payload }) {

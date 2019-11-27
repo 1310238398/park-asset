@@ -25,6 +25,8 @@ const (
 	TraceIDKey = prefix + "/trace_id"
 	// ResBodyKey 存储上下文中的键(响应Body数据)
 	ResBodyKey = prefix + "/res_body"
+	// OrgIDKey 存储上下文中的建(组织ID)
+	OrgIDKey = prefix + "/org_id"
 )
 
 // NewContext 封装上线文入口
@@ -100,6 +102,11 @@ func GetTraceID(c *gin.Context) string {
 // GetUserID 获取用户ID
 func GetUserID(c *gin.Context) string {
 	return c.GetString(UserIDKey)
+}
+
+// GetOrgID 获取OrgID
+func GetOrgID(c *gin.Context) string {
+	return c.GetString(OrgIDKey)
 }
 
 // CheckIsRootUser 检查用户是否是root用户

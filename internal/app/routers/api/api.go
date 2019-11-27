@@ -66,6 +66,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		// 用户身份授权
 		g.Use(middleware.UserAuthMiddleware(
 			a,
+			cUser.UserBll,
 			middleware.AllowMethodAndPathPrefixSkipper(
 				middleware.JoinRouter("GET", "/api/v1/pub/login"),
 				middleware.JoinRouter("GET", "/api/v1/pub/statistics"),
@@ -244,8 +245,8 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			v1.GET("/statistics/financiall_indicator", cStatistic.QueryFinanciallIndicator)
 			v1.GET("/statistics/company", cStatistic.QueryCompany)
 
-			// 注册/api/v1/business-formats
-			gBusinessFormat := v1.Group("business-formats")
+			// 注册/api/v1/business-formats 业态相关
+			gBusinessFormat := v1.Group("business_formats")
 			{
 				gBusinessFormat.GET("", cBusinessFormat.Query)
 				gBusinessFormat.GET(":id", cBusinessFormat.Get)
@@ -360,6 +361,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjDeliveryStandard.GET("", cProjDeliveryStandard.Query)
 				gProjDeliveryStandard.GET(":id", cProjDeliveryStandard.Get)
 				gProjDeliveryStandard.POST("", cProjDeliveryStandard.Create)
+				gProjDeliveryStandard.PUT("", cProjDeliveryStandard.UpdateAll)
 				gProjDeliveryStandard.PUT(":id", cProjDeliveryStandard.Update)
 				gProjDeliveryStandard.DELETE(":id", cProjDeliveryStandard.Delete)
 			}

@@ -51,13 +51,13 @@
             "gorm_options": "type:decimal(20,4);"  
         },
         {
-            "struct_field_name": "TaxPrise",
+            "struct_field_name": "TaxPrice",
             "comment": "销售税额",
             "struct_field_type": "float64",
             "gorm_options": "type:decimal(20,4);"  
         },
         {
-            "struct_field_name": "AveragePrise",
+            "struct_field_name": "AveragePrice",
             "comment": "均价",
             "struct_field_type": "float64",
             "gorm_options": "type:decimal(20,4);"  

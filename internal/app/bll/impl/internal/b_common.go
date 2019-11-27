@@ -79,3 +79,52 @@ func DefaultSystemParameterValue(ctx context.Context, mSystemParameter model.ISy
 	}
 	return val
 }
+
+// GetCostTemplate 获取成本模板
+func GetCostTemplate(ctx context.Context, mCostItem model.ICostItem) (schema.CostItems, error) {
+	ps := schema.CostItemQueryParam{}
+	cir, err := mCostItem.Query(ctx, ps)
+	if err != nil {
+		return nil, err
+	}
+
+	result := schema.CostItems{}
+	for _, v := range cir.Data {
+		if v.ParentID == "" {
+			result = append(result, v)
+		} else {
+			for _, k := range cir.Data {
+				if k.RecordID == v.ParentID {
+					k.Children = append(k.Children, k)
+				}
+				break
+			}
+		}
+	}
+	return result, nil
+}
+
+// GetTaxPrice 计算税金
+func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, price float64, taxID string, taxRate float64) (float64, float64, error) {
+	//TODO 土增计税
+
+	//取税
+	tax, err := mTaxCalculation.Get(ctx, taxID)
+	if err != nil {
+		return 0, 0, err
+	}
+	var taxPrice float64
+	if taxRate == 0 {
+		taxRate = tax.TaxRate
+	}
+
+	//特别计税
+
+	//计税
+	if tax.Type == 1 {
+		taxPrice = price * taxRate / (1 + taxRate)
+	} else if tax.Type == 2 {
+		taxPrice = price * taxRate
+	}
+	return taxPrice, taxRate, nil
+}

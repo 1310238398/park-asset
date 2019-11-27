@@ -21,7 +21,7 @@ func (a SchemaCostBusiness) ToCostBusiness() *CostBusiness {
 		RecordID:   &a.RecordID,
 		CostID:     &a.CostID,
 		BusinessID: &a.BusinessID,
-		UnitPrise:  &a.UnitPrise,
+		UnitPrice:  &a.UnitPrice,
 	}
 	return item
 }
@@ -32,7 +32,7 @@ type CostBusiness struct {
 	RecordID   *string  `gorm:"column:record_id;size:36;index;"`       // 记录ID
 	CostID     *string  `gorm:"column:cost_id;size:36;index;"`         // 成本项ID
 	BusinessID *string  `gorm:"column:business_id;size:36;index;"`     // 业态ID
-	UnitPrise  *float64 `gorm:"column:unit_prise;type:decimal(20,4);"` // 单价
+	UnitPrice  *float64 `gorm:"column:unit_price;type:decimal(20,4);"` // 单价
 }
 
 func (a CostBusiness) String() string {
@@ -50,7 +50,7 @@ func (a CostBusiness) ToSchemaCostBusiness() *schema.CostBusiness {
 		RecordID:   *a.RecordID,
 		CostID:     *a.CostID,
 		BusinessID: *a.BusinessID,
-		UnitPrise:  *a.UnitPrise,
+		UnitPrice:  *a.UnitPrice,
 	}
 	return item
 }

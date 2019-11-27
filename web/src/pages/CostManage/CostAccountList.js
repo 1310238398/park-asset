@@ -6,7 +6,7 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import AddNewSalesPlan from './AddNewSalesPlan';
+
 
 import styles from './CostAccount.less';
 //import { catchClause } from '@babel/types';
@@ -67,59 +67,28 @@ class CostAccountList extends PureComponent {
       // selectedRows: [],
       expandHang: [],
       expandedRowKeys: [],
-      
-    
   };
   componentDidMount() {
     // 调接口
-    // this.dispatch({
-    //   type: 'costAccount/fetch',
-    //   search: {},
-    //   pagination: {},
-    // });
-    // this.dispatch({
-    //   type: 'projectManage/queryCompany',
-    // });
-    // this.dispatch({
-    //   type: 'projectManage/queryPlotList',
-    // });
+    this.dispatch({
+      type: 'projectManage/fetch',
+      search: {},
+      pagination: {},
+    });
+    this.dispatch({
+      type: 'costAccount/queryCompany',
+    });
+    this.dispatch({
+      type: 'costAccount/queryPlotList',
+    });
 
-   
   }
 
-
-  // clearSelectRows = () => {
-  //   const { selectedRowKeys } = this.state;
-  //   if (selectedRowKeys.length === 0) {
-  //     return;
-  //   }
-  //   this.setState({ selectedRowKeys: [], selectedRows: [] });
-  // };
 
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
   };
-
-
-  // handleTableSelectRow = (keys, rows) => {
-  //   this.setState({
-  //     selectedRowKeys: keys,
-  //     selectedRows: rows,
-  //   });      
-  // };
-
-  // handleTableChange = pagination => {
-  //   console.log("handleTableChange");
-  //   this.dispatch({
-  //     type: 'projectManage/fetch',
-  //     pagination: {
-  //       current: pagination.current,
-  //       pageSize: pagination.pageSize,
-  //     },
-  //   });
-  //   this.clearSelectRows();
-  // };
 
   handleResetFormClick = () => {
     const { form } = this.props;
@@ -165,7 +134,7 @@ class CostAccountList extends PureComponent {
   renderSearchForm() {
     const {
       form: { getFieldDecorator },
-      projectManage: { companyList, poltList },
+      costAccount: { companyList, poltList },
     } = this.props;
 
     return (
@@ -285,34 +254,29 @@ class CostAccountList extends PureComponent {
     console.log(this.state.expandHang);
   };
 
-  goToDetail(item) {
+  goToDetail(item, type1) {
+    // type V 查看  E 编辑
+
+    
     this.dispatch({
       type: 'costAccount/redirectDetail',
-      payload: item,
+      payload: {
+        item: item,
+        operType: type1
+      },
+    
     });
 
+
   }
-  handleDataFormCancel = () => {
-    this.dispatch({
-      type: 'costAccount/changeFormVisible',
-      payload: false,
-    });
-  };
-  handleDataFormSubmit = data => {
-    console.log("哈哈哈2");
-    this.dispatch({
-      type: 'costAccount/submit',
-      payload: data,
-    });
-    this.clearSelectRows();
-  };
+ 
 
   
 
   render() {
     const {
       loading,
-      costAccount: {
+      projectManage: {
         data: { list, pagination },
       },
     } = this.props;
@@ -354,13 +318,12 @@ class CostAccountList extends PureComponent {
         render: (text, record) => {
           const { editingKey } = this.state;
         
-          return !record.isPro ? null:(  
-            <div>
-            <PButton   code="edit"  onClick={() => {}}>
+          return <div>
+            <PButton   code="edit"  onClick={() => {this.goToDetail(record, 'E');}}>
               编辑
             </PButton>
             
-              <PButton  code="view" style={{ marginLeft: 8 }} onClick={() => {this.goToDetail(record);}}>
+              <PButton  code="view" style={{ marginLeft: 8 }} onClick={() => {this.goToDetail(record, 'V');}}>
               查看
               </PButton>
           
@@ -368,7 +331,7 @@ class CostAccountList extends PureComponent {
          
             </div>
           
-          );
+         
         },
       },
       
@@ -411,7 +374,7 @@ class CostAccountList extends PureComponent {
                 loading={loading}
                 rowKey={record => record.key}
                 expandedRowKeys={this.state.expandedRowKeys}
-                dataSource={data}
+                dataSource={list}//{data}
                 columns={columns}
                 pagination={false}//{paginationProps}
                 scroll={{ y: 500}}

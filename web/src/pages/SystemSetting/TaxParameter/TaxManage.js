@@ -228,7 +228,7 @@ class TaxManage extends PureComponent {
                 title: "税率",
                 dataIndex: "tax_rate",
                 width: 100,
-                render: data => `${data}%`
+                render: data => `${data*100}%`
             },
             {
                 title: "含税计算",
