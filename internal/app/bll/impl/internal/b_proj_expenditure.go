@@ -98,14 +98,23 @@ func (a *ProjExpenditure) Update(ctx context.Context, recordID string, item sche
 
 // Delete 删除数据
 func (a *ProjExpenditure) Delete(ctx context.Context, recordID string) error {
-	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
-		if err != nil {
-			return err
-		} else if oldItem == nil {
-			return errors.ErrNotFound
-		}
+	oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
+	if err != nil {
+		return err
+	} else if oldItem == nil {
+		return errors.ErrNotFound
+	}
 
+	result, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
+		ParentID: recordID,
+	}, schema.ProjExpenditureQueryOptions{PageParam: &schema.PaginationParam{PageSize: -1}})
+	if err != nil {
+		return err
+	} else if result.PageResult.Total > 0 {
+		return errors.ErrNotAllowDeleteWithChild
+	}
+
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, recordID)
 		if err != nil {
 			return err

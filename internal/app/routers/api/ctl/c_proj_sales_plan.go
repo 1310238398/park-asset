@@ -84,6 +84,10 @@ func (a *ProjSalesPlan) QueryList(c *gin.Context) {
 	params.ProjBusinessID = c.Query("proj_business_id")
 	params.ProjIncomeID = c.Query("proj_income_id")
 	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 
 	result, err := a.ProjSalesPlanBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
