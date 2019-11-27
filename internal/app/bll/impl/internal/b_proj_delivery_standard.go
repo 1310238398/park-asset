@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"gxt-park-assets/internal/app/bll"
 
 	"gxt-park-assets/internal/app/errors"
@@ -59,7 +58,7 @@ func (a *ProjDeliveryStandard) UpdateList(ctx context.Context, projectID string,
 				pds.RecordID = item.RecordID
 			}
 			//处理下级
-			for _, v := range pds.Children {
+			for _, v := range *pds.Children {
 				v.ParentID = pds.RecordID
 				if err := update(v); err != nil {
 					return err
@@ -108,22 +107,24 @@ func (a *ProjDeliveryStandard) getUpdate(ctx context.Context, recordID string) (
 	return a.Get(ctx, recordID)
 }
 
-func (a *ProjDeliveryStandard) getPath(ctx context.Context, recordID string) (string, error) {
-	result := recordID
-	for {
-		item, err := a.Get(ctx, recordID)
-		if err != nil {
-			return "", err
-		}
-		if item == nil {
-			return result, nil
-		}
-		if item.ParentID == "" || item.ParentID == recordID {
-			return result, nil
-		}
-		recordID = item.ParentID
-		result = fmt.Sprintf("%s/%s", recordID, result)
+func (a *ProjDeliveryStandard) getPath(ctx context.Context, parentID string) (string, error) {
+	if parentID == "" {
+		return "", nil
 	}
+
+	pitem, err := a.ProjDeliveryStandardModel.Get(ctx, parentID)
+	if err != nil {
+		return "", err
+	} else if pitem == nil {
+		return "", errors.ErrInvalidParent
+	}
+
+	var parentPath string
+	if v := pitem.ParentPath; v != "" {
+		parentPath = v + "/"
+	}
+	parentPath = parentPath + pitem.RecordID
+	return parentPath, nil
 }
 
 func (a *ProjDeliveryStandard) toTree(data schema.ProjDeliveryStandards) schema.ProjDeliveryStandards {
@@ -133,10 +134,16 @@ func (a *ProjDeliveryStandard) toTree(data schema.ProjDeliveryStandards) schema.
 			result = append(result, v)
 		} else {
 			for _, k := range data {
-				if k.RecordID == v.ParentID {
-					k.Children = append(k.Children, k)
+				if v.ParentID == k.RecordID {
+					if k.Children == nil {
+						var children []*schema.ProjDeliveryStandard
+						children = append(children, v)
+						k.Children = &children
+						continue
+					}
+					*k.Children = append(*k.Children, v)
 				}
-				break
+				continue
 			}
 		}
 	}
@@ -145,15 +152,20 @@ func (a *ProjDeliveryStandard) toTree(data schema.ProjDeliveryStandards) schema.
 
 // Create 创建数据
 func (a *ProjDeliveryStandard) Create(ctx context.Context, item schema.ProjDeliveryStandard) (*schema.ProjDeliveryStandard, error) {
+	parentPath, err := a.getPath(ctx, item.ParentID)
+	if err != nil {
+
+		return nil, err
+	}
+
+	item.ParentPath = parentPath
 	item.RecordID = util.MustUUID()
-	err := a.ProjDeliveryStandardModel.Create(ctx, item)
+
+	err = a.ProjDeliveryStandardModel.Create(ctx, item)
 	if err != nil {
 		return nil, err
 	}
-	item.ParentPath, err = a.getPath(ctx, item.ParentID)
-	if err != nil {
-		return nil, err
-	}
+
 	return a.getUpdate(ctx, item.RecordID)
 }
 
@@ -166,10 +178,21 @@ func (a *ProjDeliveryStandard) Update(ctx context.Context, recordID string, item
 		return nil, errors.ErrNotFound
 	}
 
-	err = a.ProjDeliveryStandardModel.Update(ctx, recordID, item)
+	newItem := oldItem
+
+	switch {
+	case item.Content != "":
+		newItem.Content = item.Content
+		fallthrough
+	case item.Part != "":
+		newItem.Part = item.Part
+	}
+
+	err = a.ProjDeliveryStandardModel.Update(ctx, recordID, *newItem)
 	if err != nil {
 		return nil, err
 	}
+
 	return a.getUpdate(ctx, recordID)
 }
 

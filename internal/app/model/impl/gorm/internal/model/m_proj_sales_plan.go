@@ -32,12 +32,15 @@ func (a *ProjSalesPlan) getQueryOption(opts ...schema.ProjSalesPlanQueryOptions)
 func (a *ProjSalesPlan) Query(ctx context.Context, params schema.ProjSalesPlanQueryParam, opts ...schema.ProjSalesPlanQueryOptions) (*schema.ProjSalesPlanQueryResult, error) {
 	db := entity.GetProjSalesPlanDB(ctx, a.db)
 
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
 	if v := params.Year; v != 0 {
 		db = db.Where("year = ?", v)
 	}
 
 	if v := params.ProjBusinessID; v != "" {
-		db = db.Where("businesss_id = ?", v)
+		db = db.Where("proj_business_id = ?", v)
 	}
 
 	if v := params.ProjIncomeID; v != "" {

@@ -18,9 +18,11 @@ type SchemaExpenditure schema.Expenditure
 // ToExpenditure 转换为支出节点实体
 func (a SchemaExpenditure) ToExpenditure() *Expenditure {
 	item := &Expenditure{
-		RecordID: &a.RecordID,
-		Name:     &a.Name,
-		Category: &a.Category,
+		RecordID:   &a.RecordID,
+		Name:       &a.Name,
+		Category:   &a.Category,
+		ParentID:   &a.ParentID,
+		ParentPath: &a.ParentPath,
 	}
 	return item
 }
@@ -28,9 +30,11 @@ func (a SchemaExpenditure) ToExpenditure() *Expenditure {
 // Expenditure 支出节点实体
 type Expenditure struct {
 	CostModel
-	RecordID *string `gorm:"column:record_id;size:36;index;"` // 记录ID
-	Name     *string `gorm:"column:name;size:200;index;"`     // 支出节点名称
-	Category *string `gorm:"column:category;size:200;index;"` // 工作类别(大纲 里程碑 一级 二级)
+	RecordID   *string `gorm:"column:record_id;size:36;index;"`    // 记录ID
+	Name       *string `gorm:"column:name;size:200;index;"`        // 支出节点名称
+	Category   *string `gorm:"column:category;size:200;index;"`    // 工作类别(大纲 里程碑 一级 二级)
+	ParentID   *string `gorm:"column:parent_id;size:36;index;"`    // 父级ID
+	ParentPath *string `gorm:"column:parent_path;size:518;index;"` // 父级路经
 }
 
 func (a Expenditure) String() string {
@@ -45,9 +49,11 @@ func (a Expenditure) TableName() string {
 // ToSchemaExpenditure 转换为支出节点对象
 func (a Expenditure) ToSchemaExpenditure() *schema.Expenditure {
 	item := &schema.Expenditure{
-		RecordID: *a.RecordID,
-		Name:     *a.Name,
-		Category: *a.Category,
+		RecordID:   *a.RecordID,
+		Name:       *a.Name,
+		Category:   *a.Category,
+		ParentID:   *a.ParentID,
+		ParentPath: *a.ParentPath,
 	}
 	return item
 }
