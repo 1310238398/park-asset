@@ -199,7 +199,6 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 				}
 			}
 		}
-
 	}
 	var check func(t *schema.ProjCostItemShow) (bool, error)
 
@@ -521,9 +520,9 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 				if err != nil {
 					return b, t.Price, t.TaxPrice, err
 				}
-				oldm := map[string]int{}
+				oldm := map[string]bool{}
 				for _, v := range pcbqr.Data {
-					oldm[v.RecordID] = 0
+					oldm[v.RecordID] = true
 				}
 				for _, v := range pbfqr.Data { //整理成本项下各业态信息
 					var b = true
@@ -531,7 +530,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						if w.ProjBusinessID == v.RecordID {
 							price += w.UnitPrice * v.FloorArea
 							b = false
-							oldm[w.RecordID] = 1
+							oldm[w.RecordID] = false
 							break
 						}
 					}
@@ -540,7 +539,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 					}
 					//删除旧业态信息
 					for k, v := range oldm {
-						if v == 0 {
+						if v {
 							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
 								return b, t.Price, t.TaxPrice, err
 							}
@@ -558,9 +557,9 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 				if err != nil {
 					return b, t.Price, t.TaxPrice, err
 				}
-				oldm := map[string]int{}
+				oldm := map[string]bool{}
 				for _, v := range pcbqr.Data {
-					oldm[v.RecordID] = 0
+					oldm[v.RecordID] = true
 				}
 				for _, v := range pbfqr.Data { //整理成本项下各业态信息
 					var b = true
@@ -573,7 +572,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 								}
 							}
 							b = false
-							oldm[w.RecordID] = 1
+							oldm[w.RecordID] = false
 							break
 						}
 					}
@@ -588,7 +587,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 					}
 					//删除旧业态信息
 					for k, v := range oldm {
-						if v == 0 {
+						if v {
 							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
 								return b, t.Price, t.TaxPrice, err
 							}

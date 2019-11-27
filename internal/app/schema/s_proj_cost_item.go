@@ -45,6 +45,7 @@ type ProjCostItemQueryParam struct {
 	CostID       string // 成本项ID
 	ProjectID    string // 项目ID
 	ProjIncomeID string // 项目收益测算ID
+	InLandTax    int    // 是否计入土增
 }
 
 // ProjCostItemQueryOptions 查询可选参数项

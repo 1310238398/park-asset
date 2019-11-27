@@ -179,6 +179,17 @@ func (a *CostItem) Delete(ctx context.Context, recordID string) error {
 		} else if oldItem == nil {
 			return errors.ErrNotFound
 		}
+
+		// 确认下级
+		ciqp := schema.CostItemQueryParam{}
+		ciqp.ParentID = recordID
+		ciqr, err := a.CostItemModel.Query(ctx, ciqp)
+		if err != nil {
+			return err
+		}
+		if len(ciqr.Data) > 0 {
+			return errors.New("存在下级，不可删除")
+		}
 		// 删除相关业态数据
 		cbqp := schema.CostBusinessQueryParam{}
 		cbqp.CostID = recordID

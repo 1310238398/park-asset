@@ -43,7 +43,25 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 			return nil
 		}
 	}
+
+	// 获取相关税率
+	incomeTax, err := a.TaxCalculationModel.GetByName(ctx, "增值税销项税")
+	if err != nil {
+		return err
+	}
+	if incomeTax == nil {
+		return errors.New("增值税销项税")
+	}
+	localTax, err := a.TaxCalculationModel.GetByName(ctx, "地方附加税")
+	if err != nil {
+		return err
+	}
+	if localTax == nil {
+		return errors.New("未设置地方附加税")
+	}
+
 	//获取销售收入
+	var income float64
 	pspqp := schema.ProjSalesPlanQueryParam{}
 	pspqp.ProjectID = projectID
 	pspqr, err := a.ProjSalesPlanModel.Query(ctx, pspqp)
@@ -53,12 +71,74 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 	if pspqr.Data == nil || len(pspqr.Data) == 0 {
 		return errors.New("缺少销售收入")
 	}
+	for _, v := range pspqr.Data {
+		income += v.Payback
+	}
 
-	item.Income = 0
+	item.Income = util.DecimalFloat64(income / (incomeTax.TaxRate + 1))
 	//获取扣除项金额
-	item.Cost = 0
+	var cost float64
+	var tax float64
+	pciqp := schema.ProjCostItemQueryParam{}
+	pciqp.ProjectID = projectID
+	pciqp.InLandTax = 1
+	shows, err := a.ProjCostItemModel.QueryShow(ctx, pciqp)
+	if err != nil {
+		return err
+	}
+	if len(shows) == 0 {
+		return errors.New("缺少成本核算")
+	}
+	result := schema.ProjCostItemShows{}
+	for _, v := range shows {
+		if v.CostParentID == "" {
+			result = append(result, v)
+		} else {
+			for _, k := range shows {
+				if k.CostID == v.CostParentID {
+					k.Children = append(k.Children, v)
+				}
+			}
+		}
+	}
+
+	var getCost func(t *schema.ProjCostItemShow) (bool, float64, float64, error)
+	getCost = func(t *schema.ProjCostItemShow) (bool, float64, float64, error) {
+		var b = false
+		var price float64
+		var tax float64
+		if t.RecordID != "" {
+			b = true
+		} else {
+			return false, 0, 0, nil
+		}
+		for _, v := range t.Children {
+			i, pr, ta, err := getCost(v)
+			if err != nil {
+				return i, pr, ta, err
+			}
+			if i {
+				price += pr
+				tax += tax
+			}
+		}
+		return b, price, tax, nil
+	}
+	for _, v := range result {
+		i, price, tax, err := getCost(v)
+		if err != nil {
+			return err
+		}
+		if i {
+			cost += price
+			tax += tax
+		}
+	}
+	item.Cost = cost - tax
 	//计算附加税
-	item.AdditionalTax = 0
+
+	//附加税=（销项税-进项税）*地方税率
+	item.AdditionalTax = (item.Income*incomeTax.TaxRate - tax) * localTax.TaxRate
 	//计算增值额及增值率
 	increase := item.Income -
 		item.Cost*(1+item.FinanceAddRate+item.ManageAddRate+item.CostAddRate) -
@@ -111,6 +191,14 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 	return nil
 }
 
+// Renew 更新土地增值税
+func (a *LandAppreciationTax) Renew(ctx context.Context, projectID string) error {
+	err := ExecTrans(ctx, a.Trans, func(ctx context.Context) error {
+		return a.renew(ctx, projectID)
+	})
+	return err
+}
+
 // Query 查询数据
 func (a *LandAppreciationTax) Query(ctx context.Context, params schema.LandAppreciationTaxQueryParam, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTaxQueryResult, error) {
 	return a.LandAppreciationTaxModel.Query(ctx, params, opts...)
@@ -124,7 +212,6 @@ func (a *LandAppreciationTax) Get(ctx context.Context, recordID string, opts ...
 	} else if item == nil {
 		return nil, errors.ErrNotFound
 	}
-
 	return item, nil
 }
 
@@ -134,8 +221,17 @@ func (a *LandAppreciationTax) getUpdate(ctx context.Context, recordID string) (*
 
 // Create 创建数据
 func (a *LandAppreciationTax) Create(ctx context.Context, item schema.LandAppreciationTax) (*schema.LandAppreciationTax, error) {
-	item.RecordID = util.MustUUID()
-	err := a.LandAppreciationTaxModel.Create(ctx, item)
+	err := ExecTrans(ctx, a.Trans, func(ctx context.Context) error {
+		item.RecordID = util.MustUUID()
+		err := a.LandAppreciationTaxModel.Create(ctx, item)
+		if err != nil {
+			return err
+		}
+		if err := a.renew(ctx, item.ProjectID); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -144,14 +240,24 @@ func (a *LandAppreciationTax) Create(ctx context.Context, item schema.LandApprec
 
 // Update 更新数据
 func (a *LandAppreciationTax) Update(ctx context.Context, recordID string, item schema.LandAppreciationTax) (*schema.LandAppreciationTax, error) {
-	oldItem, err := a.LandAppreciationTaxModel.Get(ctx, recordID)
-	if err != nil {
-		return nil, err
-	} else if oldItem == nil {
-		return nil, errors.ErrNotFound
-	}
 
-	err = a.LandAppreciationTaxModel.Update(ctx, recordID, item)
+	err := ExecTrans(ctx, a.Trans, func(ctx context.Context) error {
+		oldItem, err := a.LandAppreciationTaxModel.Get(ctx, recordID)
+		if err != nil {
+			return err
+		} else if oldItem == nil {
+			return errors.ErrNotFound
+		}
+
+		err = a.LandAppreciationTaxModel.Update(ctx, recordID, item)
+		if err != nil {
+			return err
+		}
+		if err := a.renew(ctx, oldItem.ProjectID); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}

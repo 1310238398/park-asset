@@ -21,6 +21,16 @@ type ProjCapitalizedInterest struct {
 	ProjCapitalizedInterestModel model.IProjCapitalizedInterest
 }
 
+// renew 更新资本化利息
+func (a *ProjCapitalizedInterest) renew(ctx context.Context, projectID string) error {
+	//确认收入列表
+	//确认支出列表
+	//整合资本化利息
+	//查询已有资本换利息
+	//更新列表
+	return nil
+}
+
 // Query 查询数据
 func (a *ProjCapitalizedInterest) Query(ctx context.Context, params schema.ProjCapitalizedInterestQueryParam, opts ...schema.ProjCapitalizedInterestQueryOptions) (*schema.ProjCapitalizedInterestQueryResult, error) {
 	return a.ProjCapitalizedInterestModel.Query(ctx, params, opts...)
