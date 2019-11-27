@@ -506,7 +506,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 			}
 			if i {
 				price += pr
-				tax += tax
+				tax += ta
 				hasc = true
 			}
 		}

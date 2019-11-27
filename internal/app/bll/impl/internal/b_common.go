@@ -2,6 +2,8 @@ package internal
 
 import (
 	"context"
+	"fmt"
+	"gxt-park-assets/internal/app/errors"
 
 	"gxt-park-assets/internal/app/config"
 	icontext "gxt-park-assets/internal/app/context"
@@ -106,7 +108,11 @@ func GetCostTemplate(ctx context.Context, mCostItem model.ICostItem) (schema.Cos
 
 // GetTaxPrice 计算税金
 func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, price float64, taxID string, taxRate float64) (float64, float64, error) {
-	//TODO 土增计税
+	/*
+		本方法限于成本测算中各成本项的计税
+		土地增值税，地方附加税等通过按名称查询指定税率的方式查询
+	*/
+	var taxPrice float64
 
 	//取税
 	tax, err := mTaxCalculation.Get(ctx, taxID)
@@ -114,14 +120,17 @@ func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, pri
 		return 0, 0, err
 	}
 	if tax == nil {
-		return 0, 0, nil
+		if taxRate == 0 {
+			return 0, 0, nil
+		}
+		// 默认计税
+		taxPrice = price * taxRate / (1 + taxRate)
+		return taxPrice, taxRate, nil
 	}
-	var taxPrice float64
+
 	if taxRate == 0 {
 		taxRate = tax.TaxRate
 	}
-
-	//特别计税
 
 	//计税
 	if tax.Type == 1 {
@@ -130,4 +139,23 @@ func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, pri
 		taxPrice = price * taxRate
 	}
 	return taxPrice, taxRate, nil
+}
+
+// GetTaxRate
+func GetTaxRate(ctx context.Context, mTaxCalculation model.ITaxCalculation, name string, defRate ...float64) (float64, error) {
+
+	if name == "" {
+		return 0, nil
+	}
+	tax, err := mTaxCalculation.GetByName(ctx, name)
+	if err != nil {
+		return 0, err
+	}
+	if tax == nil {
+		if len(defRate) > 0 {
+			return defRate[0], nil
+		}
+		return 0, errors.New(fmt.Sprintf("未设置[%s]", name))
+	}
+	return tax.TaxRate, nil
 }
