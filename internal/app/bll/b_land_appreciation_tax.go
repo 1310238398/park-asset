@@ -14,6 +14,8 @@ type ILandAppreciationTax interface {
 	Query(ctx context.Context, params schema.LandAppreciationTaxQueryParam, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTaxQueryResult, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTax, error)
+	// 根据项目ID查询数据
+	GetByProjectID(ctx context.Context, projectID string) (*schema.LandAppreciationTax, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.LandAppreciationTax) (*schema.LandAppreciationTax, error)
 	// 更新数据

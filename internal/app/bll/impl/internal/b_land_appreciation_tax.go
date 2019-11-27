@@ -50,7 +50,7 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 		return err
 	}
 	if incomeTax == nil {
-		return errors.New("增值税销项税")
+		return errors.New("未设置增值税销项税")
 	}
 	localTax, err := a.TaxCalculationModel.GetByName(ctx, "地方附加税")
 	if err != nil {
@@ -211,6 +211,24 @@ func (a *LandAppreciationTax) Get(ctx context.Context, recordID string, opts ...
 		return nil, err
 	} else if item == nil {
 		return nil, errors.ErrNotFound
+	}
+	return item, nil
+}
+
+// GetByProjectID 按项目ID获取土增
+func (a *LandAppreciationTax) GetByProjectID(ctx context.Context, projectID string) (*schema.LandAppreciationTax, error) {
+	item, err := a.LandAppreciationTaxModel.GetByProjectID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	} else if item == nil {
+		err := a.Renew(ctx, projectID)
+		if err != nil {
+			return nil, err
+		}
+		item, err = a.LandAppreciationTaxModel.GetByProjectID(ctx, projectID)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return item, nil
 }

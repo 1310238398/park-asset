@@ -141,7 +141,7 @@ func GetTaxPrice(ctx context.Context, mTaxCalculation model.ITaxCalculation, pri
 	return taxPrice, taxRate, nil
 }
 
-// GetTaxRate
+// GetTaxRate 获取税率（根据税名）
 func GetTaxRate(ctx context.Context, mTaxCalculation model.ITaxCalculation, name string, defRate ...float64) (float64, error) {
 
 	if name == "" {
