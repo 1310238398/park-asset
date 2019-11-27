@@ -3,8 +3,8 @@ import request from '../utils/request';
 
 const router = 'business-formats';
 
-export async function queryList() {
-    return request(`/v1/${router}`);
+export async function queryList(params){
+    return request(`/v1/${router}?${stringify(params)}`);
 }
 export async function queryListNotPage() {
     return request(`/v1/${router}?q=list`);
@@ -18,7 +18,7 @@ export async function create(params) {
     return request(`/v1/${router}`, {
         method: 'POST',
         body: params,
-      });
+    });
 }
 
 export async function update(params){
@@ -33,3 +33,7 @@ export async function del(params) {
       method: 'DELETE',
     });
 }
+
+// export async function getList(params){
+//     return request(`/v1/${router}?${stringify(params)}`);
+// }

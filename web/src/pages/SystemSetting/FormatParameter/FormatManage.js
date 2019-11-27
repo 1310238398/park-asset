@@ -6,7 +6,8 @@ import FormatCard from './FormatCard';
 
 import styles from './FormatManage.less';
 
-import { queryList, del } from '@/services/formatManage';
+import { queryList, del,} from '@/services/formatManage';
+//getList
 
 @Form.create()
 class FormatManage extends PureComponent {
@@ -20,23 +21,28 @@ class FormatManage extends PureComponent {
             ],
             pagination: {
             }
-        }
+        },
+        loading : true,
     };
 
     componentWillMount(){
+
+        const params = { q : "page", current : 1 };
         //请求接口
-        queryList().then(res=>{
+        queryList(params).then(res=>{
             if(res && res.error){
                 console.log(res.error.message);
                 return;
             }else{
                 this.setState( { data : res } );
             }
+            this.setState({ loading : false });
         });
     }
 
-    getList = () => {
-        queryList().then(res=>{
+    getList = params => {
+        queryList(params).then(res=>{
+            this.setState({ loading : false });
             if(res && res.error){
                 console.log(res.error.message);
             }else{
@@ -121,9 +127,17 @@ class FormatManage extends PureComponent {
     };
 
     onSave = (saved = false) => {
+        const { 
+            data : {
+                pagination : { current, pageSize }
+            }
+        } = this.state;
+
+        const params = { q : "page", current : current, pageSize : pageSize };
         if(saved){
+            this.setState({ loading : true });
             //为true，进行保存了，重新拉取列表，进行数据的更新
-            this.getList();
+            this.getList(params);
         }
         this.setState({ formVisible : false,editInfo : null});
         this.clearSelectRows();
@@ -146,9 +160,19 @@ class FormatManage extends PureComponent {
         });
     };
     handleDelOKClick(params) {
+        this.setState({ loading : true });
+        const { 
+            data : {
+                pagination : { current, pageSize }
+            }
+        } = this.state;
+
+        const param = { q : "page", current : current, pageSize : pageSize };
+
         del(params).then( res => {
+            this.setState({ loading : false });
             if( res && res.status == "OK" ){
-                this.getList();
+                this.getList(param);
             }else{
                 if(res && res.error){
                     console.log(res.error.message);
@@ -158,10 +182,18 @@ class FormatManage extends PureComponent {
         this.clearSelectRows();
     }
 
+    onTableChange = pagination =>{
+        console.log("current",pagination.current);
+        console.log("pagesize",pagination.pageSize);
+
+        const params = { q : "page", current : pagination.current, pageSize : pagination.pageSize };
+        this.getList(params);
+    }
+
    
     //页面的render
     render() {
-        const { selectedRowKeys, selectedRows , data:{ list, pagination }, formVisible ,editInfo } = this.state;
+        const { selectedRowKeys, selectedRows , data:{ list, pagination }, formVisible ,editInfo, loading } = this.state;
         const columns = [
             {
                 title: '业态名称',
@@ -231,7 +263,7 @@ class FormatManage extends PureComponent {
                                         onClick={() => this.handleDelClick()}
                                     >
                                         删除
-                                  </PButton>,
+                                    </PButton>,
                                 ]
                             }
                         </div>
@@ -245,6 +277,8 @@ class FormatManage extends PureComponent {
                                 dataSource={list}
                                 rowKey={record => record.record_id}
                                 pagination={paginationProps}
+                                onChange = {this.onTableChange}
+                                loading = {loading}
                             // size="small"
                             />
                         </div>

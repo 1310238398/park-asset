@@ -195,18 +195,25 @@ export default [
             },
         ],
       },
-      //基础设定-系统设定
+      //基础设定-系统设定--模板
       {
         path : 'systemset',
         routes: [  
-          {//业态管理
+          //业态管理
+          {
             path : '/systemset/formatManage',
             component : './SystemSetting/FormatParameter/FormatManage',
           },
-          {
+          //税目管理
+          { 
             path : "/systemset/taxManage",
             component : './SystemSetting/TaxParameter/TaxManage',
-          }
+          },
+          // 项目成本管理
+          { 
+            path : "/systemset/projectCostManage",
+            component : './SystemSetting/ProjectCostParameter/ProjectCostManage',
+          },
         ]
       },
       // 成本管理
