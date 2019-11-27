@@ -8,6 +8,8 @@ import (
 
 // ILandAppreciationTax 土地增值税业务逻辑接口
 type ILandAppreciationTax interface {
+	// 更新数据
+	Renew(ctx context.Context, projectID string) error
 	// 查询数据
 	Query(ctx context.Context, params schema.LandAppreciationTaxQueryParam, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTaxQueryResult, error)
 	// 查询指定数据

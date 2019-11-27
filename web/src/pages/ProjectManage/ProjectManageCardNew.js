@@ -90,13 +90,18 @@ class ProjectManageCardNew extends PureComponent {
   showStep = step => {
     console.log('showStep');
 
-    const current = step !== -1 ? step : 0;
-    this.dispatch({
+    const current = (step !== -1) ? step : 0;
+   
+    
+  this.dispatch({
       type: "projectManage/saveCurrentIndex",
       payload: current
     });
+    
+  
 
     if (step === -1) {
+      console.log("step === -1")
       this.handleDataNewFormCancel();
     }
     //
@@ -113,7 +118,10 @@ class ProjectManageCardNew extends PureComponent {
   };
 
   setStep1Submit = handler => {
+
     console.log('setStep1Submit');
+    console.log("handler ");
+    console.log(handler);
     this.step1 = handler;
   };
 

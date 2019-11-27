@@ -83,7 +83,28 @@ class SalesPlan extends PureComponent {
   state = {
     editingKey: '',
     yearList: ['2020', '2019', '2018', '2017'],
-    quarterList: ['合计', '第一季度', '第二季度', '第三季度', '第四季度'],
+    quarterList: [
+      {
+        name: '第一季度',
+        key: 1
+
+      },
+      {
+        name: '第二季度',
+        key: 2
+
+      },
+      {
+        name: '第三季度',
+        key: 3
+
+      },
+      {
+        name: '第四季度',
+        key: 4
+
+      },
+    ],
     columns: [
       {
         title: '业态名称',
@@ -96,7 +117,7 @@ class SalesPlan extends PureComponent {
         title: '年度',
         dataIndex: 'year',
         width: '8%',
-       
+
         align: 'center',
 
       },
@@ -104,7 +125,7 @@ class SalesPlan extends PureComponent {
         title: '季度',
         dataIndex: 'quarter',
         width: '8%',
-       
+
         align: 'center',
 
       },
@@ -169,11 +190,11 @@ class SalesPlan extends PureComponent {
                 <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)} style={{ marginRight: 8 }}>
                   编辑
               </a>
-              <Popconfirm title="确定删除?" onConfirm={() => this.deletePlan(record.record_id)}>
-              <a disabled={editingKey !== ''} >
-                  删除
+                <Popconfirm title="确定删除?" onConfirm={() => this.deletePlan(record.record_id)}>
+                  <a disabled={editingKey !== ''} >
+                    删除
               </a>
-              </Popconfirm>
+                </Popconfirm>
               </div>
             );
         },
@@ -225,15 +246,15 @@ class SalesPlan extends PureComponent {
   };
   componentDidMount() {
     console.log("销售计划页面初始化");
-    const { costAccount:{formID}} = this.props;
+    const { costAccount: { formID } } = this.props;
 
 
-     this.dispatch({
-        type: 'salesPlan/fetch',
-        search: {},
-        pagination: {},
-        pro_id: formID,
-      });
+    this.dispatch({
+      type: 'salesPlan/fetch',
+      search: {},
+      pagination: {},
+      pro_id: formID,
+    });
 
   }
 
@@ -263,11 +284,11 @@ class SalesPlan extends PureComponent {
 
     const { form } = this.props;
     form.validateFields({ force: true }, (err, values) => {
-     
+
       if (err) {
         return;
-      } 
-      const { costAccount:{formID}} = this.props;
+      }
+      const { costAccount: { formID } } = this.props;
       const formData = { ...values };
       console.log('form数据  ' + JSON.stringify(formData));
 
@@ -284,7 +305,7 @@ class SalesPlan extends PureComponent {
   isEditing = record => record.record_id === this.state.editingKey;
 
   save(form, key) {  // key是项目业态id
-   const { salesPlan:{ data:{list, pagination}} } = this.props;
+    const { salesPlan: { data: { list, pagination } } } = this.props;
     console.log('要保存数据的key ' + key);
 
     form.validateFields(async (error, row) => {
@@ -296,39 +317,40 @@ class SalesPlan extends PureComponent {
       const index = newData.findIndex(item => key === item.record_id);
       if (index > -1) {
         const item = newData[index];
+        row.record_id = key;
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
 
-        let response ;
-        row.record_id = key;
+        let response;
+      
         response = await updateSalesPlan(row);
         if (response.record_id && response.record_id !== "") {
           message.success('更新成功');
-          this.setState({  editingKey: '' });
+          this.setState({ editingKey: '' });
           this.dispatch({
             type: 'salesPlan/saveData',
-            payload:{
+            payload: {
               list: [...newData],
               pagination: pagination
-            } ,
+            },
           });
 
         }
-       
-      } 
 
-    
+      }
+
+
     });
   }
 
   deletePlan(key) {
 
-  this.dispatch({
-    type: 'salesPlan/del',
-    payload: key,
-  });
+    this.dispatch({
+      type: 'salesPlan/del',
+      payload: key,
+    });
 
 
   }
@@ -374,10 +396,10 @@ class SalesPlan extends PureComponent {
       loading,
       form: { getFieldDecorator },
       costAccount: { formType },
-      salesPlan:{ data:{list, pagination}}
+      salesPlan: { data: { list, pagination } }
     } = this.props;
 
-    
+
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -385,7 +407,7 @@ class SalesPlan extends PureComponent {
       ...pagination,
     };
 
-    const {yearList, quarterList, editingKey, columns, view_columns } = this.state;
+    const { yearList, quarterList, editingKey, columns, view_columns } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
@@ -472,8 +494,8 @@ class SalesPlan extends PureComponent {
                 >
                   {quarterList &&
                     quarterList.map(item => (
-                      <Select.Option key={item} value={item}>
-                        {item}
+                      <Select.Option key={item.key} value={item.key}>
+                        {item.name}
                       </Select.Option>
                     ))}
                 </Select>
@@ -496,13 +518,13 @@ class SalesPlan extends PureComponent {
             rowKey={record => record.record_id}
             dataSource={list}
             columns={formType === "E" ? columns2 : (formType === 'V' ? view_columns : null)} //{view_columns}
-           // pagination={false}
-           pagination={paginationProps}
-           // scroll={{ y: 500 }}
+            // pagination={false}
+            pagination={paginationProps}
+            // scroll={{ y: 500 }}
             rowClassName="editable-row"
             rowClassName={() => 'editable-row'}
             onChange={this.handleTableChange}
-           // style={{ maxHeight: 500 }}
+          // style={{ maxHeight: 500 }}
           ></Table>
         </EditableContext.Provider>
 

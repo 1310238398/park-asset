@@ -42,7 +42,7 @@ export async function deletePlan(params) {
 // 成本核算列表相关接口
 // 查询成本核算列表
 export async function queryCostList(params) {
-  return request(`/v1/proj-cost-items?q=tree&${stringify(params)}`);
+  return request(`/v1/proj-cost-items?q=tree&show=map&${stringify(params)}`);
 }
 
 // 更新成本项数据

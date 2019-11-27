@@ -90,6 +90,11 @@ func (a *ProjCostItem) QueryShow(ctx context.Context, params schema.ProjCostItem
 	}
 
 	db = db.Select(strings.Join(selectlist, ","))
+	db = db.Where(fmt.Sprintf("%s.deleted_at IS NULL", cit))
+	//仅查询土增相关成本项
+	if params.InLandTax == 1 {
+		db = db.Where(fmt.Sprintf("%s.in_land_tax = ?", cit), 1)
+	}
 	var list entity.ProjCostItemShows
 	if re := db.Find(&list); re.Error != nil {
 		return nil, re.Error
