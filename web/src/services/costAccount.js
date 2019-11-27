@@ -80,6 +80,13 @@ export async function updateCostNode(params) {
   });
 
 }
+// 删除节点
+export async function deleteCostNode(params) {
+  // /api/v1/proj-expenditures/{id}
+  return request(`/v1/proj-expenditures/${params}`, {
+    method: 'DELETE',
+  });
+}
 
 // export async function query(params) {
 //   return request(`/v1/${router}?${stringify(params)}`);
