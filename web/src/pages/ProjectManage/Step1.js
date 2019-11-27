@@ -55,6 +55,8 @@ export default class Step1 extends PureComponent {
           return;
         }
         const formData = { ...values };
+        console.log("保存的数据  ");
+        console.log(formData);
         if (formData.files && formData.files.length > 0) {
           formData.files = formData.files.join('');
         } else {

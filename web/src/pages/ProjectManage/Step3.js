@@ -233,7 +233,7 @@ export default class Step3 extends PureComponent {
       console.log("keys ");
       console.log(keys);
 
-      if (keys.length == 1) {
+      if (keys.length === 1) {
         console.log("keys  1");
        let index = newData1.findIndex(item => key === item.record_id);
         if (index > -1) {
@@ -334,7 +334,7 @@ export default class Step3 extends PureComponent {
           index_ > -1 &&
           newData1[index_].children &&
           newData1[index_].children.length > 0 &&
-          key != keychild
+           i < (keys.length - 1)
         ) {
           console.log('进入下一层');
           newData1 = newData1[index_].children;
