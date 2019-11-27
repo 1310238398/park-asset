@@ -81,6 +81,7 @@ func (a *ProjDeliveryStandard) queryTree(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
+
 	ginplus.ResSuccess(c, result)
 }
 

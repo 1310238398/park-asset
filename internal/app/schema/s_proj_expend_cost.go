@@ -16,7 +16,7 @@ type ProjExpendCostQueryParam struct {
 	ProjExpenditureIDs    []string // 项目支出节点ID列表
 	NotProjCostIDs        []string // 去除的成本项ID列表
 	NotProjExpenditureIDs []string // 去除的项目支出节点ID列表
-
+	ProjectID             string   // 项目ID
 }
 
 // ProjExpendCostQueryOptions 查询可选参数项

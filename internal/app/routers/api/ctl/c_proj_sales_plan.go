@@ -83,6 +83,11 @@ func (a *ProjSalesPlan) QueryList(c *gin.Context) {
 	params.Quarter = util.S(c.Query("quarter")).DefaultInt(0)
 	params.ProjBusinessID = c.Query("proj_business_id")
 	params.ProjIncomeID = c.Query("proj_income_id")
+	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 
 	result, err := a.ProjSalesPlanBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
@@ -138,7 +143,7 @@ func (a *ProjSalesPlan) Create(c *gin.Context) {
 // @Summary 更新数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Param body body []schema.ProjSalesPlan true
+// @Param body body schema.ProjSalesPlan true
 // @Success 200 schema.ProjSalesPlan
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"

@@ -11,6 +11,7 @@ type ProjCostItem struct {
 	CostID       string              `json:"cost_id" swaggo:"false,成本项ID"`           // 成本项ID
 	TaxRate      float64             `json:"tax_rate" swaggo:"false,税率"`             // 税率
 	TaxPrice     float64             `json:"tax_price" swaggo:"false,缴税税额"`          // 缴税税额
+	Name         string              `json:"name" swaggo:"false,项目成本项名称"`            // 名称
 	Price        float64             `json:"price" swaggo:"false,成本项价格"`             // 成本项价格
 	Memo         string              `json:"memo" swaggo:"false,备注"`                 // 备注
 	Principal    string              `json:"principal" swaggo:"false,负责人"`           // 负责人
@@ -42,9 +43,11 @@ type ProjCostItemShow struct {
 
 // ProjCostItemQueryParam 查询条件
 type ProjCostItemQueryParam struct {
-	CostID       string // 成本项ID
-	ProjectID    string // 项目ID
-	ProjIncomeID string // 项目收益测算ID
+	CostID       string   // 成本项ID
+	ProjectID    string   // 项目ID
+	ProjIncomeID string   // 项目收益测算ID
+	RecordIDs    []string // 项目成本项ID列表
+	InLandTax    int      // 是否计入土增
 }
 
 // ProjCostItemQueryOptions 查询可选参数项

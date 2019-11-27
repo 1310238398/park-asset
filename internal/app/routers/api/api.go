@@ -51,8 +51,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjCostHis *ctl.ProjCostHis,
 		cProjCostItem *ctl.ProjCostItem,
 		cProjDeliveryStandard *ctl.ProjDeliveryStandard,
-		cProjExpendCost *ctl.ProjExpendCost,
-		cProjExpenditureTime *ctl.ProjExpenditureTime,
 		cProjExpenditure *ctl.ProjExpenditure,
 		cProjFile *ctl.ProjFile,
 		cProjIncomeCalculation *ctl.ProjIncomeCalculation,
@@ -366,26 +364,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjDeliveryStandard.PUT("", cProjDeliveryStandard.UpdateAll)
 				gProjDeliveryStandard.PUT(":id", cProjDeliveryStandard.Update)
 				gProjDeliveryStandard.DELETE(":id", cProjDeliveryStandard.Delete)
-			}
-
-			// 注册/api/v1/proj-expend-costs
-			gProjExpendCost := v1.Group("proj-expend-costs")
-			{
-				gProjExpendCost.GET("", cProjExpendCost.Query)
-				gProjExpendCost.GET(":id", cProjExpendCost.Get)
-				gProjExpendCost.POST("", cProjExpendCost.Create)
-				gProjExpendCost.PUT(":id", cProjExpendCost.Update)
-				gProjExpendCost.DELETE(":id", cProjExpendCost.Delete)
-			}
-
-			// 注册/api/v1/proj-expenditure-times
-			gProjExpenditureTime := v1.Group("proj-expenditure-times")
-			{
-				gProjExpenditureTime.GET("", cProjExpenditureTime.Query)
-				gProjExpenditureTime.GET(":id", cProjExpenditureTime.Get)
-				gProjExpenditureTime.POST("", cProjExpenditureTime.Create)
-				gProjExpenditureTime.PUT(":id", cProjExpenditureTime.Update)
-				gProjExpenditureTime.DELETE(":id", cProjExpenditureTime.Delete)
 			}
 
 			// 注册/api/v1/proj-expenditures

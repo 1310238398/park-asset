@@ -52,6 +52,10 @@ func (a *ProjExpenditure) QueryPage(c *gin.Context) {
 	var params schema.ProjExpenditureQueryParam
 	params.LikeName = c.Query("name")
 	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 	result, err := a.ProjExpenditureBll.Query(ginplus.NewContext(c), params, schema.ProjExpenditureQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
@@ -74,7 +78,12 @@ func (a *ProjExpenditure) QueryPage(c *gin.Context) {
 // @Router GET /api/v1/proj-expenditures?q=tree
 func (a *ProjExpenditure) QueryTree(c *gin.Context) {
 	var params schema.ProjExpenditureQueryParam
-
+	params.LikeName = c.Query("name")
+	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 	result, err := a.ProjExpenditureBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
@@ -165,4 +174,16 @@ func (a *ProjExpenditure) Delete(c *gin.Context) {
 		return
 	}
 	ginplus.ResOK(c)
+}
+
+// Generate 生成数据
+// @Summary 生成数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id  string true ""
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router DELETE /api/v1/proj-expenditures/generate
+func (a *ProjExpenditure) Generate(c *gin.Context) {
+
 }

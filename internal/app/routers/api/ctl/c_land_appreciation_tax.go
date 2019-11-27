@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -25,24 +26,24 @@ type LandAppreciationTax struct {
 // Query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" 1
-// @Param pageSize query int true "分页大小" 10
-// @Success 200 []schema.LandAppreciationTax "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Param projectID query int true "项目ID"
+// @Success 200 schema.LandAppreciationTax
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/land-appreciation-taxes
 func (a *LandAppreciationTax) Query(c *gin.Context) {
-	var params schema.LandAppreciationTaxQueryParam
+	projectID := c.Query("projectID")
+	if projectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+	}
 
-	result, err := a.LandAppreciationTaxBll.Query(ginplus.NewContext(c), params, schema.LandAppreciationTaxQueryOptions{
-		PageParam: ginplus.GetPaginationParam(c),
-	})
+	result, err := a.LandAppreciationTaxBll.GetByProjectID(ginplus.NewContext(c), projectID)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResPage(c, result.Data, result.PageResult)
+	ginplus.ResSuccess(c, result)
 }
 
 // Get 查询指定数据

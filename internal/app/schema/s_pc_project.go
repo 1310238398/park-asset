@@ -127,17 +127,17 @@ func (a PcProjects) FillPlotData(m map[string]*Plot) PcProjects {
 
 // PcProjectTree 项目树
 type PcProjectTree struct {
-	RecordID             string      `json:"record_id" swaggo:"false,记录ID"`                // 记录ID
-	Name                 string      `json:"name" swaggo:"false,组织或项目名称"`                  // 组织或项目名称
-	Creator              string      `json:"creator" swaggo:"false,创建人"`                   // 创建人
-	Memo                 string      `json:"memo" swaggo:"false,备注"`                       // 备注
-	ParentID             string      `json:"parent_id" swaggo:"false,父级ID"`                // 父级ID
-	ParentPath           string      `json:"parent_path" swaggo:"false,父级路经"`              // 父级路经
-	OrgID                string      `json:"org_id" swaggo:"false,项目所属子公司"`                // 项目所属子公司
-	Children             interface{} `json:"children" swaggo:"false, 子级树"`                 // 子级树
-	Type                 int         `json:"type" swaggo:"false,项目类型(1:住宅 2:写字楼)"`         // 项目类型(1:住宅 2:写字楼)
-	UndergroundFloorArea float64     `json:"underground_floor_area" swaggo:"false,地下建筑面积"` // 地下建筑面积
-	GroundFloorArea      float64     `json:"ground_floor_area" swaggo:"false,地上建筑面积"`      // 地上建筑面积
+	RecordID             string         `json:"record_id" swaggo:"false,记录ID"`                // 记录ID
+	Name                 string         `json:"name" swaggo:"false,组织或项目名称"`                  // 组织或项目名称
+	Creator              string         `json:"creator" swaggo:"false,创建人"`                   // 创建人
+	Memo                 string         `json:"memo" swaggo:"false,备注"`                       // 备注
+	ParentID             string         `json:"parent_id" swaggo:"false,父级ID"`                // 父级ID
+	ParentPath           string         `json:"parent_path" swaggo:"false,父级路经"`              // 父级路经
+	OrgID                string         `json:"org_id" swaggo:"false,项目所属子公司"`                // 项目所属子公司
+	Children             PcProjectTrees `json:"children" swaggo:"false, 子级树"`                 // 子级树
+	Type                 int            `json:"type" swaggo:"false,项目类型(1:住宅 2:写字楼)"`         // 项目类型(1:住宅 2:写字楼)
+	UndergroundFloorArea float64        `json:"underground_floor_area" swaggo:"false,地下建筑面积"` // 地下建筑面积
+	GroundFloorArea      float64        `json:"ground_floor_area" swaggo:"false,地上建筑面积"`      // 地上建筑面积
 
 }
 
@@ -146,7 +146,7 @@ type PcProjectTrees []*PcProjectTree
 
 // ToTree 转换为树形结构
 func (a PcProjectTrees) ToTree(items PcProjectTrees) PcProjectTrees {
-	mi := make(map[string]*PcProjectTree)
+	mi := make(map[string]*PcProjectTree, len(a))
 	for _, item := range a {
 		mi[item.RecordID] = item
 	}
@@ -166,26 +166,29 @@ func (a PcProjectTrees) ToTree(items PcProjectTrees) PcProjectTrees {
 				continue
 			}
 
-			pitem.Children = append(pitem.Children.(PcProjectTrees), item)
+			pitem.Children = append(pitem.Children, item)
 			continue
 		}
 
 		list = append(list, item)
 	}
-
+	// 把项目作为子树填充
 	for _, item := range a {
-		if pcitem, ok := mp[item.RecordID]; ok {
-			if item.Children == nil {
-				var children PcProjectTrees
-				children = append(children, pcitem)
-				item.Children = children
+		for _, projItem := range items {
+			if item.RecordID == projItem.OrgID {
+				if item.Children == nil {
+					var children PcProjectTrees
+					children = append(children, projItem)
+					item.Children = children
+
+					continue
+				}
+				item.Children = append(item.Children, projItem)
 				continue
+
 			}
 
-			item.Children = append(item.Children.(PcProjectTrees), pcitem)
-			continue
 		}
-
 	}
 
 	return list

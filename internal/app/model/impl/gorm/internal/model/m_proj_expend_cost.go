@@ -55,6 +55,11 @@ func (a *ProjExpendCost) Query(ctx context.Context, params schema.ProjExpendCost
 	if v := params.NotProjExpenditureIDs; len(v) > 0 {
 		db = db.Where("proj_expenditure_id NOT IN (?)", v)
 	}
+	if v := params.ProjectID; v != "" {
+		sub := entity.GetProjExpenditureDB(ctx, a.db).Select("record_id").Where("project_id = ?", v).SubQuery()
+		db = db.Where("proj_expenditure_id IN (?)", sub)
+
+	}
 
 	db = db.Order("id DESC")
 
