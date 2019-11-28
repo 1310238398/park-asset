@@ -27,7 +27,7 @@ export default {
       });
       }
       
-      const response1 = yield call(projectManage.getProFormat, { record_id: params.project_id });
+      const response1 = yield call(projectManage.getProFormat, { record_id: params.projectID });
 
       if (response1 && response1.list) {
 

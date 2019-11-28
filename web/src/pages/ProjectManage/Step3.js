@@ -233,7 +233,7 @@ export default class Step3 extends PureComponent {
       console.log("keys ");
       console.log(keys);
 
-      if (keys.length == 1) {
+      if (keys.length === 1) {
         console.log("keys  1");
        let index = newData1.findIndex(item => key === item.record_id);
         if (index > -1) {
@@ -334,15 +334,13 @@ export default class Step3 extends PureComponent {
           index_ > -1 &&
           newData1[index_].children &&
           newData1[index_].children.length > 0 &&
-          key != keychild
+           i < (keys.length - 1)
         ) {
           console.log('进入下一层');
           newData1 = newData1[index_].children;
           console.log('newData1 ' + newData1.length);
         }
       }
-
-     
     });
   }
 
@@ -530,7 +528,7 @@ export default class Step3 extends PureComponent {
     
    
     // 递归遍历
-      let item = this.findItem(deliveryStandard, currentItem.parent_path+"/"+currentItem.record_id);  
+      let item = this.findItem(deliveryStandard, currentItem.parent_path !== "" ? (currentItem.parent_path+"/"+currentItem.record_id) : currentItem.record_id);  
     
     const newItem = {
       record_id: "",
@@ -562,7 +560,7 @@ export default class Step3 extends PureComponent {
 
     // 并展开子项
   
-    console.log('添加结果 '+ JSON.stringify(this.state.data));
+    console.log('添加结果 '+ JSON.stringify(deliveryStandard));
   };
 
   // 递归遍历(有问题)
@@ -599,7 +597,7 @@ export default class Step3 extends PureComponent {
             console.log('进入下一层');
             for (let m = 0; m < i; m++) {
            let index_ =  key.indexOf("/");
-           key.slice(index+1);
+           key.slice(index_+1);
 
             }
            
@@ -609,26 +607,6 @@ export default class Step3 extends PureComponent {
         }
     }
  
-    
-   
-    // for (let i = 0; i < objList.length; i++) {
-    //   console.log("循环");
-    //   console.log("objList[i].record_id "+objList[i].record_id);
-
-     
-
-    //   if (key === objList[i].record_id) {
-    //     console.log("定位到对象 "+JSON.stringify(objList[i]));
-    //     return objList[i];
-       
-    //   }
-    //   else if (key.indexOf(objList[i].record_id) !== -1 &&  objList[i].children && objList[i].children.length > 0) {
-
-    //     return this.findItem(objList[i].children, key);
-    //   }
-
-    // }
-  
   }
 
   handleAdd = () => {

@@ -41,7 +41,7 @@ class FormatCard extends PureComponent {
                         console.log(res.error.message);
                     }
                     onSave(true);
-                })
+                });
             }else{  // 添加
                 create(tempInfo).then(res=>{
                     if(res && res.error){
