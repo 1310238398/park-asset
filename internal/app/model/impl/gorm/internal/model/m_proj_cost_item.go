@@ -95,6 +95,9 @@ func (a *ProjCostItem) QueryShow(ctx context.Context, params schema.ProjCostItem
 	if params.InLandTax == 1 {
 		db = db.Where(fmt.Sprintf("%s.in_land_tax = ?", cit), 1)
 	}
+	if v := params.Name; v != "" {
+		db = db.Where(fmt.Sprintf("%s.name = ?", cit), v)
+	}
 	var list entity.ProjCostItemShows
 	if re := db.Find(&list); re.Error != nil {
 		return nil, re.Error
