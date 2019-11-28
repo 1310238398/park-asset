@@ -46,9 +46,9 @@ class EditableCell extends React.Component {
 
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber />;
+      return <InputNumber placeholder="请输入"/>;
     }
-    return <Input />;
+    return <Input  placeholder="请输入"/>;
   };
 
   renderCell = ({ getFieldDecorator }) => {
@@ -111,6 +111,7 @@ export default class Step3 extends PureComponent {
       ],
       
       editingKey: '',
+      addingNew: false, // 表示正在添加新的item
 
       expandHang: [],
       expandedRowKeys: [],
@@ -141,7 +142,7 @@ export default class Step3 extends PureComponent {
         key: 'operation',
         width: '15%',
         render: (text, record) => {
-          const { editingKey } = this.state;
+          const { editingKey, addingNew } = this.state;
           const editable = this.isEditing(record);
           return editable ? (
             <span>
@@ -152,24 +153,24 @@ export default class Step3 extends PureComponent {
                   </a>
                 )}
               </EditableContext.Consumer>
-              <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel(record.record_id)}>
+              <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel(record)}>
                 <a>取消</a>
               </Popconfirm>
             </span>
           ) : (
             <div >
-            <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)}>
+            <a disabled={editingKey !== '' || addingNew} onClick={() => this.edit(record.record_id)}>
               编辑
             </a>
             {/* 点击添加出现下拉菜单选择 同级添加还是 下级添加 */}
            
-            <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter" disabled={editingKey !== ''}>
-              <a  style={{ marginLeft: 8 }} disabled={editingKey !== ''} 
+            <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter" disabled={editingKey !== ''|| addingNew}>
+              <a  style={{ marginLeft: 8 }} disabled={editingKey !== '' || addingNew} 
              // onMouseEnter={() =>this.currentClickKey(record)}
               >添加</a> 
             </Dropdown>
             <Popconfirm title="确定删除?" onConfirm={() => this.deleteStandard(record)}>
-            <a style={{ marginLeft: 8 }} disabled={editingKey !== ''}>删除</a>
+            <a style={{ marginLeft: 8 }} disabled={editingKey !== '' || addingNew}>删除</a>
             </Popconfirm>
             </div>
           );
@@ -198,7 +199,14 @@ export default class Step3 extends PureComponent {
 
   isEditing = record => record.record_id === this.state.editingKey;
 
-  cancel = () => {
+  cancel = (record) => {
+
+    if (record.record_id === "") { // 如果是新建的取消 需要做删除
+      console.log("删除想要添加的临时节点");
+     // this.deleteNode(record);
+     this.deleteStandard(record);
+     this.setState({ addingNew: false });
+    }
     this.setState({ editingKey: '' });
   };
 
@@ -254,6 +262,10 @@ export default class Step3 extends PureComponent {
 
           if (response.record_id && response.record_id !== "") {
             message.success('成功');
+            if (row.record_id === "") {
+              this.setState({ addingNew: false });
+
+            }
             row = {...response};
     
 
@@ -307,6 +319,10 @@ export default class Step3 extends PureComponent {
           
           if (response.record_id && response.record_id !== "") {
             message.success('成功');
+            if (row.record_id === "") {
+              this.setState({ addingNew: false });
+
+            }
             row = {...response};
             console.log(newData);
             //let index = newData1.findIndex(item => key === item.record_id);
@@ -354,6 +370,18 @@ export default class Step3 extends PureComponent {
     let deliveryStandardData = [...deliveryStandard];
 
     if (record.parent_path === "") {
+
+      if (record.record_id === "") { // 删除临时节点（想创建但是又取消的）
+                
+        deliveryStandardData = deliveryStandardData.filter(item => item.record_id !== record.record_id);
+
+        this.dispatch({
+            type: 'projectManage/saveDeliveryStandard',
+            payload: deliveryStandardData,
+          });
+        return;
+
+    }
       let response ;
       response = await deleteStandard(record.record_id);
       if (response.status === "OK") {
@@ -372,6 +400,26 @@ export default class Step3 extends PureComponent {
 
     }
     let parentItem = this.findItem(deliveryStandardData, record.parent_path);
+
+
+    if (record.record_id === "") { // 删除临时节点（想创建但是又取消的）
+      if (parentItem.children && parentItem.children.length > 0) {
+          parentItem.children =  parentItem.children.filter(item => item.record_id !== record.record_id);
+
+          if (parentItem.children.length === 0) {
+              parentItem.children = null;
+          }
+          this.dispatch({
+            type: 'projectManage/saveDeliveryStandard',
+            payload: deliveryStandardData,
+            });
+
+      }
+      return;
+
+  }
+
+
     let response ;
     response = await deleteStandard(record.record_id);
     if (response.status === "OK") {
@@ -423,21 +471,142 @@ export default class Step3 extends PureComponent {
   };
 
   expandRow(ji) {
-    const { data } = this.state;
+    this.setState({ expandedRowKeys: [], expandHang: [] });
+    const {  projectManage: { deliveryStandard }, } = this.props;
+    const { expandedRowKeys} = this.state;
     if (ji === 1) {
       this.setState({ expandedRowKeys: [], expandHang: [] });
       return;
     }
-    let line = ji - 1; // 显示第二级菜单 就是展开第一级菜单
+  
+   // parent_path = "" 的情况单独处理 也就是点击展开第二级的时候
+   
+  let expandHang = [...expandedRowKeys];
+    for (let m = 0; m < deliveryStandard.length; m++) {
+      if (deliveryStandard[m].children !== null) {
+          expandHang.push(deliveryStandard[m].record_id);
+      }
+     
 
-    for (let i = 0; i < data.length; i++) {}
+      
+    }
+   
+    let slashCount = ji - 3; // 显示第二级菜单 就是展开第一级菜单
+    if (slashCount >= 0) {
+      //let keys = [];
+      this.findExpandKeys(deliveryStandard, slashCount, expandHang);
+     // this.setState({ expandedRowKeys: [...expandedRowKeys, ...keys] });
+    }
+   
+    expandHang.sort();
+
+      this.setState({ expandedRowKeys: [...expandHang] });
+    
+
+  }
+  findExpandKeys(objList, count, expandHang) { // 递归寻找可展开的节点
+    const { expandedRowKeys } = this.state;
+    console.log("findExpandKeys");
+    console.log(objList);
+   // count >= 0  单独处理0 的情况 parent_path 非空且不包含/的情况
+  
+ // let expandHang = [...expandedRowKeys];
+   if (count === 0) {
+    
+
+    for (let m = 0; m < objList.length; m++) {
+      console.log("count === 0  循环");
+
+      if ((objList[m].parent_path === "") && (objList[m].children !== null) && objList[m].children.length > 0) {
+        console.log("进入children");
+        if (expandedRowKeys.indexOf(objList[m].record_id) === -1) {
+          console.log("添加新的record_id "+ objList[m].record_id);
+          expandHang.push(objList[m].record_id);
+        
+        }
+         this.findExpandKeys(objList[m].children, count, expandHang);
+      }
+      else if (objList[m].parent_path.match(/\//g) === null && objList[m].parent_path !== "" &&  (objList[m].children !== null) && objList[m].children.length > 0) {
+        if (expandedRowKeys.indexOf(objList[m].record_id) === -1) {
+          console.log("添加新的record_id "+ objList[m].record_id);
+          expandHang.push(objList[m].record_id);
+        
+        }
+       
+      }
+
+    }
+    expandHang.sort();
+    
+    this.setState({ expandedRowKeys: [...expandHang] });
+  
+    console.log("最终展开的数据 ");
+    console.log(expandHang);
+   // console.log(expandedRowKeys);
+    
+   }
+   else {
+
+  
+   
+      for(let n = 0; n < objList.length; n++) {
+        console.log("内循环 n "+ n);
+        if (objList[n].parent_path === "" && (objList[n].children === null)) {
+
+          console.log("哈哈哈哈");
+
+        }
+
+        else if (objList[n].parent_path === "" && objList[n].children && objList[n].children.length > 0) {
+
+          if (expandedRowKeys.indexOf(objList[n].record_id) === -1) {
+                expandHang.push(objList[n].record_id);
+          
+            }
+           this.findExpandKeys(objList[n].children, count, expandHang);
+        }
+        else if (objList[n].parent_path.match(/\//g) === null && objList[n].parent_path !== "") {
+
+        console.log("父路径不包含/");
+        // 不含/的时候
+        if (expandedRowKeys.indexOf(objList[n].record_id) === -1) {
+          expandHang.push(objList[n].record_id);
+         
+            }
+            if (objList[n].children && objList[n].children.length > 0) {
+              this.findExpandKeys(objList[n].children, count, expandHang);
+            }
+        }
+        else if (objList[n].parent_path.match(/\//g) !== null && objList[n].parent_path.match(/\//g).length <= count && objList[n].parent_path !== "") {
+          if (expandedRowKeys.indexOf(objList[n].record_id) === -1) {
+            expandHang.push(objList[n].record_id);
+            //this.setState({ expandedRowKeys: [...expandedRowKeys,objList[n].record_id ] });
+          }
+          if (objList[n].children && objList[n].children.length > 0) {
+            this.findExpandKeys(objList[n].children, count, expandHang);
+          }
+         
+         
+        }
+      }
+    
+    expandHang.sort();
+    this.setState({ expandedRowKeys: [ ...expandHang] }); // 异步的
+
+    console.log("最终展开的数据 ");
+    console.log(expandHang);
+  }
+
   }
 
   handleOnExpand = (expanded, record) => {
     console.log('handleOnExpand');
-    const { expandHang } = this.state;
+    const { expandedRowKeys } = this.state;
+    
 
-    //  let tempHang = expandHang;
+    
+   // console.log("expandHang "+ expandHang);
+      let expandHang = [...expandedRowKeys];
     if (expanded) {
       console.log('true');
       console.log('push');
@@ -447,9 +616,11 @@ export default class Step3 extends PureComponent {
       console.log('false');
       for (let i = 0; i < expandHang.length; i++) {
         if (expandHang[i] === record.record_id) {
+          console.log("找到了。。");
           if (i > 0) {
             console.log('pop');
             expandHang.splice(i, 1);
+            
           } else {
             expandHang.splice(0, 1);
           }
@@ -458,17 +629,20 @@ export default class Step3 extends PureComponent {
           for (let y = 0; y < record.children.length; y++) {
             if (expandHang[i] === record.children[y].record_id) {
               console.log('hahah');
-              delete expandHang[i];
+            //  delete expandHang[i];
+            expandHang.splice(i, 1);
             }
           }
         }
       }
+
+      expandHang = [...expandHang];
     }
     this.setState({
       expandedRowKeys: [...expandHang],
     });
 
-    console.log(this.state.expandHang);
+    console.log(expandHang);
   };
 
   
@@ -478,6 +652,7 @@ export default class Step3 extends PureComponent {
     console.log("brotherLevelAdd");
     const {  projectManage:{ deliveryStandard } } = this.props;
 
+    this.setState({ addingNew: true});
     let deliveryStandardData = [...deliveryStandard];
     if (currentItem.parent_path === "") {
       console.log("顶级添加");
@@ -485,9 +660,9 @@ export default class Step3 extends PureComponent {
      
       const newItem = {
         record_id: "",
-        content: "请输入标准内容",
+        content: "",
   
-        part: "请输入部位名称",
+        part: "",
         parent_path : "",
         parent_id: "",
       };
@@ -504,9 +679,9 @@ export default class Step3 extends PureComponent {
     let count =  0;
     const newItem = {
       record_id: "",
-      content: "请输入标准内容",
+      content: "",
 
-      part: "请输入部位名称",
+      part: "",
       parent_id:item.record_id,
       parent_path:item.parent_path !== "" ? item.parent_path+"/"+item.record_id : item.record_id,
     };
@@ -525,16 +700,16 @@ export default class Step3 extends PureComponent {
     const {  expandedRowKeys} = this.state;
     const {  projectManage:{ deliveryStandard }  } = this.props;
 
-    
+    this.setState({ addingNew: true});
    
     // 递归遍历
       let item = this.findItem(deliveryStandard, currentItem.parent_path !== "" ? (currentItem.parent_path+"/"+currentItem.record_id) : currentItem.record_id);  
     
     const newItem = {
       record_id: "",
-      content: "请输入标准内容",
+      content: "",
 
-      part: "请输入部位名称",
+      part: "",
       parent_id: item.record_id,
       parent_path:item.parent_path !== "" ?  (item.parent_path + "/"+ item.record_id) : item.record_id,
     };
@@ -546,14 +721,14 @@ export default class Step3 extends PureComponent {
       item.children.push(newItem);
     }
     
-    let expandKeys =[];
-    expandKeys.push(item.record_id);
+    let expandHang = [...expandedRowKeys];
+    expandHang.push(item.record_id);
     for (let i in item.children) {
-      expandKeys.push(item.children[i].record_id);
+      expandHang.push(item.children[i].record_id);
     }
     this.setState({
     
-      expandedRowKeys:[...expandedRowKeys, ...expandKeys],
+      expandedRowKeys:[...expandHang],
      // count: count + 1,
     });
     console.log("需要展开的子项 "+ this.state.expandedRowKeys);
@@ -595,13 +770,15 @@ export default class Step3 extends PureComponent {
           objList[index].children.length > 0 && i < (keys.length - 1)) {
 
             console.log('进入下一层');
-            for (let m = 0; m < i; m++) {
+         //   for (let m = 0; m < i; m++) {
            let index_ =  key.indexOf("/");
-           key.slice(index_+1);
-
-            }
+           console.log("index_  "+ index_);
+           key = key.substring(index_+1);
+           console.log("截取后的key "+ key);
+//
+        //    }
            
-            return this.findItem(objList[i].children, key);
+            return this.findItem(objList[index].children, key);
 
 
         }
@@ -701,6 +878,13 @@ export default class Step3 extends PureComponent {
       <EditableContext.Provider value={this.props.form}>
         <Button
           onClick={() => {
+            this.expandRow(1);
+          }}
+        >
+          一级
+        </Button>
+        <Button
+          onClick={() => {
             this.expandRow(2);
           }}
         >
@@ -712,6 +896,13 @@ export default class Step3 extends PureComponent {
           }}
         >
           三级
+        </Button>
+        <Button
+          onClick={() => {
+            this.expandRow(4);
+          }}
+        >
+          四级
         </Button>
         {/* <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
           Add a row
