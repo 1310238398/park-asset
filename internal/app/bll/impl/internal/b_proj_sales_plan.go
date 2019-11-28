@@ -182,7 +182,7 @@ func (a *ProjSalesPlan) fillBusinName(ctx context.Context, list schema.ProjSales
 	if err != nil {
 		return nil, err
 	}
-	list.FillData(projBusinResult.Data.ToMap())
+	list.FillData(projBusinResult.Data)
 
 	return list, nil
 

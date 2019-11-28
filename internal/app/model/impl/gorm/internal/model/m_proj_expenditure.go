@@ -57,7 +57,7 @@ func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditu
 
 	}
 
-	db = db.Order("id DESC")
+	db = db.Order("sequence DESC, id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.ProjExpenditures
@@ -113,5 +113,12 @@ func (a *ProjExpenditure) Delete(ctx context.Context, recordID string) error {
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}
+	return nil
+}
+
+// Generate 生成数据
+func (a *ProjExpenditure) Generate(ctx context.Context, projectID string) error {
+	// expendDB := entity.GetExpenditureDB(ctx, a.db)
+
 	return nil
 }

@@ -47,6 +47,10 @@ func (a *ProjBusinessFormat) Query(c *gin.Context) {
 func (a *ProjBusinessFormat) QueryList(c *gin.Context) {
 	var params schema.ProjBusinessFormatQueryParam
 	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 	params.BusinessFormatID = c.Query("business_format_id")
 	result, err := a.ProjBusinessFormatBll.Query(ginplus.NewContext(c), params)
 	if err != nil {

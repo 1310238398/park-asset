@@ -18,7 +18,7 @@ type ProjExpenditure struct {
 	TotalCost           float64       `json:"total_cost" swaggo:"false,支出总额"`                                                                                                 // 支出总额
 	ProjCostItems       ProjCostItems `json:"proj_cost_items" swaggo:"false, 项目支出节点成本项列表"`                                                                                    // 项目支出节点成本项列表
 	Category            string        `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"`                                                                                     // 工作类别(大纲 里程碑 一级 二级)
-
+	Sequence            int           `json:"sequence" swaggo:"false,排序值"`                                                                                                    // 排序值
 }
 
 // ProjExpenditureQueryParam 查询条件
@@ -69,12 +69,6 @@ func (a ProjExpenditures) FillProjCostItem(m map[string]*ProjCostItem, projExpen
 	}
 }
 
-// func (a ProjExpenditures) FillCategory(m map[string]*Expenditure) {
-// 	for _, item := range a {
-
-// 	}
-// }
-
 // ProjExpenditureTree 项目支出节点
 type ProjExpenditureTree struct {
 	RecordID            string                  `json:"record_id" swaggo:"false,记录ID"`                                                                                                  // 记录ID
@@ -87,8 +81,11 @@ type ProjExpenditureTree struct {
 	ParentID            string                  `json:"parent_id" swaggo:"false,父级ID"`                                                                                                  // 父级ID
 	ParentPath          string                  `json:"parent_path" swaggo:"false,父级路经"`                                                                                                // 父级路经
 	TotalCost           float64                 `json:"total_cost" swaggo:"false,支出总额"`                                                                                                 // 支出总额
+	Category            string                  `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"`                                                                                     // 工作类别(大纲 里程碑 一级 二级)
 	ProjCostItems       ProjCostItems           `json:"proj_cost_items" swaggo:"false, 项目支出节点成本项列表"`                                                                                    // 项目支出节点成本项列表
 	Children            *[]*ProjExpenditureTree `json:"children,omitempty" swaggo:"false,子级树"`                                                                                          // 子级树
+	Sequence            int                     `json:"sequence" swaggo:"false,排序值"`                                                                                                    // 排序值
+
 }
 
 // ProjExpenditureTrees 项目支出节点树列表
@@ -109,6 +106,7 @@ func (a ProjExpenditures) ToTrees() ProjExpenditureTrees {
 			ExpenditureTimeType: item.ExpenditureTimeType,
 			ExpendRate:          item.ExpendRate,
 			ProjCostItems:       item.ProjCostItems,
+			Sequence:            item.Sequence,
 		}
 	}
 	return list

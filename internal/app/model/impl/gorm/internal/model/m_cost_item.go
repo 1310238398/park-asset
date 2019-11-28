@@ -40,6 +40,10 @@ func (a *CostItem) Query(ctx context.Context, params schema.CostItemQueryParam, 
 		db = db.Where("parent_id=?", v)
 	}
 
+	if v := params.PrefixParentPath; v != "" {
+		db = db.Where("parent_path like ?", v+"%")
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)

@@ -426,14 +426,13 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 }
 
 func (a *ProjExpenditure) update(ctx context.Context, recordID string, item schema.ProjExpenditure) error {
+	oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
+	if err != nil {
+		return err
+	} else if oldItem == nil {
+		return errors.ErrNotFound
+	}
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
-		if err != nil {
-			return err
-		} else if oldItem == nil {
-			return errors.ErrNotFound
-		}
-
 		newItem := oldItem
 		switch {
 		case !item.StartTime.IsZero():
@@ -488,4 +487,9 @@ func (a *ProjExpenditure) update(ctx context.Context, recordID string, item sche
 
 		return nil
 	})
+}
+
+// Generate 生成数据
+func (a *ProjExpenditure) Generate(ctx context.Context, projectID string) error {
+	return nil
 }

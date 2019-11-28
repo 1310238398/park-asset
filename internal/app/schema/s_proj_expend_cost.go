@@ -33,15 +33,15 @@ type ProjExpendCostQueryResult struct {
 // ProjExpendCosts 项目支出节点成本项列表
 type ProjExpendCosts []*ProjExpendCost
 
-// ToProjExpendCostsMap 转化支出节点项目成本项列表Map key:ProjCostItemID value: []*ProjExpendCost
+// ToProjExpendCostsMap 转化支出节点项目成本项列表Map key:ProjCostID value: []*ProjExpendCost
 func (a ProjExpendCosts) ToProjExpendCostsMap() map[string]ProjExpendCosts {
 	m := make(map[string]ProjExpendCosts)
 	for _, item := range a {
 		var list []*ProjExpendCost
-		for _, mItem := range a {
+		for _, projExpCostItem := range a {
 			m[item.ProjCostID] = list
-			if item.ProjCostID == mItem.ProjCostID {
-				list = append(list, mItem)
+			if item.ProjCostID == projExpCostItem.ProjCostID {
+				list = append(list, projExpCostItem)
 			}
 
 		}
