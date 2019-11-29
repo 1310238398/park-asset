@@ -17,7 +17,7 @@ import (
 // @Version 4.0.0
 // @Title 资产管理系统
 // @Schemes http,https
-// @Host 39.98.250.155:10088
+// @Host 127.0.0.1:10088
 // @BasePath /
 // @Name LyricTian
 // @Consumes json

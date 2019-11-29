@@ -51,7 +51,7 @@ func (a *ProjSalesPlan) Query(ctx context.Context, params schema.ProjSalesPlanQu
 		db = db.Where("quarter = ? ", v)
 	}
 
-	db = db.Order("id DESC")
+	db = db.Order("year, quarter, id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.ProjSalesPlans

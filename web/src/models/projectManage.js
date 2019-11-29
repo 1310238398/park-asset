@@ -89,6 +89,10 @@ export default {
       if (payload.type === 'E') {
         yield [
           put({
+            type: 'saveFormType',
+            payload: payload.type,
+          }),
+          put({
             type: 'saveFormTitle',
             payload: '编辑项目',
           }),

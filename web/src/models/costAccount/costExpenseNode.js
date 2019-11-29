@@ -53,6 +53,7 @@ export default {
             
         ],
         data:[],// tree
+        costNodeItems:[],// 可选择的科目tree
 
     },
     effects: {
@@ -66,6 +67,15 @@ export default {
               payload: response.list || [],
             });
             } 
+
+            const response1 = yield call(costAccountService.queryCostitems, payload);
+            if (response1.list && response1.list.length >=0) {
+              
+                yield put({
+                    type: 'saveCostNodeItems',
+                    payload: response1.list || [],
+                  });
+            }
          
            
           },
@@ -79,6 +89,9 @@ export default {
         saveData(state, { payload }) {
             return { ...state, data: payload };
         },
+        saveCostNodeItems(state, { payload }) {
+            return { ...state, costNodeItems: payload };
+        }
 
 
     },

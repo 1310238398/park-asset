@@ -28,42 +28,7 @@ class EditableCell extends React.Component {
 
     state = {
 
-        selectableCostItems: [
-            {
-                title: 'Node1',
-                value: '0-0',
-                key: '0-0',
-                children: [
-                    {
-                        title: 'Child Node1',
-                        value: '0-0-0',
-                        key: '0-0-0',
-                    },
-                ],
-            },
-            {
-                title: 'Node2',
-                value: '0-1',
-                key: '0-1',
-                children: [
-                    {
-                        title: 'Child Node3',
-                        value: '0-1-0',
-                        key: '0-1-0',
-                    },
-                    {
-                        title: 'Child Node4',
-                        value: '0-1-1',
-                        key: '0-1-1',
-                    },
-                    {
-                        title: 'Child Node5',
-                        value: '0-1-2',
-                        key: '0-1-2',
-                    },
-                ],
-            },
-        ],
+       
     }
     renderToposNode = (data) => {
         let ret = [];
@@ -74,17 +39,20 @@ class EditableCell extends React.Component {
     }
     getInput = () => {
 
+        const { costExpenseNode:{costNodeItems }} = this.props;
         const { selectableCostItems } = this.state;
+
+        
 
         let handleChange = (value) => {
             console.log(value);
         }
         if (this.props.inputType === 'number') {
             if (this.props.dataIndex === "expend_rate") {
-                return <InputNumber max={100} min={0} />;
+                return <InputNumber max={100} min={0} placeholder="请输入"/>;
             }
             else {
-                return <InputNumber />;
+                return <InputNumber placeholder="请输入"/>;
             }
 
         }
@@ -93,6 +61,7 @@ class EditableCell extends React.Component {
             return <Select
                 //mode="multiple"
                 style={{ width: 200 }}
+                
 
             // onBlur={handleChange}
 
@@ -118,13 +87,13 @@ class EditableCell extends React.Component {
         }
         else if (this.props.inputType === 'multiply') {
 
-            return <TreeSelect treeData={selectableCostItems} style={{ width: 180 }}
+            return <TreeSelect treeData={costNodeItems} style={{ width: 180 }}
                 treeCheckable={true}
                 showCheckedStrategy={SHOW_PARENT}
                 searchPlaceholder='请选择'
             ></TreeSelect>;
         }
-        return <Input />;
+        return <Input placeholder="请输入"/>;
     };
 
     // // 设置初始值
@@ -241,7 +210,8 @@ class CostExpenseNode extends PureComponent {
             }
 
         ],
-        editingKey: '',
+        editingKey: '', addingNew: false, // 表示正在添加新的item
+
         expandHang: [],
         expandedRowKeys: [],
     };
@@ -289,7 +259,7 @@ class CostExpenseNode extends PureComponent {
            
             console.log("删除想要添加的临时节点");
             this.deleteNode(record);
-            
+            this.setState({ addingNew: false });
          
 
         }
@@ -301,11 +271,10 @@ class CostExpenseNode extends PureComponent {
         // key包含cost_id的路径
         form.validateFields(async (error, row) => {
 
-            console.log("row ");
-            console.log(row);
+           
             row.expend_rate = row.expend_rate / 100.00;
-            console.log("修改后的税率 ");
-            console.log(row.expend_rate);
+            //proj_cost_items
+          
             if (error) {
                 return;
             }
@@ -343,6 +312,10 @@ class CostExpenseNode extends PureComponent {
                     }
                     if (response.record_id && response.record_id !== "") {
                         message.success('成功');
+                        if (row.record_id === "") {
+                            this.setState({ addingNew: false });
+              
+                          }
                         row = { ...response };
 
                         newData.splice(index, 1, {
@@ -392,6 +365,10 @@ class CostExpenseNode extends PureComponent {
 
                     if (response.record_id && response.record_id !== "") {
                         message.success('成功');
+                        if (row.record_id === "") {
+                            this.setState({ addingNew: false });
+              
+                          }
                         row = { ...response };
                         newData1.splice(index_, 1, {
                             ...item,
@@ -457,6 +434,7 @@ class CostExpenseNode extends PureComponent {
 
       brotherLevelAdd = (currentItem) => {
         const { costExpenseNode:{ data }} = this.props;
+        this.setState({ addingNew: true});
         let datatemp = [...data];
         if (currentItem.parent_path === "") {
             console.log("顶级添加");
@@ -465,7 +443,7 @@ class CostExpenseNode extends PureComponent {
               
                 parent_path : "",
                 parent_id: "",
-                name: "请输入节点名称",
+                name: "",
                 expenditure_time_type: 1,
                 expend_rate: 0,
                 category:""
@@ -486,7 +464,7 @@ class CostExpenseNode extends PureComponent {
            
             parent_id:item.record_id,
             parent_path:item.parent_path !== "" ? item.parent_path+"/"+item.record_id : item.record_id,
-            name: "请输入节点名称",
+            name: "",
             expenditure_time_type: 1,
             expend_rate: 0,
             category:""
@@ -498,22 +476,20 @@ class CostExpenseNode extends PureComponent {
             item.children = [];
             item.children.push(newItem);
           }
-        
-
-
+   
       }
       childLevelAdd = (currentItem) => {
         const {  expandedRowKeys} = this.state;
         const { costExpenseNode:{ data }} = this.props;
+        this.setState({ addingNew: true});
         //递归遍历
         let item = this.findItem(data, currentItem.parent_path !== "" ? (currentItem.parent_path+"/"+currentItem.record_id) : currentItem.record_id);
 
         const newItem = {
             record_id: "",
-           
             parent_id: item.record_id,
             parent_path:item.parent_path !== "" ?  (item.parent_path + "/"+ item.record_id) : item.record_id,
-            name: "请输入节点名称",
+            name: "",
             expenditure_time_type: 1,
             expend_rate: 0,
             category:""
@@ -562,11 +538,11 @@ class CostExpenseNode extends PureComponent {
             if (index > -1 && objList[index].children && objList[index].children.length > 0 && i < (keys.length - 1)) {
 
                 console.log("进入下一层");
-                for (let m = 0; m < i; m++) {
+              //  for (let m = 0; m < i; m++) {
                     let index_ = key.indexOf("/");
-                    key.splice(index_+1);
-                }
-                return this.findItem(objList[i].children, key);
+                  key =   key.substring(index_+1);
+              //  }
+                return this.findItem(objList[index].children, key);
             }
         }
 
@@ -645,9 +621,9 @@ class CostExpenseNode extends PureComponent {
       }
       handleOnExpand = (expanded, record) => {
         console.log('handleOnExpand');
-        const { expandHang } = this.state;
+        const { expandedRowKeys } = this.state;
     
-        //  let tempHang = expandHang;
+          let expandHang = [...expandedRowKeys];
         if (expanded) {
           console.log('true');
           console.log('push');
@@ -668,7 +644,8 @@ class CostExpenseNode extends PureComponent {
               for (let y = 0; y < record.children.length; y++) {
                 if (expandHang[i] === record.children[y].record_id) {
                   console.log('hahah');
-                  delete expandHang[i];
+                  //delete expandHang[i];
+                  expandHang.splice(i, 1);
                 }
               }
             }
@@ -678,7 +655,7 @@ class CostExpenseNode extends PureComponent {
           expandedRowKeys: [...expandHang],
         });
     
-        console.log(this.state.expandHang);
+        console.log(expandHang);
       };
 
     render() {
@@ -687,7 +664,7 @@ class CostExpenseNode extends PureComponent {
             loading,
             form: { getFieldDecorator },
             costAccount: { formType },
-            costExpenseNode: { data }
+            costExpenseNode: { data , costNodeItems}
         } = this.props;
 
         console.log("formType " + formType);
@@ -746,13 +723,13 @@ class CostExpenseNode extends PureComponent {
 
             },
 
-            // {
-            //     title: '成本科目',
-            //     dataIndex: 'proj_cost_items',
-            //     width: 200,
+            {
+                title: '成本科目',
+                dataIndex: 'proj_cost_items',
+                width: 200,
 
-            //     align: 'center',
-            // },
+                align: 'center',
+            },
             {
                 title: '资金支出时间',
                 dataIndex: 'expenditure_time_type',
@@ -831,15 +808,26 @@ class CostExpenseNode extends PureComponent {
 
             },
 
-            // {
-            //     title: '成本科目',
-            //     dataIndex: 'proj_cost_items',
-            //     width: 200,
+            {
+                title: '成本科目',
+                dataIndex: 'proj_cost_items',
+                width: 200,
 
-            //     align: 'center',
-            //     editable: true,
-            //     inputType: "multiply"
-            // },
+                align: 'center',
+                editable: true,
+                inputType: "multiply",
+                render: (text, record) => {
+                   return <TreeSelect treeData={costNodeItems} style={{ width: 180 }}
+                   treeCheckable={true}
+                  defaultValue={text}
+                  placeholder="请选择对应科目"
+                   showCheckedStrategy={SHOW_PARENT}
+                   //searchPlaceholder='请选择'
+                   disabled
+               ></TreeSelect>
+
+                }
+            },
             {
                 title: '资金支出时间',
                 dataIndex: 'expenditure_time_type',
@@ -878,7 +866,7 @@ class CostExpenseNode extends PureComponent {
                 align: 'center',
                 fixed: 'right',
                 render: (text, record) => {
-                    const { editingKey } = this.state;
+                    const { editingKey, addingNew } = this.state;
                     const editable = this.isEditing(record);
 
                     return editable ? (
@@ -896,16 +884,16 @@ class CostExpenseNode extends PureComponent {
                         </div>
                     ) : (
                             <div style={{ textAlign: "center" }}>
-                                <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)}>
+                                <a disabled={editingKey !== '' || addingNew} onClick={() => this.edit(record.record_id)}>
                                     编辑
                                 </a>
-                                <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter" disabled={editingKey !== ''}>
+                                <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter" disabled={editingKey !== '' || addingNew}>
                                     <a style={{ marginLeft: 8 }} disabled={editingKey !== ''}
                                     // onMouseEnter={() =>this.currentClickKey(record)}
                                     >添加</a>
                                 </Dropdown>
                                 <Popconfirm title="确定删除?" onConfirm={() => this.deleteNode(record)}>
-                                    <a style={{ marginLeft: 8 }} disabled={editingKey !== ''}>删除</a>
+                                    <a style={{ marginLeft: 8 }} disabled={editingKey !== '' || addingNew}>删除</a>
                                 </Popconfirm>
                             </div>
                         )

@@ -57,11 +57,14 @@ export default {
         let item = {};
 
         item.title = formateDatatemp[i].name;
-        item.dataIndex = formateDatatemp[i].business_format_id + "_unit";
+        item.dataIndex = formateDatatemp[i].record_id + "_unit";
         item.align = "center";
         item.width = 100;
-        item.editable= true;
-        //item.render = this.
+        item.editable = true;
+        // item.render = (text, record) => {
+
+        // return <div style={{textAlign: "center"}}>{text}</div>
+        // };
         unitData.push(item);
       }
 
@@ -76,10 +79,13 @@ export default {
         let item = {};
 
         item.title = formateDatatemp[i].name;
-        item.dataIndex = formateDatatemp[i].business_format_id + "_total";
+        item.dataIndex = formateDatatemp[i].record_id + "_total";
         item.align = "center";
         item.width = 100;
-        //item.render = this.
+        // item.render = (text, record) => {
+
+        //   return <div style={{textAlign: "center"}}>{text}</div>
+        //   };
         totalData.push(item);
       }
 

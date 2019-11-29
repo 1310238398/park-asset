@@ -7,6 +7,9 @@ import {
     Card
 } from 'antd';
 import styles from './CostAccount.less';
+import CurrentVersion from './CurrentVersion';
+import HisVersion from './HisVersion';
+import VersionComparison from './VersionComparison';
 const { TabPane } = Tabs;
 @connect(state => ({
     //salesPlan: state.salesPlan,
@@ -26,19 +29,19 @@ class IncomeMeasure extends PureComponent {
 
         return (
             <div  >
-            <Tabs type="card" >
+            <Tabs
+            // type="card" 
+             defaultActiveKey="1" 
+             tabPosition="left"
+             >
               <TabPane tab="最新版本" key="1">
-               <div style={{background:"white"}}>hdhdhdh </div>
+               <CurrentVersion></CurrentVersion>
               </TabPane>
               <TabPane tab="历史版本" key="2">
-                <p>Content of Tab Pane 2</p>
-                <p>Content of Tab Pane 2</p>
-                <p>Content of Tab Pane 2</p>
+             <HisVersion></HisVersion>
               </TabPane>
               <TabPane tab="版本对比" key="3"> 
-                <p>Content of Tab Pane 3</p>
-                <p>Content of Tab Pane 3</p>
-                <p>Content of Tab Pane 3</p>
+              <VersionComparison></VersionComparison>
               </TabPane>
             </Tabs>
           </div>

@@ -23,7 +23,7 @@ export default {
    
     submitting: false,
     formTitle: '',
-    formID: '',
+    formID: '', // 暂存项目ID
    
     addSalesPlanVisible: false,
     //formData: {},
@@ -64,10 +64,16 @@ export default {
       }
 
       const response = yield call(costAccountService.querySalesPlan, params);
+      
       yield put({
         type: 'saveData',
         payload: response,
       });
+      yield put({
+        type: 'saveFormID',
+        payload: pro_id,
+      });
+
      
       // 请求所有业态
       const response1 = yield call(getProFormat, { record_id: pro_id });
@@ -222,8 +228,12 @@ export default {
           type: 'changeSalesPlanFormVisible',
           payload: false,
         });
+        const project_id = yield select(state => state.salesPlan.formID);
         yield put({
           type: 'fetch',
+          search: {},
+           pagination: {},
+            pro_id: project_id,
         });
       }
 
