@@ -15,7 +15,7 @@ import {
   InputNumber,
 } from 'antd';
 import styles from './CostAccount.less';
-import { updateCostItem } from '@/services/costAccount';
+import { updateCostItem , createCostItem, deleteCostItem} from '@/services/costAccount';
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
 const EditableRow = ({ form, index, ...props }) => (
@@ -357,6 +357,64 @@ class CostList extends PureComponent {
 
     });
   }
+
+  enable = async (record) => {
+    const { costList:{data}} = this.props;
+    let response ;
+    response = await createCostItem(record);
+    if (response && response.record_id) {
+
+      message.success("启用成功");
+      let item = this.findItem(data, record.cost_parent_path !== "" ? (record.cost_parent_path+"/"+ record.cost_id): record.cost_id);
+
+      item.record_id = response.record_id;
+
+    }
+
+  }
+  ignore = async (record) => {
+    const { costList:{data}} = this.props;
+    let response ;
+    response = await deleteCostItem(record.record_id);
+    if (response && response.status === "OK") {
+
+      message.success("忽略成功");
+      let item = this.findItem(data, record.cost_parent_path !== "" ? (record.cost_parent_path+"/"+ record.cost_id): record.cost_id);
+
+      item.record_id = "";
+
+    }
+
+  }
+
+  findItem(objList, key) {
+    console.log("findItem 路径  "+key);
+    let keys =[];
+    keys = key.split("/");
+    console.log("keys   "+ keys);
+    let index = -1;
+    for (let i = 0; i < keys.length; i++) {
+
+        let keychild = '';
+        keychild = keys[i];
+        index = objList.findIndex(item => keychild === item.cost_id);
+        if (index > -1 && i === keys.length - 1) {
+            console.log("找到了！！");
+            return objList[index]; 
+        }
+        if (index > -1 && objList[index].children && objList[index].children.length > 0 && i < (keys.length - 1)) {
+
+            console.log("进入下一层");
+          //  for (let m = 0; m < i; m++) {
+                let index_ = key.indexOf("/");
+              key =   key.substring(index_+1);
+          //  }
+            return this.findItem(objList[index].children, key);
+        }
+    }
+
+  }
+
   edit(key) {
     console.log(`key:${key}`);
     this.setState({ editingKey: key });
@@ -536,7 +594,7 @@ class CostList extends PureComponent {
                       编辑
                 </a>
 
-                    <Popconfirm title="确定忽略?" onConfirm={() => { }}>
+                    <Popconfirm title="确定忽略?" onConfirm={() => {this.ignore(record) }}>
                       <a disabled={editingKey !== ''} >
                         忽略
                 </a>
@@ -546,7 +604,7 @@ class CostList extends PureComponent {
                 )
             ) : null) :
             (<div style={{ width: "100%", textAlign: "center" }}>
-              <Popconfirm title="确定启用?" onConfirm={() => { }}>
+              <Popconfirm title="确定启用?" onConfirm={() => { this.enable(record)}}>
                 <a disabled={editingKey !== ''} >
                   启用
                 </a>

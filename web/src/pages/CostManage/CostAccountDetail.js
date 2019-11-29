@@ -7,7 +7,8 @@ import CostList from './CostList';
 import AddNewSalesPlan from './AddNewSalesPlan';
 import  IncomeMeasure  from "./IncomeMeasure";
 import CostExpenseNode from "./CostExpenseNode";
-import LandValueAddedTax from './LandValueAddedTax'
+import LandValueAddedTax from './LandValueAddedTax';
+import CapitalizedInterest from './CapitalizedInterest';
 
 const { TabPane } = Tabs;
 
@@ -123,7 +124,7 @@ export default class CostAccountDetail extends PureComponent {
              <CostExpenseNode></CostExpenseNode>
             </TabPane>
             <TabPane tab="资本化利息" key="5">
-              Content of Tab Pane 3
+             <CapitalizedInterest></CapitalizedInterest>
             </TabPane>
             <TabPane tab="土地增值税" key="6">
               {/* Content of Tab Pane 3 */}

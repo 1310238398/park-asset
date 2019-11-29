@@ -1,5 +1,21 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
+import { async } from 'q';
+
+
+//土增
+const land_value_add = "land-appreciation-taxes";
+//查询
+export async function queryLandValue(params){
+  return request(`/v1/${land_value_add}?${stringify(params)}`);
+}
+//修改
+export async function updateLandValue(params){
+  return request(`/v1/${land_value_add}/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
 
 // const router = 'projects';
 // const proRouter = 'statistics/project/name';
@@ -54,8 +70,24 @@ export async function updateCostItem(params) {
   });
 }
 // 启用成本项
+export async function createCostItem(params) {
+ // /api/v1/proj-cost-items
+ return request(`/v1/proj-cost-items`, {
+  method: 'POST',
+  body: params,
+});
+}
 
 // 忽略成本项
+export async function deleteCostItem(record_id) {
+
+ // ​/api​/v1​/proj-cost-items​/{id}
+ return request(`/v1/proj-cost-items/${record_id}`, {
+  method: 'DELETE',
+});
+
+
+}
 
 //成本支出节点相关接口
 // 查询项目下所有的成本支出节点列表
@@ -86,6 +118,12 @@ export async function deleteCostNode(params) {
   return request(`/v1/proj-expenditures/${params}`, {
     method: 'DELETE',
   });
+}
+
+// 查询可供节点选择的科目列表
+export async function queryCostitems(params) {
+ // /api/v1/proj-cost-items?q=node  projectID
+ return request(`/v1/proj-cost-items?q=node&projectID=${params}`);
 }
 
 // export async function query(params) {
