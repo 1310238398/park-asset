@@ -46,6 +46,7 @@ class TaxCard extends PureComponent {
             //     return;
             // }
             submitInfo.type = parseInt(submitInfo.type,10);
+            submitInfo.tax_rate = submitInfo.tax_rate / 100;
             if(info){
                 submitInfo.record_id = info.record_id;
                 update(submitInfo).then(res=>{

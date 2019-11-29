@@ -29,7 +29,7 @@ class EditableCell extends React.Component {  //根据editing 改变该行的某
 
     getInput = () => {  //编辑框
         if (this.props.inputType === 'number') {
-            return <InputNumber />;
+            return <InputNumber min={0}/>;
         }
         if (this.props.inputType === "select") {
             if (this.props.dataIndex == "label") {
@@ -86,7 +86,7 @@ class EditableCell extends React.Component {  //根据editing 改变该行的某
                                         message: inputType != "select"? `请输入${title}` : `请选择${title}` ,
                                     },
                                 ],
-                                initialValue: record[dataIndex] ? record[dataIndex].toString()  : "",
+                                initialValue: inputType =='number' ? record[dataIndex] ? record[dataIndex] : 0 : record[dataIndex] ? record[dataIndex].toString() : "" ,
                             })(this.getInput())}
                         </Form.Item>
                     ) : (
@@ -129,7 +129,7 @@ class ProjectCostManage extends PureComponent {
                         title: res.list[i].name,
                         dataIndex: res.list[i].record_id,
                         key: res.list[i].record_id,
-                        width: 80,
+                        width: 100,
                         align: "center",
                         editable: true,
                         required: true,
@@ -436,10 +436,11 @@ class ProjectCostManage extends PureComponent {
                 title: "科目名称",
                 dataIndex: "name",
                 key: "name",
-                width: 100,
+                width: 200,
                 editable: true,
                 required: true,
                 type: "text",
+                fixed: 'left',
             },
             {
                 title: "科目类别",
@@ -458,7 +459,7 @@ class ProjectCostManage extends PureComponent {
                 title: "税种",
                 dataIndex: "tax_id",
                 key: "tax_id",
-                width: 150,
+                width: 200,
                 align: "center",
                 editable: true,
                 required: true,
@@ -509,7 +510,7 @@ class ProjectCostManage extends PureComponent {
                 title: "状态",
                 dataIndex: "status",
                 key: "status",
-                width: 80,
+                width: 100,
                 align: "center",
                 editable: true,
                 required: true,
@@ -522,8 +523,9 @@ class ProjectCostManage extends PureComponent {
                 title: '操作',
                 dataIndex: 'operation',
                 key: 'operation',
-                width: 145,
+                width: 300,
                 align: "center",
+                fixed: 'right',
                 render: (text, record) => {
                     const { editingKey } = this.state;
                     const editable = this.isEditing(record);  // 判断该行是否是要编辑的那一行
@@ -545,7 +547,7 @@ class ProjectCostManage extends PureComponent {
                         </span>
                     ) :
                         (
-                            <div>
+                            <div className={styles.operation}>
                                 {/* 没有点击编辑的状态 */}
                                 <PButton disabled={editingKey !== ''} key="add" code="add" style={{ marginLeft: 8 }}>
                                     <Dropdown overlay={() => this.getMenu(record)} placement="bottomCenter">
