@@ -117,8 +117,12 @@ func (a *ProjExpenditure) Delete(ctx context.Context, recordID string) error {
 }
 
 // Generate 生成数据
-func (a *ProjExpenditure) Generate(ctx context.Context, projectID string) error {
-	// expendDB := entity.GetExpenditureDB(ctx, a.db)
+func (a *ProjExpenditure) Generate(ctx context.Context, projectID string, list *schema.ProjExpenditures) error {
+	entity.GetProjExpenditureDB(ctx, a.db).Begin()
+	// elist := make([]*schema.ProjExpenditure, len(a))
+	// for i, item := range *list {
+	// 	list[i] = item.ToSchemaProjExpenditure()
+	// }
 
 	return nil
 }

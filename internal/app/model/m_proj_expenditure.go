@@ -19,5 +19,5 @@ type IProjExpenditure interface {
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
 	// 生成数据
-	Generate(ctx context.Context, projectID string) error
+	Generate(ctx context.Context, projectID string, list *schema.ProjExpenditures) error
 }

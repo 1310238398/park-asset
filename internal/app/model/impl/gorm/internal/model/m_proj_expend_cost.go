@@ -41,7 +41,7 @@ func (a *ProjExpendCost) Query(ctx context.Context, params schema.ProjExpendCost
 	}
 
 	if v := params.ProjExpenditureID; v != "" {
-		db = db.Where("proj_expenditure_id", v)
+		db = db.Where("proj_expenditure_id = ?", v)
 	}
 
 	if v := params.ProjExpenditureIDs; len(v) > 0 {

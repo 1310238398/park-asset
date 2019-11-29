@@ -51,24 +51,14 @@ func (a ProjSalesPlans) ToProjBusinFormatIDs() []string {
 	return list
 }
 
-// // FillData 填充业态名称
-// func (a ProjSalesPlans) FillData(m map[string]*ProjBusinessFormat) {
-// 	for _, item := range a {
-// 		if projBusinItem, ok := m[item.ProjBusinessID]; ok {
-// 			item.ProjBusinessName = projBusinItem.Name
-
-// 		}
-// 	}
-// }
-
 // FillData 填充业态名称
 func (a ProjSalesPlans) FillData(list ProjBusinessFormats) {
 	for _, item := range a {
 		for _, projBusin := range list {
 			if item.ProjBusinessID == projBusin.RecordID {
 				item.ProjBusinessName = projBusin.Name
+				break
 			}
-			break
 		}
 	}
 }

@@ -1,28 +1,31 @@
 package test
 
-import "testing"
+import (
+	"gxt-park-assets/internal/app/schema"
+	"testing"
+)
 
 func TestProjExpendCost(t *testing.T) {
-	list := ProjExpendCosts{
-		&ProjExpendCost{
+	list := schema.ProjExpendCosts{
+		&schema.ProjExpendCost{
 			RecordID:          "pec1",
 			Amount:            12.12,
 			ProjCostID:        "pc1",
 			ProjExpenditureID: "pe1",
 		},
-		&ProjExpendCost{
+		&schema.ProjExpendCost{
 			RecordID:          "pec2",
 			Amount:            12.12,
 			ProjCostID:        "pc2",
 			ProjExpenditureID: "pe2",
 		},
-		&ProjExpendCost{
+		&schema.ProjExpendCost{
 			RecordID:          "pec3",
 			Amount:            12.12,
 			ProjCostID:        "pc2",
 			ProjExpenditureID: "pe2",
 		},
-		&ProjExpendCost{
+		&schema.ProjExpendCost{
 			RecordID:          "pec4",
 			Amount:            12.12,
 			ProjCostID:        "pc3",

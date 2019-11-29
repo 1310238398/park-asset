@@ -50,3 +50,12 @@ func (a ProjExpendCosts) ToProjExpendCostsMap() map[string]ProjExpendCosts {
 	return m
 
 }
+
+// ToProjCostIDs 转换位项目成本项ID
+func (a ProjExpendCosts) ToProjCostIDs() []string {
+	list := make([]string, len(a))
+	for i, item := range a {
+		list[i] = item.RecordID
+	}
+	return list
+}

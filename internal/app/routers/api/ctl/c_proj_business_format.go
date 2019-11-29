@@ -1,9 +1,8 @@
 package ctl
 
 import (
-	"ant-smartpark/pkg/errors"
-	"fmt"
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -30,7 +29,7 @@ func (a *ProjBusinessFormat) Query(c *gin.Context) {
 	case "list":
 		a.QueryList(c)
 	default:
-		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
+		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
 }
 
@@ -161,9 +160,6 @@ func (a *ProjBusinessFormat) UpdateList(c *gin.Context) {
 	}
 	if len(items) == 0 {
 		return
-	}
-	for _, item := range items {
-		fmt.Println(item)
 	}
 	err := a.ProjBusinessFormatBll.UpdateList(ginplus.NewContext(c), items[0].ProjectID, items)
 	if err != nil {

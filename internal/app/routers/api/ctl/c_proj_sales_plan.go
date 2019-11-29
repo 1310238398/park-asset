@@ -1,8 +1,8 @@
 package ctl
 
 import (
-	"ant-smartpark/pkg/errors"
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/util"
@@ -32,7 +32,7 @@ func (a *ProjSalesPlan) Query(c *gin.Context) {
 	case "list":
 		a.QueryList(c)
 	default:
-		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
+		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
 }
 

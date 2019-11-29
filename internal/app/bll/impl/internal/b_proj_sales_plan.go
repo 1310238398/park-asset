@@ -218,6 +218,7 @@ func (a *ProjSalesPlan) getTax(ctx context.Context, taxName string) (*schema.Tax
 
 func (a *ProjSalesPlan) checkExist(ctx context.Context, item schema.ProjSalesPlan) error {
 	result, err := a.ProjSalesPlanModel.Query(ctx, schema.ProjSalesPlanQueryParam{
+		ProjectID:      item.ProjectID,
 		Year:           item.Year,
 		Quarter:        item.Quarter,
 		ProjBusinessID: item.ProjBusinessID,
