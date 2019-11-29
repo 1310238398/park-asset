@@ -1,5 +1,21 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
+import { async } from 'q';
+
+
+//土增
+const land_value_add = "land-appreciation-taxes";
+//查询
+export async function queryLandValue(params){
+  return request(`/v1/${land_value_add}?${stringify(params)}`);
+}
+//修改
+export async function updateLandValue(params){
+  return request(`/v1/${land_value_add}/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
 
 // const router = 'projects';
 // const proRouter = 'statistics/project/name';
