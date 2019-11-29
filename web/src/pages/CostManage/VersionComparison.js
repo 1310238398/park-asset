@@ -108,27 +108,17 @@ class EditableCell extends React.Component {
 @connect(state => ({
     // projectManage: state.projectManage,
     costAccount: state.costAccount,
-    currentVersion: state.currentVersion,
-    // costList: state.costList,
+  
     loading: state.loading.models.currentVersion,
 }))
 @Form.create()
-class CurrentVersion extends PureComponent {
+class VersionComparison extends PureComponent {
     state = {
         columns:[
             {
-                title: '序号',
-                dataIndex: 'serial_number',
-                width: "5%",
-               // ellipsis: true,
-               // align: 'center',
-               // fixed: 'left',
-        
-              },
-            {
                 title: '科目名称',
                 dataIndex: 'name',
-                width: "15%",
+                width: "20%",
                // ellipsis: true,
                // align: 'center',
                // fixed: 'left',
@@ -197,56 +187,37 @@ class CurrentVersion extends PureComponent {
         
                value: 111,
         
-              },
-              {
-                record_id: '002',
-                name: '成本科目2',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
         
-               value: 111,
+                children: [
+                  {
+                    record_id: '001-001',
+                    name: '成本科目101',
+                    cost_id: "001-001", // 成本项ID
+                    cost_parent_id: "001", //成本项父级ID
+                    cost_parent_path: "001",//成本项父级路经 具体到父级ID
         
-              },
-              {
-                record_id: '003',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
+                  value: 23232,
+                    children: [
+                      {
+                        record_id: '001-001-001',
+                        name: '成本科目10101',
+                        cost_id: "001-001-001", // 成本项ID
+                        cost_parent_id: "001-001", //成本项父级ID
+                        cost_parent_path: "001/001-001",//成本项父级路经 具体到父级ID
+                       value: 54645,
+                      },
+                    ],
+                  },
+                  {
+                    record_id: '001-002',
+                    name: '成本科目102',
+                    cost_id: "001-002", // 成本项ID
+                    cost_parent_id: "001", //成本项父级ID
+                    cost_parent_path: "001",//成本项父级路经 具体到父级ID
         
-                value: 111,
-        
-              },
-              {
-                record_id: '004',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
-        
-                value: 111,
-        
-              },
-              {
-                record_id: '005',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
-        
-                value: 111,
-        
-              },
-              {
-                record_id: '006',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
-        
-                value: 111,
-        
+                   value: 888
+                  },
+                ],
               },
         ],
         editingKey: '',
@@ -355,4 +326,4 @@ class CurrentVersion extends PureComponent {
     }
 
 }
-export default CurrentVersion;
+export default VersionComparison;

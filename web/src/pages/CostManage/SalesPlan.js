@@ -380,13 +380,26 @@ class SalesPlan extends PureComponent {
     });
 
   };
+  handleResetFormClick = () => {
+    const { form , costAccount: { formID }} = this.props;
+    form.resetFields();
+
+    this.dispatch({
+      type: 'salesPlan/fetch',
+      search: {},
+      pagination: {},
+      pro_id: formID,
+    });
+  };
 
   handleTableChange = pagination => {
+    const { costAccount: { formID }} = this.props;
     this.dispatch({
       type: 'salesPlan/fetch',
       pagination: {
         current: pagination.current,
         pageSize: pagination.pageSize,
+        project_id: formID,
       },
     });
     //this.clearSelectRows();
@@ -505,6 +518,10 @@ class SalesPlan extends PureComponent {
             <Button type="primary" htmlType="submit" style={{ marginLeft: 50 }}>
               查询
             </Button>
+            <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
+                  重置
+             </Button>
+            
           </div>
           <Button type="primary" onClick={this.handleAddClick}>
             新增计划

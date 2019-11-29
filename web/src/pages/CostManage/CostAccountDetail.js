@@ -110,7 +110,7 @@ export default class CostAccountDetail extends PureComponent {
         //content={this.renderContent()}
       >
         <Card bordered={false}>
-          <Tabs defaultActiveKey="2" onChange={this.callback}>
+          <Tabs defaultActiveKey="1" onChange={this.callback} >
             <TabPane tab="收益测算" key="1">
             <IncomeMeasure></IncomeMeasure>
             </TabPane>

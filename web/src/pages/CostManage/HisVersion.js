@@ -108,47 +108,66 @@ class EditableCell extends React.Component {
 @connect(state => ({
     // projectManage: state.projectManage,
     costAccount: state.costAccount,
-    currentVersion: state.currentVersion,
-    // costList: state.costList,
-    loading: state.loading.models.currentVersion,
+    hisVersion: state.hisVersion,
+   
+    loading: state.loading.models.hisVersion,
 }))
 @Form.create()
-class CurrentVersion extends PureComponent {
+class HisVersion extends PureComponent {
     state = {
         columns:[
             {
-                title: '序号',
-                dataIndex: 'serial_number',
-                width: "5%",
-               // ellipsis: true,
-               // align: 'center',
-               // fixed: 'left',
-        
-              },
-            {
-                title: '科目名称',
+                title: '版本名',
                 dataIndex: 'name',
-                width: "15%",
+                width: "10%",
                // ellipsis: true,
                // align: 'center',
                // fixed: 'left',
         
               },
               {
-                title: '数值(万元)',
-                dataIndex: 'value',
-                width: "35%",
+                title: '投资回报率(%)',
+                dataIndex: 'rate',
+                width: "10%",
         
                 align: 'center',
 
               },
               {
-                title: '备注',
-                dataIndex: 'memo',
-                width: "35%",
-                editable: true,
-                inputType: "text",
+                title: '项目净利润(万元)',
+                dataIndex: 'net_profit',
+                width: "10%",
+              
+             
         
+                align: 'center',
+
+              },
+              {
+                title: '开发成本',
+                dataIndex: 'development_cost',
+                width: "10%",
+                align: 'center',
+
+              },
+              {
+                title: '销售收入',
+                dataIndex: 'sales_revenue',
+                width: "10%",
+                align: 'center',
+
+              },
+              {
+                title: '负责人',
+                dataIndex: 'person',
+                width: "10%",
+                align: 'center',
+
+              },
+              {
+                title: '创建时间',
+                dataIndex: 'time',
+                width: "10%",
                 align: 'center',
 
               },
@@ -160,25 +179,13 @@ class CurrentVersion extends PureComponent {
                 align: 'center',
                // fixed: 'right',
                 render: (text, record) => {
-                    const { editingKey } = this.state;
-                    const editable = this.isEditing(record);
-                    return editable ? (
-                        <div style={{ textAlign: "center" }}>
-                            <EditableContext.Consumer>
-                                {form => (
-                                    <a onClick={() => this.save(form, record.parent_path !== "" ? (record.parent_path + "/" + record.record_id) : (record.record_id))} style={{ marginRight: 8 }}>
-                                        保存
-                                        </a>
-                                )}
-                            </EditableContext.Consumer>
-                            <Popconfirm title="确定取消修改?" onConfirm={() => this.cancel()}>
-                                <a>取消</a>
-                            </Popconfirm>
-                        </div>
-                    ) : (
+                   
+                  
+                    return  (
+                      
                             <div style={{ textAlign: "center" }}>
-                                <a disabled={editingKey !== '' } onClick={() => this.edit(record.cost_id)}>
-                                    编辑
+                                <a   onClick={() => {}}>
+                                   查看
                                 </a>
                               
                             </div>
@@ -190,76 +197,40 @@ class CurrentVersion extends PureComponent {
         tableData: [
             {
                 record_id: '001',
-                name: '成本科目1',
+                name: '版本1',
                 cost_id: "001", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
                value: 111,
-        
-              },
-              {
+
+            },
+            {
                 record_id: '002',
-                name: '成本科目2',
+                name: '版本2',
                 cost_id: "001", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
                value: 111,
-        
-              },
-              {
+
+            },
+            {
                 record_id: '003',
-                name: '成本科目3',
+                name: '版本3',
                 cost_id: "001", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
-                value: 111,
-        
-              },
-              {
-                record_id: '004',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
-        
-                value: 111,
-        
-              },
-              {
-                record_id: '005',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
-        
-                value: 111,
-        
-              },
-              {
-                record_id: '006',
-                name: '成本科目3',
-                cost_id: "001", // 成本项ID
-                cost_parent_id: "", //成本项父级ID
-                cost_parent_path: "",//成本项父级路经 具体到父级ID
-        
-                value: 111,
-        
-              },
+               value: 111,
+
+            },
         ],
-        editingKey: '',
+      
     };
 
     componentDidMount = async () => {
 
-        const { costAccount: { formID } } = this.props;
-
-        this.dispatch({
-            type: 'currentVersion/fetch',
-            payload: formID,
-        });
     }
 
 
@@ -355,4 +326,4 @@ class CurrentVersion extends PureComponent {
     }
 
 }
-export default CurrentVersion;
+export default HisVersion;
