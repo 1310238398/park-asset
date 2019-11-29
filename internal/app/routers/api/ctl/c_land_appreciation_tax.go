@@ -26,7 +26,7 @@ type LandAppreciationTax struct {
 // Query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param projectID query int true "项目ID"
+// @Param projectID query string true "项目ID"
 // @Success 200 schema.LandAppreciationTax
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
