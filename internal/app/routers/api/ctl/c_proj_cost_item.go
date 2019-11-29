@@ -28,6 +28,8 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 	switch q {
 	case "tree":
 		a.queryTree(c)
+	case "node":
+		a.QueryNodeTree(c)
 	default:
 		a.queryTree(c)
 	}
@@ -55,7 +57,6 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 
 	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
-
 		return
 	}
 	if show := c.Query("show"); show == "map" {
@@ -67,6 +68,30 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 	} else {
 		ginplus.ResSuccess(c, result)
 	}
+}
+
+// QueryNodeTree 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param projectID query string true "项目ID"
+// @Success 200 []schema.ProjCostItemShow "数据列表"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-cost-items?q=node
+func (a *ProjCostItem) QueryNodeTree(c *gin.Context) {
+	var params schema.ProjCostItemQueryParam
+	params.ProjectID = c.Query("projectID")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result.ToNodeTrees())
 }
 
 // Get 查询指定数据
