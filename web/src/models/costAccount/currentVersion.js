@@ -5,10 +5,21 @@ import * as costAccountService from '@/services/costAccount';
 export default {
     namespace: 'currentVersion',
     state: {
+        data: [],
 
     },
     effects: {
+        *fetch({ payload }, { call, put }) {
 
+            const response = yield call(costAccountService.getCurrentVersionInfo, payload);
+            if (response.list && response.list.length  >= 0 ) {
+
+                yield put({
+                    type: 'saveData',
+                    payload: response.list || [],
+                  });
+            }
+        }
     },
     reducers: {
         

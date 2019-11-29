@@ -818,7 +818,7 @@ class CostExpenseNode extends PureComponent {
                 inputType: "multiply",
                 render: (text, record) => {
                    return <TreeSelect treeData={costNodeItems} style={{ width: 180 }}
-                  // treeCheckable={true}
+                   treeCheckable={true}
                   defaultValue={text}
                   placeholder="请选择对应科目"
                    showCheckedStrategy={SHOW_PARENT}

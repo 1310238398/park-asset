@@ -126,6 +126,13 @@ export async function queryCostitems(params) {
  return request(`/v1/proj-cost-items?q=node&projectID=${params}`);
 }
 
+// 收益测算相关接口
+export async function getCurrentVersionInfo(params) {
+ // /api/v1/proj-income-calculations?q=current
+ return request(`/v1/proj-income-calculations?q=current&project_id=${params}`);
+}
+
+
 // export async function query(params) {
 //   return request(`/v1/${router}?${stringify(params)}`);
 // }
