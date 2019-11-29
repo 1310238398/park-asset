@@ -54,19 +54,14 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 	}
 
 	// 获取相关税率
-	incomeTax, err := a.TaxCalculationModel.GetByName(ctx, "增值税销项税")
+	incomeTaxRate, err := GetTaxRate(ctx, a.TaxCalculationModel, schema.TAX_INCOME)
 	if err != nil {
 		return err
 	}
-	if incomeTax == nil {
-		return errors.New("未设置增值税销项税")
-	}
-	localTax, err := a.TaxCalculationModel.GetByName(ctx, "地方附加税")
+
+	localTaxRate, err := GetTaxRate(ctx, a.TaxCalculationModel, schema.TAX_ADDITIONAL)
 	if err != nil {
 		return err
-	}
-	if localTax == nil {
-		return errors.New("未设置地方附加税")
 	}
 
 	//获取销售收入
@@ -78,13 +73,13 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 		return err
 	}
 	if pspqr.Data == nil || len(pspqr.Data) == 0 {
-		return errors.New("缺少销售收入")
+		return errors.ErrNoProjSalesPlan
 	}
 	for _, v := range pspqr.Data {
 		income += v.Payback
 	}
 
-	item.Income = util.DecimalFloat64(income / (incomeTax.TaxRate + 1))
+	item.Income = util.DecimalFloat64(income / (incomeTaxRate + 1))
 	//获取扣除项金额
 	var cost float64
 	var tax float64
@@ -96,7 +91,7 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 		return err
 	}
 	if len(shows) == 0 {
-		return errors.New("缺少成本核算")
+		return errors.ErrNoProjCostItem
 	}
 	result := schema.ProjCostItemShows{}
 	for _, v := range shows {
@@ -151,8 +146,8 @@ func (a *LandAppreciationTax) renew(ctx context.Context, projectID string) error
 	//计算附加税
 
 	//附加税=（销项税-进项税）*地方税率
-	if t := item.Income*incomeTax.TaxRate - tax; t > 0 {
-		item.AdditionalTax = t * localTax.TaxRate
+	if t := item.Income*incomeTaxRate - tax; t > 0 {
+		item.AdditionalTax = t * localTaxRate
 	}
 
 	//计算增值额及增值率

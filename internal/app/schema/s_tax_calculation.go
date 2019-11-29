@@ -1,5 +1,14 @@
 package schema
 
+const (
+	TAX_INCOME     = "所得税"
+	TAX_STAMP      = "印花税"
+	TAX_USE        = "使用税"
+	TAX_CONTRACT   = "契税"
+	TAX_ADDITIONAL = "地方附加税"
+	TAX_OUTPUT     = "增值税销项税"
+)
+
 // TaxCalculation 税目计算表
 type TaxCalculation struct {
 	RecordID           string  `json:"record_id" swaggo:"false,记录ID"`            // 记录ID

@@ -41,6 +41,16 @@ var (
 	ErrLoginNotAllowModifyPwd = New("不允许修改密码")
 	ErrLoginInvalidOldPwd     = New("旧密码不正确")
 	ErrLoginInvalidVerifyCode = New("无效的验证码")
+
+	//成本核算
+	ErrNoProjCostItem  = New("缺少成本测算")
+	ErrNoProjSalesPlan = New("缺少销售计划")
+	ErrNoTaxIncome     = New("未设置所得税")
+	ErrNoTaxStamp      = New("未设置印花税")
+	ErrNoTaxUse        = New("未设置使用税")
+	ErrNoTaxContract   = New("未设置契税")
+	ErrNoTaxAdditional = New("未设置地方附加税")
+	ErrNoTaxOutput     = New("未设置增值税销项税")
 )
 
 func init() {
@@ -71,4 +81,14 @@ func init() {
 	newBadRequestError(ErrLoginNotAllowModifyPwd)
 	newBadRequestError(ErrLoginInvalidOldPwd)
 	newBadRequestError(ErrLoginInvalidVerifyCode)
+
+	//成本核算
+	newBadRequestError(ErrNoProjCostItem)
+	newBadRequestError(ErrNoProjSalesPlan)
+	newBadRequestError(ErrNoTaxIncome)
+	newBadRequestError(ErrNoTaxStamp)
+	newBadRequestError(ErrNoTaxUse)
+	newBadRequestError(ErrNoTaxContract)
+	newBadRequestError(ErrNoTaxAdditional)
+	newBadRequestError(ErrNoTaxOutput)
 }
