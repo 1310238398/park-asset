@@ -1,8 +1,8 @@
 package ctl
 
 import (
-	"ant-smartpark/pkg/errors"
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 	"gxt-park-assets/pkg/util"
@@ -32,7 +32,7 @@ func (a *ProjSalesPlan) Query(c *gin.Context) {
 	case "list":
 		a.QueryList(c)
 	default:
-		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
+		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
 }
 
@@ -56,6 +56,11 @@ func (a *ProjSalesPlan) QueryPage(c *gin.Context) {
 	params.ProjBusinessID = c.Query("proj_business_id")
 	params.ProjIncomeID = c.Query("proj_income_id")
 	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+
 	result, err := a.ProjSalesPlanBll.Query(ginplus.NewContext(c), params, schema.ProjSalesPlanQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})

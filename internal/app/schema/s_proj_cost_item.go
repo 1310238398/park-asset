@@ -6,17 +6,17 @@ import (
 
 // ProjCostItem 项目成本项
 type ProjCostItem struct {
-	RecordID     string              `json:"record_id" swaggo:"false,记录ID"`          // 记录ID
-	ProjectID    string              `json:"project_id" swaggo:"false,成本项目ID"`       // 成本项目ID
-	CostID       string              `json:"cost_id" swaggo:"false,成本项ID"`           // 成本项ID
-	TaxRate      float64             `json:"tax_rate" swaggo:"false,税率"`             // 税率
-	TaxPrice     float64             `json:"tax_price" swaggo:"false,缴税税额"`          // 缴税税额
-	Name         string              `json:"name" swaggo:"false,项目成本项名称"`            // 名称
-	Price        float64             `json:"price" swaggo:"false,成本项价格"`             // 成本项价格
-	Memo         string              `json:"memo" swaggo:"false,备注"`                 // 备注
-	Principal    string              `json:"principal" swaggo:"false,负责人"`           // 负责人
-	ProjIncomeID string              `json:"proj_income_id" swaggo:"false,项目收益测算ID"` // 项目收益测算ID
-	BusinessList []*ProjCostBusiness `json:"business_list" swaggo:"false,成本下业态列表"`   // 成本下业态列表
+	RecordID     string              `json:"record_id" swaggo:"false,记录ID"`                       // 记录ID
+	ProjectID    string              `json:"project_id" binding:"required" swaggo:"false,成本项目ID"` // 成本项目ID
+	CostID       string              `json:"cost_id" swaggo:"false,成本项ID"`                        // 成本项ID
+	TaxRate      float64             `json:"tax_rate" swaggo:"false,税率"`                          // 税率
+	TaxPrice     float64             `json:"tax_price" swaggo:"false,缴税税额"`                       // 缴税税额
+	Name         string              `json:"name" swaggo:"false,项目成本项名称"`                         // 名称
+	Price        float64             `json:"price" swaggo:"false,成本项价格"`                          // 成本项价格
+	Memo         string              `json:"memo" swaggo:"false,备注"`                              // 备注
+	Principal    string              `json:"principal" swaggo:"false,负责人"`                        // 负责人
+	ProjIncomeID string              `json:"proj_income_id" swaggo:"false,项目收益测算ID"`              // 项目收益测算ID
+	BusinessList []*ProjCostBusiness `json:"business_list" swaggo:"false,成本下业态列表"`                // 成本下业态列表
 }
 
 // ProjCostItem 项目成本项展示
@@ -37,7 +37,7 @@ type ProjCostItemShow struct {
 	Principal      string              `json:"principal" swaggo:"false,负责人"`                        // 负责人
 	ProjIncomeID   string              `json:"proj_income_id" swaggo:"false,项目收益测算ID"`              // 项目收益测算ID
 	BusinessList   []*ProjCostBusiness `json:"business_list" swaggo:"false,成本下业态列表"`                // 成本下业态列表
-	Children       []*ProjCostItemShow `json:"children,omitempty" swaggo:"fasle,下级成本项"`             //下级成本项
+	Children       ProjCostItemShows   `json:"children,omitempty" swaggo:"fasle,下级成本项"`             //下级成本项
 	Editable       bool                `json:"editable" swaggo:"false,可编辑"`
 }
 
@@ -119,4 +119,48 @@ func (a *ProjCostItemShow) ToMap() map[string]interface{} {
 	}
 
 	return result
+}
+
+// ProjCostItemTree 项目成本项(树结构)
+type ProjCostItemTree struct {
+	Value    string              `json:"value" swaggo:"false,记录ID"`               // 记录ID
+	Key      string              `json:"key"  swaggo:"false,记录ID"`                // 记录ID
+	Title    string              `json:"title" swaggo:"false,业态名称"`               // 名称
+	Children []*ProjCostItemTree `json:"children,omitempty" swaggo:"fasle,下级成本项"` //下级成本项
+}
+
+// ToTree 转换为项目支出节点成本项
+func (a *ProjCostItemShow) ToTree() ProjCostItemTree {
+	return ProjCostItemTree{
+		Value: a.RecordID,
+		Key:   a.RecordID,
+		Title: a.Name,
+	}
+}
+
+// ToNodeTrees 转换为项目支出节点成本项树
+func (a ProjCostItemShows) ToNodeTrees() []*ProjCostItemTree {
+	var list []*ProjCostItemTree
+	for _, item := range a {
+		if item.RecordID == "" || item.ProjectID == "" {
+			continue
+		}
+
+		var tempTree ProjCostItemTree
+		var children []*ProjCostItemTree
+
+		tempTree = item.ToTree()
+		if len(item.Children) == 0 {
+			list = append(list, &tempTree)
+			continue
+		}
+
+		children = item.Children.ToNodeTrees()
+		tempTree.Children = children
+
+		list = append(list, &tempTree)
+
+	}
+
+	return list
 }

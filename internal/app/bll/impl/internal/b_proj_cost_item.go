@@ -578,6 +578,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 					}
 					if b { //需要新增业态信息
 						item := schema.ProjCostBusiness{}
+						item.RecordID= util.MustUUID()
 						item.ProjBusinessID = v.RecordID
 						item.ProjCostID = t.RecordID
 						item.UnitPrice = unitprice

@@ -30,6 +30,7 @@ func (a SchemaProjExpenditure) ToProjExpenditure() *ProjExpenditure {
 		ParentPath:          &a.ParentPath,
 		TotalCost:           &a.TotalCost,
 		Category:            &a.Category,
+		Sequence:            &a.Sequence,
 	}
 	return item
 }
@@ -48,6 +49,8 @@ type ProjExpenditure struct {
 	ParentPath          *string    `gorm:"column:parent_path;size:518;index;"`     // 父级路经
 	TotalCost           *float64   `gorm:"column:total_cost;type:decimal(20,4);"`  // 支出总额
 	Category            *string    `gorm:"column:category;size:100;index;"`        // 类别
+	Sequence            *int       `json:"column:sequence;index;"`                 // 排序值
+
 }
 
 func (a ProjExpenditure) String() string {
@@ -73,6 +76,7 @@ func (a ProjExpenditure) ToSchemaProjExpenditure() *schema.ProjExpenditure {
 		ParentPath:          *a.ParentPath,
 		TotalCost:           *a.TotalCost,
 		Category:            *a.Category,
+		Sequence:            *a.Sequence,
 	}
 	return item
 }
