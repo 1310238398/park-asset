@@ -72,10 +72,10 @@ export default class Step1 extends PureComponent {
         let response;
         const params = { ...formData };
         if (formType === 'E') {
-          console.log("编辑基本信息");
+         
           params.record_id = formID;
           response = await updateProInfo(params);
-          if (response && response.record_id) {
+          if (response && response.record_id) { 
             message.success('保存成功');
            // idHandler(response.column_id);
             if (nextHandler) nextHandler();
@@ -83,7 +83,7 @@ export default class Step1 extends PureComponent {
         
         }
         else if (formType === 'A') {
-          console.log("创建基本信息");
+         
           response =   await createPro(params);
 
           if (response && response.record_id) {

@@ -49,7 +49,9 @@ class EditableCell extends React.Component {
     if (this.props.inputType === 'number') {
       if ( this.props.dataIndex === 'tax_rate') {
 
-        return <InputNumber max={1} min={0} step={0.01}/>;
+        return <InputNumber max={100} min={0}   formatter={value => `${value}%`} 
+        parser={value => value.replace('%', '')}
+        />;
       }
       else {
          return <InputNumber />;
@@ -99,7 +101,7 @@ class EditableCell extends React.Component {
                   message: `请输入 ${title}!`,
                 },
               ],
-              initialValue: record[dataIndex],
+              initialValue:  dataIndex === "tax_rate" ? (record[dataIndex] * 100) : record[dataIndex],
             })(this.getInput())}
           </Form.Item>
         ) : (
@@ -258,7 +260,7 @@ class CostList extends PureComponent {
            return <div style={{ width: "100%", textAlign: "center" }}>{text}</div>
 
           },
-        fixed: 'right',
+       // fixed: 'right',
    
 
       },
@@ -269,9 +271,9 @@ class CostList extends PureComponent {
         //  ellipsis: true,
         align: 'center',
         editable: true,
-        fixed: 'right',
+       // fixed: 'right',
         render: (text, record) => {
-          return <div style={{ width: "100%", textAlign: "center" }}>{text}</div>
+          return <div style={{ width: "100%", textAlign: "center" }}>{text * 100 + "%"}</div>
 
         }
 
@@ -400,6 +402,7 @@ class CostList extends PureComponent {
     // key包含cost_id的路径
     form.validateFields(async (error, row) => {
 
+      row.tax_rate = row.tax_rate / 100.00;
       console.log("row ");
       console.log(row);
       let business_list = [];
@@ -422,12 +425,9 @@ class CostList extends PureComponent {
       keys = key.split('/');
       console.log(keys);
 
-
       let index_ = -1;
 
       let newData1 = [...newData];
-
-
 
       if (keys.length == 1) {
         console.log('keys  1');

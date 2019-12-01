@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import {
   Form,
+  Row, Col,
   Input,
   Modal,
   Dropdown,
@@ -248,6 +249,7 @@ class SalesPlan extends PureComponent {
     console.log("销售计划页面初始化");
     const { costAccount: { formID } } = this.props;
 
+    
 
     this.dispatch({
       type: 'salesPlan/fetch',
@@ -460,22 +462,20 @@ class SalesPlan extends PureComponent {
     };
 
     return (
+      <div className={styles.tableList}>
+        <div className={styles.tableListForm}>
       <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
-        <div className={styles.top_div}>
-          <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-            <FormItem
+        
+         <Row gutter={16}>
+            <Col md={4} sm={24}>
+               <FormItem
               {...formItemLayout}
               label="年份"
               labelAlign='left'
-              style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+             // style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
               {getFieldDecorator('year', {
-                // rules: [
-                //   {
-                //     required: true,
-                //     message: '请选择年份',
-                //   },
-                // ],
+              
               })(
                 <Select
                   placeholder="请选择年份"
@@ -492,11 +492,13 @@ class SalesPlan extends PureComponent {
                 </Select>
               )}
             </FormItem>
-            <FormItem
+            </Col>
+            <Col  md={4} sm={24}>
+                <FormItem
               {...formItemLayout}
               label="季度"
               labelAlign='left'
-              style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+             // style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
               {getFieldDecorator('quarter', {})(
                 <Select
@@ -514,20 +516,28 @@ class SalesPlan extends PureComponent {
                 </Select>
               )}
             </FormItem>
-
-            <Button type="primary" htmlType="submit" style={{ marginLeft: 50 }}>
+            </Col>
+            <Col  md={6} sm={24}>
+                <Button type="primary" htmlType="submit" style={{ marginLeft: 50 }}>
               查询
             </Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
                   重置
              </Button>
             
-          </div>
-          <Button type="primary" onClick={this.handleAddClick}>
+            </Col>
+            <Col md={10} sm={24} style={{ textAlign:"right"}}>
+            <Button  icon="plus" type="primary" onClick={this.handleAddClick}>
             新增计划
           </Button>
-        </div>
+            </Col>
+         </Row>
 
+        </Form>
+        </div>
+        {/* <div className={styles.tableListOperator}>
+         
+        </div> */}
         <EditableContext.Provider value={this.props.form}>
           <Table
             components={components}
@@ -544,8 +554,9 @@ class SalesPlan extends PureComponent {
           // style={{ maxHeight: 500 }}
           ></Table>
         </EditableContext.Provider>
+        </div>
 
-      </Form>
+    
     );
   }
 }
