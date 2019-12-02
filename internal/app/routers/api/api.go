@@ -321,6 +321,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjCapitalizedInterest.GET("", cProjCapitalizedInterest.Query)
 				gProjCapitalizedInterest.GET(":id", cProjCapitalizedInterest.Get)
 				gProjCapitalizedInterest.POST("", cProjCapitalizedInterest.Create)
+				gProjCapitalizedInterest.PUT("", cProjCapitalizedInterest.UpdateYear)
 				gProjCapitalizedInterest.PUT(":id", cProjCapitalizedInterest.Update)
 				gProjCapitalizedInterest.DELETE(":id", cProjCapitalizedInterest.Delete)
 			}

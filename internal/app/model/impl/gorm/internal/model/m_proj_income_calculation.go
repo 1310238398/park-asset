@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjIncomeCalculation 创建项目收益测算存储实例
@@ -50,6 +51,34 @@ func (a *ProjIncomeCalculation) Query(ctx context.Context, params schema.ProjInc
 // Get 查询指定数据
 func (a *ProjIncomeCalculation) Get(ctx context.Context, recordID string, opts ...schema.ProjIncomeCalculationQueryOptions) (*schema.ProjIncomeCalculation, error) {
 	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("record_id=?", recordID)
+	var item entity.ProjIncomeCalculation
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaProjIncomeCalculation(), nil
+}
+
+// GetCurrent 查询项目当前数据
+func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 1)
+	var item entity.ProjIncomeCalculation
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaProjIncomeCalculation(), nil
+}
+
+// GetFinish 查询项目最终数据
+func (a *ProjIncomeCalculation) GetFinish(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 3)
 	var item entity.ProjIncomeCalculation
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {
