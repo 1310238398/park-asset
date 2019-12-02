@@ -49,7 +49,8 @@ class EditableCell extends React.Component {
         }
         if (this.props.inputType === 'number') {
             if (this.props.dataIndex === "expend_rate") {
-                return <InputNumber max={100} min={0} placeholder="请输入"/>;
+                return <InputNumber max={100} min={0} placeholder="请输入"  formatter={value => `${value}%`}
+                parser={value => value.replace('%', '')}/>;
             }
             else {
                 return <InputNumber placeholder="请输入"/>;

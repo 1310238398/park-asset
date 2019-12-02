@@ -117,18 +117,9 @@ class CurrentVersion extends PureComponent {
     state = {
         columns:[
             {
-                title: '序号',
-                dataIndex: 'serial_number',
-                width: "5%",
-               // ellipsis: true,
-               // align: 'center',
-               // fixed: 'left',
-        
-              },
-            {
                 title: '科目名称',
                 dataIndex: 'name',
-                width: "15%",
+                width: "20%",
                // ellipsis: true,
                // align: 'center',
                // fixed: 'left',
@@ -152,6 +143,7 @@ class CurrentVersion extends PureComponent {
                 align: 'center',
 
               },
+         
               {
                 title: '操作',
                 dataIndex: 'operation',
@@ -187,6 +179,7 @@ class CurrentVersion extends PureComponent {
 
               }
         ],
+        
         tableData: [
             {
                 record_id: '001',
@@ -201,7 +194,7 @@ class CurrentVersion extends PureComponent {
               {
                 record_id: '002',
                 name: '成本科目2',
-                cost_id: "001", // 成本项ID
+                cost_id: "002", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
@@ -211,7 +204,7 @@ class CurrentVersion extends PureComponent {
               {
                 record_id: '003',
                 name: '成本科目3',
-                cost_id: "001", // 成本项ID
+                cost_id: "003", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
@@ -221,7 +214,7 @@ class CurrentVersion extends PureComponent {
               {
                 record_id: '004',
                 name: '成本科目3',
-                cost_id: "001", // 成本项ID
+                cost_id: "004", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
@@ -231,7 +224,7 @@ class CurrentVersion extends PureComponent {
               {
                 record_id: '005',
                 name: '成本科目3',
-                cost_id: "001", // 成本项ID
+                cost_id: "005", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
@@ -241,7 +234,7 @@ class CurrentVersion extends PureComponent {
               {
                 record_id: '006',
                 name: '成本科目3',
-                cost_id: "001", // 成本项ID
+                cost_id: "006", // 成本项ID
                 cost_parent_id: "", //成本项父级ID
                 cost_parent_path: "",//成本项父级路经 具体到父级ID
         
@@ -350,6 +343,8 @@ class CurrentVersion extends PureComponent {
            >
 
            </Table>
+           <div style={{ marginTop: 20, marginBottom: 20, textAlign: "center"}}><Button type="primary">保存版本</Button></div>
+           
              </EditableContext.Provider>    
         );
     }
