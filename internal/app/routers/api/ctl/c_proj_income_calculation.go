@@ -70,12 +70,12 @@ func (a *ProjIncomeCalculation) query(c *gin.Context) {
 func (a *ProjIncomeCalculation) getCurrent(c *gin.Context) {
 	projectID := c.Query("projectID")
 	if projectID == "" {
-		ginplus.ResError(errors.ErrInvalidRequestParameter)
+		ginplus.ResError(c, errors.ErrInvalidRequestParameter)
 		return
 	}
-	result, err := a.ProjIncomeCalculationBll.GetCurrent(ctx, projectID)
+	result, err := a.ProjIncomeCalculationBll.GetCurrent(ginplus.NewContext(c), projectID)
 	if err != nil {
-		ginplus.ResError(err)
+		ginplus.ResError(c, err)
 		return
 	}
 	if result == nil {

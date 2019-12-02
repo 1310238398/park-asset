@@ -50,7 +50,7 @@ func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string
 		if err != nil {
 			return nil, err
 		} else if item == nil {
-			return nili, err
+			return nil, err
 		}
 	}
 	return item, nil
