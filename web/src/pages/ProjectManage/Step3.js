@@ -113,8 +113,7 @@ export default class Step3 extends PureComponent {
 
       expandHang: [],
       expandedRowKeys: [],
-      depth: 4, // 树的最大深度
-      depthMap:[],
+     
      
       //所有的二级key
       //所有的三级key
@@ -445,7 +444,9 @@ export default class Step3 extends PureComponent {
 
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    
+  }
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -817,18 +818,9 @@ export default class Step3 extends PureComponent {
     this.setState({currentItem: item});
   }
 
-  initDepthMap() {
-    const { depth, depthMap}= this.state;
-    let newList =[];
-    for (let i = 1 ; i <= depth; i++) {
-        newList.push(i);
-
-    }
-    this.setState({ depthMap: [...newList]});
-  }
-
+ 
   render() {
-    const { defaultData, depth, depthMap } = this.state;
+    const { defaultData } = this.state;
     const {
 
       //form: { getFieldDecorator, getFieldValue },
@@ -836,8 +828,7 @@ export default class Step3 extends PureComponent {
       onCancel,
     } = this.props;
   
-    this.initDepthMap();
-   
+    
 
     const formItemLayout = {
       labelCol: {
@@ -879,22 +870,6 @@ export default class Step3 extends PureComponent {
     return (
       <EditableContext.Provider value={this.props.form}>
       
-      <div className={styles.tableListOperator} style={{ marginBottom: 10}}>
-       
-       {
-         depthMap.map(item =>
-          <Tag></Tag>
-          )
-         
-       }
-        <Tag  onClick={() => {
-            this.expandRow(1);
-          }}
-          >1</Tag>
-        <Tag>2</Tag>
-        <Tag>3</Tag>
-      </div>
-     
         <Table
           components={components}
           bordered

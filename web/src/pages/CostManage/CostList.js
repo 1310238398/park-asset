@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import {
   Form,
+  Tag,
   Input,
   Modal,
   Dropdown,
@@ -49,12 +50,15 @@ class EditableCell extends React.Component {
     if (this.props.inputType === 'number') {
       if ( this.props.dataIndex === 'tax_rate') {
 
-        return <InputNumber max={100} min={0}   formatter={value => `${value}%`} 
+        return <InputNumber max={100} min={0}  formatter={value => `${value}%`} 
         parser={value => value.replace('%', '')}
         />;
       }
       else {
-         return <InputNumber />;
+         return <InputNumber  
+         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+         parser={value => value.replace(/\\s?|(,*)/g, '')}
+         />;
       }
      
     }
@@ -210,7 +214,7 @@ class CostList extends PureComponent {
         title: '科目名称',
         dataIndex: 'name',
         width: 200,
-        ellipsis: true,
+      //  ellipsis: true,
         align: 'center',
         fixed: 'left',
 
@@ -219,7 +223,6 @@ class CostList extends PureComponent {
         title: '科目类别',
         dataIndex: 'label',
         width: 100,
-
         align: 'center',
         render: (text, record) => {
           //return <span >{record.rate * record.total}</span>;
@@ -255,14 +258,10 @@ class CostList extends PureComponent {
         align: 'center',
         
          render: (text) =>{
-            
 
            return <div style={{ width: "100%", textAlign: "center" }}>{text}</div>
-
           },
        // fixed: 'right',
-   
-
       },
       {
         title: '税率',
@@ -349,9 +348,12 @@ class CostList extends PureComponent {
       },
     ],
 
-
-
     editingKey: '',
+    expandedRowKeys: [],
+    depth: 4, // 树的最大深度
+    depthMap:[],
+    currentDepth: 1,
+
   };
 
 
@@ -376,7 +378,17 @@ class CostList extends PureComponent {
 
     console.log(" costList页面 接受的pro_id " + formID);
     console.log(" costList页面 接受的operType " + formType);
+    this.initDepthMap();
 
+  }
+  initDepthMap() {
+    const { depth, depthMap}= this.state;
+    let newList =[];
+    for (let i = 1 ; i <= depth; i++) {
+        newList.push(i);
+
+    }
+    this.setState({ depthMap: [...newList]});
   }
 
   renderFuc = (text, record) => {
@@ -643,6 +655,185 @@ class CostList extends PureComponent {
       let item1 =  columns[index1];
       item1.children = [...formatTotalPriceData];
   }
+
+  
+  expandRow(ji) {
+    this.setState({ currentDepth: ji});
+    this.setState({ expandedRowKeys: [] });
+    const {  costList: { data }, } = this.props;
+    const { expandedRowKeys} = this.state;
+    if (ji === 1) {
+      this.setState({ expandedRowKeys: [] });
+      return;
+    }
+  
+   // parent_path = "" 的情况单独处理 也就是点击展开第二级的时候
+   
+  let expandHang = [...expandedRowKeys];
+    for (let m = 0; m < data.length; m++) {
+      if (data[m].children !== null) {
+          expandHang.push(data[m].cost_id);
+      }
+     
+
+      
+    }
+   
+    let slashCount = ji - 3; // 显示第二级菜单 就是展开第一级菜单
+    if (slashCount >= 0) {
+      //let keys = [];
+      this.findExpandKeys(data, slashCount, expandHang);
+     // this.setState({ expandedRowKeys: [...expandedRowKeys, ...keys] });
+    }
+   
+    expandHang.sort();
+
+      this.setState({ expandedRowKeys: [...expandHang] });
+    
+
+  }
+
+  findExpandKeys(objList, count, expandHang) { // 递归寻找可展开的节点
+    const { expandedRowKeys } = this.state;
+    console.log("findExpandKeys");
+    console.log(objList);
+   // count >= 0  单独处理0 的情况 parent_path 非空且不包含/的情况
+  
+ 
+   if (count === 0) {
+    
+
+    for (let m = 0; m < objList.length; m++) {
+      console.log("count === 0  循环");
+
+      if ((objList[m].cost_parent_path === "") && (objList[m].children !== null) && (objList[m].children !== undefined) && objList[m].children.length > 0) {
+        console.log("进入children");
+        if (expandedRowKeys.indexOf(objList[m].cost_id) === -1) {
+          console.log("添加新的cost_id "+ objList[m].cost_id);
+          expandHang.push(objList[m].cost_id);
+        
+        }
+         this.findExpandKeys(objList[m].children, count, expandHang);
+      }
+      else if (objList[m].cost_parent_path.match(/\//g) === null && objList[m].cost_parent_path !== "" &&  (objList[m].children !== null) && (objList[m].children !== undefined) && objList[m].children.length > 0) {
+        if (expandedRowKeys.indexOf(objList[m].cost_id) === -1) {
+          console.log("添加新的cost_id "+ objList[m].cost_id);
+          expandHang.push(objList[m].cost_id);
+        
+        }
+       
+      }
+
+    }
+    expandHang.sort();
+    
+    this.setState({ expandedRowKeys: [...expandHang] });
+  
+    console.log("最终展开的数据 ");
+    console.log(expandHang);
+   // console.log(expandedRowKeys);
+    
+   }
+   else {
+
+  
+   
+      for(let n = 0; n < objList.length; n++) {
+        console.log("内循环 n "+ n);
+        if (objList[n].cost_parent_path === "" && (objList[n].children === null)) {
+
+          console.log("哈哈哈哈");
+
+        }
+
+        else if (objList[n].cost_parent_path === "" && objList[n].children && objList[n].children.length > 0) {
+
+          if (expandedRowKeys.indexOf(objList[n].cost_id) === -1) {
+                expandHang.push(objList[n].cost_id);
+          
+            }
+           this.findExpandKeys(objList[n].children, count, expandHang);
+        }
+        else if (objList[n].cost_parent_path.match(/\//g) === null && objList[n].cost_parent_path !== "") {
+
+        console.log("父路径不包含/");
+        // 不含/的时候
+        if (expandedRowKeys.indexOf(objList[n].cost_id) === -1) {
+          expandHang.push(objList[n].cost_id);
+         
+            }
+            if (objList[n].children && objList[n].children.length > 0) {
+              this.findExpandKeys(objList[n].children, count, expandHang);
+            }
+        }
+        else if (objList[n].cost_parent_path.match(/\//g) !== null && objList[n].cost_parent_path.match(/\//g).length <= count && objList[n].cost_parent_path !== "") {
+          if (expandedRowKeys.indexOf(objList[n].cost_id) === -1) {
+            expandHang.push(objList[n].cost_id);
+            //this.setState({ expandedRowKeys: [...expandedRowKeys,objList[n].record_id ] });
+          }
+          if (objList[n].children && objList[n].children.length > 0) {
+            this.findExpandKeys(objList[n].children, count, expandHang);
+          }
+         
+         
+        }
+      }
+    
+    expandHang.sort();
+    this.setState({ expandedRowKeys: [ ...expandHang] }); // 异步的
+
+    console.log("最终展开的数据 ");
+    console.log(expandHang);
+  }
+
+  }
+
+  
+  handleOnExpand = (expanded, record) => {
+    console.log('handleOnExpand');
+    const { expandedRowKeys } = this.state;
+    
+
+    
+   // console.log("expandHang "+ expandHang);
+      let expandHang = [...expandedRowKeys];
+    if (expanded) {
+      console.log('true');
+      console.log('push');
+      expandHang.push(record.cost_id);
+      expandHang.sort();
+    } else {
+      console.log('false');
+      for (let i = 0; i < expandHang.length; i++) {
+        if (expandHang[i] === record.cost_id) {
+          console.log("找到了。。");
+          if (i > 0) {
+            console.log('pop');
+            expandHang.splice(i, 1);
+            
+          } else {
+            expandHang.splice(0, 1);
+          }
+        }
+        if (record.children) {
+          for (let y = 0; y < record.children.length; y++) {
+            if (expandHang[i] === record.children[y]._id) {
+              console.log('hahah');
+            //  delete expandHang[i];
+            expandHang.splice(i, 1);
+            }
+          }
+        }
+      }
+
+      expandHang = [...expandHang];
+    }
+    this.setState({
+      expandedRowKeys: [...expandHang],
+    });
+
+    console.log(expandHang);
+  };
   render() {
     const {
       loading,
@@ -653,7 +844,7 @@ class CostList extends PureComponent {
 
 
 
-    const { editingKey, tableData , columns} = this.state;
+    const { editingKey, tableData , columns, depthMap, currentDepth} = this.state;
 
     const components = {
       body: {
@@ -728,8 +919,24 @@ class CostList extends PureComponent {
 
     return (
       <EditableContext.Provider value={this.props.form}>
+           <div className={styles.tableListOperator} style={{ marginBottom: 10}}>
+       <span style={{ color: "blue", marginRight:  10, fontSize:13}}>控制列表</span>
+       {
+         depthMap.map(item =>
+         <Tag value={item} color={ currentDepth === item ? "blue":""}
+         key={item}
+         onClick={() => {
+          this.expandRow(item);
+        }}
+         >{item}</Tag>
+          )
+         
+       }
+       
+      </div>
         <Table
           components={components}
+          expandedRowKeys={this.state.expandedRowKeys}
           bordered
           loading={loading}
           rowKey={record => record.cost_id}
@@ -738,6 +945,7 @@ class CostList extends PureComponent {
           pagination={false}
           scroll={{ y: 800, x: 'calc(100%)' }}
           rowClassName="editable-row"
+          onExpand={this.handleOnExpand}
          // rowClassName={(record) => record.record_id !== "" ?  'editable-row' : "{background: 'blue'}"}
         // style={{ maxHeight: 500 }}
         />

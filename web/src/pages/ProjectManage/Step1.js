@@ -406,7 +406,7 @@ export default class Step1 extends PureComponent {
       } label="项目相关证书">
           <span style={{ color: 'red' }}>（图片上传格式jpg,jpeg,png）</span>
             {getFieldDecorator('files', {
-              initialValue: [],//formData.files ? [formData.files] : '',
+              initialValue: formData.files ? formData.files : '',
               rules: [
                 {
                   required: false,
