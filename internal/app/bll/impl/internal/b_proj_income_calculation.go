@@ -38,6 +38,24 @@ func (a *ProjIncomeCalculation) Get(ctx context.Context, recordID string, opts .
 	return item, nil
 }
 
+// GetCurrent 查询指定数据
+func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
+	//查询最终版
+	item, err := a.ProjIncomeCalculationModel.GetFinish(ctx, projectID)
+	if err != nil {
+		return nil, err
+	} else if item == nil {
+		//查询当前版
+		item, err = a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
+		if err != nil {
+			return nil, err
+		} else if item == nil {
+			return nili, err
+		}
+	}
+	return item, nil
+}
+
 func (a *ProjIncomeCalculation) getUpdate(ctx context.Context, recordID string) (*schema.ProjIncomeCalculation, error) {
 	return a.Get(ctx, recordID)
 }

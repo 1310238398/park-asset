@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -22,6 +23,18 @@ type ProjIncomeCalculation struct {
 	ProjIncomeCalculationBll bll.IProjIncomeCalculation
 }
 
+func (a *ProjIncomeCalculation) Query(c *gin.Context) {
+	q := c.Query("q")
+	switch q {
+	case "list":
+		a.query(c)
+	case "current":
+		a.getCurrent(c)
+	default:
+		a.query(c)
+	}
+}
+
 // Query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
@@ -31,8 +44,8 @@ type ProjIncomeCalculation struct {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-income-calculations
-func (a *ProjIncomeCalculation) Query(c *gin.Context) {
+// @Router GET /api/v1/proj-income-calculations?q=list
+func (a *ProjIncomeCalculation) query(c *gin.Context) {
 	var params schema.ProjIncomeCalculationQueryParam
 
 	result, err := a.ProjIncomeCalculationBll.Query(ginplus.NewContext(c), params, schema.ProjIncomeCalculationQueryOptions{
@@ -43,6 +56,32 @@ func (a *ProjIncomeCalculation) Query(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// getCurrent 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param projectID query string true "项目ID"
+// @Success 200 []schema.ProjIncomeCalculation "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-income-calculations?q=current
+func (a *ProjIncomeCalculation) getCurrent(c *gin.Context) {
+	projectID := c.Query("projectID")
+	if projectID == "" {
+		ginplus.ResError(errors.ErrInvalidRequestParameter)
+		return
+	}
+	result, err := a.ProjIncomeCalculationBll.GetCurrent(ctx, projectID)
+	if err != nil {
+		ginplus.ResError(err)
+		return
+	}
+	if result == nil {
+		result = new(schema.ProjIncomeCalculation)
+	}
+	ginplus.ResSuccess(c, result.ToProjIncomeCalculationResult())
 }
 
 // Get 查询指定数据

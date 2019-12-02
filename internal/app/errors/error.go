@@ -18,6 +18,7 @@ var (
 	ErrNotFound                = New("资源不存在")
 	ErrMethodNotAllow          = New("方法不被允许")
 	ErrBadRequest              = New("请求发生错误")
+	ErrParameterNotEnough      = New("请求参数不足")
 	ErrInvalidRequestParameter = New("无效的请求参数")
 	ErrTooManyRequests         = New("请求过于频繁")
 	ErrUnknownQuery            = New("未知的查询类型")
@@ -57,6 +58,7 @@ func init() {
 	// 公共错误
 	newBadRequestError(ErrBadRequest)
 	newBadRequestError(ErrInvalidRequestParameter)
+	newBadRequestError(ErrParameterNotEnough)
 	newErrorCode(ErrNotFound, 404, ErrNotFound.Error(), 404)
 	newErrorCode(ErrMethodNotAllow, 405, ErrMethodNotAllow.Error(), 405)
 	newErrorCode(ErrTooManyRequests, 429, ErrTooManyRequests.Error(), 429)

@@ -201,6 +201,75 @@ func (a *ProjCapitalizedInterest) Query(ctx context.Context, params schema.ProjC
 	return a.ProjCapitalizedInterestModel.Query(ctx, params, opts...)
 }
 
+// 查询整年数据
+func (a *ProjCapitalizedInterest) QueryYearShow(ctx context.Context, params schema.ProjCapitalizedInterestQueryParam) ([]*schema.ProjCapitalizedInterestYearShow, error) {
+	list, err := a.ProjCapitalizedInterestModel.Query(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	result := []*schema.ProjCapitalizedInterestYearShow{}
+	for _, v := range list.Data {
+		var w *schema.ProjCapitalizedInterestYearShow
+		if len(result) > 0 {
+			w = result[len(result)-1]
+		}
+
+		if w != nil && v.Year == w.Year {
+
+			switch v.Quarter {
+			case 1:
+				//异常，跳过
+				continue
+			case 2:
+				w.SalesPaybackTwo = v.SalesPayback
+				w.CostExpenditureTwo = v.CostExpenditure
+				w.MarginBackTwo = v.MarginBack
+				w.MarginOutTwo = v.MarginOut
+			case 3:
+				w.SalesPaybackThree = v.SalesPayback
+				w.CostExpenditureThree = v.CostExpenditure
+				w.MarginBackThree = v.MarginBack
+				w.MarginOutThree = v.MarginOut
+			case 4:
+				w.SalesPaybackFour = v.SalesPayback
+				w.CostExpenditureFour = v.CostExpenditure
+				w.MarginBackFour = v.MarginBack
+				w.MarginOutFour = v.MarginOut
+
+				//累计占用金额
+				w.AccumulativeOccupancyFunds = w.AccumulativeOccupancyFunds
+			default:
+				//异常，跳过
+				continue
+			}
+			// 累加数据
+			w.TaxPayment += v.TaxPayment
+			w.FundsOccupiedAmount += v.FundsOccupiedAmount
+			w.FundPossessionCost += v.FundPossessionCost
+		} else {
+			w := new(schema.ProjCapitalizedInterestYearShow)
+			w.RecordID = util.MustUUID()
+			if v.Quarter != 1 {
+				//异常，跳过
+			}
+			w.SalesPaybackOne = v.SalesPayback
+			w.CostExpenditureOne = v.CostExpenditure
+			w.MarginBackOne = v.MarginBack
+			w.MarginOutOne = v.MarginOut
+			w.TaxRate = v.TaxRate
+			w.TaxPayment = v.TaxPayment
+			w.FundsOccupiedAmount = v.FundsOccupiedAmount
+			w.FundPossessionCost = v.FundPossessionCost
+			w.InterestRate = v.InterestRate
+			w.ProjectID = v.ProjectID
+		}
+		result = append(result, w)
+
+	}
+	return result, nil
+
+}
+
 // Get 查询指定数据
 func (a *ProjCapitalizedInterest) Get(ctx context.Context, recordID string, opts ...schema.ProjCapitalizedInterestQueryOptions) (*schema.ProjCapitalizedInterest, error) {
 	item, err := a.ProjCapitalizedInterestModel.Get(ctx, recordID, opts...)
@@ -241,6 +310,87 @@ func (a *ProjCapitalizedInterest) Update(ctx context.Context, recordID string, i
 		return nil, err
 	}
 	return a.getUpdate(ctx, recordID)
+}
+
+// UpdateYearShow 更新整年数据
+func (a *ProjCapitalizedInterest) UpdateYearShow(ctx context.Context, item schema.ProjCapitalizedInterestYearShow) error {
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+
+		//第一季度
+		olditem, err := a.ProjCapitalizedInterestModel.GetByQuarterIndex(ctx, item.ProjectID, item.Year, 1)
+		if err != nil {
+			return err
+		}
+		if olditem == nil {
+			return errors.ErrBadRequest
+		}
+		olditem.SalesPayback = item.SalesPaybackOne
+		olditem.CostExpenditure = item.CostExpenditureOne
+		olditem.MarginOut = item.MarginOutOne
+		olditem.MarginBack = item.MarginBackOne
+		olditem.TaxRate = item.TaxRate
+		olditem.InterestRate = item.InterestRate
+		err = a.ProjCapitalizedInterestModel.Update(ctx, olditem.RecordID, *olditem)
+		if err != nil {
+			return err
+		}
+		//第二季度
+		olditem, err = a.ProjCapitalizedInterestModel.GetByQuarterIndex(ctx, item.ProjectID, item.Year, 2)
+		if err != nil {
+			return err
+		}
+		if olditem == nil {
+			return errors.ErrBadRequest
+		}
+		olditem.SalesPayback = item.SalesPaybackTwo
+		olditem.CostExpenditure = item.CostExpenditureTwo
+		olditem.MarginOut = item.MarginOutTwo
+		olditem.MarginBack = item.MarginBackTwo
+		olditem.TaxRate = item.TaxRate
+		olditem.InterestRate = item.InterestRate
+		err = a.ProjCapitalizedInterestModel.Update(ctx, olditem.RecordID, *olditem)
+		if err != nil {
+			return err
+		}
+		//第三季度
+		olditem, err = a.ProjCapitalizedInterestModel.GetByQuarterIndex(ctx, item.ProjectID, item.Year, 3)
+		if err != nil {
+			return err
+		}
+		if olditem == nil {
+			return errors.ErrBadRequest
+		}
+		olditem.SalesPayback = item.SalesPaybackThree
+		olditem.CostExpenditure = item.CostExpenditureThree
+		olditem.MarginOut = item.MarginOutThree
+		olditem.MarginBack = item.MarginBackThree
+		olditem.TaxRate = item.TaxRate
+		olditem.InterestRate = item.InterestRate
+		err = a.ProjCapitalizedInterestModel.Update(ctx, olditem.RecordID, *olditem)
+		if err != nil {
+			return err
+		}
+		//第四季度
+		olditem, err = a.ProjCapitalizedInterestModel.GetByQuarterIndex(ctx, item.ProjectID, item.Year, 4)
+		if err != nil {
+			return err
+		}
+		if olditem == nil {
+			return errors.ErrBadRequest
+		}
+		olditem.SalesPayback = item.SalesPaybackFour
+		olditem.CostExpenditure = item.CostExpenditureFour
+		olditem.MarginOut = item.MarginOutFour
+		olditem.MarginBack = item.MarginBackFour
+		olditem.TaxRate = item.TaxRate
+		olditem.InterestRate = item.InterestRate
+		err = a.ProjCapitalizedInterestModel.Update(ctx, olditem.RecordID, *olditem)
+		if err != nil {
+			return err
+		}
+
+		return a.renew(ctx, item.ProjectID)
+	})
 }
 
 // Delete 删除数据
