@@ -62,7 +62,7 @@ func (a *ProjIncomeCalculation) query(c *gin.Context) {
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param projectID query string true "项目ID"
-// @Success 200 []schema.ProjIncomeCalculation "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Success 200 schema.ProjIncomeCalculationResult "查询结果：{info:原始数据,list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
