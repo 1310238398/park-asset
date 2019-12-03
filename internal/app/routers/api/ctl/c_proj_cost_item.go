@@ -55,7 +55,7 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 		return
 	}
 
-	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	level, result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
 		return
 	}
@@ -64,9 +64,15 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 		for _, v := range result {
 			mapResult = append(mapResult, v.ToMap())
 		}
-		ginplus.ResSuccess(c, mapResult)
+		ginplus.ResSuccess(c, map[string]interface{}{
+			"level": level,
+			"list":  mapResult,
+		})
 	} else {
-		ginplus.ResSuccess(c, result)
+		ginplus.ResSuccess(c, map[string]interface{}{
+			"level": level,
+			"list":  result,
+		})
 	}
 }
 
@@ -86,7 +92,7 @@ func (a *ProjCostItem) QueryNodeTree(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return
 	}
-	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	_, result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
