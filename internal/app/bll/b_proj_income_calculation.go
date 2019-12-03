@@ -20,4 +20,14 @@ type IProjIncomeCalculation interface {
 	Update(ctx context.Context, recordID string, item schema.ProjIncomeCalculation) (*schema.ProjIncomeCalculation, error)
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+
+	// 更新收益测算
+	Renew(ctx context.Context, recordID string) error
+
+	// 创建新版本
+	CreateVersion(ctx context.Context, projectID string) error
+	// 更新旧版本
+	UpdateVersion(ctx context.Context, projectID string) error
+	//TODO 获取版本比对
+	GetVersionComparison(ctx context.Context, projectID string, versions ...string) error
 }
