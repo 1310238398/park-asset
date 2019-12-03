@@ -80,7 +80,7 @@ func (a *ProjExpenditure) Get(ctx context.Context, recordID string, opts ...sche
 		return nil, err
 	}
 
-	item.ProjCostItems = pExpendCostResult.Data.ToProjCostIDs()
+	item.ProjCostItemIDs = pExpendCostResult.Data.ToProjCostIDs()
 
 	return item, nil
 }
@@ -214,22 +214,24 @@ func (a *ProjExpenditure) createProjExpenCost(ctx context.Context, item schema.P
 		if err != nil {
 			return nil
 		}
-
 		pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
-			RecordIDs: item.ProjCostItems,
+			RecordIDs: item.ProjCostItemIDs,
 		})
 		if err != nil {
 			return err
 		}
-		mCost := pCostResult.Data.ToMap()
 
-		for _, projCostItemID := range item.ProjCostItems {
+		mpCost := pCostResult.Data.ToMap()
+		for _, projCostItemID := range item.ProjCostItemIDs {
 			var projExpendCost schema.ProjExpendCost
 			projExpendCost.RecordID = util.MustUUID()
 			projExpendCost.ProjExpenditureID = item.RecordID
 			projExpendCost.ProjCostID = projCostItemID
 			// 本次累计金额 - 之前金额
-			projAmount := item.ExpendRate*mCost[projCostItemID].Price - mProjCost[projCostItemID]
+			if _, ok := mProjCost[projCostItemID]; !ok {
+				mProjCost[projCostItemID] = 0
+			}
+			projAmount := item.ExpendRate*mpCost[projCostItemID].Price - mProjCost[projCostItemID]
 			if projAmount < 0 {
 				projExpendCost.Amount = 0
 			}
@@ -248,12 +250,12 @@ func (a *ProjExpenditure) createProjExpenCost(ctx context.Context, item schema.P
 
 // 填充本次此项目支出节点金额(非累计)
 func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item schema.ProjExpenditure) error {
-	if len(item.ProjCostItems) == 0 {
+	if len(item.ProjCostItemIDs) == 0 {
 		return nil
 	}
 
 	pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
-		RecordIDs: item.ProjCostItems,
+		RecordIDs: item.ProjCostItemIDs,
 	})
 	if err != nil {
 		return err
@@ -284,9 +286,16 @@ func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item schema.P
 
 // 此项目支出节点对应成本项累计支出金额 key:项目成本项ID value:之前累计金额 (不包括本次支出)
 func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.ProjExpenditure) (map[string]float64, error) {
+	m := make(map[string]float64, len(item.ProjCostItemIDs))
+	if item.StartTime == nil {
+		for _, id := range item.ProjCostItemIDs {
+			m[id] = 0
+		}
+		return m, nil
+	}
 	projExpenedResult, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
 		ProjectID:       item.ProjectID,
-		BeforeStartTime: item.StartTime,
+		BeforeStartTime: *item.StartTime,
 	})
 	if err != nil {
 		return nil, err
@@ -297,13 +306,15 @@ func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.
 		NotProjExpenditureIDs: []string{item.RecordID},
 	})
 
-	var m map[string]float64
-	mProjCost := projExpendCostResult.Data.ToProjExpendCostsMap()
+	mProjCosts := projExpendCostResult.Data.ToProjExpendCostsMap()
 
-	for _, projCostItemID := range item.ProjCostItems {
-		list, ok := mProjCost[projCostItemID]
+	// 获得项目成本项ID 对应的之前的金额
+	for _, projCostItemID := range item.ProjCostItemIDs {
+		m[projCostItemID] = 0
+		list, ok := mProjCosts[projCostItemID]
 		if !ok {
 			continue
+
 		}
 		for _, v := range list {
 			m[projCostItemID] += v.Amount
@@ -463,8 +474,8 @@ func (a *ProjExpenditure) update(ctx context.Context, recordID string, item sche
 		case !item.EndTime.IsZero():
 			newItem.EndTime = item.EndTime
 			fallthrough
-		case len(item.ProjCostItems) > 0:
-			newItem.ProjCostItems = item.ProjCostItems
+		case len(item.ProjCostItemIDs) > 0:
+			newItem.ProjCostItemIDs = item.ProjCostItemIDs
 			fallthrough
 		case item.ExpendRate > 0:
 			newItem.ExpendRate = item.ExpendRate
@@ -509,15 +520,4 @@ func (a *ProjExpenditure) update(ctx context.Context, recordID string, item sche
 
 		return nil
 	})
-}
-
-// Generate 生成数据
-func (a *ProjExpenditure) Generate(ctx context.Context, projectID string) error {
-	eResult, err := a.ExpenditureModel.Query(ctx, schema.ExpenditureQueryParam{})
-	if err != nil {
-		return err
-	}
-	list := eResult.Data.ToTrees().ToTree().ToProjList()
-	a.ProjExpenditureModel.Generate(ctx, projectID, &list)
-	return nil
 }

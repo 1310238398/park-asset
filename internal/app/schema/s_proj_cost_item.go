@@ -22,6 +22,7 @@ type ProjCostItem struct {
 // ProjCostItem 项目成本项展示
 type ProjCostItemShow struct {
 	RecordID       string              `json:"record_id" swaggo:"false,记录ID"`                       // 记录ID
+	Level          int                 `json:"level" swaggo:"false,级别"`                             //级别
 	ProjectID      string              `json:"project_id" swaggo:"false,成本项目ID"`                    // 成本项目ID
 	CostID         string              `json:"cost_id" swaggo:"false,成本项ID"`                        // 成本项ID
 	CostParentID   string              `json:"cost_parent_id" swaggo:"false,成本项父级ID"`               //父级成本项ID
@@ -97,6 +98,7 @@ func (a *ProjCostItemShow) ToMap() map[string]interface{} {
 	result["name"] = a.Name
 	result["tax_id"] = a.TaxID
 	result["label"] = a.Label
+	result["level"] = a.Level
 	result["calculate_type"] = a.CalculateType
 	result["tax_rate"] = a.TaxRate
 	result["tax_price"] = a.TaxPrice

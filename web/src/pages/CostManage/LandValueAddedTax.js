@@ -59,7 +59,7 @@ class LandValueAddedTax extends PureComponent{  //土增
 
     state = {
         data : [],
-        projectID : "6dc94eb7-4675-44f2-9323-312ff9659854",  
+        // projectID : "6dc94eb7-4675-44f2-9323-312ff9659854",  
         loading : true,
         editingKey : "",
         metadata : {},
@@ -69,14 +69,11 @@ class LandValueAddedTax extends PureComponent{  //土增
         const {
             costAccount: { formID },
         } = this.props;
-        this.setState({ projectID : formID });
-        this.getData();
+        const params = { projectID : formID };
+        this.getData(params);
     }
 
-    getData = () =>{
-        const { projectID } = this.state;
-
-        const params = { projectID : projectID };
+    getData = (params) =>{
         queryLandValue(params).then(res=>{
             this.setState({ loading : false });
             if(res && res.error){
@@ -123,6 +120,9 @@ class LandValueAddedTax extends PureComponent{  //土增
 
     save = (form,record) => {
         const { metadata } = this.state;
+        const {
+            costAccount: { formID },
+        } = this.props;
         form.validateFields((err,row) => {
             if(err){
                 return;
@@ -134,7 +134,8 @@ class LandValueAddedTax extends PureComponent{  //土增
                 if(res && res.error){
                     console.log(res.error.message);
                 }else{
-                    this.getData();
+                    const params = { projectID : formID };
+                    this.getData(params);
                 }
             })
 
@@ -211,11 +212,6 @@ class LandValueAddedTax extends PureComponent{  //土增
                             </div>
                         )
                         :(
-                            // <div style={{ textAlign: "center" }} onClick={()=> this.edit(record.key)}>
-                            //     <a>
-                            //         编辑
-                            //     </a>
-                            // </div>
                              <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)}>
                                 编辑
                             </a>
@@ -235,6 +231,7 @@ class LandValueAddedTax extends PureComponent{  //土增
                     loading = { loading }
                     rowKey={record => record.key}
                     pagination={false}
+                    // bordered = { true }
                 >
 
                 </Table>

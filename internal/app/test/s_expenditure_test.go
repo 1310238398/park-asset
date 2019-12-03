@@ -50,7 +50,9 @@ func TestExpenditure(t *testing.T) {
 		},
 	}
 
-	for _, item := range list.To() {
+	var items schema.ProjExpenditures
+	items = *list.ToProjEx(&items)
+	for _, item := range items {
 		t.Logf("%v+\n", item)
 	}
 

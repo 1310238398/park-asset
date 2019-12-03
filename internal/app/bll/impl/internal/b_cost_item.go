@@ -171,7 +171,7 @@ func (a *CostItem) Update(ctx context.Context, recordID string, item schema.Cost
 
 		addItems := a.compare(ctx, *item.BusinessList, cbqr.Data)
 		delItems := a.compare(ctx, cbqr.Data, *item.BusinessList)
-		updateItems := a.compare(ctx, cbqr.Data, append(addItems, delItems...))
+		updateItems := a.compare(ctx, *item.BusinessList, append(addItems, delItems...))
 		// 新增业态
 		for _, addItem := range addItems {
 			addItem.RecordID = util.MustUUID()

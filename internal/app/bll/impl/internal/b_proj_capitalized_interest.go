@@ -16,12 +16,16 @@ func NewProjCapitalizedInterest(
 	mProjCapitalizedInterest model.IProjCapitalizedInterest,
 	mProjCostItem model.IProjCostItem,
 	mPcProject model.IPcProject,
+	mProjSalesPlan model.IProjSalesPlan,
+	mProjExpenditureTime model.IProjExpenditureTime,
 ) *ProjCapitalizedInterest {
 	return &ProjCapitalizedInterest{
 		TransModel:                   mTrans,
 		ProjCapitalizedInterestModel: mProjCapitalizedInterest,
 		ProjCostItemModel:            mProjCostItem,
 		PcProjectModel:               mPcProject,
+		ProjSalesPlanModel:           mProjSalesPlan,
+		ProjExpenditureTimeModel:     mProjExpenditureTime,
 	}
 }
 
@@ -31,6 +35,8 @@ type ProjCapitalizedInterest struct {
 	ProjCapitalizedInterestModel model.IProjCapitalizedInterest
 	ProjCostItemModel            model.IProjCostItem
 	PcProjectModel               model.IPcProject
+	ProjSalesPlanModel           model.IProjSalesPlan
+	ProjExpenditureTimeModel     model.IProjExpenditureTime
 }
 
 // renew 更新资本化利息（收入及支出）
@@ -49,7 +55,61 @@ func (a *ProjCapitalizedInterest) renew(ctx context.Context, projectID string) e
 	listMap := map[QuarterIndex]*schema.ProjCapitalizedInterest{}
 	list := []*schema.ProjCapitalizedInterest{}
 	//确认收入列表
+	pspqp := schema.ProjSalesPlanQueryParam{}
+	pspqp.ProjectID = projectID
+	pspqr, err := a.ProjSalesPlanModel.Query(ctx, pspqp)
+	if err != nil {
+		return err
+	}
+	for _, v := range pspqr.Data {
+		item := new(schema.ProjCapitalizedInterest)
+		q := NewQuarterIndex(v.Year, v.Quarter)
+		item.Year = v.Year
+		item.Quarter = v.Quarter
+		item.ProjectID = projectID
+		item.SalesPayback = v.Payback
+		listMap[q] = item
+	}
+
 	//确认支出列表
+	petqp := schema.ProjExpenditureTimeQueryParam{}
+	petqp.ProjectID = projectID
+	petqr, err := a.ProjExpenditureTimeModel.Query(ctx, petqp)
+	if err != nil {
+		return err
+	}
+	for _, v := range petqr.Data {
+
+		var quarter int //季度
+		//确认季度
+		switch v.Month {
+		case 1, 2, 3:
+			quarter = 1
+		case 4, 5, 6:
+			quarter = 2
+		case 7, 8, 9:
+			quarter = 3
+		case 10, 11, 12:
+			quarter = 4
+		default:
+			quarter = 1
+		}
+
+		q := NewQuarterIndex(v.Year, quarter)
+
+		if pci := listMap[q]; pci != nil {
+			pci.CostExpenditure += v.ExpenditureAmount
+		} else {
+			item := new(schema.ProjCapitalizedInterest)
+			item.Year = v.Year
+			item.Quarter = quarter
+			item.ProjectID = projectID
+			item.CostExpenditure = v.ExpenditureAmount
+			listMap[q] = item
+		}
+
+	}
+
 	//整合资本化利息
 	var tr = 0.05375 //收入纳税比例
 	var ir = 0.07    //资金成本率

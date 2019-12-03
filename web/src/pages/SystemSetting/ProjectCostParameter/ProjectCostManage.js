@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Card, Table, Input, InputNumber, Form, Popconfirm, Select, Dropdown, Menu, Modal, } from 'antd';
+import { Card, Table, Input, InputNumber, Form, Popconfirm, Select, Dropdown, Menu, Modal, Tag, } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 
@@ -7,7 +7,7 @@ import styles from './ProjectCostManage.less';
 
 import { query, create, del, update } from '@/services/projectCostManage';
 import { queryListNotPage } from '@/services/formatManage';
-import { queryList } from '@/services/taxManage';
+import { queryList } from '@/services/taxManage';  
 
 
 const EditableContext = React.createContext();
@@ -15,21 +15,9 @@ const EditableContext = React.createContext();
 @Form.create()
 class EditableCell extends React.Component {  //根据editing 改变该行的某列是否是可编辑的
 
-    // getSelect = (selectData) => {
-    //     return  <Select placeholder="请选择" style={{ width: '100%' }}>
-    //                 {
-    //                     selectData.map(item => {
-    //                     <Select.Option value={item.code}>{item.name}</Select.Option>
-    //                     })
-    //                 }
-    //                 {/* <Select.Option value="1">计入</Select.Option>
-    //                 <Select.Option value="2">不计入</Select.Option> */}
-    //             </Select>;
-    // };
-
     getInput = () => {  //编辑框
         if (this.props.inputType === 'number') {
-            return <InputNumber min={0}/>;
+            return <InputNumber min={0} style= {{ width : '90%'}}/>;
         }
         if (this.props.inputType === "select") {
             if (this.props.dataIndex == "label") {
@@ -108,21 +96,22 @@ class ProjectCostManage extends PureComponent {
         taxList : [],
         dataList: [
         ],
-        expandHang: [],
+        temp_data : [],
         expandedRowKeys: [],
-        editingKey: '',   //编辑行的record_id
+        editingKey: '',  
         loading : true,
         chooseBtn : '',
+        level : [],
     };
 
-    componentWillMount(){
+    componentWillMount(){  
         let is_get_format = false;
         let is_get_tax = false;
         queryListNotPage().then(res=>{
-            is_get_format = true;
             if(res && res.error){
                 console.log(res.error.message);
             }else{
+                is_get_format = true;
                 const format_list = [];
                 for(let i=0; i < res.list.length; i++){
                     const one={
@@ -144,14 +133,13 @@ class ProjectCostManage extends PureComponent {
         });
 
         queryList().then(res =>{
-            is_get_tax = true;
             if(res && res.error){
                 console.log(res.error.message);
             }else{
+                is_get_tax = true;
                 this.setState({taxList : res.list});
             }
         });
-        let i=0;
         this.in = setInterval(()=>{
             if(is_get_format && is_get_tax){
                 clearInterval(this.in);
@@ -160,45 +148,69 @@ class ProjectCostManage extends PureComponent {
         },1000);
     }
 
-    getDataList = () =>{
+    getDataList = () =>{ 
         query().then(res=>{
             this.setState({ loading : false });
             if(res && res.error){
                 console.log(res.error.message);
             }else{
-                this.setState( { dataList : res } );
+                const level_arr = [];
+                for(let i=1;i<=res.deep;i++){
+                    level_arr.push(i);
+                }
+                this.setState( { dataList : res.tree, temp_data : JSON.parse(JSON.stringify(res.tree)), level : [...level_arr] } );
             }
         });
     };
 
-    handleOnExpand = (expanded, record) => {
-        const { expandHang } = this.state;
-        if (expanded) {  //收起或打开的判断
-            expandHang.push(record.record_id);
-            expandHang.sort();
-        } else {
-            for (let i = 0; i < expandHang.length; i++) {
-                if (expandHang[i] === record.record_id) {
-                    if (i > 0) {
-                        expandHang.splice(i, 1);
+    handleOnExpand = (expanded, record) => {  
+        const { expandedRowKeys } = this.state;
+        let expandHang = [...expandedRowKeys];
+        let flag = false;
+        if (expanded) {  
+            if(expandHang.indexOf(record.record_id)==-1){
+                expandHang.push(record.record_id);
+                expandHang.sort();
+            }
+        } else { 
+            if(record.children){
+                const temp_expand = this.getExpandChildren(record);
+                for( let i=0; i<temp_expand.length; i++){
+                    for(let j=0; j<expandHang.length;j++){
+                        if (expandHang[j] === temp_expand[i]){
+                            expandHang.splice(j, 1);
+                            break;
+                        }
+                    }
+                }
+            }else{
+                if(expandHang.indexOf(record.record_id) !=-1){
+                    let w = expandHang.indexOf(record.record_id);
+                    if (w > 0) {
+                        expandHang.splice(w, 1);
                     } else {
                         expandHang.splice(0, 1);
                     }
                 }
-                if (record.children) {
-                    for (let y = 0; y < record.children.length; y++) {
-                        if (expandHang[i] === record.children[y].record_id) {
-                            delete expandHang[i];
-                        }
-                    }
-                }
             }
         }
-
-        this.setState({ expandedRowKeys: [...expandHang] });
+        this.setState({ expandedRowKeys: [...expandHang] });    
     }
 
-    brotherLevelAdd = (currentItem) => {  
+    getExpandChildren = ( record ) => { 
+        let e_children = [];
+        let i=0;
+        if(record.children){
+            e_children.push(record.record_id);
+            for(i=0; i<record.children.length;i++){
+                const children = this.getExpandChildren(record.children[i]);
+                e_children.push(...children);
+            }
+        }
+        return e_children;
+    }
+
+    brotherLevelAdd = (currentItem) => {  //----同级添加
         const { dataList } = this.state;
         let parent_id = currentItem.parent_id;
         if(parent_id == ""){  //顶级的同级添加
@@ -207,8 +219,8 @@ class ProjectCostManage extends PureComponent {
                 record_id: (count+1).toString(),
                 parent_id : parent_id,
             };
-            dataList.push(newItem);
-            this.setState({dataList : [...dataList], editingKey : (count+1).toString(), chooseBtn : "A" });
+            const list = this.moveAdd(newItem,dataList);
+            this.setState({dataList : [...list], editingKey : (count+1).toString(), chooseBtn : "A" });
             return;
         }else{ //子级的同级添加
             let item = this.findItem(dataList,parent_id); //得到父级item
@@ -217,7 +229,7 @@ class ProjectCostManage extends PureComponent {
                 record_id: (count+1).toString(),
                 parent_id : parent_id,
             };
-            item.children.push(newItem);
+            item.children = this.moveAdd(newItem,item.children);
             this.setState({dataList : [...dataList], editingKey : (count+1).toString(), chooseBtn : "A" });
             return;
         }  
@@ -226,7 +238,7 @@ class ProjectCostManage extends PureComponent {
 
     childLevelAdd = (currentItem) =>{  //子级添加
         const { dataList } = this.state;
-        let item = this.findItem(dataList,currentItem.record_id,currentItem.parent_id);
+        let item = currentItem;
         let count = 0;
         if(currentItem.children){
             count = currentItem.children.length;
@@ -237,7 +249,7 @@ class ProjectCostManage extends PureComponent {
             record_id: (count+1).toString(),
             parent_id : currentItem.record_id,
         };
-        item.children.push(newItem);
+        item.children = this.moveAdd(newItem,item.children);
         this.handleOnExpand(true,item);
         this.setState({ 
             dataList : [...dataList], 
@@ -247,7 +259,7 @@ class ProjectCostManage extends PureComponent {
         return;
     }
 
-    findItem = (objList, key) => {
+    findItem = (objList, key) => {  //---没有问题
         for(let i=0;i<objList.length;i++){
             if(key == objList[i].record_id){
                 return objList[i];
@@ -257,7 +269,20 @@ class ProjectCostManage extends PureComponent {
         }
     }
 
-    getMenu = (record) => {
+    moveAdd = (item, arr) => { //--没有问题
+        const data = arr;
+        if(data.length==0){
+            data.push(item);
+        }else{
+            for(let i=data.length-1;i>=0;i--){
+                data[i+1] = data[i];
+            }
+            data[0]= item;
+        }
+        return data;
+    }
+
+    getMenu = (record) => { //--没有问题
         return (
         <Menu >
           <Menu.Item onClick={() => this.brotherLevelAdd(record)} >
@@ -271,7 +296,7 @@ class ProjectCostManage extends PureComponent {
     };
 
     save = (form, record) => {
-        const { chooseBtn, formatList, dataList } = this.state;
+        const { chooseBtn, formatList, dataList, temp_data } = this.state;
         form.validateFields((err, row) => {
             if (err) {
                 return;
@@ -326,10 +351,7 @@ class ProjectCostManage extends PureComponent {
                     this.setState({ loading : false });
                     if(res && res.error){
                         console.log(res.error.message);
-                        // this.getDataList();  这个地方出现的问题
-                        // let data = [...dataList];
-                        // dataList = data.splice(data.length-1,1)
-                        // this.setState({ loading : false, dataList : [...data]});
+                        this.setState({ dataList : JSON.parse(JSON.stringify(temp_data)) });
                     }else{
                         this.getDataList();
                     }
@@ -351,11 +373,15 @@ class ProjectCostManage extends PureComponent {
             this.setState({ editingKey: "" });
         });
     }
-    cancel = () => {
+    cancel = () => {  //---没有问题
+        const { temp_data, chooseBtn } = this.state;
+        if(chooseBtn =='A'){ //添加的操作
+            this.setState({ dataList : JSON.parse(JSON.stringify(temp_data)) });
+        }
         this.setState({ editingKey: "" });
     }
 
-    edit = (rid) => {
+    edit = (rid) => {  // 没有问题
         this.setState({ editingKey: rid, chooseBtn : "E" });
     }
 
@@ -380,13 +406,13 @@ class ProjectCostManage extends PureComponent {
             this.setState({ loading : false });
             if( res && res.status == "OK" ){
                 this.getDataList();
+                this.handleOnExpand(false,params);
             }else{
                 if(res && res.error){
                     console.log(res.error.message);
                 }
             }
         });
-        // this.clearSelectRows();
     }
 
     isEditing = record => record.record_id === this.state.editingKey;
@@ -416,6 +442,28 @@ class ProjectCostManage extends PureComponent {
         return ecolumns;
     };
 
+    handleTag = ( tag ) => {   //编辑和添加的时候是无法进行操作的，置灰操作,还有收起的操作
+        const { dataList } = this.state;
+        const arr =this.getLevel(tag,dataList);
+        this.setState({ expandedRowKeys : [...arr] });
+    }
+
+    getLevel = ( tag, list ) =>{
+        let expandList = [];
+        let i=0;
+        for( i=0; i<list.length; i++ ){
+            if(list[i].children){
+                if(list[i].level != tag){
+                    expandList.push(list[i].record_id);
+                    const children = this.getLevel( tag, list[i].children);
+                    expandList.push(...children);
+                }
+                
+            }
+        }
+        return expandList;
+    }
+
     render() {
         const components = {
             body: {
@@ -426,10 +474,10 @@ class ProjectCostManage extends PureComponent {
         const breadcrumbList = [
             { title: "基础设定" },
             { title: "系统设定" },
-            { title: "项目成本管理" }
+            { title: "成本科目" }
         ];
         
-        const { dataList, expandedRowKeys, formatList, taxList, loading } = this.state;
+        const { dataList, expandedRowKeys, formatList, taxList, loading, level, editingKey } = this.state;
 
         const columns = [
             {
@@ -440,13 +488,13 @@ class ProjectCostManage extends PureComponent {
                 editable: true,
                 required: true,
                 type: "text",
-                fixed: 'left',
+                // fixed: 'left',
             },
             {
                 title: "科目类别",
                 dataIndex: "label",
                 key: "label",
-                width: 100,
+                width: 150,
                 editable: true,
                 align: "center",
                 required: true,
@@ -484,7 +532,7 @@ class ProjectCostManage extends PureComponent {
                 title: "计算方式",
                 dataIndex: "calculate_type",
                 key: "calculate_type",
-                width: 100,
+                width: 150,
                 editable: true,
                 align: 'center',
                 required: true,
@@ -516,7 +564,7 @@ class ProjectCostManage extends PureComponent {
                 required: true,
                 type: "select",
                 render : data => {
-                    return data == 1 ? "启用" : "停用";
+                    return data == 1 ?  <Tag color='blue'>启用</Tag> : <Tag color='red'>停用</Tag>;
                 }
             },
             {
@@ -575,11 +623,30 @@ class ProjectCostManage extends PureComponent {
         const eColumns = this.mapEditColumns(columns);
 
         return (
-            <PageHeaderLayout title="项目成本管理" breadcrumbList={breadcrumbList}>
+            <PageHeaderLayout title="成本科目" breadcrumbList={breadcrumbList}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         {/* <div className={styles.tableListForm}>{this.renderSearchForm()}</div>*/}
-                        {/* <div className={styles.tableListOperator}></div>  */}
+                        <div className={styles.tableListOperator}>
+                            控制科目列表 
+                            <span>
+                                {   editingKey == '' ?
+                                        level.map(item => 
+                                            <Tag key={item} color = 'blue'
+                                                onClick={() => this.handleTag(item)}
+                                            >
+                                                {item}
+                                            </Tag>
+                                    )
+                                    :
+                                        level.map(item => 
+                                            <Tag key={item}>
+                                                {item}
+                                            </Tag>
+                                    )
+                                } 
+                            </span>
+                        </div> 
                         <EditableContext.Provider value={this.props.form}>
                             <Table
                                 components={components}
@@ -592,6 +659,7 @@ class ProjectCostManage extends PureComponent {
                                 onExpand={this.handleOnExpand}
                                 scroll={{ x: 1500, y: 800 }}
                                 rowClassName="editable-row"
+                                bordered = { true }
                             >
 
                             </Table>

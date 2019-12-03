@@ -61,7 +61,7 @@ func (a *CostItem) query(c *gin.Context) {
 // queryTree 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param show query string true "展示方式" map
+// @Param show query string false "展示方式" map
 // @Success 200 []schema.CostItem "查询结果：列表数据"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -77,10 +77,15 @@ func (a *CostItem) queryTree(c *gin.Context) {
 	}
 	if show := c.Query("show"); show == "map" {
 		mapResult := []map[string]interface{}{}
+		deep := 0
 		for _, v := range result {
-			mapResult = append(mapResult, v.ToMap())
+			mapResult = append(mapResult, v.ToMap(&deep))
 		}
-		ginplus.ResSuccess(c, mapResult)
+
+		ginplus.ResSuccess(c, schema.CostResult{
+			Deep: deep,
+			Tree: mapResult,
+		})
 	} else {
 		ginplus.ResSuccess(c, result)
 	}

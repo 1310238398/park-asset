@@ -5,14 +5,19 @@ import (
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )
 
 // NewProjBusinessFormat 创建项目业态控制器
-func NewProjBusinessFormat(bProjBusinessFormat bll.IProjBusinessFormat) *ProjBusinessFormat {
+func NewProjBusinessFormat(
+	bProjBusinessFormat bll.IProjBusinessFormat,
+	bProjCostItem bll.IProjCostItem,
+) *ProjBusinessFormat {
 	return &ProjBusinessFormat{
 		ProjBusinessFormatBll: bProjBusinessFormat,
+		ProjCostItemBll:       bProjCostItem,
 	}
 }
 
@@ -21,6 +26,7 @@ func NewProjBusinessFormat(bProjBusinessFormat bll.IProjBusinessFormat) *ProjBus
 // @Description 项目业态控制器
 type ProjBusinessFormat struct {
 	ProjBusinessFormatBll bll.IProjBusinessFormat
+	ProjCostItemBll       bll.IProjCostItem
 }
 
 // Query 查询数据
@@ -166,6 +172,15 @@ func (a *ProjBusinessFormat) UpdateList(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
+
+	//成本更新
+	if err := a.ProjCostItemBll.Renew(ginplus.NewContext(c), items[0].ProjectID); err != nil {
+		logger.Warnf(c, "项目成本项更新异常")
+	}
+	//TODO 资本支出节点更新
+	//TODO 资本化利息更新
+	//TODO 收益测算更新
+
 	ginplus.ResOK(c)
 
 }
