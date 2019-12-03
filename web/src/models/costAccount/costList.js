@@ -11,6 +11,8 @@ export default {
     formateData: [], // 当前项目下的所有业态列表
     formatUnitPriceData: [],
     formatTotalPriceData: [],
+    treeDepth: [], // 树的深度层级
+    
 
   },
   effects: {
@@ -20,11 +22,24 @@ export default {
       // 请求所有的核算列表
       const response = yield call(costAccountService.queryCostList, params);
 
-      if (response && response.length >=0) {
+      if (response.list && response.list.length >=0) {
         yield put({
         type: 'saveData',
-        payload: response || [],
+        payload: response.list || [],
       });
+      let treeMap = [];
+      for (let i = 1; i <= response.level; i++ ) {
+        treeMap.push(i);
+
+      }
+
+      yield put(
+        {type: 'saveTreeDepth',
+        payload: [...treeMap],
+
+
+        }
+      );
       }
       
       const response1 = yield call(projectManage.getProFormat, { record_id: params.projectID });
@@ -107,6 +122,9 @@ export default {
     },
     savFormatTotalPriceData(state, { payload }) {
       return { ...state, formatTotalPriceData: payload };
+    },
+    saveTreeDepth(state, { payload }) {
+      return {...state, treeDepth: payload};
     }
   }
 }

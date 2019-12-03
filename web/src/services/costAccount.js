@@ -129,7 +129,12 @@ export async function queryCostitems(params) {
 // 收益测算相关接口
 export async function getCurrentVersionInfo(params) {
  // /api/v1/proj-income-calculations?q=current
- return request(`/v1/proj-income-calculations?q=current&project_id=${params}`);
+ return request(`/v1/proj-income-calculations?q=current&projectID=${params}`);
+}
+
+// 修改当前版本的数据信息
+export async function updateCurrentVersionInfo(params) {
+
 }
 
 

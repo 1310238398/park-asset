@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Tabs, Card, message } from 'antd';
+import { Tabs, Card, message, TreeSelect } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import SalesPlan from './SalesPlan';
 import CostList from './CostList';
@@ -15,7 +15,7 @@ const { TabPane } = Tabs;
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
 @connect(state => ({
-  //projectManage: state.projectManage,
+  projectManage: state.projectManage,
  
   costAccount: state.costAccount,
   costList: state.costList,
@@ -96,6 +96,18 @@ export default class CostAccountDetail extends PureComponent {
     this.clearSelectRows();
   };
 
+  renderAllProject(data) {
+    let ret = [];
+    ret = data.map(obj => {
+      return (<Select.Option key={obj.record_id} value={obj}>{obj.name}</Select.Option>)
+    })
+    return ret;
+  }
+
+   handleChange = (value) => {
+    console.log("选择项目");
+    console.log(value);
+  }
   render() {
     const breadcrumbList = [
       { title: '成本管理' },
@@ -103,9 +115,60 @@ export default class CostAccountDetail extends PureComponent {
       { title: '项目详情', href: '/cost/detail' },
     ];
     const { pro_id, formType} = this.state;
+    const { projectManage:{ data:{list}}} = this.props;
+    
+    const treeData = [
+      {
+        title: 'Node1',
+        value: '0-0',
+        key: '0-0',
+        children: [
+          {
+            title: 'Child Node1',
+            value: '0-0-0',
+            key: '0-0-0',
+          },
+        ],
+      },
+      {
+        title: 'Node2',
+        value: '0-1',
+        key: '0-1',
+        children: [
+          {
+            title: 'Child Node3',
+            value: '0-1-0',
+            key: '0-1-0',
+          },
+          {
+            title: 'Child Node4',
+            value: '0-1-1',
+            key: '0-1-1',
+          },
+          {
+            title: 'Child Node5',
+            value: '0-1-2',
+            key: '0-1-2',
+          },
+        ],
+      },
+    ];
     return (
       <PageHeaderLayout
-        title="项目详情"
+        title={
+          <div>
+            <span>当前项目：</span>
+            <TreeSelect
+           treeData={treeData}
+            style={{ width: 200 }}
+
+           // onBlur={this.handleChange}
+           onChange={this.handleChange}
+          >
+           
+          </TreeSelect>
+          </div>
+        }
         breadcrumbList={breadcrumbList}
         //content={this.renderContent()}
       >
