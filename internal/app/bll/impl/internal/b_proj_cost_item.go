@@ -58,6 +58,8 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 
 		//已有成本管理
 		if len(result.Data) > 0 {
+			// 刷新成本项
+			// return a.renew(ctx,projectID)
 			return nil
 		}
 

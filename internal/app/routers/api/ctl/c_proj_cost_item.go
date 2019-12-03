@@ -10,9 +10,13 @@ import (
 )
 
 // NewProjCostItem 创建项目成本项控制器
-func NewProjCostItem(bProjCostItem bll.IProjCostItem) *ProjCostItem {
+func NewProjCostItem(
+	bProjCostItem bll.IProjCostItem,
+	bProjIncomeCalculation bll.IProjIncomeCalculation,
+) *ProjCostItem {
 	return &ProjCostItem{
-		ProjCostItemBll: bProjCostItem,
+		ProjCostItemBll:          bProjCostItem,
+		ProjIncomeCalculationBll: bProjIncomeCalculation,
 	}
 }
 
@@ -20,7 +24,8 @@ func NewProjCostItem(bProjCostItem bll.IProjCostItem) *ProjCostItem {
 // @Name ProjCostItem
 // @Description 项目成本项控制器
 type ProjCostItem struct {
-	ProjCostItemBll bll.IProjCostItem
+	ProjCostItemBll          bll.IProjCostItem
+	ProjIncomeCalculationBll bll.IProjIncomeCalculation
 }
 
 func (a *ProjCostItem) Query(c *gin.Context) {
@@ -139,6 +144,12 @@ func (a *ProjCostItem) Create(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
+
+	//TODO 更新成本支出节点
+	//TODO 更新资本化利息
+	// 更新收益测算
+	a.ProjIncomeCalculationBll.Renew(c, item.ProjectID)
+
 	ginplus.ResSuccess(c, nitem)
 }
 

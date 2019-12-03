@@ -37,7 +37,7 @@ type ProjIncomeCalculation struct {
 }
 
 type ProjIncomeItem struct {
-	Index string `json:"index" swaggo:"false,序号"`
+	Index string `json:"index" binding:"required" swaggo:"false,序号"`
 	Name  string `json:"name" swaggo:"false,项目名称"`
 	Value string `json:"value" swaggo:"false,值"`
 	Memo  string `json:"memo" swaggo:"false,备注"`
