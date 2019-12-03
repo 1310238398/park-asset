@@ -538,10 +538,8 @@ class CostList extends PureComponent {
 
       
       item.record_id = response.record_id;
-      item.editable = response.editable;
-
+      item.editable = true;// response.editable;
     }
-
   }
   ignore = async (record) => {
     const { costList:{data}} = this.props;
@@ -656,8 +654,7 @@ class CostList extends PureComponent {
       item1.children = [...formatTotalPriceData];
   }
 
-  
-  expandRow(ji) {
+  expandRowByLevel(ji) {
     this.setState({ currentDepth: ji});
     this.setState({ expandedRowKeys: [] });
     const {  costList: { data }, } = this.props;
@@ -667,7 +664,7 @@ class CostList extends PureComponent {
       return;
     }
   
-   // parent_path = "" 的情况单独处理 也就是点击展开第二级的时候
+   
    
   let expandHang = [...expandedRowKeys];
     for (let m = 0; m < data.length; m++) {
@@ -679,114 +676,48 @@ class CostList extends PureComponent {
       
     }
    
-    let slashCount = ji - 3; // 显示第二级菜单 就是展开第一级菜单
-    if (slashCount >= 0) {
+    let level = ji - 1; // 显示第二级菜单 就是展开第一级菜单
+    if (level >= 1) {
       //let keys = [];
-      this.findExpandKeys(data, slashCount, expandHang);
+      this.findExpandKeysByLevel(data, level, expandHang);
      // this.setState({ expandedRowKeys: [...expandedRowKeys, ...keys] });
     }
    
     expandHang.sort();
 
       this.setState({ expandedRowKeys: [...expandHang] });
-    
-
   }
-
-  findExpandKeys(objList, count, expandHang) { // 递归寻找可展开的节点
-    const { expandedRowKeys } = this.state;
-    console.log("findExpandKeys");
-    console.log(objList);
-   // count >= 0  单独处理0 的情况 parent_path 非空且不包含/的情况
   
  
-   if (count === 0) {
-    
 
-    for (let m = 0; m < objList.length; m++) {
-      console.log("count === 0  循环");
+  findExpandKeysByLevel(objList, level, expandHang) {
 
-      if ((objList[m].cost_parent_path === "") && (objList[m].children !== null) && (objList[m].children !== undefined) && objList[m].children.length > 0) {
-        console.log("进入children");
-        if (expandedRowKeys.indexOf(objList[m].cost_id) === -1) {
-          console.log("添加新的cost_id "+ objList[m].cost_id);
-          expandHang.push(objList[m].cost_id);
-        
-        }
-         this.findExpandKeys(objList[m].children, count, expandHang);
-      }
-      else if (objList[m].cost_parent_path.match(/\//g) === null && objList[m].cost_parent_path !== "" &&  (objList[m].children !== null) && (objList[m].children !== undefined) && objList[m].children.length > 0) {
-        if (expandedRowKeys.indexOf(objList[m].cost_id) === -1) {
-          console.log("添加新的cost_id "+ objList[m].cost_id);
-          expandHang.push(objList[m].cost_id);
-        
-        }
-       
-      }
+    const { expandedRowKeys } = this.state;
 
-    }
-    expandHang.sort();
-    
-    this.setState({ expandedRowKeys: [...expandHang] });
-  
-    console.log("最终展开的数据 ");
-    console.log(expandHang);
-   // console.log(expandedRowKeys);
-    
-   }
-   else {
-
-  
-   
       for(let n = 0; n < objList.length; n++) {
-        console.log("内循环 n "+ n);
-        if (objList[n].cost_parent_path === "" && (objList[n].children === null)) {
 
-          console.log("哈哈哈哈");
+        let eitem = objList[n];
+         if (eitem.level <= level ) {
+          let index = expandedRowKeys.findIndex(item => eitem.cost_id === item);
 
-        }
-
-        else if (objList[n].cost_parent_path === "" && objList[n].children && objList[n].children.length > 0) {
-
-          if (expandedRowKeys.indexOf(objList[n].cost_id) === -1) {
-                expandHang.push(objList[n].cost_id);
+          if (index === -1) {
+            expandHang.push(eitem.cost_id);
           
-            }
-           this.findExpandKeys(objList[n].children, count, expandHang);
-        }
-        else if (objList[n].cost_parent_path.match(/\//g) === null && objList[n].cost_parent_path !== "") {
-
-        console.log("父路径不包含/");
-        // 不含/的时候
-        if (expandedRowKeys.indexOf(objList[n].cost_id) === -1) {
-          expandHang.push(objList[n].cost_id);
-         
-            }
-            if (objList[n].children && objList[n].children.length > 0) {
-              this.findExpandKeys(objList[n].children, count, expandHang);
-            }
-        }
-        else if (objList[n].cost_parent_path.match(/\//g) !== null && objList[n].cost_parent_path.match(/\//g).length <= count && objList[n].cost_parent_path !== "") {
-          if (expandedRowKeys.indexOf(objList[n].cost_id) === -1) {
-            expandHang.push(objList[n].cost_id);
-            //this.setState({ expandedRowKeys: [...expandedRowKeys,objList[n].record_id ] });
           }
-          if (objList[n].children && objList[n].children.length > 0) {
-            this.findExpandKeys(objList[n].children, count, expandHang);
+          if (eitem.children && eitem.children.length > 0) {
+            this.findExpandKeysByLevel(eitem.children, level, expandHang);
           }
-         
-         
         }
       }
     
-    expandHang.sort();
+    //expandHang.sort();
     this.setState({ expandedRowKeys: [ ...expandHang] }); // 异步的
-
-    console.log("最终展开的数据 ");
-    console.log(expandHang);
+    //console.log("最终展开的数据 ");
+   // console.log(expandHang);
+  
   }
 
-  }
+
 
   
   handleOnExpand = (expanded, record) => {
@@ -839,7 +770,7 @@ class CostList extends PureComponent {
       loading,
       form: { getFieldDecorator },
       costAccount: { formType },
-      costList: { formatTotalPriceData, formatUnitPriceData, data }
+      costList: { formatTotalPriceData, formatUnitPriceData, data, treeDepth }
     } = this.props;
 
 
@@ -922,11 +853,11 @@ class CostList extends PureComponent {
            <div className={styles.tableListOperator} style={{ marginBottom: 10}}>
        <span style={{ color: "blue", marginRight:  10, fontSize:13}}>控制列表</span>
        {
-         depthMap.map(item =>
+         treeDepth.map(item =>
          <Tag value={item} color={ currentDepth === item ? "blue":""}
          key={item}
          onClick={() => {
-          this.expandRow(item);
+          this.expandRowByLevel(item);
         }}
          >{item}</Tag>
           )

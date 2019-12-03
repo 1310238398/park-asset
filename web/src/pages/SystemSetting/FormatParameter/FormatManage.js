@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Card, Form, Input, Button, Table, Modal } from 'antd';
+import { Row, Col, Card, Form, Input, Button, Table, Modal, Tag } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import FormatCard from './FormatCard';
@@ -198,20 +198,22 @@ class FormatManage extends PureComponent {
             {
                 title: '业态名称',
                 dataIndex: 'name',
-                width: 100,
+                width: 200,
             },
             {
                 title: '所在区域',
                 dataIndex: 'is_underground',
                 width: 150,
+                align : 'center',
                 render : data =>{
-                    return data == 1 ? "地下" : ( data == 2 ? "地上" : "错误数据");
+                    return data == 1 ? <Tag color='blue'>地下</Tag> : <Tag color='blue'>地上</Tag>;
                 }
             },
             {
                 title: '属于人防',
                 dataIndex: 'is_civil_defense',
                 width: 150,
+                align : 'center',
                 render: data =>{
                     return data == 1 ? "是" : ( data == 2 ? "否" : "错误数据");
                 }

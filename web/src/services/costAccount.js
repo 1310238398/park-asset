@@ -3,7 +3,7 @@ import request from '../utils/request';
 import { async } from 'q';
 
 
-//土增
+//------土增
 const land_value_add = "land-appreciation-taxes";
 //查询
 export async function queryLandValue(params){
@@ -12,6 +12,22 @@ export async function queryLandValue(params){
 //修改
 export async function updateLandValue(params){
   return request(`/v1/${land_value_add}/${params.record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
+//----资本化利息
+const proj_capitalized = "proj-capitalized-interests";
+// /api/v1/proj-capitalized-interests?q=year&projectID=6dc94eb7-4675-44f2-9323-312ff965985
+//查询
+export async function queryCapitalized(params){
+  return request(`/v1/${proj_capitalized}?${stringify(params)}`);
+}
+
+//修改---
+export async function updateCapitalized(params){
+  return request(`/v1/${proj_capitalized}`,{
     method: 'PUT',
     body: params,
   });
@@ -129,7 +145,12 @@ export async function queryCostitems(params) {
 // 收益测算相关接口
 export async function getCurrentVersionInfo(params) {
  // /api/v1/proj-income-calculations?q=current
- return request(`/v1/proj-income-calculations?q=current&project_id=${params}`);
+ return request(`/v1/proj-income-calculations?q=current&projectID=${params}`);
+}
+
+// 修改当前版本的数据信息
+export async function updateCurrentVersionInfo(params) {
+
 }
 
 
