@@ -132,7 +132,7 @@ class SalesPlan extends PureComponent {
       },
 
       {
-        title: '销售面积(万m²)',
+        title: '销售面积(m²)',
         dataIndex: 'sale_area',
         width: '10%',
         align: 'center',
@@ -211,7 +211,7 @@ class SalesPlan extends PureComponent {
         align: 'center',
       },
       {
-        title: '销售面积(万m²)',
+        title: '销售面积(m²)',
         dataIndex: 'sale_area',
         width: '10%',
         align: 'center',
@@ -472,7 +472,7 @@ class SalesPlan extends PureComponent {
               {...formItemLayout}
               label="年份"
               labelAlign='left'
-             // style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+             style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
               {getFieldDecorator('year', {
               
@@ -498,7 +498,7 @@ class SalesPlan extends PureComponent {
               {...formItemLayout}
               label="季度"
               labelAlign='left'
-             // style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+              style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
               {getFieldDecorator('quarter', {})(
                 <Select

@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Icon, Modal, Button } from 'antd';
-import styles from './PicturesWall.less';
+import styles from './PicturesWall2.less';
 
 const defaction = '/api/v1/files';
-
-export default class PicturesWall extends React.Component {
+//PicturesWall2 跟PicturesWall的区别是 返回的数据结构不一样 这个返回对象数组
+export default class PicturesWall2 extends React.Component {
   static propTypes = {
     accept: PropTypes.string,
     bucket: PropTypes.string.isRequired,
@@ -136,22 +136,25 @@ export default class PicturesWall extends React.Component {
 
   triggerChange = ({ fileList }) => {
     // Should provide an event to pass value to Form.
-    console.log("triggerChange ");
-    console.log(fileList);
+    
     const { onChange } = this.props;
     if (onChange) {
       const tmp = fileList.filter(item => {
         return {}.hasOwnProperty.call(item, 'url');
       });
+     
       const out = tmp.map(item => {
         if ({}.hasOwnProperty.call(item, 'url')) {
-          return item.url;
+            let out_item = {};
+            out_item.path = item.url;
+            out_item.size = item.size;
+            out_item.name = item.name;
+          return out_item;
         } else {
           return '';
         }
       });
-      console.log("out ");
-      console.log(out);
+      
       if (this.isChg(out)) {
         this.validFilelist = [...out];
         onChange(out);
