@@ -161,11 +161,11 @@ formatData(forData) {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 8 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 18 },
+        sm: { span: 16 },
       },
     };
 
@@ -197,7 +197,7 @@ formatData(forData) {
                   
                 </Col>
                 <Col span={12}>
-                <Form.Item {...formItemLayout} label="建筑面积">
+                <Form.Item {...formItemLayout} label="建筑面积(m²)">
                 {getFieldDecorator(item.record_id+"mj", {
                   initialValue: item.floor_area,
                   rules: [

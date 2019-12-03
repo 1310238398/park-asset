@@ -13,8 +13,10 @@ import (
 func NewProjExpenditure(
 	mTrans model.ITrans,
 	mProjExpenditure model.IProjExpenditure,
-	mProjExpendCost model.IProjExpendCost, mProjCostItem model.IProjCostItem,
+	mProjExpendCost model.IProjExpendCost,
+	mProjCostItem model.IProjCostItem,
 	mProjExpenditureTime model.IProjExpenditureTime,
+	mExpenditure model.IExpenditure,
 ) *ProjExpenditure {
 	return &ProjExpenditure{
 		TransModel:               mTrans,
@@ -22,6 +24,7 @@ func NewProjExpenditure(
 		ProjExpendCostModel:      mProjExpendCost,
 		ProjCostItemModel:        mProjCostItem,
 		ProjExpenditureTimeModel: mProjExpenditureTime,
+		ExpenditureModel:         mExpenditure,
 	}
 }
 
@@ -32,6 +35,7 @@ type ProjExpenditure struct {
 	ProjExpendCostModel      model.IProjExpendCost
 	ProjCostItemModel        model.IProjCostItem
 	ProjExpenditureTimeModel model.IProjExpenditureTime
+	ExpenditureModel         model.IExpenditure
 }
 
 // Query 查询数据
@@ -68,6 +72,15 @@ func (a *ProjExpenditure) Get(ctx context.Context, recordID string, opts ...sche
 	} else if item == nil {
 		return nil, errors.ErrNotFound
 	}
+
+	pExpendCostResult, err := a.ProjExpendCostModel.Query(ctx, schema.ProjExpendCostQueryParam{
+		ProjExpenditureID: recordID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	item.ProjCostItemIDs = pExpendCostResult.Data.ToProjCostIDs()
 
 	return item, nil
 }
@@ -201,13 +214,24 @@ func (a *ProjExpenditure) createProjExpenCost(ctx context.Context, item schema.P
 		if err != nil {
 			return nil
 		}
-		for _, projCostItem := range item.ProjCostItems {
+		pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
+			RecordIDs: item.ProjCostItemIDs,
+		})
+		if err != nil {
+			return err
+		}
+
+		mpCost := pCostResult.Data.ToMap()
+		for _, projCostItemID := range item.ProjCostItemIDs {
 			var projExpendCost schema.ProjExpendCost
 			projExpendCost.RecordID = util.MustUUID()
 			projExpendCost.ProjExpenditureID = item.RecordID
-			projExpendCost.ProjCostID = projCostItem.RecordID
+			projExpendCost.ProjCostID = projCostItemID
 			// 本次累计金额 - 之前金额
-			projAmount := item.ExpendRate*projCostItem.Price - mProjCost[projCostItem.RecordID]
+			if _, ok := mProjCost[projCostItemID]; !ok {
+				mProjCost[projCostItemID] = 0
+			}
+			projAmount := item.ExpendRate*mpCost[projCostItemID].Price - mProjCost[projCostItemID]
 			if projAmount < 0 {
 				projExpendCost.Amount = 0
 			}
@@ -226,12 +250,12 @@ func (a *ProjExpenditure) createProjExpenCost(ctx context.Context, item schema.P
 
 // 填充本次此项目支出节点金额(非累计)
 func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item schema.ProjExpenditure) error {
-	if len(item.ProjCostItems) == 0 {
+	if len(item.ProjCostItemIDs) == 0 {
 		return nil
 	}
 
 	pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
-		RecordIDs: item.ProjCostItems.ToProjCostIDs(),
+		RecordIDs: item.ProjCostItemIDs,
 	})
 	if err != nil {
 		return err
@@ -262,9 +286,16 @@ func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item schema.P
 
 // 此项目支出节点对应成本项累计支出金额 key:项目成本项ID value:之前累计金额 (不包括本次支出)
 func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.ProjExpenditure) (map[string]float64, error) {
+	m := make(map[string]float64, len(item.ProjCostItemIDs))
+	if item.StartTime == nil {
+		for _, id := range item.ProjCostItemIDs {
+			m[id] = 0
+		}
+		return m, nil
+	}
 	projExpenedResult, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
 		ProjectID:       item.ProjectID,
-		BeforeStartTime: item.StartTime,
+		BeforeStartTime: *item.StartTime,
 	})
 	if err != nil {
 		return nil, err
@@ -275,16 +306,18 @@ func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.
 		NotProjExpenditureIDs: []string{item.RecordID},
 	})
 
-	var m map[string]float64
-	mProjCost := projExpendCostResult.Data.ToProjExpendCostsMap()
+	mProjCosts := projExpendCostResult.Data.ToProjExpendCostsMap()
 
-	for _, projCostItem := range item.ProjCostItems {
-		list, ok := mProjCost[projCostItem.RecordID]
+	// 获得项目成本项ID 对应的之前的金额
+	for _, projCostItemID := range item.ProjCostItemIDs {
+		m[projCostItemID] = 0
+		list, ok := mProjCosts[projCostItemID]
 		if !ok {
 			continue
+
 		}
 		for _, v := range list {
-			m[projCostItem.RecordID] += v.Amount
+			m[projCostItemID] += v.Amount
 		}
 	}
 
@@ -426,14 +459,13 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 }
 
 func (a *ProjExpenditure) update(ctx context.Context, recordID string, item schema.ProjExpenditure) error {
+	oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
+	if err != nil {
+		return err
+	} else if oldItem == nil {
+		return errors.ErrNotFound
+	}
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
-		if err != nil {
-			return err
-		} else if oldItem == nil {
-			return errors.ErrNotFound
-		}
-
 		newItem := oldItem
 		switch {
 		case !item.StartTime.IsZero():
@@ -442,8 +474,8 @@ func (a *ProjExpenditure) update(ctx context.Context, recordID string, item sche
 		case !item.EndTime.IsZero():
 			newItem.EndTime = item.EndTime
 			fallthrough
-		case len(item.ProjCostItems) > 0:
-			newItem.ProjCostItems = item.ProjCostItems
+		case len(item.ProjCostItemIDs) > 0:
+			newItem.ProjCostItemIDs = item.ProjCostItemIDs
 			fallthrough
 		case item.ExpendRate > 0:
 			newItem.ExpendRate = item.ExpendRate

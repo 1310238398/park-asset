@@ -57,7 +57,7 @@ func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditu
 
 	}
 
-	db = db.Order("id DESC")
+	db = db.Order("sequence DESC, id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.ProjExpenditures

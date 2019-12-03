@@ -175,15 +175,3 @@ func (a *ProjExpenditure) Delete(c *gin.Context) {
 	}
 	ginplus.ResOK(c)
 }
-
-// Generate 生成数据
-// @Summary 生成数据
-// @Param Authorization header string false "Bearer 用户令牌"
-// @Param project_id  string true ""
-// @Success 200 schema.HTTPStatus "{status:OK}"
-// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router DELETE /api/v1/proj-expenditures/generate
-func (a *ProjExpenditure) Generate(c *gin.Context) {
-
-}

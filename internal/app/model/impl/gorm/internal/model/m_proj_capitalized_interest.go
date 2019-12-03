@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjCapitalizedInterest 创建项目资本化利息测算存储实例
@@ -58,6 +59,19 @@ func (a *ProjCapitalizedInterest) Get(ctx context.Context, recordID string, opts
 		return nil, nil
 	}
 
+	return item.ToSchemaProjCapitalizedInterest(), nil
+}
+
+// GetByQueryIndex 按季度查询数据
+func (a *ProjCapitalizedInterest) GetByQuarterIndex(ctx context.Context, projectID string, year int, quarter int) (*schema.ProjCapitalizedInterest, error) {
+	db := entity.GetProjCapitalizedInterestDB(ctx, a.db).Where("project_id=? AND year=? AND quarter=?", projectID, year, quarter)
+	var item entity.ProjCapitalizedInterest
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
 	return item.ToSchemaProjCapitalizedInterest(), nil
 }
 

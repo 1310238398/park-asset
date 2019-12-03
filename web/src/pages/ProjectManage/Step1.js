@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { createPro, updateProInfo } from '@/services/projectManage';
 import { Form, Input, Modal, Row, Col, Select, Radio, DatePicker, message , InputNumber} from 'antd';
-import PicturesWall from '../../components/PicturesWall/PicturesWall';
+import PicturesWall2 from '../../components/PicturesWall2/PicturesWall2';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import moment from 'moment';
 
@@ -58,7 +58,12 @@ export default class Step1 extends PureComponent {
         console.log("保存的数据  ");
         console.log(formData);
         if (formData.files && formData.files.length > 0) {
-          formData.files = formData.files.join('');
+          //formData.files = formData.files.join('');
+        
+          for (let i = 0; i < formData.files.length; i++) {
+           
+            formData.files[i].project_id = formID;
+          }
         } else {
           formData.files = [];
         }
@@ -72,9 +77,10 @@ export default class Step1 extends PureComponent {
         let response;
         const params = { ...formData };
         if (formType === 'E') {
+         
           params.record_id = formID;
           response = await updateProInfo(params);
-          if (response && response.record_id) {
+          if (response && response.record_id) { 
             message.success('保存成功');
            // idHandler(response.column_id);
             if (nextHandler) nextHandler();
@@ -82,6 +88,7 @@ export default class Step1 extends PureComponent {
         
         }
         else if (formType === 'A') {
+         
           response =   await createPro(params);
 
           if (response && response.record_id) {
@@ -384,18 +391,29 @@ export default class Step1 extends PureComponent {
       <Row>
       
 
-        <Col span={12}>
-          <Form.Item {...formItemLayout} label="项目相关证书">
+        <Col span={24} style={{ textAlign: "left"}}>
+          <Form.Item   
+          labelCol= {{
+              span: 4,
+          }
+      
+      }
+      wrapperCol= {
+        {
+           span: 20,
+        }
+       
+      } label="项目相关证书">
           <span style={{ color: 'red' }}>（图片上传格式jpg,jpeg,png）</span>
             {getFieldDecorator('files', {
-             // initialValue: formData.files ? [formData.files] : '',
+              initialValue: formData.files ? formData.files : '',
               rules: [
                 {
                   required: false,
                   message: '请选择',
                 },
               ],
-            })(<PicturesWall num={1} bucket="oper" listType="picture-card" />)}
+            })(<PicturesWall2  num={5} listType="picture-card" />)}
           </Form.Item>
         </Col>
       </Row>

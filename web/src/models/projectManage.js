@@ -24,6 +24,7 @@ export default {
 
     allBusinessFormat: [], // 所有的业态列表(渲染界面用)
     deliveryStandard: [], // 项目的交付标准
+
     companyList: [],
     poltList: [],
   },
@@ -88,6 +89,10 @@ export default {
 
       if (payload.type === 'E') {
         yield [
+          put({
+            type: 'saveFormType',
+            payload: payload.type,
+          }),
           put({
             type: 'saveFormTitle',
             payload: '编辑项目',
@@ -170,9 +175,17 @@ export default {
       else {
         console.log("这是编辑");
         const response = yield call(projectManageService.getProInfo, payload);
-        // if (response && response.asset_type) {
-        //   response.asset_type = response.asset_type.split(',');
-        // }
+       
+        let newFiles=[];
+        for (let i = 0; i < response.files.length; i++) {
+
+          let item = response.files[i].path;
+          newFiles.push(item);
+
+        }
+        response.files = [...newFiles];
+        // console.log("格式化之后的数据 ");
+        // console.log(response);
         yield [
           put({
             type: 'saveFormData',

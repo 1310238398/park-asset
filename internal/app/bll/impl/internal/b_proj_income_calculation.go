@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"gxt-park-assets/internal/app/bll"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model"
@@ -10,8 +11,12 @@ import (
 )
 
 // NewProjIncomeCalculation 创建项目收益测算
-func NewProjIncomeCalculation(mProjIncomeCalculation model.IProjIncomeCalculation) *ProjIncomeCalculation {
+func NewProjIncomeCalculation(
+	mTrans model.ITrans,
+	mProjIncomeCalculation model.IProjIncomeCalculation,
+) bll.IProjIncomeCalculation {
 	return &ProjIncomeCalculation{
+		TransModel:                 mTrans,
 		ProjIncomeCalculationModel: mProjIncomeCalculation,
 	}
 }
@@ -19,6 +24,19 @@ func NewProjIncomeCalculation(mProjIncomeCalculation model.IProjIncomeCalculatio
 // ProjIncomeCalculation 项目收益测算业务逻辑
 type ProjIncomeCalculation struct {
 	ProjIncomeCalculationModel model.IProjIncomeCalculation
+	TransModel                 model.ITrans
+}
+
+// renew 更新当前版本
+func (a *ProjIncomeCalculation) renew(ctx context.Context, projectID string) error {
+	return nil
+}
+
+// Renew 更新收益测算
+func (a *ProjIncomeCalculation) Renew(ctx context.Context, projectID string) error {
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		return a.renew(ctx, projectID)
+	})
 }
 
 // Query 查询数据
@@ -35,6 +53,24 @@ func (a *ProjIncomeCalculation) Get(ctx context.Context, recordID string, opts .
 		return nil, errors.ErrNotFound
 	}
 
+	return item, nil
+}
+
+// GetCurrent 查询指定数据
+func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
+	//查询最终版
+	item, err := a.ProjIncomeCalculationModel.GetFinish(ctx, projectID)
+	if err != nil {
+		return nil, err
+	} else if item == nil {
+		//查询当前版
+		item, err = a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
+		if err != nil {
+			return nil, err
+		} else if item == nil {
+			return nil, err
+		}
+	}
 	return item, nil
 }
 
@@ -78,4 +114,19 @@ func (a *ProjIncomeCalculation) Delete(ctx context.Context, recordID string) err
 	}
 
 	return a.ProjIncomeCalculationModel.Delete(ctx, recordID)
+}
+
+//TODO 创建新版本
+func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID string) error {
+	return nil
+}
+
+//TODO 更新旧版本
+func (a *ProjIncomeCalculation) UpdateVersion(ctx context.Context, projectID string) error {
+	return nil
+}
+
+//TODO 获取版本比对
+func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context, projectID string, versions ...string) error {
+	return nil
 }

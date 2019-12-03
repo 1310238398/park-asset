@@ -1,19 +1,23 @@
 package ctl
 
 import (
-	"ant-smartpark/pkg/errors"
-	"fmt"
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )
 
 // NewProjBusinessFormat 创建项目业态控制器
-func NewProjBusinessFormat(bProjBusinessFormat bll.IProjBusinessFormat) *ProjBusinessFormat {
+func NewProjBusinessFormat(
+	bProjBusinessFormat bll.IProjBusinessFormat,
+	bProjCostItem bll.IProjCostItem,
+) *ProjBusinessFormat {
 	return &ProjBusinessFormat{
 		ProjBusinessFormatBll: bProjBusinessFormat,
+		ProjCostItemBll:       bProjCostItem,
 	}
 }
 
@@ -22,6 +26,7 @@ func NewProjBusinessFormat(bProjBusinessFormat bll.IProjBusinessFormat) *ProjBus
 // @Description 项目业态控制器
 type ProjBusinessFormat struct {
 	ProjBusinessFormatBll bll.IProjBusinessFormat
+	ProjCostItemBll       bll.IProjCostItem
 }
 
 // Query 查询数据
@@ -30,7 +35,7 @@ func (a *ProjBusinessFormat) Query(c *gin.Context) {
 	case "list":
 		a.QueryList(c)
 	default:
-		ginplus.ResError(c, errors.NewBadRequestError("未知的查询类型"))
+		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
 }
 
@@ -47,6 +52,10 @@ func (a *ProjBusinessFormat) Query(c *gin.Context) {
 func (a *ProjBusinessFormat) QueryList(c *gin.Context) {
 	var params schema.ProjBusinessFormatQueryParam
 	params.ProjectID = c.Query("project_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 	params.BusinessFormatID = c.Query("business_format_id")
 	result, err := a.ProjBusinessFormatBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
@@ -158,14 +167,20 @@ func (a *ProjBusinessFormat) UpdateList(c *gin.Context) {
 	if len(items) == 0 {
 		return
 	}
-	for _, item := range items {
-		fmt.Println(item)
-	}
 	err := a.ProjBusinessFormatBll.UpdateList(ginplus.NewContext(c), items[0].ProjectID, items)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
+
+	//成本更新
+	if err := a.ProjCostItemBll.Renew(ginplus.NewContext(c), items[0].ProjectID); err != nil {
+		logger.Warnf(c, "项目成本项更新异常")
+	}
+	//TODO 资本支出节点更新
+	//TODO 资本化利息更新
+	//TODO 收益测算更新
+
 	ginplus.ResOK(c)
 
 }

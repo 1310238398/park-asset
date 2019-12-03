@@ -12,6 +12,10 @@ type IProjIncomeCalculation interface {
 	Query(ctx context.Context, params schema.ProjIncomeCalculationQueryParam, opts ...schema.ProjIncomeCalculationQueryOptions) (*schema.ProjIncomeCalculationQueryResult, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.ProjIncomeCalculationQueryOptions) (*schema.ProjIncomeCalculation, error)
+	// 获取项目当前收益测算数据
+	GetCurrent(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error)
+	// 获取项目最终收益测算数据
+	GetFinish(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.ProjIncomeCalculation) error
 	// 更新数据

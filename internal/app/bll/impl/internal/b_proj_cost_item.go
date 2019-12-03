@@ -171,12 +171,12 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 }
 
 // QueryTree 查询数据
-func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error) {
+func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItemQueryParam) (int, schema.ProjCostItemShows, error) {
 
 	//获取列表
 	shows, err := a.ProjCostItemModel.QueryShow(ctx, params)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 
 	// 获取项目业态面积
@@ -184,8 +184,9 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 	pbfqp.ProjectID = params.ProjectID
 	pbfqr, err := a.ProjBusinessFormatModel.Query(ctx, pbfqp)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
+	var level int //树层级
 
 	//整理列表
 	result := schema.ProjCostItemShows{}
@@ -195,6 +196,7 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 		} else {
 			for _, k := range shows {
 				if k.CostID == v.CostParentID {
+
 					k.Children = append(k.Children, v)
 				}
 			}
@@ -203,12 +205,18 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 	var check func(t *schema.ProjCostItemShow) (bool, error)
 
 	check = func(t *schema.ProjCostItemShow) (bool, error) {
+		// 级别
+		t.Level = t.Level + 1
+		if level < t.Level {
+			level = t.Level
+		}
 		var b = false
 		var hasc = false
 		if t.RecordID != "" {
 			b = true
 		}
 		for _, v := range t.Children {
+			v.Level = t.Level
 			i, _ := check(v)
 			if i {
 				hasc = true
@@ -238,7 +246,7 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 		check(v)
 	}
 
-	return result, nil
+	return level, result, nil
 }
 
 func (a *ProjCostItem) Query(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItemQueryResult, error) {
@@ -578,6 +586,7 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 					}
 					if b { //需要新增业态信息
 						item := schema.ProjCostBusiness{}
+						item.RecordID = util.MustUUID()
 						item.ProjBusinessID = v.RecordID
 						item.ProjCostID = t.RecordID
 						item.UnitPrice = unitprice

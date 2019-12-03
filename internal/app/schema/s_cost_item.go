@@ -13,16 +13,16 @@ type CostItem struct {
 	CalculateType int             `json:"calculate_type" swaggo:"false,计算方式(1.单价算总价,2.总价算单价)"` //计算方式(1.单价算总价,2.总价算单价)
 	InLandTax     int             `json:"in_land_tax" swaggo:"false,是否计入土地增值税(1.计入,2.不计入)"`    //是否计入土地增值税(1.计入,2.不计入)
 	Children      []*CostItem     `json:"children,omitempty" swaggo:"false,下级列表"`              //下级列表
-	BusinessList  []*CostBusiness `json:"business_list" swaggo:"false,业态信息"`                   //业态单价列表
+	BusinessList  *CostBusinesses `json:"business_list" swaggo:"false,业态信息"`                   //业态单价列表
 }
 
 // CostItemQueryParam 查询条件
 type CostItemQueryParam struct {
-	ParentID   string // 父级ID
-	ParentPath string // 父级路经
-	Level      int    // 层级
-	LikeName   string // 成本项名称(模糊查询)
-	Name       string // 成本项名称
+	ParentID         string // 父级ID
+	PrefixParentPath string // 父级路经(前缀模糊查询)
+	Level            int    // 层级
+	LikeName         string // 成本项名称(模糊查询)
+	Name             string // 成本项名称
 }
 
 // CostItemQueryOptions 查询可选参数项
@@ -39,7 +39,12 @@ type CostItemQueryResult struct {
 // CostItems 成本项列表
 type CostItems []*CostItem
 
-func (a *CostItem) ToMap() map[string]interface{} {
+// ToMap 转为键值映射
+func (a *CostItem) ToMap(deep *int, tmpDeep ...int) map[string]interface{} {
+	var tmp int
+	if len(tmpDeep) > 0 {
+		tmp = tmpDeep[0]
+	}
 	result := map[string]interface{}{}
 	result["record_id"] = a.RecordID
 	result["parent_id"] = a.ParentID
@@ -52,17 +57,29 @@ func (a *CostItem) ToMap() map[string]interface{} {
 	result["calculate_type"] = a.CalculateType
 	result["in_land_tax"] = a.InLandTax
 
-	for _, v := range a.BusinessList {
+	for _, v := range *a.BusinessList {
 		result[v.BusinessID] = v.UnitPrice
 	}
 
 	children := []map[string]interface{}{}
+
+	tmp++
 	for _, v := range a.Children {
-		children = append(children, v.ToMap())
+		children = append(children, v.ToMap(deep, tmp))
 	}
 	if len(children) > 0 {
 		result["children"] = children
 	}
 
+	if tmp > *deep {
+		*deep = tmp
+	}
+
 	return result
+}
+
+// CostResult 成本项返回结果
+type CostResult struct {
+	Tree []map[string]interface{} `json:"tree" swaggo:"false,数据结果"`  // 返回结果
+	Deep int                      `json:"deep" swaggo:"false,树最大深度"` // 树最大深度
 }

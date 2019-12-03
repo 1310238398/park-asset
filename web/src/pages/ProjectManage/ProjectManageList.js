@@ -89,11 +89,57 @@ class ProjectManageList extends PureComponent {
     });
   };
 
-  handleTableSelectRow = (keys, rows) => {
-    this.setState({
-      selectedRowKeys: keys,
-      selectedRows: rows,
+  handleSelect = (record, selected, selectedRows, nativeEvent) => {
+    console.log("handleSelect ");
+    console.log(record)
+    console.log(selected);
+    console.log(selectedRows);
+    let rows = [];
+    let keys = [];
+    if (selected) {
+      rows.push(record);
+      keys.push(record.record_id);
+
+     this.setState({
+      selectedRowKeys: [...keys],
+      selectedRows: [...rows],
     });
+
+    }
+    else {
+      this.setState({
+        selectedRowKeys: [],
+        selectedRows: [],
+      });
+    }
+
+
+  }
+
+  handleTableSelectRow = async (selectedRowKeys, selectedRows) => {
+  
+    // console.log("handleTableSelectRow");
+    // console.log(selectedRowKeys);
+    // console.log(selectedRows);
+    // let keys = [];
+    // let rows = [];
+    // if (selectedRowKeys.length > 0 && selectedRows.length > 0) {
+    //   let itemKey = selectedRowKeys[selectedRowKeys.length - 1];
+    //   let itemRow = selectedRows[selectedRows.length - 1];
+    //   keys.push(itemKey);
+    //   rows.push(itemRow);
+    //   console.log("keys ");
+    //   console.log(keys);
+    //   console.log(rows);
+    // }
+    // await  this.setState({
+    //   selectedRowKeys: [...keys],
+    //   selectedRows: [...rows],
+    // });
+
+    // console.log("selectedRows ");
+    // console.log(this.state.selectedRows);
+  
   };
 
   handleTableChange = pagination => {
@@ -309,18 +355,18 @@ getMenu = (record) => {
      
   return (
   <Menu >
-    <Menu.Item  onClick={() => this.editPro(record, 0)} key="1">
+    <Menu.Item  onClick={() => this.editPro(record, 0)} key={1}>
       
        基本信息
       
     </Menu.Item>
   
-    <Menu.Item onClick={() => this.editPro(record, 1)} key="2">
+    <Menu.Item onClick={() => this.editPro(record, 1)} key={2}>
     
        项目业态
       
     </Menu.Item>
-    <Menu.Item onClick={() => this.editPro(record, 2)} key="3">
+    <Menu.Item onClick={() => this.editPro(record, 2)} key={3}>
     
    交付标准
    
@@ -387,7 +433,10 @@ getMenu = (record) => {
               <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
                 新建
               </PButton>
-              {selectedRows.length === 1 && [
+              {selectedRows.length === 1 
+              && 
+              (selectedRows[selectedRows.length - 1].org_id !== "") 
+              && [
                <Dropdown overlay={() => this.getMenu(selectedRows[0])} placement="bottomCenter">
                 <PButton
                   key="edit"
@@ -434,7 +483,9 @@ getMenu = (record) => {
               <Table
                 rowSelection={{
                   selectedRowKeys,
-                  onChange: this.handleTableSelectRow,
+                //  onChange: this.handleTableSelectRow,
+                 // type: "radio",
+                 onSelect: this.handleSelect,
                 }}
                 loading={loading}
                 rowKey={record => record.record_id}

@@ -155,6 +155,20 @@ func GetTaxRate(ctx context.Context, mTaxCalculation model.ITaxCalculation, name
 		if len(defRate) > 0 {
 			return defRate[0], nil
 		}
+		switch name {
+		case schema.TAX_ADDITIONAL:
+			return 0, errors.ErrNoTaxAdditional
+		case schema.TAX_CONTRACT:
+			return 0, errors.ErrNoTaxContract
+		case schema.TAX_INCOME:
+			return 0, errors.ErrNoTaxIncome
+		case schema.TAX_OUTPUT:
+			return 0, errors.ErrNoTaxOutput
+		case schema.TAX_STAMP:
+			return 0, errors.ErrNoTaxStamp
+		case schema.TAX_USE:
+			return 0, errors.ErrNoTaxUse
+		}
 		return 0, errors.New(fmt.Sprintf("未设置[%s]", name))
 	}
 	return tax.TaxRate, nil

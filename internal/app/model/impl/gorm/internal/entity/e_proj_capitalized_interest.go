@@ -31,7 +31,6 @@ func (a SchemaProjCapitalizedInterest) ToProjCapitalizedInterest() *ProjCapitali
 		Memo:                       &a.Memo,
 		Principal:                  &a.Principal,
 		ProjIncomeID:               &a.ProjIncomeID,
-		TaxID:                      &a.TaxID,
 	}
 	return item
 }
@@ -80,7 +79,6 @@ func (a ProjCapitalizedInterest) ToSchemaProjCapitalizedInterest() *schema.ProjC
 		Memo:                       *a.Memo,
 		Principal:                  *a.Principal,
 		ProjIncomeID:               *a.ProjIncomeID,
-		TaxID:                      *a.TaxID,
 	}
 	return item
 }

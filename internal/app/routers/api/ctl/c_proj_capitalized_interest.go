@@ -1,10 +1,12 @@
 package ctl
 
 import (
-	"github.com/gin-gonic/gin"
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewProjCapitalizedInterest 创建项目资本化利息测算控制器
@@ -21,7 +23,19 @@ type ProjCapitalizedInterest struct {
 	ProjCapitalizedInterestBll bll.IProjCapitalizedInterest
 }
 
-// Query 查询数据
+func (a *ProjCapitalizedInterest) Query(c *gin.Context) {
+	q := c.Query("q")
+	switch q {
+	case "list":
+		a.query(c)
+	case "year":
+		a.queryYear(c)
+	default:
+		a.query(c)
+	}
+}
+
+// query 查询数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
@@ -30,8 +44,8 @@ type ProjCapitalizedInterest struct {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-capitalized-interests
-func (a *ProjCapitalizedInterest) Query(c *gin.Context) {
+// @Router GET /api/v1/proj-capitalized-interests?q=list
+func (a *ProjCapitalizedInterest) query(c *gin.Context) {
 	var params schema.ProjCapitalizedInterestQueryParam
 
 	result, err := a.ProjCapitalizedInterestBll.Query(ginplus.NewContext(c), params, schema.ProjCapitalizedInterestQueryOptions{
@@ -42,6 +56,35 @@ func (a *ProjCapitalizedInterest) Query(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// queryYear 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param projectID query string true 项目ID
+// @Success 200 []schema.ProjCapitalizedInterestYearShow "查询结果：列表数据"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-capitalized-interests?q=year
+func (a *ProjCapitalizedInterest) queryYear(c *gin.Context) {
+	var params schema.ProjCapitalizedInterestQueryParam
+	if pid := c.Query("projectID"); pid != "" {
+		params.ProjectID = pid
+	} else {
+		ginplus.ResError(c, errors.ErrInvalidRequestParameter)
+		return
+	}
+
+	result, err := a.ProjCapitalizedInterestBll.QueryYearShow(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	if len(result) == 0 {
+		result = append(result, new(schema.ProjCapitalizedInterestYearShow))
+	}
+	ginplus.ResSuccess(c, result)
 }
 
 // Get 查询指定数据
@@ -109,6 +152,31 @@ func (a *ProjCapitalizedInterest) Update(c *gin.Context) {
 		return
 	}
 	ginplus.ResSuccess(c, nitem)
+}
+
+// UpdateYear 更新数据
+// @Summary 更新数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param id path string true "记录ID"
+// @Param body body schema.ProjCapitalizedInterest true
+// @Success 200 schema.ProjCapitalizedInterest
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/proj-capitalized-interests
+func (a *ProjCapitalizedInterest) UpdateYear(c *gin.Context) {
+	var item schema.ProjCapitalizedInterestYearShow
+	if err := ginplus.ParseJSON(c, &item); err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	err := a.ProjCapitalizedInterestBll.UpdateYearShow(ginplus.NewContext(c), item)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResOK(c)
 }
 
 // Delete 删除数据

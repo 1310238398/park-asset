@@ -49,7 +49,8 @@ class EditableCell extends React.Component {
         }
         if (this.props.inputType === 'number') {
             if (this.props.dataIndex === "expend_rate") {
-                return <InputNumber max={100} min={0} placeholder="请输入"/>;
+                return <InputNumber max={100} min={0} placeholder="请输入"  formatter={value => `${value}%`}
+                parser={value => value.replace('%', '')}/>;
             }
             else {
                 return <InputNumber placeholder="请输入"/>;
@@ -818,7 +819,7 @@ class CostExpenseNode extends PureComponent {
                 inputType: "multiply",
                 render: (text, record) => {
                    return <TreeSelect treeData={costNodeItems} style={{ width: 180 }}
-                  // treeCheckable={true}
+                   treeCheckable={true}
                   defaultValue={text}
                   placeholder="请选择对应科目"
                    showCheckedStrategy={SHOW_PARENT}
