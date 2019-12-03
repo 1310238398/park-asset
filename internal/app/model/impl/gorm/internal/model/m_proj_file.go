@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjFile 创建成本项目文件管理存储实例
@@ -30,6 +31,10 @@ func (a *ProjFile) getQueryOption(opts ...schema.ProjFileQueryOptions) schema.Pr
 // Query 查询数据
 func (a *ProjFile) Query(ctx context.Context, params schema.ProjFileQueryParam, opts ...schema.ProjFileQueryOptions) (*schema.ProjFileQueryResult, error) {
 	db := entity.GetProjFileDB(ctx, a.db)
+
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
 
 	db = db.Order("id DESC")
 

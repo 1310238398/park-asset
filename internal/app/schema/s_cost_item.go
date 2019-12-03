@@ -39,7 +39,12 @@ type CostItemQueryResult struct {
 // CostItems 成本项列表
 type CostItems []*CostItem
 
-func (a *CostItem) ToMap() map[string]interface{} {
+// ToMap 转为键值映射
+func (a *CostItem) ToMap(deep *int, tmpDeep ...int) map[string]interface{} {
+	var tmp int
+	if len(tmpDeep) > 0 {
+		tmp = tmpDeep[0]
+	}
 	result := map[string]interface{}{}
 	result["record_id"] = a.RecordID
 	result["parent_id"] = a.ParentID
@@ -57,12 +62,24 @@ func (a *CostItem) ToMap() map[string]interface{} {
 	}
 
 	children := []map[string]interface{}{}
+
+	tmp++
 	for _, v := range a.Children {
-		children = append(children, v.ToMap())
+		children = append(children, v.ToMap(deep, tmp))
 	}
 	if len(children) > 0 {
 		result["children"] = children
 	}
 
+	if tmp > *deep {
+		*deep = tmp
+	}
+
 	return result
+}
+
+// CostResult 成本项返回结果
+type CostResult struct {
+	Tree []map[string]interface{} `json:"tree" swaggo:"false,数据结果"`  // 返回结果
+	Deep int                      `json:"deep" swaggo:"false,树最大深度"` // 树最大深度
 }
