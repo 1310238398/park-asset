@@ -76,10 +76,10 @@ export default {
         item.align = "center";
         item.width = 100;
         item.editable = true;
-        // item.render = (text, record) => {
+        item.render = (text, record) => {
 
-        // return <div style={{textAlign: "center"}}>{text}</div>
-        // };
+        return <div style={{textAlign: "center"}}>{text}</div>
+        };
         unitData.push(item);
       }
 
@@ -97,10 +97,10 @@ export default {
         item.dataIndex = formateDatatemp[i].record_id + "_total";
         item.align = "center";
         item.width = 100;
-        // item.render = (text, record) => {
+        item.render = (text, record) => {
 
-        //   return <div style={{textAlign: "center"}}>{text}</div>
-        //   };
+          return <div style={{textAlign: "center"}}>{text}</div>
+          };
         totalData.push(item);
       }
 

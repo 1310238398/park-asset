@@ -391,14 +391,33 @@ getMenu = (record) => {
         width: 200,
       },
       {
-        title: '所属公司',
-        dataIndex: 'org_name',
+        title: '项目类型',
+        dataIndex: 'type',
         width: 150,
+        render: (text, record) => {
+
+          if (text === 1) {
+              return "住宅";
+
+          }
+          else if (text === 2) {
+            return "写字楼";
+          }
+        }
       },
-      { title: '所属地块', dataIndex: 'plot_name', width: 150 },
+      { 
+        title: '占地面积',
+       dataIndex: 'cover_area', 
+       width: 150 
+      },
+      { 
+        title: '开工日期',
+       dataIndex: 'start_time', 
+       width: 150 
+      },
       {
-        title: '项目地址',
-        dataIndex: 'address',
+        title: '竣工日期',
+        dataIndex: 'end_time',
         width: 150,
       },
     

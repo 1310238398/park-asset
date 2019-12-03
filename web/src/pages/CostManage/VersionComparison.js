@@ -383,7 +383,9 @@ class VersionComparison extends PureComponent {
             <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
                 <Row gutter={16}>
                     <Col md={6} sm={24}>
-                        <Form.Item label="起始版本">
+                        <Form.Item label="起始版本"
+                          style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+                        >
                             {getFieldDecorator('start_version')(
 
                                 <Select placeholder="请选择起始版本" style={{ width: '100%' }}>
@@ -398,7 +400,9 @@ class VersionComparison extends PureComponent {
                         </Form.Item>
                     </Col>
                     <Col md={6} sm={24}>
-                    <Form.Item label="中间版本">
+                    <Form.Item label="中间版本"
+                      style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+                    >
                             {getFieldDecorator('middle_version')(
 
                                 <Select placeholder="请选择中间版本" style={{ width: '100%' }} mode="multiple">
@@ -414,7 +418,9 @@ class VersionComparison extends PureComponent {
                     
                     </Col>
                     <Col md={6} sm={24}>
-                    <Form.Item label="最终版本">
+                    <Form.Item label="最终版本"
+                      style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+                    >
                             {getFieldDecorator('end_version')(
 
                                 <Select placeholder="请选择最终版本" style={{ width: '100%' }}>
