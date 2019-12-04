@@ -268,7 +268,7 @@ class CostExpenseNode extends PureComponent {
     }
     this.setState({ editingKey: '' });
   };
-  save(form, key) {
+  save(form, key, record) {
     const {
       costExpenseNode: { data },
       costAccount: { formID },
@@ -306,6 +306,10 @@ class CostExpenseNode extends PureComponent {
             row.parent_path = '';
             row.parent_id = '';
             row.record_id = '';
+            if (record.previous_id && record.previous_id !== "") {
+
+                row.previous_id = record.previous_id;
+            }
             response = await createCostNode(row);
           } else {
             row.record_id = item.record_id;
@@ -357,6 +361,10 @@ class CostExpenseNode extends PureComponent {
             row.parent_path = key.substring(0, key.lastIndexOf('/'));
             row.parent_id = keys[keys.length - 2];
             row.record_id = '';
+            if (record.previous_id && record.previous_id !== "") {
+
+                row.previous_id = record.previous_id;
+            }
             response = await createCostNode(row);
           } else {
             row.record_id = item.record_id;
@@ -430,10 +438,12 @@ class CostExpenseNode extends PureComponent {
     this.setState({ addingNew: true });
     let datatemp = [...data];
     if (currentItem.parent_path === '') {
+
+        let index = data.findIndex(item => currentItem.record_id === item.record_id);
       console.log('顶级添加');
       const newItem = {
         record_id: '',
-
+        previous_id: currentItem.record_id, 
         parent_path: '',
         parent_id: '',
         name: '',
@@ -441,7 +451,8 @@ class CostExpenseNode extends PureComponent {
         expend_rate: 0,
         category: '',
       };
-      datatemp.push(newItem);
+     // datatemp.push(newItem);
+      datatemp.splice(index+1, 0, newItem);
       this.dispatch({
         type: 'costExpenseNode/saveData',
         payload: datatemp,
@@ -450,8 +461,11 @@ class CostExpenseNode extends PureComponent {
     }
 
     let item = this.findItem(datatemp, currentItem.parent_path);
+
+    
     const newItem = {
       record_id: '',
+      previous_id: currentItem.record_id, 
 
       parent_id: item.record_id,
       parent_path:
@@ -462,10 +476,14 @@ class CostExpenseNode extends PureComponent {
       category: '',
     };
     if (item.children) {
-      item.children.push(newItem);
+      //item.children.push(newItem);
+      let index = item.children.findIndex(item => currentItem.record_id === item.record_id);
+
+      item.children.splice(index+1, 0, newItem);
     } else {
       item.children = [];
       item.children.push(newItem);
+      //item.children.splice(index+1, 0, newItem);
     }
   };
   childLevelAdd = currentItem => {
@@ -679,7 +697,7 @@ class CostExpenseNode extends PureComponent {
         title: '节点名称',
         dataIndex: 'name',
         width: 200,
-        ellipsis: true,
+       // ellipsis: true,
 
         align: 'center',
         fixed: 'left',
@@ -762,7 +780,7 @@ class CostExpenseNode extends PureComponent {
         title: '节点名称',
         dataIndex: 'name',
         width: 200,
-        ellipsis: true,
+      //  ellipsis: true,
         align: 'center',
         fixed: 'left',
         editable: true,
@@ -881,7 +899,7 @@ class CostExpenseNode extends PureComponent {
                         form,
                         record.parent_path !== ''
                           ? record.parent_path + '/' + record.record_id
-                          : record.record_id
+                          : record.record_id, record
                       )
                     }
                     style={{ marginRight: 8 }}

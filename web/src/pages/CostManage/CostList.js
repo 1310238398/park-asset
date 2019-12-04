@@ -851,7 +851,7 @@ class CostList extends PureComponent {
     return (
       <EditableContext.Provider value={this.props.form}>
            <div className={styles.tableListOperator} style={{ marginBottom: 10}}>
-       <span style={{ color: "blue", marginRight:  10, fontSize:13}}>控制列表</span>
+       <span style={{ marginRight:  10, fontSize:13}}>控制列表</span>
        {
          treeDepth.map(item =>
          <Tag value={item} color={ currentDepth === item ? "blue":""}
