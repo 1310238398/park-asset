@@ -237,3 +237,26 @@ func (a PcProjects) FillFiles(fitems ProjFiles) {
 		}
 	}
 }
+
+type ProjectNode struct {
+	Title    string       `json:"title"`
+	Value    string       `json:"value"`
+	Key      string       `json:"key"`
+	Children ProjectNodes `json:"children"`
+}
+
+type ProjectNodes []*ProjectNode
+
+// ToProjectNodes 转化为节点树
+func (a PcProjectTrees) ToProjectNodes() ProjectNodes {
+	result := ProjectNodes{}
+	for _, v := range a {
+		item := new(ProjectNode)
+		item.Title = v.Name
+		item.Key = v.RecordID
+		item.Value = v.RecordID
+		item.Children = v.Children.ToProjectNodes()
+		result = append(result, item)
+	}
+	return result
+}
