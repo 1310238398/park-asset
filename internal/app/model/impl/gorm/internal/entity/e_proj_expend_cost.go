@@ -21,6 +21,8 @@ func (a SchemaProjExpendCost) ToProjExpendCost() *ProjExpendCost {
 		RecordID:          &a.RecordID,
 		ProjCostID:        &a.ProjCostID,
 		ProjExpenditureID: &a.ProjExpenditureID,
+		Amount:            &a.Amount,
+		CostPrice:         &a.CostPrice,
 	}
 	return item
 }
@@ -28,9 +30,12 @@ func (a SchemaProjExpendCost) ToProjExpendCost() *ProjExpendCost {
 // ProjExpendCost 项目支出节点成本项实体
 type ProjExpendCost struct {
 	CostModel
-	RecordID          *string `gorm:"column:record_id;size:36;index;"`           // 记录ID
-	ProjCostID        *string `gorm:"column:proj_cost_id;size:36;index;"`        // 项目成本项ID
-	ProjExpenditureID *string `gorm:"column:proj_expenditure_id;size:36;index;"` // 项目支出节点ID
+	RecordID          *string  `gorm:"column:record_id;size:36;index;"`           // 记录ID
+	ProjCostID        *string  `gorm:"column:proj_cost_id;size:36;index;"`        // 项目成本项ID
+	ProjExpenditureID *string  `gorm:"column:proj_expenditure_id;size:36;index;"` // 项目支出节点ID
+	Amount            *float64 `gorm:"column:amount;type:decimal(20.4)" `         // 成本项支出金额
+	CostPrice         *float64 `gorm:"column:cost_price;type:decimal(20.4)"`      // 成本项价格
+
 }
 
 func (a ProjExpendCost) String() string {
@@ -48,6 +53,8 @@ func (a ProjExpendCost) ToSchemaProjExpendCost() *schema.ProjExpendCost {
 		RecordID:          *a.RecordID,
 		ProjCostID:        *a.ProjCostID,
 		ProjExpenditureID: *a.ProjExpenditureID,
+		Amount:            *a.Amount,
+		CostPrice:         *a.CostPrice,
 	}
 	return item
 }

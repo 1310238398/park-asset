@@ -164,8 +164,9 @@ func (a *PcProject) create(ctx context.Context, item schema.PcProject) error {
 
 		var projExpendlist schema.ProjExpenditures
 		projExpendlist = *eResult.Data.ToTrees().ToTree().ToProjExpendList(&projExpendlist)
-		for _, projExpendItem := range projExpendlist {
+		for i, projExpendItem := range projExpendlist {
 			projExpendItem.ProjectID = item.RecordID
+			projExpendItem.Sequence = float64(i) + 1
 			err = a.ProjExpenditureModel.Create(ctx, *projExpendItem)
 			if err != nil {
 				return err
