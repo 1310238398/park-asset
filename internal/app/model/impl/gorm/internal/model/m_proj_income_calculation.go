@@ -78,7 +78,7 @@ func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string
 
 // GetFinish 查询项目最终数据
 func (a *ProjIncomeCalculation) GetFinish(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
-	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 3)
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND (flag=? OR flag=?)", projectID, 3,4)
 	var item entity.ProjIncomeCalculation
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {

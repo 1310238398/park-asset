@@ -18,6 +18,8 @@ type IProjIncomeCalculation interface {
 	Create(ctx context.Context, item schema.ProjIncomeCalculation) (*schema.ProjIncomeCalculation, error)
 	// 更新数据
 	Update(ctx context.Context, recordID string, item schema.ProjIncomeCalculation) (*schema.ProjIncomeCalculation, error)
+	// 更新备注
+	UpdateMemo(ctx context.Context, recordID, index string, memo string) error
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
 

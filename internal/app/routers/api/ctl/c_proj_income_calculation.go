@@ -130,25 +130,25 @@ func (a *ProjIncomeCalculation) Create(c *gin.Context) {
 // @Summary 更新数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Param body body schema.ProjIncomeCalculation true
-// @Success 200 schema.ProjIncomeCalculation
+// @Param body body schema.ProjIncomeItem true
+// @Success 200 schema.HTTPStatus "{status:"OK"}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router PUT /api/v1/proj-income-calculations/{id}
 func (a *ProjIncomeCalculation) Update(c *gin.Context) {
-	var item schema.ProjIncomeCalculation
+	var item schema.ProjIncomeItem
 	if err := ginplus.ParseJSON(c, &item); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	nitem, err := a.ProjIncomeCalculationBll.Update(ginplus.NewContext(c), c.Param("id"), item)
+	err := a.ProjIncomeCalculationBll.UpdateMemo(ginplus.NewContext(c), c.Param("id"), item.Index, item.Memo)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, nitem)
+	ginplus.ResOK(c)
 }
 
 // Delete 删除数据
