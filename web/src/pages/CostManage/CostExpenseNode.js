@@ -146,7 +146,7 @@ class EditableCell extends React.Component {
                   ? ( record[dataIndex] === null ?  null : moment(record[dataIndex])) 
                   : dataIndex === 'expend_rate'
                   ? record[dataIndex] * 100
-                  : record[dataIndex],
+                  : dataIndex === 'expenditure_time_type' ? (record[dataIndex] === 0 ? "": record[dataIndex]): record[dataIndex],
             })(this.getInput())}
           </Form.Item>
         ) : (

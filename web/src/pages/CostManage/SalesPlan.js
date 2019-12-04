@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import { stringify } from 'qs';
 import {
   Form,
-  Row, Col,
+  Row,
+  Col,
   Input,
   Modal,
   Dropdown,
@@ -13,7 +15,7 @@ import {
   message,
   Divider,
   Button,
-  InputNumber
+  InputNumber,
 } from 'antd';
 import styles from './CostAccount.less';
 import { updateSalesPlan } from '@/services/costAccount';
@@ -31,7 +33,10 @@ const EditableFormRow = Form.create()(EditableRow);
 class EditableCell extends React.Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber />;
+      return <InputNumber   formatter={value => `${value}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}
+      parser={value => (value).replace(/\\s?|(,*)/g, '')}
+      style={{ width:"100%"}}
+      />;
     }
     return <Input />;
   };
@@ -63,8 +68,8 @@ class EditableCell extends React.Component {
             })(this.getInput())}
           </Form.Item>
         ) : (
-            children
-          )}
+          children
+        )}
       </td>
     );
   };
@@ -87,23 +92,19 @@ class SalesPlan extends PureComponent {
     quarterList: [
       {
         name: '第一季度',
-        key: 1
-
+        key: 1,
       },
       {
         name: '第二季度',
-        key: 2
-
+        key: 2,
       },
       {
         name: '第三季度',
-        key: 3
-
+        key: 3,
       },
       {
         name: '第四季度',
-        key: 4
-
+        key: 4,
       },
     ],
     columns: [
@@ -111,7 +112,7 @@ class SalesPlan extends PureComponent {
         title: '业态名称',
         dataIndex: 'proj_business_name',
         width: '15%',
-        ellipsis: true,
+       // ellipsis: true,
         align: 'center',
       },
       {
@@ -120,7 +121,6 @@ class SalesPlan extends PureComponent {
         width: '8%',
 
         align: 'center',
-
       },
       {
         title: '季度',
@@ -128,46 +128,60 @@ class SalesPlan extends PureComponent {
         width: '8%',
 
         align: 'center',
-
       },
 
       {
         title: '销售面积(m²)',
         dataIndex: 'sale_area',
-        width: '10%',
+        width: '15%',
         align: 'center',
         editable: true,
+        render: (text, record) => {
+        
+        return <span >{`${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+        }
       },
       {
-        title: '销售单价(万元)',
+        title: '销售单价(元)',
         dataIndex: 'average_price',
         width: '15%',
         align: 'center',
         editable: true,
+        render: (text, record) => {
+        
+          return <span >{`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+          }
       },
       {
-        title: '合同额(万元)',
+        title: '合同额(元)',
         dataIndex: 'contract_amount',
         width: '15%',
         align: 'center',
-
         render: (text, record) => {
-          return <span>{record.sale_area * record.average_price}</span>;
-        },
+        
+          return <span >{`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+          }
+        // render: (text, record) => {
+        //   return <span>{record.sale_area * record.average_price}</span>;
+        // },
       },
       {
-        title: '回款额(万元)',
+        title: '回款额(元)',
         dataIndex: 'payback',
         width: '15%',
         align: 'center',
         editable: true,
+        render: (text, record) => {
+        
+          return <span >{`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+          }
       },
       {
         // 非项目行 该单元格可以为null
         title: '操作',
         dataIndex: 'operation',
         key: 'operation',
-        width: '15%',
+        width: '10%',
         render: (text, record) => {
           const { editingKey } = this.state;
           const editable = this.isEditing(record);
@@ -176,7 +190,6 @@ class SalesPlan extends PureComponent {
             <span>
               <EditableContext.Consumer>
                 {form => (
-
                   <a onClick={() => this.save(form, record.record_id)} style={{ marginRight: 8 }}>
                     保存
                   </a>
@@ -187,17 +200,19 @@ class SalesPlan extends PureComponent {
               </Popconfirm>
             </span>
           ) : (
-              <div>
-                <a disabled={editingKey !== ''} onClick={() => this.edit(record.record_id)} style={{ marginRight: 8 }}>
-                  编辑
+            <div>
+              <a
+                disabled={editingKey !== ''}
+                onClick={() => this.edit(record.record_id)}
+                style={{ marginRight: 8 }}
+              >
+                编辑
               </a>
-                <Popconfirm title="确定删除?" onConfirm={() => this.deletePlan(record.record_id)}>
-                  <a disabled={editingKey !== ''} >
-                    删除
-              </a>
-                </Popconfirm>
-              </div>
-            );
+              <Popconfirm title="确定删除?" onConfirm={() => this.deletePlan(record.record_id)}>
+                <a disabled={editingKey !== ''}>删除</a>
+              </Popconfirm>
+            </div>
+          );
         },
       },
     ],
@@ -207,49 +222,64 @@ class SalesPlan extends PureComponent {
         title: '业态名称',
         dataIndex: 'proj_business_name',
         width: '15%',
-        ellipsis: true,
+       // ellipsis: true,
         align: 'center',
       },
       {
         title: '销售面积(m²)',
         dataIndex: 'sale_area',
-        width: '10%',
+        width: '15%',
         align: 'center',
         editable: true,
+        render: (text, record) => {
+
+        return  <span >{`${text}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+        }
+
       },
       {
-        title: '销售单价(万元)',
+        title: '销售单价(元)',
         dataIndex: 'average_price',
         width: '15%',
         align: 'center',
         editable: true,
+        render: (text, record) => {
+        
+          return <span >{`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+          }
       },
       {
-        title: '合同额(万元)',
+        title: '合同额(元)',
         dataIndex: 'contract_amount',
         width: '15%',
         align: 'center',
-
         render: (text, record) => {
-          return <span>{record.sale_area * record.average_price}</span>;
-        },
+        
+          return <span >{`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+          }
+
+        // render: (text, record) => {
+        //   return <span>{record.sale_area * record.average_price}</span>;
+        // },
       },
       {
-        title: '回款额(万元)',
+        title: '回款额(元)',
         dataIndex: 'payback',
         width: '15%',
         align: 'center',
         editable: true,
+        render: (text, record) => {
+        
+          return <span >{`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+          }
       },
-
     ],
-
   };
   componentDidMount() {
-    console.log("销售计划页面初始化");
-    const { costAccount: { formID } } = this.props;
-
-    
+    console.log('销售计划页面初始化');
+    const {
+      costAccount: { formID },
+    } = this.props;
 
     this.dispatch({
       type: 'salesPlan/fetch',
@@ -257,7 +287,6 @@ class SalesPlan extends PureComponent {
       pagination: {},
       pro_id: formID,
     });
-
   }
 
   dispatch = action => {
@@ -282,15 +311,16 @@ class SalesPlan extends PureComponent {
     if (e) {
       e.preventDefault();
     }
-    console.log("handleSearchFormSubmit");
+    console.log('handleSearchFormSubmit');
 
     const { form } = this.props;
     form.validateFields({ force: true }, (err, values) => {
-
       if (err) {
         return;
       }
-      const { costAccount: { formID } } = this.props;
+      const {
+        costAccount: { formID },
+      } = this.props;
       const formData = { ...values };
       console.log('form数据  ' + JSON.stringify(formData));
 
@@ -306,8 +336,13 @@ class SalesPlan extends PureComponent {
 
   isEditing = record => record.record_id === this.state.editingKey;
 
-  save(form, key) {  // key是项目业态id
-    const { salesPlan: { data: { list, pagination } } } = this.props;
+  save(form, key) {
+    // key是项目业态id
+    const {
+      salesPlan: {
+        data: { list, pagination },
+      },
+    } = this.props;
     console.log('要保存数据的key ' + key);
 
     form.validateFields(async (error, row) => {
@@ -326,35 +361,28 @@ class SalesPlan extends PureComponent {
         });
 
         let response;
-      
+
         response = await updateSalesPlan(row);
-        if (response.record_id && response.record_id !== "") {
+        if (response.record_id && response.record_id !== '') {
           message.success('更新成功');
           this.setState({ editingKey: '' });
           this.dispatch({
             type: 'salesPlan/saveData',
             payload: {
               list: [...newData],
-              pagination: pagination
+              pagination: pagination,
             },
           });
-
         }
-
       }
-
-
     });
   }
 
   deletePlan(key) {
-
     this.dispatch({
       type: 'salesPlan/del',
       payload: key,
     });
-
-
   }
   edit(key) {
     this.setState({ editingKey: key });
@@ -380,10 +408,12 @@ class SalesPlan extends PureComponent {
       type: 'salesPlan/changeSalesPlanFormVisible',
       payload: true,
     });
-
   };
   handleResetFormClick = () => {
-    const { form , costAccount: { formID }} = this.props;
+    const {
+      form,
+      costAccount: { formID },
+    } = this.props;
     form.resetFields();
 
     this.dispatch({
@@ -395,7 +425,9 @@ class SalesPlan extends PureComponent {
   };
 
   handleTableChange = pagination => {
-    const { costAccount: { formID }} = this.props;
+    const {
+      costAccount: { formID },
+    } = this.props;
     this.dispatch({
       type: 'salesPlan/fetch',
       pagination: {
@@ -410,10 +442,11 @@ class SalesPlan extends PureComponent {
     const {
       loading,
       form: { getFieldDecorator },
-      costAccount: { formType },
-      salesPlan: { data: { list, pagination } }
+      costAccount: { formType, businessData },
+      salesPlan: {
+        data: { list, pagination },
+      },
     } = this.props;
-
 
     const paginationProps = {
       showSizeChanger: true,
@@ -464,76 +497,73 @@ class SalesPlan extends PureComponent {
     return (
       <div className={styles.tableList}>
         <div className={styles.tableListForm}>
-      <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
-        
-         <Row gutter={16}>
-            <Col md={4} sm={24}>
-               <FormItem
-              {...formItemLayout}
-              label="年份"
-              labelAlign='left'
-             style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
-            >
-              {getFieldDecorator('year', {
-              
-              })(
-                <Select
-                  placeholder="请选择年份"
-                  // defaultValue="lucy"
-                  style={{ width: 120 }}
-                // onChange={this.handleSelectChange}
-                >
-                  {yearList &&
-                    yearList.map(item => (
-                      <Select.Option key={item} value={item}>
-                        {item}
-                      </Select.Option>
-                    ))}
-                </Select>
-              )}
-            </FormItem>
-            </Col>
-            <Col  md={4} sm={24}>
+          <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
+            <Row gutter={16}>
+              <Col md={3} sm={24}>
                 <FormItem
-              {...formItemLayout}
-              label="季度"
-              labelAlign='left'
-              style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
-            >
-              {getFieldDecorator('quarter', {})(
-                <Select
-                  placeholder="请选择季度"
-                  // defaultValue="lucy"
-                  style={{ width: 120 }}
-                //  onChange={this.handleSelectChange}
+                  {...formItemLayout}
+                  label="年份"
+                  labelAlign="left"
+                  style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
                 >
-                  {quarterList &&
-                    quarterList.map(item => (
-                      <Select.Option key={item.key} value={item.key}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                </Select>
-              )}
-            </FormItem>
-            </Col>
-            <Col  md={6} sm={24}>
+                  {getFieldDecorator('year', {})(
+                    <Select
+                      placeholder="请选择年份"
+                      // defaultValue="lucy"
+                      style={{ width: 120 }}
+                      // onChange={this.handleSelectChange}
+                    >
+                      {yearList &&
+                        yearList.map(item => (
+                          <Select.Option key={item} value={item}>
+                            {item}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+              <Col md={4} sm={24}>
+                <FormItem
+                  {...formItemLayout}
+                  label="季度"
+                  labelAlign="left"
+                  style={{ marginLeft: 50, paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
+                >
+                  {getFieldDecorator('quarter', {})(
+                    <Select
+                      placeholder="请选择季度"
+                      // defaultValue="lucy"
+                      style={{ width: 120 }}
+                      //  onChange={this.handleSelectChange}
+                    >
+                      {quarterList &&
+                        quarterList.map(item => (
+                          <Select.Option key={item.key} value={item.key}>
+                            {item.name}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+              <Col md={8} sm={24}>
                 <Button type="primary" htmlType="submit" style={{ marginLeft: 50 }}>
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
+                  查询
+                </Button>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
                   重置
-             </Button>
-            
-            </Col>
-            <Col md={10} sm={24} style={{ textAlign:"right"}}>
-            <Button  icon="plus" type="primary" onClick={this.handleAddClick}>
-            新增计划
-          </Button>
-            </Col>
-         </Row>
-
-        </Form>
+                </Button>
+              </Col>
+              <Col md={9} sm={24} style={{ textAlign: 'right' }}>
+                {formType === 'E' && businessData.length > 0 && (
+                  <Button icon="plus" type="primary" onClick={this.handleAddClick}>
+                    新增计划
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          </Form>
         </div>
         {/* <div className={styles.tableListOperator}>
          
@@ -544,19 +574,17 @@ class SalesPlan extends PureComponent {
             loading={loading}
             rowKey={record => record.record_id}
             dataSource={list}
-            columns={formType === "E" ? columns2 : (formType === 'V' ? view_columns : null)} //{view_columns}
+            columns={formType === 'E' ? columns2 : formType === 'V' ? view_columns : null} //{view_columns}
             // pagination={false}
             pagination={paginationProps}
             // scroll={{ y: 500 }}
             rowClassName="editable-row"
             rowClassName={() => 'editable-row'}
             onChange={this.handleTableChange}
-          // style={{ maxHeight: 500 }}
+            // style={{ maxHeight: 500 }}
           ></Table>
         </EditableContext.Provider>
-        </div>
-
-    
+      </div>
     );
   }
 }

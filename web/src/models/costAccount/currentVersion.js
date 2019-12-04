@@ -9,7 +9,10 @@ export default {
     submitting: false,
     newFormVisible: false,
     selectNewModeVisile: false,
+    currentVersionID: "", // 当前版本的record_id
     canSave: true, // 是否可以保存当前版本
+    
+
   },
   effects: {
     *fetch({ payload }, { call, put }) {
@@ -19,6 +22,13 @@ export default {
           type: 'saveData',
           payload: response.list || [],
         });
+      
+        if (response.info && response.info.record_id) {
+          yield put({
+            type: 'saveCurrentVersionID',
+            payload:response.info.record_id
+          });
+        }
 
         if (response.info && response.info.flag !== 1) {
           // 不可保存
@@ -47,5 +57,8 @@ export default {
     saveCanSave(state, { payload }) {
       return { ...state, canSave: payload };
     },
+    saveCurrentVersionID(state, { payload }) {
+      return { ...state, currentVersionID: payload };
+    }
   },
 };

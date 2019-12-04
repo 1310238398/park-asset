@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as costAccountService from '@/services/costAccount';
-import * as projectManageService from '@/services/projectManage'
+import * as projectManageService from '@/services/projectManage';
 // 成本核算
 export default {
   namespace: 'costAccount',
@@ -21,12 +21,12 @@ export default {
     formData: {},
     companyList: [],
     poltList: [],
-
+    projectTreeData: [],
+    businessData:[], // 项目业态数据 如果该数组为空 则详情内所有标签内容皆为空
   },
   // 调service  call 调service函数 put 调reducer函数 select 暂存
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
-
       let params = {
         q: 'page',
       };
@@ -38,7 +38,7 @@ export default {
           payload: search,
         });
       } else {
-        const s = yield select(state => state.projectManage.search);
+        const s = yield select(state => state.costAccount.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -51,7 +51,7 @@ export default {
           payload: pagination,
         });
       } else {
-        const p = yield select(state => state.projectManage.pagination);
+        const p = yield select(state => state.costAccount.pagination);
         if (p) {
           params = { ...params, ...p };
         }
@@ -62,11 +62,12 @@ export default {
         type: 'saveData',
         payload: response,
       });
+
+     
     },
     *loadForm({ payload }, { put }) {
       if (payload.type === 'addSalesPlan') {
-
-        console.log("新增销售计划页面");
+        console.log('新增销售计划页面');
         yield put({
           type: 'changeSalesPlanFormVisible',
           payload: true,
@@ -90,9 +91,6 @@ export default {
             payload: {},
           }),
         ];
-
-
-
       }
       // else if (payload.type === 'A') {
       //   yield put({
@@ -100,8 +98,6 @@ export default {
       //     payload: true,
       //   });
       // }
-
-
 
       // if (payload.type === 'E') {
       //   yield [
@@ -208,24 +204,22 @@ export default {
     },
     // 成本核算的接口
     // 查看详情
-    *redirectDetail({ payload }, { put }) {
-      console.log("type type  " + payload.operType);
-     
+    *redirectDetail({ payload }, { put, call }) {
       yield put(
         routerRedux.push({
           pathname: '/cost/detail',
           query: {
-            key: payload.item.record_id,
+            key: payload.record_id,
             operType: payload.operType,
-
           },
-        }),
-
+        })
       );
+
+      // 查询项目业态
       // yield put(
       //   {
-      //     type: 'saveFormID',
-      //     payload: payload.item.record_id,
+      //     type: 'queryProBusiness',
+      //     payload: payload.record_id,
       //   }
       // );
 
@@ -235,12 +229,62 @@ export default {
       //     payload: payload.operType,
       //   }
       // );
-
-
     },
+    *replaceDetail({ payload }, { put }) {
+      yield put(
+        routerRedux.replace({
+          pathname: '/cost/detail',
+          query: {
+            key: payload.record_id,
+            operType: payload.operType,
+          },
+        })
+      );
+      yield put({
+        type: 'saveFormID',
+        payload: payload.record_id,
+      });
 
+      yield put({
+        type: 'saveFormType',
+        payload: payload.operType,
+      });
 
+      const response1 = yield call(projectManageService.getProFormat, { record_id: payload.record_id });
+      console.log("请求项目业态");
+      if (response1 && response1.list) {
 
+        yield put({
+          type: 'saveBusinessData',
+          payload: response1.list,
+        });
+      }
+    },
+    *queryProTree({ payload }, { put, call }) {
+      const params = {
+        q: 'nodes',
+      };
+      const response = yield call(costAccountService.queryProTree, params);
+      const result = response.list ? response.list : [];
+     
+      yield put({
+        type: 'saveProjectTreeData',
+        payload: result,
+      });
+    
+    },
+    *queryProBusiness({ payload }, { put, call }) {
+      const response1 = yield call(projectManageService.getProFormat, { record_id: payload });
+      console.log("请求项目业态");
+      if (response1 && response1.list) {
+
+        yield put({
+          type: 'saveBusinessData',
+          payload: response1.list,
+        });
+      }
+    }
+  
   },
   reducers: {
     saveData(state, { payload }) {
@@ -256,7 +300,7 @@ export default {
       return { ...state, formVisible: payload };
     },
     changeSalesPlanFormVisible(state, { payload }) {
-      console.log("修改新增计划的状态");
+      console.log('修改新增计划的状态');
       return { ...state, addSalesPlanVisible: payload };
     },
     changeNewFormVisible(state, { payload }) {
@@ -266,7 +310,7 @@ export default {
       return { ...state, formTitle: payload };
     },
     saveFormType(state, { payload }) {
-      console.log("修改formType " + payload);
+      console.log('修改formType ' + payload);
       return { ...state, formType: payload };
     },
     saveFormID(state, { payload }) {
@@ -284,5 +328,11 @@ export default {
     savePolt(state, { payload }) {
       return { ...state, poltList: payload };
     },
+    saveProjectTreeData(state, { payload }) {
+      return { ...state, projectTreeData: payload };
+    },
+    saveBusinessData(state, { payload }) {
+      return { ...state, businessData: payload };
+    }
   },
 };
