@@ -77,8 +77,11 @@ class CreateNewVersion extends PureComponent {
         cost_id: '001', // 成本项ID
         cost_parent_id: '', //成本项父级ID
         cost_parent_path: '', //成本项父级路经 具体到父级ID
+        previous: "123345",
+        current: "345333",
+        difference:"23232",
 
-        value: 111,
+        
       },
       {
         record_id: '002',
@@ -87,7 +90,9 @@ class CreateNewVersion extends PureComponent {
         cost_parent_id: '', //成本项父级ID
         cost_parent_path: '', //成本项父级路经 具体到父级ID
 
-        value: 111,
+        previous:"123454",
+        current: "345567",
+         difference:"23232",
       },
       {
         record_id: '003',
@@ -96,7 +101,9 @@ class CreateNewVersion extends PureComponent {
         cost_parent_id: '', //成本项父级ID
         cost_parent_path: '', //成本项父级路经 具体到父级ID
 
-        value: 111,
+        previous: "123345",
+        current: "345333",
+        difference:"23232",
       },
       {
         record_id: '004',
@@ -105,7 +112,9 @@ class CreateNewVersion extends PureComponent {
         cost_parent_id: '', //成本项父级ID
         cost_parent_path: '', //成本项父级路经 具体到父级ID
 
-        value: 111,
+        previous: "123345",
+        current: "345333",
+        difference:"23232",
       },
       {
         record_id: '005',
@@ -114,7 +123,9 @@ class CreateNewVersion extends PureComponent {
         cost_parent_id: '', //成本项父级ID
         cost_parent_path: '', //成本项父级路经 具体到父级ID
 
-        value: 111,
+        previous: "123345",
+        current: "345333",
+        difference:"23232",
       },
       {
         record_id: '006',
@@ -123,7 +134,9 @@ class CreateNewVersion extends PureComponent {
         cost_parent_id: '', //成本项父级ID
         cost_parent_path: '', //成本项父级路经 具体到父级ID
 
-        value: 111,
+        previous: "123345",
+        current: "345333",
+        difference:"23232",
       },
     ],
     editingKey: '',
@@ -132,21 +145,55 @@ class CreateNewVersion extends PureComponent {
         title: '科目名称',
         dataIndex: 'name',
         width: '20%',
-        // ellipsis: true,
-        // align: 'center',
-        // fixed: 'left',
+      
       },
       {
-        title: '数值(万元)',
-        dataIndex: 'value',
-        width: '35%',
+        title: <div>上一版本<br></br>(万元/%)</div>,
+        dataIndex: 'previous',
+        width: '15%',
 
         align: 'center',
+        render: (text, record) => {
+          if (text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
+      },
+      {
+        title: <div>当前版本<br></br>(万元/%)</div>,
+        dataIndex: 'current',
+        width: '15%',
+        align: 'center',
+        render: (text, record) => {
+          if (text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
+      },
+      {
+        title: <div>差额<br></br>(万元/%)</div>,
+        dataIndex: 'difference',
+        width: '15%',
+        align: 'center',
+        render: (text, record) => {
+          if (text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
       },
       {
         title: '备注',
         dataIndex: 'memo',
-        width: '30%',
+        width: '20%',
         editable: true,
         inputType: 'text',
 
@@ -157,7 +204,7 @@ class CreateNewVersion extends PureComponent {
         title: '操作',
         dataIndex: 'operation',
         key: 'operation',
-        width: '15%',
+        width: '20%',
         align: 'center',
         // fixed: 'right',
         render: (text, record) => {
@@ -251,6 +298,13 @@ class CreateNewVersion extends PureComponent {
     return ecolumns;
   };
 
+    // 判断数值
+    statusValueW = value => {
+      if (value && value !== 0) {
+        return (value / (10000)).toFixed(2);
+      }
+      return 0;
+    };
   render() {
     const {
       loading,
