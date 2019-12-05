@@ -411,6 +411,7 @@ class CostList extends PureComponent {
   save(form, key) {
     const {
       costList: { data, formateData },
+      costAccount: { formID }
     } = this.props;
 
     //const { tableData } = this.state;
@@ -441,16 +442,14 @@ class CostList extends PureComponent {
 
       let newData1 = [...newData];
 
-      if (keys.length == 1) {
+      if (keys.length === 1) {
         console.log('keys  1');
         let index = newData1.findIndex(item => key === item.cost_id);
         if (index > -1) {
           const item = newData[index];
           row.record_id = item.record_id;
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-          });
+          row.project_id = formID;
+         
 
           let response;
 
@@ -458,6 +457,11 @@ class CostList extends PureComponent {
           if (response.record_id && response.record_id !== '') {
             message.success('更新成功');
             this.setState({ editingKey: '' });
+            row = {...response};
+            newData.splice(index, 1, {
+              ...item,
+              ...row,
+            });
             this.dispatch({
               type: 'costList/saveData',
               payload: newData,
@@ -483,12 +487,10 @@ class CostList extends PureComponent {
           console.log('更新数据');
           const item = newData1[index_];
           row.record_id = item.record_id;
+          row.project_id = formID;
           console.log('被更新的数据 ' + JSON.stringify(item));
           console.log('row 要更新的数据 ' + JSON.stringify(row));
-          newData1.splice(index_, 1, {
-            ...item,
-            ...row,
-          });
+          
 
           let response;
 
@@ -496,10 +498,15 @@ class CostList extends PureComponent {
           if (response.record_id && response.record_id !== '') {
             message.success('更新成功');
             this.setState({ editingKey: '' });
-            // this.dispatch({
-            //   type: 'costList/saveData',
-            //   payload: newData1,
-            // });
+            row = {...response};
+            newData1.splice(index_, 1, {
+              ...item,
+              ...row,
+            });
+            this.dispatch({
+              type: 'costList/saveData',
+              payload: newData,
+            });
           }
         }
 
