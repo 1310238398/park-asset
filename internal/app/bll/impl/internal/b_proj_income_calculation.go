@@ -347,6 +347,10 @@ func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
 	//获取版本列表（收益测算）
 	list := []*schema.ProjIncomeCalculation{}
 	for _, v := range versions {
+		for _, w := range list {
+			if v == w.Principal {
+			}
+		}
 
 	}
 
@@ -360,5 +364,5 @@ func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
 
 	//如果资本化利息发生变化，对比资本化利息表
 
-	return nil
+	return nil, nil
 }
