@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math"
 	"net/url"
 	"strconv"
 	"strings"
@@ -74,12 +75,13 @@ func FillZero(i int) string {
 	return fmt.Sprintf("%d", i)
 }
 
-// FormatAmount 格式化金额
-func FormatAmount(f float64) string {
+// FracFloat 取小数
+func FracFloat(f float64) float64 {
 	if f == 0 {
-		return "0"
+		return 0
 	}
-	return fmt.Sprintf("%.2f", f)
+	_, fr := math.Modf(f)
+	return fr
 }
 
 // BoolToInt 布尔转int

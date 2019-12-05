@@ -206,7 +206,10 @@ formatData(forData) {
                       message: '请输入建筑面积',
                     },
                   ],
-                })(<InputNumber  disabled={!getFieldValue(item.record_id)} placeholder="请输入建筑面积"  style={{ width: 200}}/>)}
+                })(<InputNumber  disabled={!getFieldValue(item.record_id)} placeholder="请输入建筑面积"  style={{ width: 200}}
+                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                parser={value => value.replace(/\\s?|(,*)/g, '')}
+                />)}
               </Form.Item>
                 </Col>
               </Row>)

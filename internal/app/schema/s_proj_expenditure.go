@@ -18,7 +18,8 @@ type ProjExpenditure struct {
 	TotalCost           float64    `json:"total_cost" swaggo:"false,支出总额"`                                                                                                 // 支出总额
 	ProjCostItemIDs     []string   `json:"proj_cost_items" swaggo:"false, 项目支出节点成本项列表"`                                                                                    // 项目支出节点成本项列表
 	Category            string     `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"`                                                                                     // 工作类别(大纲 里程碑 一级 二级)
-	Sequence            int        `json:"sequence" swaggo:"false,排序值"`                                                                                                    // 排序值
+	Sequence            float64    `json:"sequence" swaggo:"false,排序值"`                                                                                                    // 排序值
+	PreviousID          string     `json:"previous_id" swaggo:"false,创建时上一个recordID"`                                                                                      // 创建时上一个recordID
 }
 
 // ProjExpenditureQueryParam 查询条件
@@ -29,6 +30,7 @@ type ProjExpenditureQueryParam struct {
 	ParentID            string    // 父级ID
 	ParentPath          string    // 父级路经
 	BeforeStartTime     time.Time // 开始时间之前
+	RecordIDs           []string  // 记录ID列表
 }
 
 // ProjExpenditureQueryOptions 查询可选参数项
@@ -56,14 +58,11 @@ func (a ProjExpenditures) ToProjExpendIDs() []string {
 }
 
 // FillProjCostItem 填充对应项目成本项ID
-func (a ProjExpenditures) FillProjCostItem(m map[string]*ProjCostItem, projExpendCostList ProjExpendCosts) {
+func (a ProjExpenditures) FillProjCostItem(projExpendCostList ProjExpendCosts) {
 	for _, item := range a {
 		for _, projExpCostItem := range projExpendCostList {
 			if item.RecordID == projExpCostItem.ProjExpenditureID {
-				if projCostItem, ok := m[projExpCostItem.ProjCostID]; ok {
-					item.ProjCostItemIDs = append(item.ProjCostItemIDs, projCostItem.RecordID)
-				}
-
+				item.ProjCostItemIDs = append(item.ProjCostItemIDs, projExpCostItem.ProjCostID)
 			}
 		}
 	}
@@ -84,7 +83,7 @@ type ProjExpenditureTree struct {
 	Category            string                  `json:"category" swaggo:"false,工作类别(大纲 里程碑 一级 二级)"`                                                                                     // 工作类别(大纲 里程碑 一级 二级)
 	ProjCostItemIDs     []string                `json:"proj_cost_items" swaggo:"false, 项目支出节点成本项列表"`                                                                                    // 项目支出节点成本项列表
 	Children            *[]*ProjExpenditureTree `json:"children,omitempty" swaggo:"false,子级树"`                                                                                          // 子级树
-	Sequence            int                     `json:"sequence" swaggo:"false,排序值"`                                                                                                    // 排序值
+	Sequence            float64                 `json:"sequence" swaggo:"false,排序值"`                                                                                                    // 排序值
 
 }
 

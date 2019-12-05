@@ -26,10 +26,10 @@ export default class CostAccountDetail extends PureComponent {
     super(props);
   }
 
-  state = {
-   pro_id:'fff',
-   formType:"", // E V
-  };
+  // state = {
+  //  pro_id:'fff',
+  //  formType:"", // E V
+  // };
 
   componentWillMount() {
     const {
@@ -42,7 +42,8 @@ export default class CostAccountDetail extends PureComponent {
     this.setState({formType: operType});
 
     //存储到model
-
+    console.log("保存formID和 formType");
+    console.log(key);
     this.dispatch({
       type: 'costAccount/saveFormType',
       payload: operType,
@@ -50,6 +51,16 @@ export default class CostAccountDetail extends PureComponent {
 
     this.dispatch({
       type: 'costAccount/saveFormID',
+      payload: key,
+    });
+
+    this.dispatch({
+      type: 'costAccount/queryProTree',
+      payload: {}
+    });
+
+    this.dispatch({
+      type: 'costAccount/queryProBusiness',
       payload: key,
     });
   }
@@ -60,10 +71,12 @@ export default class CostAccountDetail extends PureComponent {
   };
 
   callback = key => {
-    const {
-      pro_id
-    } = this.state;
+  const { costAccount: { businessData }} = this.props;
  
+  if (businessData.length === 0) {
+
+    message.success("请添加项目业态");
+  }
 
     if (key === "1") {
       
@@ -104,9 +117,48 @@ export default class CostAccountDetail extends PureComponent {
     return ret;
   }
 
-   handleChange = (value) => {
+   handleChange = (value, label) => {
+     const { costAccount: { formType}} = this.props;
+     console.log("label "+ label);
+     
     console.log("选择项目");
     console.log(value);
+    // 刷新路由
+    this.dispatch({
+      type: 'costAccount/replaceDetail',
+      payload: {
+        record_id: value,
+        operType: formType
+      },
+    
+    });
+    location.reload();
+
+  }
+
+  handleSelect = (value, node) => {
+    console.log("handleSelect");
+   // key==value 组织 否则为项目
+    console.log(value);
+   // console.log(node);
+    console.log(node.props.eventKey);
+
+  }
+  formateTree(list) {
+  // 组织机构的颜色为浅色
+    for (let i = 0; i < list.length; i++) {
+      let item = list[i];
+      if (!item.selectable) {
+        item.title = <span style={{ color: '#cccccc' }}>{item.title}</span>;
+      }
+      if (item.children && item.children.length > 0) {
+    
+        this.formateTree(item.children);
+      
+       
+      }
+    }
+   
   }
   render() {
     const breadcrumbList = [
@@ -115,25 +167,27 @@ export default class CostAccountDetail extends PureComponent {
       { title: '项目详情', href: '/cost/detail' },
     ];
     const { pro_id, formType} = this.state;
-    const { projectManage:{ data:{list}}} = this.props;
+    const { projectManage:{ data:{list}}, costAccount:{ projectTreeData, formID }} = this.props;
     
     const treeData = [
-      {
-        title: 'Node1',
+      { selectable: false,
+        title: <span style={{ color: '#cccccc' }}>Node1</span>,
         value: '0-0',
-        key: '0-0',
+        key: '组织',
+      
         children: [
           {
             title: 'Child Node1',
             value: '0-0-0',
-            key: '0-0-0',
+            key: '项目',
           },
         ],
       },
       {
         title: 'Node2',
         value: '0-1',
-        key: '0-1',
+        key: '组织1',
+        selectable: false,
         children: [
           {
             title: 'Child Node3',
@@ -153,19 +207,23 @@ export default class CostAccountDetail extends PureComponent {
         ],
       },
     ];
+
+    this.formateTree(projectTreeData);
+    
     return (
       <PageHeaderLayout
         title={
           <div>
             <span>当前项目：</span>
             <TreeSelect
-           treeData={treeData}
+            value={formID}
+            treeData={projectTreeData}
             style={{ width: 200 }}
 
            // onBlur={this.handleChange}
-           onChange={this.handleChange}
+            onChange={this.handleChange}
+           // onSelect ={this.handleSelect}
           >
-           
           </TreeSelect>
           </div>
         }
