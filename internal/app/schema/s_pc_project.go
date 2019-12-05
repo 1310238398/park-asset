@@ -122,7 +122,6 @@ func (a PcProjects) FillPlotData(m map[string]*Plot) PcProjects {
 			a[i].PlotName = v.Name
 		}
 	}
-
 	return a
 }
 
@@ -239,10 +238,11 @@ func (a PcProjects) FillFiles(fitems ProjFiles) {
 }
 
 type ProjectNode struct {
-	Title    string       `json:"title"`
-	Value    string       `json:"value"`
-	Key      string       `json:"key"`
-	Children ProjectNodes `json:"children"`
+	Title      string       `json:"title"`
+	Value      string       `json:"value"`
+	Key        string       `json:"key"`
+	Selectable bool         `json:"selectable"`
+	Children   ProjectNodes `json:"children"`
 }
 
 type ProjectNodes []*ProjectNode
@@ -254,6 +254,9 @@ func (a PcProjectTrees) ToProjectNodes() ProjectNodes {
 		item := new(ProjectNode)
 		item.Title = v.Name
 		item.Key = v.RecordID
+		if v.OrgID != "" {
+			item.Selectable = true
+		}
 		item.Value = v.RecordID
 		item.Children = v.Children.ToProjectNodes()
 		result = append(result, item)

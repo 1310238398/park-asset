@@ -91,20 +91,19 @@ func (a *ProjSalesPlan) Update(ctx context.Context, recordID string, item schema
 		a.fillTax(ctx, tax, &item)
 	}
 
-	switch {
-	case item.Payback > 0:
+	if item.Payback > 0 {
 		newItem.Payback = item.Payback
-		fallthrough
-	case item.ContractAmount > 0:
+	}
+	if item.ContractAmount > 0 {
 		newItem.ContractAmount = item.Payback
-		fallthrough
-	case item.Principal != "":
+	}
+	if item.Principal != "" {
 		newItem.Principal = item.Principal
-		fallthrough
-	case item.SaleArea > 0:
+	}
+	if item.SaleArea > 0 {
 		newItem.SaleArea = item.SaleArea
-		fallthrough
-	case item.AveragePrice > 0:
+	}
+	if item.AveragePrice > 0 {
 		newItem.AveragePrice = item.AveragePrice
 	}
 

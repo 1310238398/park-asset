@@ -172,3 +172,19 @@ type ProjIncomeCalculationQueryResult struct {
 
 // ProjIncomeCalculations 项目收益测算列表
 type ProjIncomeCalculations []*ProjIncomeCalculation
+
+type ProjVersionValue struct {
+	VersionID string      `json:"version_id"` //版本ID
+	Version   string      `json:"version"`    //版本名
+	Value     interface{} `json:"value"`      //版本值
+}
+
+type ProjCompareItem struct {
+	RecordID string              `json:"record_id"` //项目ID
+	Type     int                 `json:"type"`      //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
+	Name     string              `json:"name"`      //项目名
+	Versions []*ProjVersionValue `json:"versions"`  //版本信息
+	Memo     string              `json:"memo"`      //版本注释
+	Children []*ProjCompareItem  `json:"children"`  //下级目录
+	Change   bool                `json:"-"`         //是否有变化
+}

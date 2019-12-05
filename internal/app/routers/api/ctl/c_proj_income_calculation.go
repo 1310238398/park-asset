@@ -73,6 +73,11 @@ func (a *ProjIncomeCalculation) getCurrent(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrInvalidRequestParameter)
 		return
 	}
+	if err := a.ProjIncomeCalculationBll.Renew(ginplus.NewContext(c), projectID); err != nil {
+		ginplus.ResError(c, errors.ErrInvalidRequestParameter)
+		return
+	}
+
 	result, err := a.ProjIncomeCalculationBll.GetCurrent(ginplus.NewContext(c), projectID)
 	if err != nil {
 		ginplus.ResError(c, err)

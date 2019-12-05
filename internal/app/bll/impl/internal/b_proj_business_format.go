@@ -150,14 +150,13 @@ func (a *ProjBusinessFormat) update(ctx context.Context, projectID string, list 
 				continue
 			}
 
-			switch {
-			case updateItem.ProjectID == "":
+			if updateItem.ProjectID == "" {
 				updateItem.ProjectID = oldItem.ProjectID
-				fallthrough
-			case updateItem.FloorArea == 0:
+			}
+			if updateItem.FloorArea == 0 {
 				updateItem.FloorArea = oldItem.FloorArea
-				fallthrough
-			case updateItem.Name == "":
+			}
+			if updateItem.Name == "" {
 				updateItem.Name = oldItem.Name
 			}
 

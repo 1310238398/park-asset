@@ -98,6 +98,10 @@ func (a *ProjCostItem) QueryShow(ctx context.Context, params schema.ProjCostItem
 	if v := params.Name; v != "" {
 		db = db.Where(fmt.Sprintf("%s.name = ?", cit), v)
 	}
+	if v := params.CostParentID; v != nil {
+		db = db.Where(fmt.Sprintf("%s.parent_path = ?", cit), *v)
+	}
+
 	var list entity.ProjCostItemShows
 	if re := db.Find(&list); re.Error != nil {
 		return nil, re.Error
@@ -109,6 +113,21 @@ func (a *ProjCostItem) QueryShow(ctx context.Context, params schema.ProjCostItem
 // Get 查询指定数据
 func (a *ProjCostItem) Get(ctx context.Context, recordID string, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItem, error) {
 	db := entity.GetProjCostItemDB(ctx, a.db).Where("record_id=?", recordID)
+	var item entity.ProjCostItem
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaProjCostItem(), nil
+}
+
+// GetByProjectIDAndCostName 根据项目ID及成本项名称查询项目成本
+func (a *ProjCostItem) GetByProjectIDAndCostName(ctx context.Context, projectID, costName string) (*schema.ProjCostItem, error) {
+	subdb := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("name=?", costName)
+	db := entity.GetProjCostItemDB(ctx, a.db).Where("project_id=? AND cost_id IN ?", projectID, subdb.SubQuery())
 	var item entity.ProjCostItem
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {
