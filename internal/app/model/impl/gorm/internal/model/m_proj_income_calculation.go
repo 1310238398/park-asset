@@ -76,9 +76,37 @@ func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string
 	return item.ToSchemaProjIncomeCalculation(), nil
 }
 
+// GetLast 查询项目上一版数据
+func (a *ProjIncomeCalculation) GetLast(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 2).Order("done_time DESC")
+	var item entity.ProjIncomeCalculation
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaProjIncomeCalculation(), nil
+}
+
+// GetBeforeLast 查询项目前一版数据
+func (a *ProjIncomeCalculation) GetBeforeLast(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 1)
+	var item entity.ProjIncomeCalculation
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+
+	return item.ToSchemaProjIncomeCalculation(), nil
+}
+
 // GetFinish 查询项目最终数据
 func (a *ProjIncomeCalculation) GetFinish(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
-	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND (flag=? OR flag=?)", projectID, 3,4)
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND (flag=? OR flag=?)", projectID, 3, 4)
 	var item entity.ProjIncomeCalculation
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {
