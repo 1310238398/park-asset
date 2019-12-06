@@ -124,20 +124,17 @@ class CurrentVersion extends PureComponent {
         // fixed: 'left',
       },
       {
-        title: '数值(万元)',
+        title: '数值(万元/%)',
         dataIndex: 'value',
         width: '30%',
-
         align: 'center',
         render: (text, record) => {
             if (text.indexOf("%") !== -1) {
                 return <span>{text}</span>
             }
             else {
-                return <span>{this.statusValueW(text)}</span>
+                return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
             }
-            
-
         }
       },
       {
@@ -146,10 +143,8 @@ class CurrentVersion extends PureComponent {
         width: '30%',
         editable: true,
         inputType: 'text',
-
         align: 'center',
       },
-
       {
         title: '操作',
         dataIndex: 'operation',

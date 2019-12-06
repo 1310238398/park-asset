@@ -5,12 +5,18 @@ import * as costAccountService from '@/services/costAccount';
 export default {
     namespace: 'hisVersion',
     state: {
-
+        data:[],
+        infoModalVisible: false,
     },
     effects: {
 
     },
     reducers: {
+        changeInfoModalVisible(state, { payload }) {
+          
+            return { ...state, infoModalVisible: payload };
+        }
+
         
     }
 }
