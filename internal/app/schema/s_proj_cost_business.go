@@ -28,3 +28,29 @@ type ProjCostBusinessQueryResult struct {
 
 // ProjCostBusinesses 项目成本项业态列表
 type ProjCostBusinesses []*ProjCostBusiness
+
+// ToProjBusinIDs 转化为项目业态ID列表
+func (a ProjCostBusinesses) ToProjBusinIDs() []string {
+	list := make([]string, 0, len(a))
+	temp := map[string]struct{}{}
+	for _, item := range a {
+		// 去重
+		if _, ok := temp[item.ProjBusinessID]; !ok {
+			temp[item.ProjBusinessID] = struct{}{}
+			list = append(list, item.ProjBusinessID)
+		}
+	}
+
+	return list
+}
+
+// FillPrice 填充价格
+func (a ProjCostBusinesses) FillPrice(m map[string]*ProjBusinessFormat) ProjCostBusinesses {
+	for _, item := range a {
+		if pBusinItem, ok := m[item.ProjBusinessID]; ok {
+			item.Price = item.UnitPrice * pBusinItem.FloorArea
+		}
+	}
+
+	return a
+}
