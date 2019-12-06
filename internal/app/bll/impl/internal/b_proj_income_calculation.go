@@ -335,7 +335,7 @@ func (a *ProjIncomeCalculation) Delete(ctx context.Context, recordID string) err
 }
 
 // CreateVersion 创建新版本
-func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID string, data []*schema.ProjCompareItem) error {
+func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID, name string, data []*schema.ProjCompareItem) error {
 
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		item, err := a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
@@ -346,6 +346,9 @@ func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID str
 		//复制收益测算
 		item.RecordID = util.MustUUID()
 		item.DoneTime = time.Now()
+		if name != "" {
+			item.VersionName = name
+		}
 		item.Flag = 2
 
 		if err := a.ProjIncomeCalculationModel.Create(ctx, *item); err != nil {
@@ -411,25 +414,35 @@ func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
 				return nil, err
 			}
 		}
+
+		if item == nil {
+			continue
+		}
 		//版本排序
 		if item.Flag == 1 {
 			list = append([]*schema.ProjIncomeCalculation{item}, list...)
 		} else if item.Flag == 3 || item.Flag == 4 {
 			list = append(list, item)
 		} else {
+			b := true
 			for i, v := range list {
 				if v.Flag == 1 {
 					continue
 				}
 				if v.Flag == 3 || v.Flag == 4 {
 					list = append(list[:i-1], item)
+					b = false
 					break
 				}
 				if v.DoneTime.Before(item.DoneTime) {
 					ls := append(list[:i-1], item)
 					list = append(ls, list[i:]...)
+					b = false
 					break
 				}
+			}
+			if b {
+				list = append(list, item)
 			}
 		}
 	}
@@ -463,15 +476,15 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	}
 
 	subItem := new(schema.ProjCompareItem)
-	item.Type = 1
-	item.RecordID = "1.1"
-	item.Name = "销售税税额"
+	subItem.Type = 1
+	subItem.RecordID = "1.1"
+	subItem.Name = "销售税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
 		nv.VersionID = v.RecordID
 		nv.Version = v.VersionName
 		nv.Value = fmt.Sprintf("%.2f", v.SaledTax)
-		item.Versions = append(item.Versions, nv)
+		subItem.Versions = append(subItem.Versions, nv)
 	}
 
 	item.Children = append(item.Children, subItem)
@@ -491,51 +504,51 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	}
 
 	subItem = new(schema.ProjCompareItem)
-	item.Type = 1
-	item.RecordID = "2.1"
-	item.Name = "土地出让金"
+	subItem.Type = 1
+	subItem.RecordID = "2.1"
+	subItem.Name = "土地出让金"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
 		nv.VersionID = v.RecordID
 		nv.Version = v.VersionName
 		nv.Value = fmt.Sprintf("%.2f", v.LandTransferFee)
-		item.Versions = append(item.Versions, nv)
+		subItem.Versions = append(subItem.Versions, nv)
 	}
 	item.Children = append(item.Children, subItem)
 	subItem = new(schema.ProjCompareItem)
-	item.Type = 1
-	item.RecordID = "2.2"
-	item.Name = "契税及土地使用税"
+	subItem.Type = 1
+	subItem.RecordID = "2.2"
+	subItem.Name = "契税及土地使用税"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
 		nv.VersionID = v.RecordID
 		nv.Version = v.VersionName
 		nv.Value = fmt.Sprintf("%.2f", v.DeedLandTax)
-		item.Versions = append(item.Versions, nv)
+		subItem.Versions = append(subItem.Versions, nv)
 	}
 	item.Children = append(item.Children, subItem)
 	subItem = new(schema.ProjCompareItem)
-	item.Type = 1
-	item.RecordID = "2.3"
-	item.Name = "资本化利息"
+	subItem.Type = 1
+	subItem.RecordID = "2.3"
+	subItem.Name = "资本化利息"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
 		nv.VersionID = v.RecordID
 		nv.Version = v.VersionName
 		nv.Value = fmt.Sprintf("%.2f", v.CapitalizedInterest)
-		item.Versions = append(item.Versions, nv)
+		subItem.Versions = append(subItem.Versions, nv)
 	}
 	item.Children = append(item.Children, subItem)
 	subItem = new(schema.ProjCompareItem)
-	item.Type = 1
-	item.RecordID = "2.4"
-	item.Name = "进项税税额"
+	subItem.Type = 1
+	subItem.RecordID = "2.4"
+	subItem.Name = "进项税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
 		nv.VersionID = v.RecordID
 		nv.Version = v.VersionName
 		nv.Value = fmt.Sprintf("%.2f", v.InputTax)
-		item.Versions = append(item.Versions, nv)
+		subItem.Versions = append(subItem.Versions, nv)
 	}
 	item.Children = append(item.Children, subItem)
 	result = append(result, item)

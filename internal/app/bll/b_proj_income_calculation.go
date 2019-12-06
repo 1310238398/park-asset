@@ -27,7 +27,7 @@ type IProjIncomeCalculation interface {
 	Renew(ctx context.Context, recordID string) error
 
 	// 创建新版本
-	CreateVersion(ctx context.Context, projectID string, data []*schema.ProjCompareItem) error
+	CreateVersion(ctx context.Context, projectID, name string, data []*schema.ProjCompareItem) error
 	// 更新旧版本
 	UpdateVersion(ctx context.Context, projectID string, data []*schema.ProjCompareItem) error
 	// 获取版本比对

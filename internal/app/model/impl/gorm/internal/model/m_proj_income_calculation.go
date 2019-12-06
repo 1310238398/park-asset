@@ -78,7 +78,7 @@ func (a *ProjIncomeCalculation) GetCurrent(ctx context.Context, projectID string
 
 // GetLast 查询项目上一版数据
 func (a *ProjIncomeCalculation) GetLast(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
-	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 2).Order("done_time DESC")
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 2).Order("done_time DESC").Limit(1)
 	var item entity.ProjIncomeCalculation
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {
@@ -92,7 +92,7 @@ func (a *ProjIncomeCalculation) GetLast(ctx context.Context, projectID string) (
 
 // GetBeforeLast 查询项目前一版数据
 func (a *ProjIncomeCalculation) GetBeforeLast(ctx context.Context, projectID string) (*schema.ProjIncomeCalculation, error) {
-	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 1)
+	db := entity.GetProjIncomeCalculationDB(ctx, a.db).Where("project_id=? AND flag=?", projectID, 2).Order("done_time DESC").Offset(1).Limit(1)
 	var item entity.ProjIncomeCalculation
 	ok, err := FindOne(ctx, db, &item)
 	if err != nil {
