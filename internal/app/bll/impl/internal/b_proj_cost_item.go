@@ -251,6 +251,7 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 	return level, result, nil
 }
 
+// Query 查询数据
 func (a *ProjCostItem) Query(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItemQueryResult, error) {
 	return a.ProjCostItemModel.Query(ctx, params, opts...)
 }
@@ -264,6 +265,11 @@ func (a *ProjCostItem) Get(ctx context.Context, recordID string, opts ...schema.
 		return nil, errors.ErrNotFound
 	}
 
+	pCostBusinResult, err := a.ProjCostBusinessModel.Query(ctx, schema.ProjCostBusinessQueryParam{
+		ProjCostID: recordID,
+	})
+
+	item.BusinessList = pCostBusinResult.Data
 	return item, nil
 }
 
@@ -289,6 +295,7 @@ func (a *ProjCostItem) create(ctx context.Context, item schema.ProjCostItem) (st
 	if costItem.CalculateType == 1 {
 		for _, v := range item.BusinessList {
 			v.ProjCostID = item.RecordID
+			v.RecordID = util.MustUUID()
 			err := a.ProjCostBusinessModel.Create(ctx, *v)
 			if err != nil {
 				return "", err
