@@ -173,12 +173,14 @@ type ProjIncomeCalculationQueryResult struct {
 // ProjIncomeCalculations 项目收益测算列表
 type ProjIncomeCalculations []*ProjIncomeCalculation
 
+// ProjVersionValue 成本核算版本值
 type ProjVersionValue struct {
-	VersionID string      `json:"version_id"` //版本ID
-	Version   string      `json:"version"`    //版本名
-	Value     interface{} `json:"value"`      //版本值
+	VersionID string `json:"version_id"` //版本ID
+	Version   string `json:"version"`    //版本名
+	Value     string `json:"value"`      //版本值
 }
 
+// ProjCompareItem 成本核算对比项
 type ProjCompareItem struct {
 	RecordID string              `json:"record_id"` //项目ID
 	Type     int                 `json:"type"`      //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
@@ -186,5 +188,25 @@ type ProjCompareItem struct {
 	Versions []*ProjVersionValue `json:"versions"`  //版本信息
 	Memo     string              `json:"memo"`      //版本注释
 	Children []*ProjCompareItem  `json:"children"`  //下级目录
-	Change   bool                `json:"-"`         //是否有变化
+}
+
+// HasChange 对比项是否有变化
+func (a *ProjCompareItem) HasChange() bool {
+	if len(a.Versions) == 0 {
+		return false
+	}
+	value := a.Versions[0].Value
+
+	for _, v := range a.Versions {
+		if v.Value != value {
+			return true
+		}
+	}
+	return false
+}
+
+// VersionRequest 版本请求
+type VersionRequest struct {
+	Name   string             `json:"name"`
+	Change []*ProjCompareItem `json:"change"`
 }

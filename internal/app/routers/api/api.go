@@ -395,6 +395,20 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjIncomeCalculation.POST("", cProjIncomeCalculation.Create)
 				gProjIncomeCalculation.PUT(":id", cProjIncomeCalculation.Update)
 				gProjIncomeCalculation.DELETE(":id", cProjIncomeCalculation.Delete)
+				gProjIncomeCalculation.POST("version", cProjIncomeCalculation.CreateVersion)
+
+				// /api/v1/proj-income-calculations/version
+			}
+
+			// 注册/api/v1/proj-income-calculations
+			gProjVersion := v1.Group("proj-version")
+			{
+				gProjVersion.GET(":id/compare", cProjIncomeCalculation.QueryVersionCompare)
+				gProjVersion.POST(":id", cProjIncomeCalculation.CreateVersion)
+				gProjVersion.PUT(":id", cProjIncomeCalculation.UpdateVersion)
+				gProjVersion.PUT(":id/apply", cProjIncomeCalculation.Apply)
+				gProjVersion.PUT(":id/pass", cProjIncomeCalculation.Pass)
+				gProjVersion.PUT(":id/reject", cProjIncomeCalculation.Reject)
 			}
 
 			// 注册/api/v1/proj-sales-his
