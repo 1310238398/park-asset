@@ -124,20 +124,17 @@ class CurrentVersion extends PureComponent {
         // fixed: 'left',
       },
       {
-        title: '数值(万元)',
+        title: '数值(万元/%)',
         dataIndex: 'value',
         width: '30%',
-
         align: 'center',
         render: (text, record) => {
             if (text.indexOf("%") !== -1) {
                 return <span>{text}</span>
             }
             else {
-                return <span>{this.statusValueW(text)}</span>
+                return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
             }
-            
-
         }
       },
       {
@@ -146,10 +143,8 @@ class CurrentVersion extends PureComponent {
         width: '30%',
         editable: true,
         inputType: 'text',
-
         align: 'center',
       },
-
       {
         title: '操作',
         dataIndex: 'operation',
@@ -308,7 +303,8 @@ class CurrentVersion extends PureComponent {
   }
 
   save(form, index) {
-      const { currentVersion: {data}} = this.props;
+      const { currentVersion: {data, currentVersionID}} = this.props;
+     
     form.validateFields( async (error, row) => {
       console.log('row ');
       console.log(row);
@@ -318,7 +314,7 @@ class CurrentVersion extends PureComponent {
 
       const newData = data;
 
-      const index_ = newData.findIndex(item => key === item.record_id);
+      const index_ = newData.findIndex(item => index === item.index);
       if (index_ > -1) {
         const item = newData[index_];
         row.index = index;
@@ -326,11 +322,9 @@ class CurrentVersion extends PureComponent {
           ...item,
           ...row,
         });
-
-        let response;
-      
-        response = await updateCurrentVersionInfo(row);
-        if (response.record_id && response.record_id !== "") {
+        let response; 
+        response = await updateCurrentVersionInfo(row, currentVersionID);
+        if (response.status && response.status === "OK") {
           message.success('更新成功');
           this.setState({ editingKey: '' });
           this.dispatch({

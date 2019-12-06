@@ -70,7 +70,6 @@ export default {
       for (let i = 0; i < formateDatatemp.length; i++) {
 
         let item = {};
-
         item.title = formateDatatemp[i].name;
         item.dataIndex = formateDatatemp[i].record_id + "_unit";
         item.align = "center";
@@ -78,7 +77,7 @@ export default {
         item.editable = true;
         item.render = (text, record) => {
 
-        return <div style={{textAlign: "center"}}>{text}</div>
+        return <div style={{textAlign: "center"}}>{text === undefined ? "": `${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</div>
         };
         unitData.push(item);
       }
@@ -99,7 +98,7 @@ export default {
         item.width = 100;
         item.render = (text, record) => {
 
-          return <div style={{textAlign: "center"}}>{text}</div>
+          return <div style={{textAlign: "center"}}>{ text === undefined ? "":`${text}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</div>
           };
         totalData.push(item);
       }

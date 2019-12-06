@@ -149,10 +149,20 @@ export async function getCurrentVersionInfo(params) {
 }
 
 // 修改当前版本的数据信息
-export async function updateCurrentVersionInfo(params) {
+export async function updateCurrentVersionInfo(params, record_id) {
 
+  
+  return request(`/v1/proj-income-calculations/${record_id}`, {
+    method: 'PUT',
+    body: params,
+  });
 }
 
+// 查询项目列表树状结构（treeselect用）
+export async function queryProTree(params) {
+  // /api/v1/pc-projects?q=nodes
+  return request(`/v1/pc-projects?${stringify(params)}`);
+}
 
 // export async function query(params) {
 //   return request(`/v1/${router}?${stringify(params)}`);

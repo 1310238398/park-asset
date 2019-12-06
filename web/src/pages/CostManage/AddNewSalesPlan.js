@@ -205,7 +205,7 @@ class AddNewSalesPlan extends PureComponent {
                         </Form.Item>
                       </Col>
                       <Col span={5}>
-                        <Form.Item {...formItemLayout} label="销售单价">
+                        <Form.Item {...formItemLayout} label="销售单价(元)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'average_price', {
                             initialValue: 0,
                             // rules: [
@@ -221,7 +221,7 @@ class AddNewSalesPlan extends PureComponent {
                         </Form.Item>
                       </Col>
                       <Col span={3}>
-                        <Form.Item wrapperCol={{ span: 14 }} labelCol={{ span: 10}} label="合同额">
+                        <Form.Item wrapperCol={{ span: 14 }} labelCol={{ span: 10}} label="合同额(元)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'contract_amount', {
                             initialValue: 0,
                           })(
@@ -233,10 +233,10 @@ class AddNewSalesPlan extends PureComponent {
                         </Form.Item>
                       </Col>
                       <Col span={6}>
-                        <Form.Item {...formItemLayout} label="销售回款额">
+                        <Form.Item {...formItemLayout} label="销售回款额(元)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'payback', {
                             initialValue: 0,
-                          
+                  
                           })(<InputNumber placeholder="请输入销售回款" style={{ width: 150 }}
                           formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                           parser={value => value.replace(/\\s?|(,*)/g, '')}

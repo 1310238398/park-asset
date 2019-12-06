@@ -142,7 +142,7 @@ func (a *PcProject) QueryTree(c *gin.Context) {
 // @Summary 查询树状数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param name query string false "名称"
-// @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
+// @Success 200 schema.ProjectNodes "查询结果：{list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"

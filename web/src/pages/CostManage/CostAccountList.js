@@ -262,7 +262,7 @@ class CostAccountList extends PureComponent {
     this.dispatch({
       type: 'costAccount/redirectDetail',
       payload: {
-        item: item,
+        record_id: item.record_id,
         operType: type1
       },
     

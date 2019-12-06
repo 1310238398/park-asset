@@ -31,5 +31,5 @@ type IProjIncomeCalculation interface {
 	// 更新旧版本
 	UpdateVersion(ctx context.Context, projectID string) error
 	//TODO 获取版本比对
-	GetVersionComparison(ctx context.Context, projectID string, versions ...string) error
+	GetVersionComparison(ctx context.Context,projectID string, versions ...string) ([]*schema.ProjCompareItem, error)
 }

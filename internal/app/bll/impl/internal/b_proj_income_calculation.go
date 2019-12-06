@@ -18,7 +18,7 @@ func NewProjIncomeCalculation(
 	mTaxCalculation model.ITaxCalculation,
 	mLandAppreciationTax model.ILandAppreciationTax,
 	mProjSalesPlan model.IProjSalesPlan,
-	mCostItem model.ICostItem,
+	mProjCostItem model.IProjCostItem,
 ) bll.IProjIncomeCalculation {
 	return &ProjIncomeCalculation{
 		TransModel:                 mTrans,
@@ -26,7 +26,7 @@ func NewProjIncomeCalculation(
 		TaxCalculationModel:        mTaxCalculation,
 		LandAppreciationTaxModel:   mLandAppreciationTax,
 		ProjSalesPlanModel:         mProjSalesPlan,
-		CostItemModel:              mCostItem,
+		ProjCostItemModel:          mProjCostItem,
 	}
 }
 
@@ -37,7 +37,7 @@ type ProjIncomeCalculation struct {
 	TaxCalculationModel        model.ITaxCalculation
 	LandAppreciationTaxModel   model.ILandAppreciationTax
 	ProjSalesPlanModel         model.IProjSalesPlan
-	CostItemModel              model.ICostItem
+	ProjCostItemModel          model.IProjCostItem
 }
 
 // Renew 更新收益测算
@@ -55,17 +55,17 @@ func (a *ProjIncomeCalculation) renew(ctx context.Context, projectID string) err
 	if err != nil {
 		return err
 	}
-	//如果存在最终版则返回
+	// 如果存在最终版则返回
 	if finish != nil {
 		return nil
 	}
 
-	//获取当前数据
+	// 获取当前数据
 	current, err := a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
 	if err != nil {
 		return err
 	}
-	//没有数据则新建数据
+	// 没有数据则新建数据
 	if current == nil {
 		current = new(schema.ProjIncomeCalculation)
 		current.RecordID = util.MustUUID()
@@ -76,27 +76,81 @@ func (a *ProjIncomeCalculation) renew(ctx context.Context, projectID string) err
 			return err
 		}
 	}
+	pspqp := schema.ProjSalesPlanQueryParam{}
+	pspqp.ProjectID = projectID
+	if pspqr, err := a.ProjSalesPlanModel.Query(ctx, pspqp); err != nil {
+		return err
+	} else if len(pspqr.Data) > 0 {
+		var sale, tax float64
+		for _, v := range pspqr.Data {
+			sale += v.Payback
+			tax += v.TaxPrice
+		}
+		// 销售收入
+		current.TotalSale = sale
+		// 销售税税额
+		current.SaledTax = tax
+	}
 
-	//销售收入
-	current.TotalSale = 0
+	pciqp := schema.ProjCostItemQueryParam{}
+	pciqp.ProjectID = projectID
+	pid := ""
+	pciqp.CostParentID = &pid
 
-	// 销售税税额
-	current.SaledTax = 0
+	if pciqr, err := a.ProjCostItemModel.QueryShow(ctx, pciqp); err != nil {
+		return err
+	} else if len(pciqr) > 0 {
+		var total, tax float64
+		for _, v := range pciqr {
+			total += v.Price
+			tax += v.TaxPrice
+		}
+		// 开发成本
+		current.TotalCost = total
 
-	// 开发成本
-	current.TotalCost = 0
+		if item, err := a.ProjCostItemModel.GetByProjectIDAndCostName(ctx, projectID, "土地出让金"); err != nil {
+			return err
+		} else if item != nil {
+			// 土地出让金
+			// 【土地出让金+土地利息】
+			current.LandTransferFee += item.Price
+		}
 
-	// 土地出让金
-	current.LandTransferFee = 0
+		if item, err := a.ProjCostItemModel.GetByProjectIDAndCostName(ctx, projectID, "土地利息】"); err != nil {
+			return err
+		} else if item != nil {
+			// 土地出让金
+			// 【土地出让金+土地利息】
+			current.LandTransferFee += item.Price
+		}
 
-	// 契税及土地使用税
-	current.DeedLandTax = 0
+		if item, err := a.ProjCostItemModel.GetByProjectIDAndCostName(ctx, projectID, "契税"); err != nil {
+			return err
+		} else if item != nil {
+			// 契税及土地使用税
+			// 【契税+土地使用税】
+			current.DeedLandTax += item.Price
+		}
 
-	// 资本化利息
-	current.CapitalizedInterest = 0
+		if item, err := a.ProjCostItemModel.GetByProjectIDAndCostName(ctx, projectID, "土地使用税"); err != nil {
+			return err
+		} else if item != nil {
+			// 契税及土地使用税
+			// 【契税+土地使用税】
+			current.DeedLandTax += item.Price
+		}
 
-	// 进项税税额
-	current.InputTax = 0
+		if item, err := a.ProjCostItemModel.GetByProjectIDAndCostName(ctx, projectID, "资本化利息"); err != nil {
+			return err
+		} else if item != nil {
+			// 资本化利息
+			current.CapitalizedInterest = item.Price
+		}
+
+		// 进项税税额
+		current.InputTax = tax
+
+	}
 
 	// 增值税税额
 	// 【销售税税额-进项税税额】
@@ -288,6 +342,27 @@ func (a *ProjIncomeCalculation) UpdateVersion(ctx context.Context, projectID str
 }
 
 //TODO 获取版本比对
-func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context, projectID string, versions ...string) error {
-	return nil
+func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
+	projectID string, versions ...string) ([]*schema.ProjCompareItem, error) {
+	//获取版本列表（收益测算）
+	list := []*schema.ProjIncomeCalculation{}
+	for _, v := range versions {
+		for _, w := range list {
+			if v == w.Principal {
+			}
+		}
+
+	}
+
+	//版本排序
+
+	//对比收益测算表
+
+	//如果销售金额发生变化对比销售计划表
+
+	//如果成本发生变化对比成本测算表
+
+	//如果资本化利息发生变化，对比资本化利息表
+
+	return nil, nil
 }
