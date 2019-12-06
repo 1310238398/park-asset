@@ -17,7 +17,7 @@ export default {
   },
   effects: {
 
-    *fetch({ payload }, { call, put, select }) {
+    *fetch({ payload }, { call, put }) {
       const params = { ...payload };
       // 请求所有的核算列表
       const response = yield call(costAccountService.queryCostList, params);

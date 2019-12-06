@@ -33,7 +33,7 @@ class HisVersionInfo extends PureComponent {
         width: '30%',
         align: 'center',
         render: (text, record) => {
-          if (text.indexOf('%') !== -1) {
+          if ((text+"").indexOf('%') !== -1) {
             return <span>{text}</span>;
           } else {
             return (
@@ -112,7 +112,10 @@ class HisVersionInfo extends PureComponent {
     ],
   };
 
-  componentDidMount = async () => {};
+  componentDidMount = async () => {
+  
+   
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -136,7 +139,7 @@ class HisVersionInfo extends PureComponent {
   render() {
     const {
       loading,
-      hisVersion: { infoModalVisible, data },
+      hisVersion: { infoModalVisible, formData },
     } = this.props;
     const { tableData, columns } = this.state;
 
@@ -157,7 +160,7 @@ class HisVersionInfo extends PureComponent {
           bordered
           loading={loading}
           rowKey={record => record.index}
-          dataSource={data}
+          dataSource={tableData}
           columns={columns}
           pagination={false}
           scroll={{ y: 500, x: 'calc(100%)' }}

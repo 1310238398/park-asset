@@ -157,6 +157,17 @@ export async function updateCurrentVersionInfo(params, record_id) {
     body: params,
   });
 }
+// 查询历史版本列表
+export async function queryHisVersionList(params) {
+  // /api/v1/proj-income-calculations?q=list&projectID=&flag=2
+  return request(`/v1/proj-income-calculations?q=list&${stringify(params)}`);
+}
+
+// 查询某一个历史版本的详情
+export async function queryHisVersionDetail(record_id) {
+  // /api/v1/proj-income-calculations/{id}
+  return request(`/v1/proj-income-calculations/${record_id}`);
+}
 
 // 查询项目列表树状结构（treeselect用）
 export async function queryProTree(params) {
