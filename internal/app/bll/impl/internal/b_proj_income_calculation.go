@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"fmt"
 	"gxt-park-assets/internal/app/bll"
 	"time"
 
@@ -69,7 +70,7 @@ func (a *ProjIncomeCalculation) renew(ctx context.Context, projectID string) err
 	if current == nil {
 		current = new(schema.ProjIncomeCalculation)
 		current.RecordID = util.MustUUID()
-		current.DoneTime = time.Now()
+		current.VersionName = "当前版本"
 		current.ProjectID = projectID
 		current.Flag = 1
 		if err := a.ProjIncomeCalculationModel.Create(ctx, *current); err != nil {
@@ -211,6 +212,8 @@ func (a *ProjIncomeCalculation) renew(ctx context.Context, projectID string) err
 		current.PaybackRate = v
 	}
 
+	current.DoneTime = time.Now()
+
 	return a.ProjIncomeCalculationModel.Update(ctx, current.RecordID, *current)
 }
 
@@ -331,38 +334,382 @@ func (a *ProjIncomeCalculation) Delete(ctx context.Context, recordID string) err
 	return a.ProjIncomeCalculationModel.Delete(ctx, recordID)
 }
 
-//TODO 创建新版本
-func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID string) error {
-	return nil
+// CreateVersion 创建新版本
+func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID string, data []*schema.ProjCompareItem) error {
+
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		item, err := a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
+		if err != nil {
+			return err
+		}
+
+		//复制收益测算
+		item.RecordID = util.MustUUID()
+		item.DoneTime = time.Now()
+		item.Flag = 2
+
+		if err := a.ProjIncomeCalculationModel.Create(ctx, *item); err != nil {
+			return err
+		}
+		//TODO 复制成本项
+		//TODO 复制收益测算
+		//TODO 复制资本化利息
+		return nil
+	})
+
 }
 
-//TODO 更新旧版本
-func (a *ProjIncomeCalculation) UpdateVersion(ctx context.Context, projectID string) error {
-	return nil
+//UpdateVersion 更新旧版本
+func (a *ProjIncomeCalculation) UpdateVersion(ctx context.Context, projectID string, data []*schema.ProjCompareItem) error {
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		item, err := a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
+		if err != nil {
+			return err
+		}
+		oldItem, err := a.ProjIncomeCalculationModel.GetLast(ctx, projectID)
+		if err != nil {
+			return err
+		}
+		item.Flag = 2
+		if err := a.ProjIncomeCalculationModel.Update(ctx, oldItem.RecordID, *item); err != nil {
+			return err
+		}
+		//TODO 复制成本项
+		//TODO 复制收益测算
+		//TODO 复制资本化利息
+		return nil
+	})
 }
 
-//TODO 获取版本比对
+//GetVersionComparison 获取版本比对
 func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
 	projectID string, versions ...string) ([]*schema.ProjCompareItem, error) {
 	//获取版本列表（收益测算）
 	list := []*schema.ProjIncomeCalculation{}
 	for _, v := range versions {
-		for _, w := range list {
-			if v == w.Principal {
+		var item *schema.ProjIncomeCalculation
+		var err error
+		switch v {
+		case "current":
+			item, err = a.ProjIncomeCalculationModel.GetCurrent(ctx, projectID)
+			if err != nil {
+				return nil, err
+			}
+		case "last":
+			item, err = a.ProjIncomeCalculationModel.GetLast(ctx, projectID)
+			if err != nil {
+				return nil, err
+			}
+		case "beforeLast":
+			item, err = a.ProjIncomeCalculationModel.GetBeforeLast(ctx, projectID)
+			if err != nil {
+				return nil, err
+			}
+		default:
+			item, err = a.ProjIncomeCalculationModel.Get(ctx, v)
+			if err != nil {
+				return nil, err
 			}
 		}
-
+		//版本排序
+		if item.Flag == 1 {
+			list = append([]*schema.ProjIncomeCalculation{item}, list...)
+		} else if item.Flag == 3 || item.Flag == 4 {
+			list = append(list, item)
+		} else {
+			for i, v := range list {
+				if v.Flag == 1 {
+					continue
+				}
+				if v.Flag == 3 || v.Flag == 4 {
+					list = append(list[:i-1], item)
+					break
+				}
+				if v.DoneTime.Before(item.DoneTime) {
+					ls := append(list[:i-1], item)
+					list = append(ls, list[i:]...)
+					break
+				}
+			}
+		}
 	}
 
-	//版本排序
-
 	//对比收益测算表
+	result := a.getIncomeCompare(list)
 
-	//如果销售金额发生变化对比销售计划表
+	//TODO 如果销售金额发生变化对比销售计划表
 
-	//如果成本发生变化对比成本测算表
+	//TODO 如果成本发生变化对比成本测算表
 
-	//如果资本化利息发生变化，对比资本化利息表
+	//TODO 如果资本化利息发生变化，对比资本化利息表
 
-	return nil, nil
+	return result, nil
+}
+
+func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalculation) []*schema.ProjCompareItem {
+	//对比收益测算表
+	result := []*schema.ProjCompareItem{}
+	//销售收入
+	item := new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "1"
+	item.Name = "销售收入"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.TotalSale)
+		item.Versions = append(item.Versions, nv)
+	}
+
+	subItem := new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "1.1"
+	item.Name = "销售税税额"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.SaledTax)
+		item.Versions = append(item.Versions, nv)
+	}
+
+	item.Children = append(item.Children, subItem)
+	result = append(result, item)
+
+	//开发成本
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "2"
+	item.Name = "开发成本"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.TotalCost)
+		item.Versions = append(item.Versions, nv)
+	}
+
+	subItem = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "2.1"
+	item.Name = "土地出让金"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.LandTransferFee)
+		item.Versions = append(item.Versions, nv)
+	}
+	item.Children = append(item.Children, subItem)
+	subItem = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "2.2"
+	item.Name = "契税及土地使用税"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.DeedLandTax)
+		item.Versions = append(item.Versions, nv)
+	}
+	item.Children = append(item.Children, subItem)
+	subItem = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "2.3"
+	item.Name = "资本化利息"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.CapitalizedInterest)
+		item.Versions = append(item.Versions, nv)
+	}
+	item.Children = append(item.Children, subItem)
+	subItem = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "2.4"
+	item.Name = "进项税税额"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.InputTax)
+		item.Versions = append(item.Versions, nv)
+	}
+	item.Children = append(item.Children, subItem)
+	result = append(result, item)
+
+	//增值税额
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "3"
+	item.Name = "增值税额"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.ValueAddTax)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "4"
+	item.Name = "增值税附加"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.ValueAddTaxSurcharge)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "5"
+	item.Name = "土地增值税"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.LandValueAddedTax)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "6"
+	item.Name = "项目税前利润"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.ProfitBeforeTax)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "7"
+	item.Name = "税前利润率"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f%%", v.ProfitBeforeTaxRate*100)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "8"
+	item.Name = "企业所得税"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.CorporateIncomeTax)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "9"
+	item.Name = "项目净利润"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.NetProfit)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "10"
+	item.Name = "项目净利率"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f%%", v.NetProfitRate*100)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+	//增值税附加
+	item = new(schema.ProjCompareItem)
+	item.Type = 1
+	item.RecordID = "11"
+	item.Name = "总投资回报率"
+	for _, v := range vList {
+		nv := new(schema.ProjVersionValue)
+		nv.VersionID = v.RecordID
+		nv.Version = v.VersionName
+		nv.Value = fmt.Sprintf("%.2f", v.PaybackRate)
+		item.Versions = append(item.Versions, nv)
+	}
+	result = append(result, item)
+
+	return result
+}
+
+// Apply 提交审核
+func (a *ProjIncomeCalculation) Apply(ctx context.Context, projectID string) error {
+	item, err := a.ProjIncomeCalculationModel.GetLast(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	if item == nil {
+		return errors.ErrNotFound
+	}
+	if item.Flag != 2 {
+		return errors.ErrBadRequest
+	}
+	item.Flag = 3
+
+	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+}
+
+// Pass 通过审核
+func (a *ProjIncomeCalculation) Pass(ctx context.Context, projectID string) error {
+	item, err := a.ProjIncomeCalculationModel.GetFinish(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	if item == nil {
+		return errors.ErrNotFound
+	}
+	if item.Flag == 4 {
+		return errors.ErrBadRequest
+	}
+	item.Flag = 4
+	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+}
+
+// Reject 拒绝审核
+func (a *ProjIncomeCalculation) Reject(ctx context.Context, projectID string) error {
+	item, err := a.ProjIncomeCalculationModel.GetFinish(ctx, projectID)
+	if err != nil {
+		return err
+	}
+	if item == nil {
+		return errors.ErrNotFound
+	}
+	if item.Flag == 4 {
+		return errors.ErrBadRequest
+	}
+	item.Flag = 2
+	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
 }
