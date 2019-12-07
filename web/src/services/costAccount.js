@@ -169,6 +169,22 @@ export async function queryHisVersionDetail(record_id) {
   return request(`/v1/proj-income-calculations/${record_id}`);
 }
 
+// 保存旧版本（创建版本的时候覆盖上一版本）
+export async function saveOldVersion(project_id) {
+ // /api/v1/proj-version/:id
+  return request(`/v1/proj-version/${project_id}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+// 创建新版本
+export async function saveNewVersion(project_id) {
+  return request(`/v1/proj-version/${project_id}`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
 // 查询项目列表树状结构（treeselect用）
 export async function queryProTree(params) {
   // /api/v1/pc-projects?q=nodes
