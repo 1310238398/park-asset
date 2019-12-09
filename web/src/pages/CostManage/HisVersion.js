@@ -17,6 +17,7 @@ import {
 import styles from './CostAccount.less';
 import {} from '@/services/costAccount';
 import HisVersionInfo from './HisVersionInfo';
+import moment from 'moment';
 const FormItem = Form.Item;
 
 @connect(state => ({
@@ -31,7 +32,7 @@ class HisVersion extends PureComponent {
     columns: [
       {
         title: '版本名',
-        dataIndex: 'name',
+        dataIndex: 'version_name',
         width: '10%',
         // ellipsis: true,
         // align: 'center',
@@ -39,7 +40,7 @@ class HisVersion extends PureComponent {
       },
       {
         title: '投资回报率(%)',
-        dataIndex: 'rate',
+        dataIndex: 'payback_rate',
         width: '10%',
 
         align: 'center',
@@ -53,27 +54,32 @@ class HisVersion extends PureComponent {
       },
       {
         title: '开发成本',
-        dataIndex: 'development_cost',
+        dataIndex: 'total_cost',
         width: '10%',
         align: 'center',
       },
       {
         title: '销售收入',
-        dataIndex: 'sales_revenue',
+        dataIndex: 'total_sale',
         width: '10%',
         align: 'center',
       },
       {
         title: '负责人',
-        dataIndex: 'person',
+        dataIndex: 'principal',
         width: '10%',
         align: 'center',
       },
       {
         title: '创建时间',
-        dataIndex: 'time',
+        dataIndex: 'done_time',
         width: '10%',
         align: 'center',
+        render: (text, record) => {
+
+         return  record.done_time === null ? "":
+          moment(record.done_time).format('YYYY-MM-DD')
+        }
       },
       {
         title: '操作',
@@ -128,7 +134,18 @@ class HisVersion extends PureComponent {
     ],
   };
 
-  componentDidMount = async () => {};
+  componentDidMount = async () => {
+    const { costAccount: { formID }} = this.props;
+    this.dispatch(
+      {
+        type: "hisVersion/fetch",
+        payload:{
+          projectID: formID,
+          flag: 2
+        }
+      }
+    );
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -180,12 +197,24 @@ class HisVersion extends PureComponent {
 
   goToDetail(record_id) {
     console.log('goToDetail');
+  
+    this.dispatch({
+      type: "hisVersion/fetchForm",
+      payload: {
+        record_id: record_id,
+      }
+    });
+    // this.dispatch({
+    //   type: 'hisVersion/saveFormID',
+    //   payload:  record_id 
+      
+    // });
 
     //查询历史版本详情
-    this.dispatch({
-      type: 'hisVersion/changeInfoModalVisible',
-      payload: true,
-    });
+    // this.dispatch({
+    //   type: 'hisVersion/changeInfoModalVisible',
+    //   payload: true,
+    // });
   }
 
   renderInfo() {
@@ -196,6 +225,7 @@ class HisVersion extends PureComponent {
     const {
       loading,
       costAccount: { formType },
+      hisVersion: {data},
     } = this.props;
     const { tableData, columns } = this.state;
 
@@ -207,7 +237,7 @@ class HisVersion extends PureComponent {
           bordered
           loading={loading}
           rowKey={record => record.record_id}
-          dataSource={tableData}
+          dataSource={data}//{tableData}
           columns={formType === 'E' ? ecolumns : formType === 'V' ? view_columns : null} //{view_columns}
           pagination={false}
           scroll={{ y: 800, x: 'calc(100%)' }}
