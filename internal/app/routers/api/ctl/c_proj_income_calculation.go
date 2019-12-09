@@ -178,7 +178,7 @@ func (a *ProjIncomeCalculation) Delete(c *gin.Context) {
 // @Summary 保存新版本
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "项目ID"
-// @Param body body []schema.ProjCompareItem true
+// @Param body body schema.VersionRequest true
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -187,14 +187,14 @@ func (a *ProjIncomeCalculation) Delete(c *gin.Context) {
 func (a *ProjIncomeCalculation) CreateVersion(c *gin.Context) {
 	projectID := c.Param("id")
 
-	data := []*schema.ProjCompareItem{}
+	req := schema.VersionRequest{}
 
-	if err := ginplus.ParseJSON(c, &data); err != nil {
+	if err := ginplus.ParseJSON(c, &req); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	if err := a.ProjIncomeCalculationBll.CreateVersion(ginplus.NewContext(c), projectID, data); err != nil {
+	if err := a.ProjIncomeCalculationBll.CreateVersion(ginplus.NewContext(c), projectID, req.Name, req.Change); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
@@ -205,7 +205,7 @@ func (a *ProjIncomeCalculation) CreateVersion(c *gin.Context) {
 // @Summary 保存旧版本
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "项目ID"
-// @Param body body []schema.ProjCompareItem true
+// @Param body body schema.VersionRequest true
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -214,14 +214,14 @@ func (a *ProjIncomeCalculation) CreateVersion(c *gin.Context) {
 func (a *ProjIncomeCalculation) UpdateVersion(c *gin.Context) {
 	projectID := c.Param("id")
 
-	data := []*schema.ProjCompareItem{}
+	req := schema.VersionRequest{}
 
-	if err := ginplus.ParseJSON(c, &data); err != nil {
+	if err := ginplus.ParseJSON(c, &req); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	if err := a.ProjIncomeCalculationBll.UpdateVersion(ginplus.NewContext(c), projectID, data); err != nil {
+	if err := a.ProjIncomeCalculationBll.UpdateVersion(ginplus.NewContext(c), projectID, req.Change); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}

@@ -285,8 +285,11 @@ func (a *ProjCostItem) Get(ctx context.Context, recordID string, opts ...schema.
 		RecordIDs: pCostBusinResult.Data.ToProjBusinIDs(),
 	})
 
-	item.BusinessList = pCostBusinResult.Data.FillPrice(pBusinResult.Data.ToMap())
+	item.Price, item.BusinessList = pCostBusinResult.Data.FillPrice(pBusinResult.Data.ToMap())
+
+	item.Price = util.DecimalFloat64(item.Price)
 	item.Name = costItem.Name
+
 	return item, nil
 }
 
@@ -374,7 +377,7 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			//更新业态信息
 			//旧业态信息列表
 			ps := schema.ProjCostBusinessQueryParam{}
-			ps.ProjCostID = item.RecordID
+			ps.ProjCostID = recordID
 			pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
 			if err != nil {
 				return err
@@ -387,7 +390,7 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 			for _, v := range item.BusinessList { //整理成本项下各业态信息
 				var b = true
 				for _, w := range pcbqr.Data {
-					if w.ProjBusinessID == v.ProjBusinessID && w.ProjCostID == v.ProjCostID {
+					if w.ProjBusinessID == v.ProjBusinessID && w.ProjCostID == recordID {
 						if w.UnitPrice != v.UnitPrice { //更新业态单价
 							w.UnitPrice = v.UnitPrice
 							w.ProjBusinessID = v.ProjBusinessID
@@ -425,9 +428,10 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 		if err := a.ProjCostItemModel.Update(ctx, recordID, item); err != nil {
 			return err
 		}
-		// if err := a.renew(ctx, oldItem.ProjectID); err != nil {
-		// 	return err
-		// }
+
+		if err := a.renew(ctx, oldItem.ProjectID); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
@@ -567,8 +571,12 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						if w.ProjBusinessID == v.RecordID {
 							price += w.UnitPrice * v.FloorArea
 							b = false
+							t.Price = price
 							oldm[w.RecordID] = false
-							break
+							if err := a.ProjCostBusinessModel.Update(ctx, w.RecordID, *w); err != nil {
+								return b, t.Price, t.TaxPrice, err
+							}
+
 						}
 					}
 					if b { //需要新增业态信息
@@ -607,9 +615,9 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 								if err := a.ProjCostBusinessModel.Update(ctx, w.RecordID, *w); err != nil {
 									return b, t.Price, t.TaxPrice, err
 								}
+								oldm[w.RecordID] = false
 							}
 							b = false
-							oldm[w.RecordID] = false
 							break
 						}
 					}

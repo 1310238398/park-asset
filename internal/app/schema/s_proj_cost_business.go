@@ -45,12 +45,14 @@ func (a ProjCostBusinesses) ToProjBusinIDs() []string {
 }
 
 // FillPrice 填充价格
-func (a ProjCostBusinesses) FillPrice(m map[string]*ProjBusinessFormat) ProjCostBusinesses {
+func (a ProjCostBusinesses) FillPrice(m map[string]*ProjBusinessFormat) (float64, ProjCostBusinesses) {
+	var price float64
 	for _, item := range a {
 		if pBusinItem, ok := m[item.ProjBusinessID]; ok {
 			item.Price = item.UnitPrice * pBusinItem.FloorArea
+			price += item.Price
 		}
 	}
 
-	return a
+	return price, a
 }

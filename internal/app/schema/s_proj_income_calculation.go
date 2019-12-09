@@ -204,3 +204,9 @@ func (a *ProjCompareItem) HasChange() bool {
 	}
 	return false
 }
+
+// VersionRequest 版本请求
+type VersionRequest struct {
+	Name   string             `json:"name"`
+	Change []*ProjCompareItem `json:"change"`
+}
