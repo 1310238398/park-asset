@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewProjCostBusiness 创建项目成本项业态存储实例
@@ -30,6 +31,14 @@ func (a *ProjCostBusiness) getQueryOption(opts ...schema.ProjCostBusinessQueryOp
 // Query 查询数据
 func (a *ProjCostBusiness) Query(ctx context.Context, params schema.ProjCostBusinessQueryParam, opts ...schema.ProjCostBusinessQueryOptions) (*schema.ProjCostBusinessQueryResult, error) {
 	db := entity.GetProjCostBusinessDB(ctx, a.db)
+
+	if v := params.ProjCostID; v != "" {
+		db = db.Where("proj_cost_id = ?", v)
+	}
+
+	if v := params.ProjBusinessID; v != "" {
+		db = db.Where("proj_business_id = ? ", v)
+	}
 
 	db = db.Order("id DESC")
 

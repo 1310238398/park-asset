@@ -124,6 +124,26 @@ func (a *ProjCostItemShow) ToMap() map[string]interface{} {
 	return result
 }
 
+// ToMap 转成map键值映射
+func (a *ProjCostItem) ToMap() map[string]interface{} {
+	result := map[string]interface{}{}
+	result["tax_rate"] = a.TaxRate
+	result["tax_price"] = a.TaxPrice
+	result["record_id"] = a.RecordID
+	result["project_id"] = a.ProjectID
+	result["proj_income_id"] = a.ProjIncomeID
+	result["principal"] = a.Principal
+	result["price"] = a.Price
+	result["name"] = a.Name
+	result["memo"] = a.Memo
+	result["cost_id"] = a.CostID
+	for _, v := range a.BusinessList {
+		result[fmt.Sprintf("%s_unit", v.ProjBusinessID)] = v.UnitPrice
+		result[fmt.Sprintf("%s_total", v.ProjBusinessID)] = v.Price
+	}
+	return result
+}
+
 // ProjCostItemTree 项目成本项(树结构)
 type ProjCostItemTree struct {
 	Value    string              `json:"value" swaggo:"false,记录ID"`               // 记录ID

@@ -236,7 +236,7 @@ func (a *ProjIncomeCalculation) UpdateVersion(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "项目ID"
 // @Param list query string true "版本ID列表,逗号分隔允许current、last、beforeLast"
-// @Success 200 []*schema.ProjCompareItem
+// @Success 200 []schema.ProjCompareItem
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
