@@ -120,7 +120,10 @@ func (a *ProjCostItem) Get(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, item)
+	if item == nil {
+		return
+	}
+	ginplus.ResSuccess(c, item.ToMap())
 }
 
 // Create 创建数据
@@ -179,7 +182,10 @@ func (a *ProjCostItem) Update(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, nitem)
+	if nitem == nil {
+		return
+	}
+	ginplus.ResSuccess(c, nitem.ToMap())
 }
 
 // Delete 删除数据

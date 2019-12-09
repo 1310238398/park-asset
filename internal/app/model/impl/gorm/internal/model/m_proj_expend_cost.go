@@ -128,3 +128,12 @@ func (a *ProjExpendCost) DeleteByProjExpendID(ctx context.Context, projExpenditu
 	}
 	return nil
 }
+
+// UpdatePrice 更新价格数据
+func (a *ProjExpendCost) UpdatePrice(ctx context.Context, recordID string, costPrice, amount float64) error {
+	result := entity.GetProjExpendCostDB(ctx, a.db).Where("record_id=?", recordID).Updates(map[string]interface{}{"cost_price": costPrice, "amount": amount})
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
