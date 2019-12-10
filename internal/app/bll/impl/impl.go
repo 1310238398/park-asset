@@ -55,5 +55,9 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewProjSalesHis, dig.As(new(bll.IProjSalesHis)))
 	container.Provide(internal.NewProjSalesPlan, dig.As(new(bll.IProjSalesPlan)))
 	container.Provide(internal.NewTaxCalculation, dig.As(new(bll.ITaxCalculation)))
+	_ = container.Provide(internal.NewComContract)
+	_ = container.Provide(func(b *internal.ComContract) bll.IComContract { return b })
+	_ = container.Provide(internal.NewComContractAttachment)
+	_ = container.Provide(func(b *internal.ComContractAttachment) bll.IComContractAttachment { return b })
 	return nil
 }

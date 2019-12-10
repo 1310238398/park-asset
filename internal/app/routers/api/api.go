@@ -57,6 +57,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjSalesHis *ctl.ProjSalesHis,
 		cProjSalesPlan *ctl.ProjSalesPlan,
 		cTaxCalculation *ctl.TaxCalculation,
+		cComContract *ctl.ComContract,
 	) error {
 
 		g := app.Group("/api")
@@ -428,6 +429,29 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gTaxCalculation.POST("", cTaxCalculation.Create)
 				gTaxCalculation.PUT(":id", cTaxCalculation.Update)
 				gTaxCalculation.DELETE(":id", cTaxCalculation.Delete)
+			}
+
+			// 注册/api/v1/com-contracts
+			gComContract := v1.Group("com-contract")
+			{
+				// 查询列表
+				gComContract.GET("", cComContract.Query)
+				// 查询一条记录详细信息
+				gComContract.GET("/:id", cComContract.Get)
+				// 提交审核
+				gComContract.PUT("/:id/commit", cComContract.Commit)
+				// 取消提交审核
+				gComContract.PUT("/:id/cancelcommit", cComContract.CancelCommit)
+				// 通过审核
+				gComContract.PUT("/:id/passcheck", cComContract.PassCheck)
+				// 新建
+				gComContract.POST("", cComContract.Create)
+				// 更新
+				gComContract.PUT("/:id", cComContract.Update)
+				// 删除
+				gComContract.DELETE("/:id", cComContract.Delete)
+				// 合同生效
+				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
 			}
 
 		}

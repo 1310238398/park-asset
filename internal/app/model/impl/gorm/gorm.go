@@ -68,6 +68,8 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.ProjSalesHis),
 		new(entity.ProjSalesPlan),
 		new(entity.TaxCalculation),
+		new(entity.ComContract),
+		new(entity.ComContractAttachment),
 	).Error
 }
 
@@ -127,5 +129,8 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewProjSalesHis, dig.As(new(model.IProjSalesHis)))
 	container.Provide(imodel.NewProjSalesPlan, dig.As(new(model.IProjSalesPlan)))
 	container.Provide(imodel.NewTaxCalculation, dig.As(new(model.ITaxCalculation)))
+	container.Provide(imodel.NewComContract, dig.As(new(model.IComContract)))
+	_ = container.Provide(imodel.NewComContractAttachment)
+	_ = container.Provide(func(m *imodel.ComContractAttachment) model.IComContractAttachment { return m })
 	return nil
 }
