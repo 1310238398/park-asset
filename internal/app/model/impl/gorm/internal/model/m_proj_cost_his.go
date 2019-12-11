@@ -48,6 +48,23 @@ func (a *ProjCostHis) Query(ctx context.Context, params schema.ProjCostHisQueryP
 	return qr, nil
 }
 
+// QueryShow  查询展示数据
+func (a *ProjCostHis) QueryShow(ctx context.Context, params schema.ProjCostHisQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error) {
+	db := entity.GetProjCostHisDB(ctx, a.db)
+
+	db = db.Order("id DESC")
+
+	db.Where("proj_income_id=?", params.ProjIncomeID)
+
+	var list entity.ProjCostHises
+
+	if re := db.Find(&list); re.Error != nil {
+		return nil, re.Error
+	}
+
+	return list.ToSchemaProjCostItemShows(), nil
+}
+
 // Get 查询指定数据
 func (a *ProjCostHis) Get(ctx context.Context, recordID string, opts ...schema.ProjCostHisQueryOptions) (*schema.ProjCostHis, error) {
 	db := entity.GetProjCostHisDB(ctx, a.db).Where("record_id=?", recordID)

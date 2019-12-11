@@ -356,9 +356,33 @@ func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID, na
 			return err
 		}
 		//TODO 复制成本项
-		// pciqp := schema.ProjCostItemQueryParam{}
-		// pciqp.ProjectID = projectID
-		// pciData, err := a.ProjCostItemModel.QueryShow(ctx, pciqp)
+		pciqp := schema.ProjCostItemQueryParam{}
+		pciqp.ProjectID = projectID
+		pciData, err := a.ProjCostItemModel.QueryShow(ctx, pciqp)
+		if err != nil {
+			return err
+		}
+		pchList := []*schema.ProjCostHis{}
+
+		for _, v := range pciData {
+			if v.RecordID == "" {
+				continue
+			}
+			pch := new(schema.ProjCostHis)
+			pch.CostID = v.CostID
+			pch.CostParentID = v.CostParentID
+			pch.CostParentPath = v.CostParentPath
+			pch.Price = v.Price
+			pch.TaxPrice = v.TaxPrice
+			pch.TaxRate = v.TaxRate
+			pch.ProjIncomeID = item.RecordID
+			pch.ProjectID = projectID
+			pch.RecordID = util.MustUUID()
+			pchList = append(pchList, pch)
+		}
+		if err := a.ProjCostHisModel.CreateList(ctx, pchList); err != nil {
+			return err
+		}
 
 		//TODO 复制收益测算
 		//TODO 复制资本化利息
