@@ -105,7 +105,10 @@ func (a *ProjIncomeCalculation) Get(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, item)
+	if item == nil {
+		ginplus.ResSuccess(c, nil)
+	}
+	ginplus.ResSuccess(c, item.ToProjIncomeCalculationResult())
 }
 
 // Create 创建数据

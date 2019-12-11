@@ -14,6 +14,8 @@ type IProjCostHis interface {
 	Get(ctx context.Context, recordID string, opts ...schema.ProjCostHisQueryOptions) (*schema.ProjCostHis, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.ProjCostHis) error
+	// 批量创建数据
+	CreateList(ctx context.Context, list []*schema.ProjCostHis) error
 	// 更新数据
 	Update(ctx context.Context, recordID string, item schema.ProjCostHis) error
 	// 删除数据
