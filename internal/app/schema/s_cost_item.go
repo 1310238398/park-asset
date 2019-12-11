@@ -6,7 +6,7 @@ type CostItem struct {
 	ParentID      string          `json:"parent_id" swaggo:"false,父级ID"`                       // 父级ID
 	ParentPath    string          `json:"parent_path" swaggo:"false,父级路经"`                     // 父级路经
 	Level         int             `json:"level" swaggo:"false,层级"`                             // 层级
-	Name          string          `json:"name" swaggo:"false,成本项名称"`                           // 名称
+	Name          string          `json:"name" binding:"required" swaggo:"false,成本项名称"`        // 名称
 	TaxID         string          `json:"tax_id" swaggo:"false,税目ID"`                          // 税目ID
 	Status        int             `json:"status" swaggo:"false,状态(1:启用2:停用)"`                  // 状态(1:启用2:停用)
 	Label         int             `json:"label" swaggo:"false,标签(1:成本科目 2:测算科目)"`              // 标签(1:成本科目 2:测算科目)

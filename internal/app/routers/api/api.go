@@ -47,7 +47,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjBusinessFormat *ctl.ProjBusinessFormat,
 		cProjCapitalizedHis *ctl.ProjCapitalizedHis,
 		cProjCapitalizedInterest *ctl.ProjCapitalizedInterest,
-		cProjCostBusiness *ctl.ProjCostBusiness,
 		cProjCostHis *ctl.ProjCostHis,
 		cProjCostItem *ctl.ProjCostItem,
 		cProjDeliveryStandard *ctl.ProjDeliveryStandard,
@@ -324,16 +323,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjCapitalizedInterest.PUT("", cProjCapitalizedInterest.UpdateYear)
 				gProjCapitalizedInterest.PUT(":id", cProjCapitalizedInterest.Update)
 				gProjCapitalizedInterest.DELETE(":id", cProjCapitalizedInterest.Delete)
-			}
-
-			// 注册/api/v1/proj-cost-businesses
-			gProjCostBusiness := v1.Group("proj-cost-businesses")
-			{
-				gProjCostBusiness.GET("", cProjCostBusiness.Query)
-				gProjCostBusiness.GET(":id", cProjCostBusiness.Get)
-				gProjCostBusiness.POST("", cProjCostBusiness.Create)
-				gProjCostBusiness.PUT(":id", cProjCostBusiness.Update)
-				gProjCostBusiness.DELETE(":id", cProjCostBusiness.Delete)
 			}
 
 			// 注册/api/v1/proj-cost-his

@@ -285,9 +285,7 @@ func (a *ProjCostItem) Get(ctx context.Context, recordID string, opts ...schema.
 		RecordIDs: pCostBusinResult.Data.ToProjBusinIDs(),
 	})
 
-	item.Price, item.BusinessList = pCostBusinResult.Data.FillPrice(pBusinResult.Data.ToMap())
-
-	item.Price = util.DecimalFloat64(item.Price)
+	item.BusinessList = pCostBusinResult.Data.FillPrice(pBusinResult.Data.ToMap())
 	item.Name = costItem.Name
 
 	return item, nil
@@ -414,12 +412,13 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 						return err
 					}
 				}
-				//删除旧业态信息
-				for k, v := range oldm {
-					if v == 0 {
-						if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
-							return err
-						}
+
+			}
+			//删除旧业态信息
+			for k, v := range oldm {
+				if v == 0 {
+					if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
+						return err
 					}
 				}
 			}
@@ -571,26 +570,25 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						if w.ProjBusinessID == v.RecordID {
 							price += w.UnitPrice * v.FloorArea
 							b = false
-							t.Price = price
 							oldm[w.RecordID] = false
-							if err := a.ProjCostBusinessModel.Update(ctx, w.RecordID, *w); err != nil {
-								return b, t.Price, t.TaxPrice, err
-							}
 
 						}
 					}
 					if b { //需要新增业态信息
 						//不进行新增业态信息
 					}
-					//删除旧业态信息
-					for k, v := range oldm {
-						if v {
-							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
-								return b, t.Price, t.TaxPrice, err
-							}
+
+				}
+
+				//删除旧业态信息
+				for k, v := range oldm {
+					if v {
+						if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
+							return b, t.Price, t.TaxPrice, err
 						}
 					}
 				}
+
 			} else { //总价算单价
 				price = t.Price
 				unitprice := util.DecimalFloat64(price / projectArea)
