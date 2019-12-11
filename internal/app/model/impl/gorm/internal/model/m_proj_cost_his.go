@@ -90,3 +90,15 @@ func (a *ProjCostHis) Delete(ctx context.Context, recordID string) error {
 	}
 	return nil
 }
+
+// CreateList 批量添加
+func (a *ProjCostHis) CreateList(ctx context.Context, list []*schema.ProjCostHis) error {
+	for _, v := range list {
+		ProjCostHis := entity.SchemaProjCostHis(*v).ToProjCostHis()
+		result := entity.GetProjCostHisDB(ctx, a.db).Create(ProjCostHis)
+		if err := result.Error; err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	return nil
+}

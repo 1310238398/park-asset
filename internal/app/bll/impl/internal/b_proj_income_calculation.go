@@ -39,6 +39,7 @@ type ProjIncomeCalculation struct {
 	LandAppreciationTaxModel   model.ILandAppreciationTax
 	ProjSalesPlanModel         model.IProjSalesPlan
 	ProjCostItemModel          model.IProjCostItem
+	ProjCostHisModel           model.IProjCostHis
 }
 
 // Renew 更新收益测算
@@ -355,6 +356,10 @@ func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID, na
 			return err
 		}
 		//TODO 复制成本项
+		// pciqp := schema.ProjCostItemQueryParam{}
+		// pciqp.ProjectID = projectID
+		// pciData, err := a.ProjCostItemModel.QueryShow(ctx, pciqp)
+
 		//TODO 复制收益测算
 		//TODO 复制资本化利息
 		return nil

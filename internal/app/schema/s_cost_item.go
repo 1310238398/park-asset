@@ -22,6 +22,7 @@ type CostItemQueryParam struct {
 	PrefixParentPath string // 父级路经(前缀模糊查询)
 	Level            int    // 层级
 	LikeName         string // 成本项名称(模糊查询)
+	Label            int    // 标签
 	Name             string // 成本项名称
 }
 
