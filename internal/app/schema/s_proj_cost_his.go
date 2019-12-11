@@ -5,7 +5,7 @@ type ProjCostHis struct {
 	RecordID     string  `json:"record_id" swaggo:"false,记录ID"`          // 记录ID
 	CostID       string  `json:"cost_id" swaggo:"false,成本项ID"`           // 成本项ID
 	ProjectID    string  `json:"project_id" swaggo:"false,项目ID"`         // 项目ID
-	TaxRate      int     `json:"tax_rate" swaggo:"false,税率"`             // 税率
+	TaxRate      float64 `json:"tax_rate" swaggo:"false,税率"`             // 税率
 	TaxPrice     float64 `json:"tax_price" swaggo:"false,缴税税额"`          // 缴税税额
 	Price        float64 `json:"price" swaggo:"false,价格"`                // 价格
 	Memo         string  `json:"memo" swaggo:"false,备注"`                 // 备注
@@ -17,9 +17,11 @@ type ProjCostHis struct {
 
 // ProjCostHisQueryParam 查询条件
 type ProjCostHisQueryParam struct {
-	CostID       string // 成本项ID
-	ProjectID    string // 项目ID
-	ProjIncomeID string // 项目收益测算ID
+	CostID       string  // 成本项ID
+	Name         string  // 成本项名称
+	ProjectID    string  // 项目ID
+	ProjIncomeID string  // 项目收益测算ID
+	CostParentID *string // 成本模板上级ID
 }
 
 // ProjCostHisQueryOptions 查询可选参数项

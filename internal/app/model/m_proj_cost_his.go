@@ -10,6 +10,8 @@ import (
 type IProjCostHis interface {
 	// 查询数据
 	Query(ctx context.Context, params schema.ProjCostHisQueryParam, opts ...schema.ProjCostHisQueryOptions) (*schema.ProjCostHisQueryResult, error)
+	// 查询展示数据
+	QueryShow(ctx context.Context, params schema.ProjCostHisQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.ProjCostHisQueryOptions) (*schema.ProjCostHis, error)
 	// 创建数据

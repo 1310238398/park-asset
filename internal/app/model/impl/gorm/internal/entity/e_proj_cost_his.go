@@ -39,7 +39,7 @@ type ProjCostHis struct {
 	RecordID     *string  `gorm:"column:record_id;size:36;index;"`      // 记录ID
 	CostID       *string  `gorm:"column:cost_id;size:36;index;"`        // 成本项ID
 	ProjectID    *string  `gorm:"column:project_id;size:36;index;"`     // 项目ID
-	TaxRate      *int     `gorm:"column:tax_rate;index;"`               // 税率
+	TaxRate      *float64 `gorm:"column:tax_rate;index;"`               // 税率
 	TaxPrice     *float64 `gorm:"column:tax_price;type:decimal(20,4);"` // 缴税税额
 	Price        *float64 `gorm:"column:price;type:decimal(20,4);"`     // 价格
 	Memo         *string  `gorm:"column:memo;size:1024;"`               // 备注
