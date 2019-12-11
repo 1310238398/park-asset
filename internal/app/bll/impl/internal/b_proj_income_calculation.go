@@ -370,8 +370,8 @@ func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID, na
 			}
 			pch := new(schema.ProjCostHis)
 			pch.CostID = v.CostID
-			pch.ParentID = v.CostParentID
-			pch.ParentPath = v.CostParentPath
+			pch.CostParentID = v.CostParentID
+			pch.CostParentPath = v.CostParentPath
 			pch.Price = v.Price
 			pch.TaxPrice = v.TaxPrice
 			pch.TaxRate = v.TaxRate

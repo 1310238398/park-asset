@@ -7,13 +7,13 @@ import (
 
 // ProjIncomeCalculation 项目收益测算
 type ProjIncomeCalculation struct {
-	RecordID    string    `json:"record_id" swaggo:"false,记录ID"`                                   // 记录ID
-	VersionName string    `json:"version_name" swaggo:"false,版本名称"`                                // 版本名称
-	Sequence    int       `json:"sequence" swaggo:"false,排序值"`                                     // 排序值
-	Principal   string    `json:"principal" swaggo:"false,负责人"`                                    // 负责人
-	DoneTime    time.Time `json:"done_time" swaggo:"false,生成时间"`                                   // 生成时间
-	ProjectID   string    `json:"project_id" swaggo:"false,成本项目ID"`                                // 成本项目ID
-	Flag        int       `json:"flag" swaggo:"false,标记(1:当前版本 2:历史版本 3:最终版本(目标成本) 领导审核后 不得轻易修改)"` // 标记(1:当前版本 2:历史版本 3:最终版本 4:目标成本 领导审核后 不得轻易修改)
+	RecordID    string    `json:"record_id" swaggo:"false,记录ID"`                                         // 记录ID
+	VersionName string    `json:"version_name" swaggo:"false,版本名称"`                                      // 版本名称
+	Sequence    int       `json:"sequence" swaggo:"false,排序值"`                                           // 排序值
+	Principal   string    `json:"principal" swaggo:"false,负责人"`                                          // 负责人
+	DoneTime    time.Time `json:"done_time" swaggo:"false,生成时间"`                                         // 生成时间
+	ProjectID   string    `json:"project_id" swaggo:"false,成本项目ID"`                                      // 成本项目ID
+	Flag        int       `json:"flag" swaggo:"false,标记(1:当前版本 2:历史版本 3:审核中 4:最终版本(目标成本) 领导审核后 不得轻易修改)"` // 标记(1:当前版本 2:历史版本 3:最终版本 4:目标成本 领导审核后 不得轻易修改)
 
 	TotalSale            float64 `json:"total_sale" swaggo:"false,总销售收入"`              // 总销售收入
 	TotalSaleMemo        string  `json:"total_sale_memo" swaggo:"false,总销售收入备注"`       // 总销售收入备注

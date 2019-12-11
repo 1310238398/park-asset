@@ -2,8 +2,6 @@ package model
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
@@ -49,43 +47,17 @@ func (a *ProjCostHis) Query(ctx context.Context, params schema.ProjCostHisQueryP
 
 	return qr, nil
 }
+
+// QueryShow  查询展示数据
 func (a *ProjCostHis) QueryShow(ctx context.Context, params schema.ProjCostHisQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error) {
-	db := entity.GetDB(ctx, a.db)
-	cit := "pc_cost_item"
-	pcit := "pc_proj_cost_item_his"
-	db = db.Table(cit).Joins(fmt.Sprintf("LEFT JOIN %s ON %s.record_id=%s.cost_id AND %s.deleted_at IS NULL AND %s.proj_income_id=?",
-		pcit, cit, pcit, pcit, pcit), params.ProjIncomeID)
-	// select列表
-	selectlist := []string{
-		fmt.Sprintf("%s.record_id AS record_id", pcit),
-		fmt.Sprintf("%s.project_id AS project_id", pcit),
-		fmt.Sprintf("%s.record_id AS cost_id", cit),
-		fmt.Sprintf("%s.parent_id AS cost_parent_id", cit),
-		fmt.Sprintf("%s.parent_path AS cost_parent_path", cit),
-		fmt.Sprintf("%s.name AS name", cit),
-		fmt.Sprintf("%s.tax_id AS tax_id", cit),
-		fmt.Sprintf("%s.label AS label", cit),
-		fmt.Sprintf("%s.calculate_type AS calculate_type", cit),
-		fmt.Sprintf("%s.tax_rate AS tax_rate", pcit),
-		fmt.Sprintf("%s.tax_price AS tax_price", pcit),
-		fmt.Sprintf("%s.price AS price", pcit),
-		fmt.Sprintf("%s.memo AS memo", pcit),
-		fmt.Sprintf("%s.principal AS principal", pcit),
-		fmt.Sprintf("%s.proj_income_id AS proj_income_id", pcit),
-	}
+	db := entity.GetProjCostHisDB(ctx, a.db)
 
-	db = db.Select(strings.Join(selectlist, ","))
-	db = db.Where(fmt.Sprintf("%s.deleted_at IS NULL", cit))
-	//仅查询土增相关成本项
+	db = db.Order("id DESC")
 
-	if v := params.Name; v != "" {
-		db = db.Where(fmt.Sprintf("%s.name = ?", cit), v)
-	}
-	if v := params.CostParentID; v != nil {
-		db = db.Where(fmt.Sprintf("%s.parent_path = ?", cit), *v)
-	}
+	db.Where("proj_income_id=?", params.ProjIncomeID)
 
-	var list entity.ProjCostItemShows
+	var list entity.ProjCostHises
+
 	if re := db.Find(&list); re.Error != nil {
 		return nil, re.Error
 	}
