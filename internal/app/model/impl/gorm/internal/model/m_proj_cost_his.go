@@ -54,7 +54,11 @@ func (a *ProjCostHis) QueryShow(ctx context.Context, params schema.ProjCostHisQu
 
 	db = db.Order("id DESC")
 
-	db.Where("proj_income_id=?", params.ProjIncomeID)
+	db = db.Where("proj_income_id=?", params.ProjIncomeID)
+
+	if v := params.Label; v != 0 {
+		db = db.Where("label=?", v)
+	}
 
 	var list entity.ProjCostHises
 

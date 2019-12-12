@@ -3,6 +3,7 @@ package schema
 // ProjCostBusiness 项目成本项业态
 type ProjCostBusiness struct {
 	RecordID       string  `json:"record_id" swaggo:"false,记录ID"`          // 记录ID
+	Name           string  `json:"name" swaggo:"false,业态名称"`               //业态名称
 	ProjBusinessID string  `json:"proj_business_id" swaggo:"false,项目业态ID"` // 项目业态ID
 	ProjCostID     string  `json:"proj_cost_id" swaggo:"false,项目成本项ID"`    // 项目成本项ID
 	UnitPrice      float64 `json:"unit_price" swaggo:"false,单价"`           // 单价

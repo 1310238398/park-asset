@@ -27,7 +27,7 @@ type ProjCostItemShow struct {
 	CostID         string              `json:"cost_id" swaggo:"false,成本项ID"`                        // 成本项ID
 	CostParentID   string              `json:"cost_parent_id" swaggo:"false,成本项父级ID"`               //父级成本项ID
 	CostParentPath string              `json:"cost_parent_path" swaggo:"false,成本项父级路经"`             //成本项父级路经
-	Name           string              `json:"name" swaggo:"false,业态名称"`                            // 名称
+	Name           string              `json:"name" swaggo:"false,成本项名称"`                           // 名称
 	TaxID          string              `json:"tax_id" swaggo:"false,税目ID"`                          // 税目ID
 	Label          int                 `json:"label" swaggo:"false,标签(1:成本科目 2:测算科目)"`              // 标签(1:成本科目 2:测算科目)
 	CalculateType  int                 `json:"calculate_type" swaggo:"false,计算方式(1.单价算总价,2.总价算单价)"` //计算方式(1.单价算总价,2.总价算单价)
