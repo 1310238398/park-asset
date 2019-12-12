@@ -49,20 +49,28 @@ class HisVersion extends PureComponent {
         title: '项目净利润(万元)',
         dataIndex: 'net_profit',
         width: '10%',
-
         align: 'center',
+        render: (text, record) => {
+          return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
       },
       {
-        title: '开发成本',
+        title: '开发成本(万元)',
         dataIndex: 'total_cost',
         width: '10%',
         align: 'center',
+        render: (text, record) => {
+          return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
       },
       {
-        title: '销售收入',
+        title: '销售收入(万元)',
         dataIndex: 'total_sale',
         width: '10%',
         align: 'center',
+        render: (text, record) => {
+          return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
       },
       {
         title: '负责人',
@@ -195,6 +203,13 @@ class HisVersion extends PureComponent {
     });
   }
 
+  // 判断数值
+  statusValueW = value => {
+    if (value && value !== 0) {
+      return (value / (10000)).toFixed(2);
+    }
+    return '0';
+  };
   goToDetail(record_id) {
     console.log('goToDetail');
   

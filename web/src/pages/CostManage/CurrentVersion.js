@@ -17,6 +17,7 @@ import {
 import styles from './CostAccount.less';
 import CreateNewVersion from './CreateNewVersion';
 import SelectNewVersionMode from './SelectNewVersionMode';
+import NewVersionName from './NewVersionName';
 import {updateCurrentVersionInfo } from '@/services/costAccount';
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -349,6 +350,9 @@ class CurrentVersion extends PureComponent {
   renderSelectNewMode = () => {
     return <SelectNewVersionMode></SelectNewVersionMode>;
   };
+  renderNewVersionName = () => {
+    return <NewVersionName></NewVersionName>
+  }
 
   selectCreateMode() {
     // 选择创建方式
@@ -404,6 +408,7 @@ class CurrentVersion extends PureComponent {
         </EditableContext.Provider>
         {this.renderSaveVersion()}
         {this.renderSelectNewMode()}
+        {this.renderNewVersionName()}
       </div>
     );
   }

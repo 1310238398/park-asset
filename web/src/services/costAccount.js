@@ -169,19 +169,25 @@ export async function queryHisVersionDetail(record_id) {
   return request(`/v1/proj-income-calculations/${record_id}`);
 }
 
+// 保存版本前 先查询
+export async function queryBeforeSaveVersion(params) {
+ //  /api/v1/proj-version/:id/compare
+ return request(`/v1/proj-version/${params.project_id}/compare?list=${params.list}`);
+}
+
 // 保存旧版本（创建版本的时候覆盖上一版本）
-export async function saveOldVersion(project_id) {
+export async function saveOldVersion(params) {
  // /api/v1/proj-version/:id
-  return request(`/v1/proj-version/${project_id}`, {
+  return request(`/v1/proj-version/${params.project_id}`, {
     method: 'PUT',
-    body: params,
+    body: params.body,
   });
 }
 // 创建新版本
-export async function saveNewVersion(project_id) {
-  return request(`/v1/proj-version/${project_id}`, {
+export async function saveNewVersion(params) {
+  return request(`/v1/proj-version/${params.project_id}`, {
     method: 'POST',
-    body: params,
+    body: params.body,
   });
 }
 
