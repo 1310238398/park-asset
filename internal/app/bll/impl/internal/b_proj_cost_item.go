@@ -184,6 +184,15 @@ func (a *ProjCostItem) Init(ctx context.Context, projectID string) error {
 // QueryTree 查询数据
 func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItemQueryParam) (int, schema.ProjCostItemShows, error) {
 
+	//判断历史情况
+	his, err := a.ProjIncomeCalculationModel.GetFinish(ctx, params.ProjectID)
+	if err != nil {
+		return 0, nil, err
+	}
+	if his != nil { //查询历史数据
+		return a.queryHistory(ctx, his.RecordID)
+	}
+
 	//获取列表
 	shows, err := a.ProjCostItemModel.QueryShow(ctx, params)
 	if err != nil {
@@ -245,6 +254,7 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 			for _, v := range pcbqr.Data {
 				for _, w := range pbfqr.Data {
 					if v.ProjBusinessID == w.RecordID {
+						v.Name = w.Name
 						v.Price = util.DecimalFloat64(v.UnitPrice * w.FloorArea)
 					}
 				}
@@ -252,6 +262,56 @@ func (a *ProjCostItem) QueryTree(ctx context.Context, params schema.ProjCostItem
 			t.BusinessList = pcbqr.Data
 		}
 		return b, nil
+	}
+
+	for _, v := range result {
+		check(v)
+	}
+
+	return level, result, nil
+}
+
+// 查询旧版本数据
+func (a *ProjCostItem) queryHistory(ctx context.Context, incomeHisID string) (int, schema.ProjCostItemShows, error) {
+	pchqr := schema.ProjCostHisQueryParam{}
+	pchqr.ProjIncomeID = incomeHisID
+
+	shows, err := a.ProjCostHisModel.QueryShow(ctx, pchqr)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	//整理列表
+	var level int //树层级
+	result := schema.ProjCostItemShows{}
+	for _, v := range shows {
+		if v.CostParentID == "" {
+			result = append(result, v)
+		} else {
+			for _, k := range shows {
+				if k.CostID == v.CostParentID {
+
+					k.Children = append(k.Children, v)
+				}
+			}
+		}
+	}
+	var check func(t *schema.ProjCostItemShow) error
+
+	check = func(t *schema.ProjCostItemShow) error {
+		// 级别
+		t.Level = t.Level + 1
+		if level < t.Level {
+			level = t.Level
+		}
+
+		for _, v := range t.Children {
+			v.Level = t.Level
+			check(v)
+
+		}
+
+		return nil
 	}
 
 	for _, v := range result {

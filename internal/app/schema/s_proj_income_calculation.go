@@ -190,6 +190,55 @@ type ProjCompareItem struct {
 	Children []*ProjCompareItem  `json:"children"`  //下级目录
 }
 
+type ProjCompareItems []*ProjCompareItem
+
+func (a *ProjCompareItem) ToMap() map[string]interface{} {
+	result := map[string]interface{}{}
+	result["record_id"] = a.RecordID
+	result["type"] = a.Type
+	result["name"] = a.Name
+	result["memo"] = a.Memo
+
+	for _, v := range a.Versions {
+		result[v.VersionID] = v.Value
+	}
+
+	if len(a.Children) > 0 {
+		data := []map[string]interface{}{}
+		for _, v := range a.Children {
+			data = append(data, v.ToMap())
+		}
+		result["children"] = data
+	}
+
+	return result
+}
+
+//ProjCompareQueryResult
+type ProjCompareQueryResult struct {
+	VersionList []*KVItem                `json:"version_list"`
+	Data        []map[string]interface{} `json:"data"`
+}
+
+// ToProjCompareQueryResult 转化为比对输出结果
+func (a ProjCompareItems) ToProjCompareQueryResult() *ProjCompareQueryResult {
+	result := new(ProjCompareQueryResult)
+	if len(a) == 0 {
+		return nil
+	}
+	for _, v := range a[0].Versions {
+		result.VersionList = append(result.VersionList, &KVItem{
+			Key:   v.VersionID,
+			Value: v.Version,
+		})
+	}
+	for _, v := range a {
+		result.Data = append(result.Data, v.ToMap())
+	}
+
+	return result
+}
+
 // HasChange 对比项是否有变化
 func (a *ProjCompareItem) HasChange() bool {
 	if len(a.Versions) == 0 {

@@ -51,13 +51,14 @@ func (a *ProjCostHis) Query(ctx context.Context, params schema.ProjCostHisQueryP
 // QueryShow  查询展示数据
 func (a *ProjCostHis) QueryShow(ctx context.Context, params schema.ProjCostHisQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error) {
 	db := entity.GetProjCostHisDB(ctx, a.db)
-	if v := params.ProjIncomeID; v != "" {
-		db = db.Where("proj_income_id=?", params.ProjIncomeID)
-	}
+
+	db = db.Where("proj_income_id=?", params.ProjIncomeID)
+
 	if v := params.ProjectID; v != "" {
 		db = db.Where("project_id = ?", params.ProjectID)
-		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("label = ?", 1).SubQuery()
-		db = db.Where("cost_id IN(?)", subQuery)
+	}
+	if v := params.Label; v != 0 {
+		db = db.Where("label=?", v)
 	}
 
 	db = db.Order("id DESC")

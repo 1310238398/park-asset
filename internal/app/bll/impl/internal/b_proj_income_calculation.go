@@ -20,6 +20,8 @@ func NewProjIncomeCalculation(
 	mLandAppreciationTax model.ILandAppreciationTax,
 	mProjSalesPlan model.IProjSalesPlan,
 	mProjCostItem model.IProjCostItem,
+	mProjBusinessFormat model.IProjBusinessFormat,
+	mProjCostBusiness model.IProjCostBusiness,
 ) bll.IProjIncomeCalculation {
 	return &ProjIncomeCalculation{
 		TransModel:                 mTrans,
@@ -28,6 +30,8 @@ func NewProjIncomeCalculation(
 		LandAppreciationTaxModel:   mLandAppreciationTax,
 		ProjSalesPlanModel:         mProjSalesPlan,
 		ProjCostItemModel:          mProjCostItem,
+		ProjBusinessFormatModel:    mProjBusinessFormat,
+		ProjCostBusinessModel:      mProjCostBusiness,
 	}
 }
 
@@ -40,6 +44,8 @@ type ProjIncomeCalculation struct {
 	ProjSalesPlanModel         model.IProjSalesPlan
 	ProjCostItemModel          model.IProjCostItem
 	ProjCostHisModel           model.IProjCostHis
+	ProjBusinessFormatModel    model.IProjBusinessFormat
+	ProjCostBusinessModel      model.IProjCostBusiness
 }
 
 // Renew 更新收益测算
@@ -364,20 +370,48 @@ func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID, na
 		}
 		pchList := []*schema.ProjCostHis{}
 
+		// 获取项目业态面积
+		pbfqp := schema.ProjBusinessFormatQueryParam{}
+		pbfqp.ProjectID = projectID
+		pbfqr, err := a.ProjBusinessFormatModel.Query(ctx, pbfqp)
+		if err != nil {
+			return err
+		}
+
 		for _, v := range pciData {
 			if v.RecordID == "" {
 				continue
 			}
 			pch := new(schema.ProjCostHis)
+			pch.RecordID = util.MustUUID()
+			pch.ProjectID = projectID
+			pch.ProjIncomeID = item.RecordID
 			pch.CostID = v.CostID
+			pch.CostName = v.Name
 			pch.CostParentID = v.CostParentID
 			pch.CostParentPath = v.CostParentPath
 			pch.Price = v.Price
 			pch.TaxPrice = v.TaxPrice
 			pch.TaxRate = v.TaxRate
-			pch.ProjIncomeID = item.RecordID
-			pch.ProjectID = projectID
-			pch.RecordID = util.MustUUID()
+			pch.Label = v.Label
+
+			ps := schema.ProjCostBusinessQueryParam{}
+			ps.ProjCostID = v.RecordID
+			pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
+			if err != nil {
+				return err
+			}
+
+			for _, w := range pcbqr.Data {
+				for _, x := range pbfqr.Data {
+					if w.ProjBusinessID == x.RecordID {
+						w.Name = x.Name
+						w.Price = util.DecimalFloat64(w.UnitPrice * x.FloorArea)
+					}
+				}
+			}
+			pch.BusinessData = util.JSONMarshalToString(pcbqr.Data)
+
 			pchList = append(pchList, pch)
 		}
 		if err := a.ProjCostHisModel.CreateList(ctx, pchList); err != nil {
@@ -415,7 +449,7 @@ func (a *ProjIncomeCalculation) UpdateVersion(ctx context.Context, projectID str
 
 //GetVersionComparison 获取版本比对
 func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
-	projectID string, versions ...string) ([]*schema.ProjCompareItem, error) {
+	projectID string, versions ...string) (schema.ProjCompareItems, error) {
 	//获取版本列表（收益测算）
 	list := []*schema.ProjIncomeCalculation{}
 	for _, v := range versions {

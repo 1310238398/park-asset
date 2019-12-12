@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/util"
 
 	"github.com/jinzhu/gorm"
 )
@@ -20,15 +21,19 @@ func (a SchemaProjCostHis) ToProjCostHis() *ProjCostHis {
 	item := &ProjCostHis{
 		RecordID:       &a.RecordID,
 		CostID:         &a.CostID,
+		CostName:       &a.CostName,
+		CostParentID:   &a.CostParentID,
+		CostParentPath: &a.CostParentPath,
 		ProjectID:      &a.ProjectID,
+		TaxID:          &a.TaxID,
 		TaxRate:        &a.TaxRate,
 		TaxPrice:       &a.TaxPrice,
 		Price:          &a.Price,
 		Memo:           &a.Memo,
 		Principal:      &a.Principal,
 		ProjIncomeID:   &a.ProjIncomeID,
-		CostParentID:   &a.CostParentID,
-		CostParentPath: &a.CostParentPath,
+		Label:          &a.Label,
+		BusinessData:   &a.BusinessData,
 	}
 	return item
 }
@@ -38,6 +43,9 @@ type ProjCostHis struct {
 	CostModel
 	RecordID       *string  `gorm:"column:record_id;size:36;index;"`      // 记录ID
 	CostID         *string  `gorm:"column:cost_id;size:36;index;"`        // 成本项ID
+	CostName       *string  `gorm:"column:cost_name;size:36";`            // 成本项名称
+	CostParentID   *string  `gorm:"column:parent_id;size:36;index;"`      // 父级ID
+	CostParentPath *string  `gorm:"column:parent_path;size:518;index;"`   // 父级路径
 	ProjectID      *string  `gorm:"column:project_id;size:36;index;"`     // 项目ID
 	TaxID          *string  `gorm:"column:tax_id;size:36"`                // 税目ID
 	TaxRate        *float64 `gorm:"column:tax_rate;index;"`               // 税率
@@ -46,10 +54,8 @@ type ProjCostHis struct {
 	Memo           *string  `gorm:"column:memo;size:1024;"`               // 备注
 	Principal      *string  `gorm:"column:principal;size:200;index;"`     // 负责人
 	ProjIncomeID   *string  `gorm:"column:proj_income_id;size:36;index;"` // 项目收益测算ID
-	CostParentID   *string  `gorm:"column:parent_id;size:36;index;"`      // 父级ID
-	CostParentPath *string  `gorm:"column:parent_path;size:518;index;"`   // 父级路径
 	Label          *int     `gorm:"column:label"`                         // 标签(1:成本科目 2:测算科目)
-	BusinessData   *string  `gorm:"column:business_data;size:1024"`       //业态数据
+	BusinessData   *string  `gorm:"column:business_data;size:1024"`       // 业态数据
 }
 
 func (a ProjCostHis) String() string {
@@ -66,6 +72,8 @@ func (a ProjCostHis) ToSchemaProjCostHis() *schema.ProjCostHis {
 	item := &schema.ProjCostHis{
 		RecordID:       *a.RecordID,
 		CostID:         *a.CostID,
+		CostParentID:   *a.CostParentID,
+		CostParentPath: *a.CostParentPath,
 		ProjectID:      *a.ProjectID,
 		TaxRate:        *a.TaxRate,
 		TaxPrice:       *a.TaxPrice,
@@ -73,8 +81,6 @@ func (a ProjCostHis) ToSchemaProjCostHis() *schema.ProjCostHis {
 		Memo:           *a.Memo,
 		Principal:      *a.Principal,
 		ProjIncomeID:   *a.ProjIncomeID,
-		CostParentID:   *a.CostParentID,
-		CostParentPath: *a.CostParentPath,
 	}
 	return item
 }
@@ -98,6 +104,7 @@ func (a ProjCostHis) ToSchemaProjCostItemShow() *schema.ProjCostItemShow {
 	item.ProjectID = *a.ProjectID
 	item.ProjIncomeID = *a.ProjIncomeID
 	item.CostID = *a.CostID
+	item.Name = *a.CostName
 	item.CostParentID = *a.CostParentID
 	item.CostParentPath = *a.CostParentPath
 	item.Label = *a.Label
@@ -105,6 +112,10 @@ func (a ProjCostHis) ToSchemaProjCostItemShow() *schema.ProjCostItemShow {
 	item.Price = *a.Price
 	item.TaxPrice = *a.TaxPrice
 	item.TaxRate = *a.TaxRate
+	bl := schema.ProjCostBusinesses{}
+	if err := util.JSONUnmarshal([]byte(*a.BusinessData), &bl); err == nil {
+		item.BusinessList = bl
+	}
 
 	return item
 }
