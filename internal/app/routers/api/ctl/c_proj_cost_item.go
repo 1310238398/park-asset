@@ -35,6 +35,8 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 		a.queryTree(c)
 	case "node":
 		a.QueryNodeTree(c)
+	case "contract":
+		a.QueryContractTree(c)
 	default:
 		a.queryTree(c)
 	}
@@ -203,4 +205,27 @@ func (a *ProjCostItem) Delete(c *gin.Context) {
 		return
 	}
 	ginplus.ResOK(c)
+}
+
+// QueryContractTree 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id query string true "项目ID"
+// @Success 200 []schema.ProjContractCostTree "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-cost-items?q=contract
+func (a *ProjCostItem) QueryContractTree(c *gin.Context) {
+	projectID := c.Query("projectID")
+	if projectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	result, err := a.ProjCostItemBll.QueryContract(ginplus.NewContext(c), projectID)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result.ToContractTrees().ToTree())
 }

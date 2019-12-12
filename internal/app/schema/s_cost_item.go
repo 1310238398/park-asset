@@ -18,12 +18,14 @@ type CostItem struct {
 
 // CostItemQueryParam 查询条件
 type CostItemQueryParam struct {
-	ParentID         string // 父级ID
-	PrefixParentPath string // 父级路经(前缀模糊查询)
-	Level            int    // 层级
-	LikeName         string // 成本项名称(模糊查询)
-	Label            int    // 标签
-	Name             string // 成本项名称
+	ParentID         string   // 父级ID
+	PrefixParentPath string   // 父级路经(前缀模糊查询)
+	SuffixParentPath string   // 父级路经(后缀模糊查询)
+	Level            int      // 层级
+	LikeName         string   // 成本项名称(模糊查询)
+	Label            int      // 标签
+	Name             string   // 成本项名称
+	RecordIDs        []string // 成本项ID列表
 }
 
 // CostItemQueryOptions 查询可选参数项
@@ -83,4 +85,9 @@ func (a *CostItem) ToMap(deep *int, tmpDeep ...int) map[string]interface{} {
 type CostResult struct {
 	Tree []map[string]interface{} `json:"tree" swaggo:"false,数据结果"`  // 返回结果
 	Deep int                      `json:"deep" swaggo:"false,树最大深度"` // 树最大深度
+}
+
+// ToNameMap 转为RecordName
+func (a *CostItems) ToNameMap() map[string]string {
+	return nil
 }

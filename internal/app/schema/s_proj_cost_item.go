@@ -188,3 +188,59 @@ func (a ProjCostItemShows) ToNodeTrees() []*ProjCostItemTree {
 
 	return list
 }
+
+// ProjContractCostTree 项目合约规划成本项树结构
+type ProjContractCostTree struct {
+	RecordID       string                 `json:"record_id" swaggo:"false,记录ID"`           // 记录ID
+	Name           string                 `json:"name" swaggo:"false,成本项名称"`               // 成本项名称
+	ProjectID      string                 `json:"project_id" swaggo:"false,成本项目ID"`        // 成本项目ID
+	CostID         string                 `json:"cost_id" swaggo:"false,成本项ID"`            // 成本项ID
+	CostParentID   string                 `json:"cost_parent_id" swaggo:"false,成本项父级ID"`   // 父级成本项ID
+	CostParentPath string                 `json:"cost_parent_path" swaggo:"false,成本项父级路经"` // 成本项父级路经
+	Level          int                    `json:"level" swaggo:"false,层级"`                 // 层级
+	Children       *ProjContractCostTrees `json:"children,omitempty" swaggo:"fasle,下级成本项"` // 下级成本项
+
+}
+
+// ProjContractCostTrees 项目合约规划成本项列表
+type ProjContractCostTrees []*ProjContractCostTree
+
+// ToContractTrees 转换为项目合约规划成本项列表
+func (a ProjCostItemShows) ToContractTrees() ProjContractCostTrees {
+	list := make(ProjContractCostTrees, len(a))
+	for i, item := range a {
+		list[i] = &ProjContractCostTree{
+			RecordID:       item.RecordID,
+			Name:           item.Name,
+			CostParentID:   item.CostParentID,
+			CostParentPath: item.CostParentPath,
+			ProjectID:      item.ProjectID,
+		}
+	}
+	return list
+
+}
+
+// ToTree 转换为树形结构
+func (a ProjContractCostTrees) ToTree() []*ProjContractCostTree {
+	mi := make(map[string]*ProjContractCostTree)
+	for _, item := range a {
+		mi[item.RecordID] = item
+	}
+
+	var list []*ProjContractCostTree
+	for _, item := range a {
+		if pitem, ok := mi[item.CostParentID]; ok {
+			if pitem.Children == nil {
+				var children ProjContractCostTrees
+				children = append(children, item)
+				pitem.Children = &children
+				continue
+			}
+			*pitem.Children = append(*pitem.Children, item)
+			continue
+		}
+		list = append(list, item)
+	}
+	return list
+}

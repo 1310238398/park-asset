@@ -17,28 +17,34 @@ func NewProjCostItem(
 	mTaxCalculation model.ITaxCalculation,
 	mCostBusiness model.ICostBusiness,
 	mProjCostBusiness model.IProjCostBusiness,
+	mProjCostHis model.IProjCostHis,
 	mTrans model.ITrans,
+	mProjIncomeCalculation model.IProjIncomeCalculation,
 ) *ProjCostItem {
 	return &ProjCostItem{
-		ProjBusinessFormatModel: mProjBusinessFormat,
-		ProjCostItemModel:       mProjCostItem,
-		CostItemModel:           mCostItem,
-		TaxCalculationModel:     mTaxCalculation,
-		CostBusinessModel:       mCostBusiness,
-		ProjCostBusinessModel:   mProjCostBusiness,
-		TransModel:              mTrans,
+		ProjBusinessFormatModel:    mProjBusinessFormat,
+		ProjCostItemModel:          mProjCostItem,
+		CostItemModel:              mCostItem,
+		TaxCalculationModel:        mTaxCalculation,
+		CostBusinessModel:          mCostBusiness,
+		ProjCostBusinessModel:      mProjCostBusiness,
+		ProjCostHisModel:           mProjCostHis,
+		TransModel:                 mTrans,
+		ProjIncomeCalculationModel: mProjIncomeCalculation,
 	}
 }
 
 // ProjCostItem 项目成本项业务逻辑
 type ProjCostItem struct {
-	ProjBusinessFormatModel model.IProjBusinessFormat
-	ProjCostItemModel       model.IProjCostItem
-	CostItemModel           model.ICostItem
-	TaxCalculationModel     model.ITaxCalculation
-	CostBusinessModel       model.ICostBusiness
-	ProjCostBusinessModel   model.IProjCostBusiness
-	TransModel              model.ITrans
+	ProjBusinessFormatModel    model.IProjBusinessFormat
+	ProjCostItemModel          model.IProjCostItem
+	CostItemModel              model.ICostItem
+	TaxCalculationModel        model.ITaxCalculation
+	CostBusinessModel          model.ICostBusiness
+	ProjCostBusinessModel      model.IProjCostBusiness
+	TransModel                 model.ITrans
+	ProjCostHisModel           model.IProjCostHis
+	ProjIncomeCalculationModel model.IProjIncomeCalculation
 }
 
 // Init 项目成本项生成
@@ -669,4 +675,27 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 		check(v)
 	}
 	return nil
+}
+
+// QueryContract 查询合约规划成本项
+func (a *ProjCostItem) QueryContract(ctx context.Context, projectID string) (schema.ProjCostItemShows, error) {
+	pIncomeResult, err := a.ProjIncomeCalculationModel.Query(ctx, schema.ProjIncomeCalculationQueryParam{
+		ProjectID: projectID,
+		Flag:      4,
+	})
+	if err != nil {
+		return nil, err
+	} else if len(pIncomeResult.Data) != 1 {
+		return nil, errors.ErrNoInCome
+	}
+
+	pCostHisResult, err := a.ProjCostHisModel.QueryShow(ctx, schema.ProjCostHisQueryParam{
+		ProjIncomeID: pIncomeResult.Data[0].RecordID,
+		ProjectID:    projectID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return pCostHisResult, nil
 }

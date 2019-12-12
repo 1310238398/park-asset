@@ -44,6 +44,10 @@ func (a *CostItem) Query(ctx context.Context, params schema.CostItemQueryParam, 
 		db = db.Where("parent_path like ?", v+"%")
 	}
 
+	if v := params.SuffixParentPath; v != "" {
+		db = db.Where("parent_path like ?", "%"+v)
+	}
+
 	if v := params.Label; v != 0 {
 		db = db.Where("label=?", v)
 	}
