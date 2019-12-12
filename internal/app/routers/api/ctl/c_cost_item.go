@@ -63,7 +63,7 @@ func (a *CostItem) query(c *gin.Context) {
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param name query string false "成本科目名称(模糊查询)"
-// @Param prefix_parent_path query string false "父级路经(前缀模糊查询 record_id)"
+// @Param label query int false "科目类型：1.成本科目，2.测算科目"
 // @Success 200 []schema.CostItem "查询结果：{list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -72,11 +72,9 @@ func (a *CostItem) query(c *gin.Context) {
 func (a *CostItem) QueryList(c *gin.Context) {
 	var params schema.CostItemQueryParam
 	params.LikeName = c.Query("name")
-	params.PrefixParentPath = c.Query("prefix_parent_path")
+	params.Label = util.S(c.Query("label")).DefaultInt(0)
 
-	result, err := a.CostItemBll.Query(ginplus.NewContext(c), params, schema.CostItemQueryOptions{
-		PageParam: ginplus.GetPaginationParam(c),
-	})
+	result, err := a.CostItemBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -97,12 +95,14 @@ func (a *CostItem) QueryList(c *gin.Context) {
 func (a *CostItem) queryTree(c *gin.Context) {
 	var params schema.CostItemQueryParam
 
-	if i, err := util.S(c.Query("label")).Int(); err != nil {
-		ginplus.ResError(c, err)
-		return
-	} else {
-		params.Label = i
-	}
+	// if i, err := util.S(c.Query("label")).Int(); err != nil {
+	// 	ginplus.ResError(c, err)
+	// 	return
+	// } else {
+	// 	params.Label = i
+	// }
+
+	params.Label = util.S(c.Query("label")).DefaultInt(0)
 
 	result, err := a.CostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {

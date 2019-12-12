@@ -28,7 +28,16 @@ type ContractPlanningTemplate struct {
 
 // Query 查询数据
 func (a *ContractPlanningTemplate) Query(ctx context.Context, params schema.ContractPlanningTemplateQueryParam, opts ...schema.ContractPlanningTemplateQueryOptions) (*schema.ContractPlanningTemplateQueryResult, error) {
-	return a.ContractPlanningTemplateModel.Query(ctx, params, opts...)
+	result, err := a.ContractPlanningTemplateModel.Query(ctx, params, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.FillCostNamePath(ctx, result.Data)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 // Get 查询指定数据
@@ -38,6 +47,11 @@ func (a *ContractPlanningTemplate) Get(ctx context.Context, recordID string, opt
 		return nil, err
 	} else if item == nil {
 		return nil, errors.ErrNotFound
+	}
+
+	err = a.FillCostNamePath(ctx, schema.ContractPlanningTemplates{item})
+	if err != nil {
+		return nil, err
 	}
 
 	return item, nil
@@ -85,18 +99,21 @@ func (a *ContractPlanningTemplate) Delete(ctx context.Context, recordID string) 
 	return a.ContractPlanningTemplateModel.Delete(ctx, recordID)
 }
 
-// FillCostPathName 填充成本项路经名称
-func (a *ContractPlanningTemplate) FillCostPathName(ctx context.Context, items schema.ContractPlanningTemplates) error {
-	return nil
-}
-
-func (a *ContractPlanningTemplate) getSep() string {
-	return "/"
-}
-
-func (a *ContractPlanningTemplate) joinParentPath(ppath, costID string) string {
-	if ppath != "" {
-		ppath += a.getSep()
+// FillCostNamePath 填充成本项科目名称路经
+func (a *ContractPlanningTemplate) FillCostNamePath(ctx context.Context, items schema.ContractPlanningTemplates) error {
+	costResult, err := a.CostItemModel.Query(ctx, schema.CostItemQueryParam{
+		Label: 1,
+	})
+	if err != nil {
+		return err
 	}
-	return ppath + costID
+	m := costResult.Data.ToNameMap()
+
+	for _, item := range items {
+		if namePath, ok := m[item.CostID]; ok {
+			item.CostNamePath = namePath
+		}
+	}
+
+	return nil
 }

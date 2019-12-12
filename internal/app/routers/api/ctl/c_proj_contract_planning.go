@@ -39,8 +39,7 @@ func (a *ProjContractPlanning) Query(c *gin.Context) {
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
 // @Param project_id query string true "项目ID"
-// @Param name query string false "合同名称(模糊查询)"
-// @Param cost_id query string true "成本项ID"
+// @Param cost_id query string false "成本项ID"
 // @Success 200 []schema.ProjContractPlanning "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -49,8 +48,11 @@ func (a *ProjContractPlanning) Query(c *gin.Context) {
 func (a *ProjContractPlanning) QueryPage(c *gin.Context) {
 	var params schema.ProjContractPlanningQueryParam
 	params.ProjectID = c.Query("project_id")
-	params.LikeName = c.Query("name")
 	params.CostID = c.Query("cost_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 
 	result, err := a.ProjContractPlanningBll.Query(ginplus.NewContext(c), params, schema.ProjContractPlanningQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),

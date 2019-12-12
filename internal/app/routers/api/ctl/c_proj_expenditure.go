@@ -84,6 +84,7 @@ func (a *ProjExpenditure) QueryTree(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return
 	}
+
 	result, err := a.ProjExpenditureBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)

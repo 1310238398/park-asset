@@ -1,5 +1,9 @@
 package schema
 
+import (
+	"strings"
+)
+
 // CostItem 成本项
 type CostItem struct {
 	RecordID      string          `json:"record_id" swaggo:"false,记录ID"`                       // 记录ID
@@ -23,7 +27,7 @@ type CostItemQueryParam struct {
 	SuffixParentPath string   // 父级路经(后缀模糊查询)
 	Level            int      // 层级
 	LikeName         string   // 成本项名称(模糊查询)
-	Label            int      // 标签
+	Label            int      // 标签(1:成本科目 2:测算科目)
 	Name             string   // 成本项名称
 	RecordIDs        []string // 成本项ID列表
 }
@@ -87,7 +91,38 @@ type CostResult struct {
 	Deep int                      `json:"deep" swaggo:"false,树最大深度"` // 树最大深度
 }
 
-// ToNameMap 转为RecordName
-func (a *CostItems) ToNameMap() map[string]string {
-	return nil
+// ToNameMap 转为路经名称映射(/分割)
+func (a CostItems) ToNameMap() map[string]string {
+	mName := make(map[string]string, len(a))
+	for _, item := range a {
+		mName[item.RecordID] = item.Name
+	}
+
+	mNamePath := make(map[string]string, len(a))
+	for _, item := range a {
+		pathOfRecordID := append(strings.Split(item.ParentPath, "/"), item.RecordID)
+		pathOfName := make([]string, len(pathOfRecordID))
+		for _, recordID := range pathOfRecordID {
+			pathOfName = append(pathOfName, mName[recordID])
+		}
+		mNamePath[item.RecordID] = strings.Trim(strings.Join(pathOfName, "/"), "/")
+	}
+
+	return mNamePath
+}
+
+// FillBusiness 填充业态
+func (a CostItems) FillBusiness(buisnItems CostBusinesses) {
+	for _, costItem := range a {
+		if costItem.BusinessList == nil {
+			var list CostBusinesses
+			costItem.BusinessList = &list
+		}
+
+		for _, businItem := range buisnItems {
+			if costItem.RecordID == businItem.CostID {
+				*costItem.BusinessList = append(*costItem.BusinessList, businItem)
+			}
+		}
+	}
 }

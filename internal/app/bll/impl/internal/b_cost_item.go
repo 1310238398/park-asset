@@ -36,6 +36,12 @@ func (a *CostItem) QueryTree(ctx context.Context, params schema.CostItemQueryPar
 	if err != nil {
 		return nil, err
 	}
+
+	costBusinResult, err := a.CostBusinessModel.Query(ctx, schema.CostBusinessQueryParam{})
+	if err != nil {
+		return nil, err
+	}
+	list.Data.FillBusiness(costBusinResult.Data)
 	result := schema.CostItems{}
 	for _, v := range list.Data {
 		if v.ParentID != "" {
@@ -48,18 +54,18 @@ func (a *CostItem) QueryTree(ctx context.Context, params schema.CostItemQueryPar
 			result = append(result, v)
 		}
 		//补充业态信息
-		cbqp := schema.CostBusinessQueryParam{}
-		cbqp.CostID = v.RecordID
-		cbqr, err := a.CostBusinessModel.Query(ctx, cbqp)
-		if err != nil {
-			return nil, err
-		}
-		if len(cbqr.Data) == 0 {
-			var bList schema.CostBusinesses
-			v.BusinessList = &bList
-			continue
-		}
-		v.BusinessList = &cbqr.Data
+		// cbqp := schema.CostBusinessQueryParam{}
+		// cbqp.CostID = v.RecordID
+		// cbqr, err := a.CostBusinessModel.Query(ctx, cbqp)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// if len(cbqr.Data) == 0 {
+		// 	var bList schema.CostBusinesses
+		// 	v.BusinessList = &bList
+		// 	continue
+		// }
+		// v.BusinessList = &cbqr.Data
 	}
 
 	return result, nil

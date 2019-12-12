@@ -7,6 +7,7 @@ type ContractPlanningTemplate struct {
 	CostID       string `json:"cost_id" binding:"required" swaggo:"false,成本项ID"` // 成本项ID
 	ContractType int    `json:"contract_type" swaggo:"false,合同类型"`               // 合同类型
 	Information  string `json:"information" swaggo:"false,合同内容"`                 // 合同内容
+	CostNamePath string `json:"cost_name_path" swaggo:"false,成本名称路经"`            // 成本名称路经
 }
 
 // ContractPlanningTemplateQueryParam 查询条件

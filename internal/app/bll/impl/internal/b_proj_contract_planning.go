@@ -15,6 +15,7 @@ func NewProjContractPlanning(
 	mProjContractPlanning model.IProjContractPlanning,
 	mContractPlanningTemplate model.IContractPlanningTemplate,
 	mProjIncomeCalculation model.IProjIncomeCalculation,
+	mCostItem model.ICostItem,
 
 ) *ProjContractPlanning {
 	return &ProjContractPlanning{
@@ -22,6 +23,7 @@ func NewProjContractPlanning(
 		ProjContractPlanningModel:     mProjContractPlanning,
 		ContractPlanningTemplateModel: mContractPlanningTemplate,
 		ProjIncomeCalculationModel:    mProjIncomeCalculation,
+		CostItemModel:                 mCostItem,
 	}
 }
 
@@ -31,40 +33,27 @@ type ProjContractPlanning struct {
 	ProjContractPlanningModel     model.IProjContractPlanning
 	ContractPlanningTemplateModel model.IContractPlanningTemplate
 	ProjIncomeCalculationModel    model.IProjIncomeCalculation
+	CostItemModel                 model.ICostItem
 }
 
 // Query 查询数据
 func (a *ProjContractPlanning) Query(ctx context.Context, params schema.ProjContractPlanningQueryParam, opts ...schema.ProjContractPlanningQueryOptions) (*schema.ProjContractPlanningQueryResult, error) {
-	pIncomeResult, err := a.ProjIncomeCalculationModel.Query(ctx, schema.ProjIncomeCalculationQueryParam{
-		ProjectID: params.ProjectID,
-		Flag:      4,
-	}, schema.ProjIncomeCalculationQueryOptions{
-		PageParam: &schema.PaginationParam{
-			PageSize: -1,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	result, err := a.ProjContractPlanningModel.Query(ctx, schema.ProjContractPlanningQueryParam{
-		ProjectID: params.ProjectID,
-	}, schema.ProjContractPlanningQueryOptions{
-		PageParam: &schema.PaginationParam{
-			PageSize: -1,
-		},
-	})
+	err := a.generate(ctx, params.ProjectID)
 	if err != nil {
 		return nil, err
 	}
 
-	if pIncomeResult.PageResult.Total == 1 && result.PageResult.Total == 0 {
-		err = a.generate(ctx, params.ProjectID)
-		if err != nil {
-			return nil, err
-		}
+	result, err := a.ProjContractPlanningModel.Query(ctx, params, opts...)
+	if err != nil {
+		return nil, err
 	}
 
-	return a.ProjContractPlanningModel.Query(ctx, params, opts...)
+	err = a.FillCostNamePath(ctx, result.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // Get 查询指定数据
@@ -122,6 +111,31 @@ func (a *ProjContractPlanning) Delete(ctx context.Context, recordID string) erro
 }
 
 func (a *ProjContractPlanning) generate(ctx context.Context, projectID string) error {
+	pIncomeResult, err := a.ProjIncomeCalculationModel.Query(ctx, schema.ProjIncomeCalculationQueryParam{
+		ProjectID: projectID,
+		Flag:      4,
+	}, schema.ProjIncomeCalculationQueryOptions{
+		PageParam: &schema.PaginationParam{
+			PageSize: -1,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	sizeResult, err := a.ProjContractPlanningModel.Query(ctx, schema.ProjContractPlanningQueryParam{
+		ProjectID: projectID,
+	}, schema.ProjContractPlanningQueryOptions{
+		PageParam: &schema.PaginationParam{
+			PageSize: -1,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	if pIncomeResult.PageResult.Total != 1 && sizeResult.PageResult.Total != 0 {
+		return nil
+	}
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		templateResult, err := a.ContractPlanningTemplateModel.Query(ctx, schema.ContractPlanningTemplateQueryParam{})
 		if err != nil {
@@ -142,4 +156,24 @@ func (a *ProjContractPlanning) generate(ctx context.Context, projectID string) e
 		}
 		return nil
 	})
+
+}
+
+// FillCostNamePath 填充成本科目名路经
+func (a *ProjContractPlanning) FillCostNamePath(ctx context.Context, items schema.ProjContractPlannings) error {
+	costResult, err := a.CostItemModel.Query(ctx, schema.CostItemQueryParam{
+		Label: 1,
+	})
+	if err != nil {
+		return err
+	}
+	m := costResult.Data.ToNameMap()
+
+	for _, item := range items {
+		if namePath, ok := m[item.CostID]; ok {
+			item.CostNamePath = namePath
+		}
+	}
+
+	return nil
 }
