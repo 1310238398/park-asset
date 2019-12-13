@@ -111,35 +111,7 @@ class HisVersion extends PureComponent {
         },
       },
     ],
-    tableData: [
-      {
-        record_id: '001',
-        name: '版本1',
-        cost_id: '001', // 成本项ID
-        cost_parent_id: '', //成本项父级ID
-        cost_parent_path: '', //成本项父级路经 具体到父级ID
-
-        value: 111,
-      },
-      {
-        record_id: '002',
-        name: '版本2',
-        cost_id: '002', // 成本项ID
-        cost_parent_id: '', //成本项父级ID
-        cost_parent_path: '', //成本项父级路经 具体到父级ID
-
-        value: 111,
-      },
-      {
-        record_id: '003',
-        name: '版本3',
-        cost_id: '003', // 成本项ID
-        cost_parent_id: '', //成本项父级ID
-        cost_parent_path: '', //成本项父级路经 具体到父级ID
-
-        value: 111,
-      },
-    ],
+   
   };
 
   componentDidMount = async () => {
@@ -159,49 +131,6 @@ class HisVersion extends PureComponent {
     const { dispatch } = this.props;
     dispatch(action);
   };
-
-  isEditing = record => record.cost_id === this.state.editingKey;
-  mapEditColumns = columns => {
-    const ecolumns = [];
-    columns.forEach(item => {
-      const eitem = { ...item };
-      if (eitem.editable) {
-        eitem.onCell = record => ({
-          record,
-          inputType: eitem.inputType,
-          dataIndex: item.dataIndex,
-          title: item.title,
-          editing: this.isEditing(record),
-        });
-      }
-
-      if (eitem.children) {
-        eitem.children = this.mapEditColumns(eitem.children);
-      }
-      ecolumns.push(eitem);
-    });
-    return ecolumns;
-  };
-
-  cancel = () => {
-    this.setState({ editingKey: '' });
-  };
-  edit(key) {
-    console.log(`key:${key}`);
-    this.setState({ editingKey: key });
-  }
-
-  save(form, key) {
-    form.validateFields((error, row) => {
-      console.log('row ');
-      console.log(row);
-      if (error) {
-        return;
-      }
-
-      this.setState({ editingKey: '' });
-    });
-  }
 
   // 判断数值
   statusValueW = value => {
@@ -242,18 +171,18 @@ class HisVersion extends PureComponent {
       costAccount: { formType },
       hisVersion: {data},
     } = this.props;
-    const { tableData, columns } = this.state;
+    const {  columns } = this.state;
 
-    const ecolumns = this.mapEditColumns(columns);
+   
     return (
       <div>
         <Table
-          // components={components}
+       
           bordered
           loading={loading}
           rowKey={record => record.record_id}
           dataSource={data}//{tableData}
-          columns={formType === 'E' ? ecolumns : formType === 'V' ? view_columns : null} //{view_columns}
+          columns={columns}
           pagination={false}
           scroll={{ y: 800, x: 'calc(100%)' }}
           rowClassName="editable-row"

@@ -190,6 +190,31 @@ export async function saveNewVersion(params) {
     body: params.body,
   });
 }
+// 提交审核
+export async function submitAudit(project_id) {
+  // /api/v1/proj-version/:id/apply
+  return request(`/v1/proj-version/${project_id}/apply`, {
+    method: 'PUT', 
+    body: {},
+  });
+}
+// 通过审核
+export async function auditPass(project_id) {
+ // /api/v1/proj-version/:id/pass
+ return request(`/v1/proj-version/${project_id}/pass`, {
+  method: 'PUT', 
+  body: {},
+});
+}
+
+// 审核驳回
+export async function auditRejected(project_id) {
+  // /api/v1/proj-version/:id/reject
+  return request(`/v1/proj-version/${project_id}/reject`, {
+   method: 'PUT', 
+   body: {},
+ });
+ }
 
 // 查询项目列表树状结构（treeselect用）
 export async function queryProTree(params) {

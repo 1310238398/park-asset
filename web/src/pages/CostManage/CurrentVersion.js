@@ -18,7 +18,7 @@ import styles from './CostAccount.less';
 import CreateNewVersion from './CreateNewVersion';
 import SelectNewVersionMode from './SelectNewVersionMode';
 import NewVersionName from './NewVersionName';
-import {updateCurrentVersionInfo } from '@/services/costAccount';
+import { updateCurrentVersionInfo } from '@/services/costAccount';
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
 class EditableCell extends React.Component {
@@ -130,13 +130,16 @@ class CurrentVersion extends PureComponent {
         width: '30%',
         align: 'center',
         render: (text, record) => {
-            if (text.indexOf("%") !== -1) {
-                return <span>{text}</span>
-            }
-            else {
-                return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
-            }
-        }
+          if (text && text.indexOf('%') !== -1) {
+            return <span>{text}</span>;
+          } else {
+            return (
+              <span>
+                {text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}
+              </span>
+            );
+          }
+        },
       },
       {
         title: '备注',
@@ -164,7 +167,7 @@ class CurrentVersion extends PureComponent {
                     onClick={() =>
                       this.save(
                         form,
-                       
+
                         record.index
                       )
                     }
@@ -189,6 +192,46 @@ class CurrentVersion extends PureComponent {
       },
     ],
 
+    view_columns:  [
+      {
+        title: '序号',
+        dataIndex: 'index',
+        width: '10%',
+      },
+      {
+        title: '科目名称',
+        dataIndex: 'name',
+        width: '20%',
+        // ellipsis: true,
+        // align: 'center',
+        // fixed: 'left',
+      },
+      {
+        title: '数值(万元/%)',
+        dataIndex: 'value',
+        width: '30%',
+        align: 'center',
+        render: (text, record) => {
+          if (text && text.indexOf('%') !== -1) {
+            return <span>{text}</span>;
+          } else {
+            return (
+              <span>
+                {text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}
+              </span>
+            );
+          }
+        },
+      },
+      {
+        title: '备注',
+        dataIndex: 'memo',
+        width: '30%',
+        editable: true,
+        inputType: 'text',
+        align: 'center',
+      },
+    ],
     tableData: [
       {
         record_id: '001',
@@ -264,10 +307,10 @@ class CurrentVersion extends PureComponent {
     dispatch(action);
   };
 
-   // 判断数值
-   statusValueW = value => {
+  // 判断数值
+  statusValueW = value => {
     if (value && value !== 0) {
-      return (value / (10000)).toFixed(2);
+      return (value / 10000).toFixed(2);
     }
     return 0;
   };
@@ -304,9 +347,11 @@ class CurrentVersion extends PureComponent {
   }
 
   save(form, index) {
-      const { currentVersion: {data, currentVersionID}} = this.props;
-     
-    form.validateFields( async (error, row) => {
+    const {
+      currentVersion: { data, currentVersionID },
+    } = this.props;
+
+    form.validateFields(async (error, row) => {
       console.log('row ');
       console.log(row);
       if (error) {
@@ -323,23 +368,17 @@ class CurrentVersion extends PureComponent {
           ...item,
           ...row,
         });
-        let response; 
+        let response;
         response = await updateCurrentVersionInfo(row, currentVersionID);
-        if (response.status && response.status === "OK") {
+        if (response.status && response.status === 'OK') {
           message.success('更新成功');
           this.setState({ editingKey: '' });
           this.dispatch({
             type: 'currentVersion/saveData',
             payload: [...newData],
-              
-            
           });
-
         }
-
       }
-
-     
     });
   }
 
@@ -351,8 +390,8 @@ class CurrentVersion extends PureComponent {
     return <SelectNewVersionMode></SelectNewVersionMode>;
   };
   renderNewVersionName = () => {
-    return <NewVersionName></NewVersionName>
-  }
+    return <NewVersionName></NewVersionName>;
+  };
 
   selectCreateMode() {
     // 选择创建方式
@@ -363,14 +402,39 @@ class CurrentVersion extends PureComponent {
     });
   }
 
+  submitAudit() { // 提交审核
+    const { costAccount:{ formID }} = this.props;
+    this.dispatch({
+      type: 'currentVersion/submitExamine',
+      payload: formID,
+    });
+
+  }
+
+  auditPass() {
+    const { costAccount:{ formID }} = this.props;
+    this.dispatch({
+      type: 'currentVersion/auditPass',
+      payload: formID,
+    });
+  }
+
+  auditReject() {
+    const { costAccount:{ formID }} = this.props;
+    this.dispatch({
+      type: 'currentVersion/auditRejected',
+      payload: formID,
+    });
+  }
+
   render() {
     const {
       loading,
       form: { getFieldDecorator },
       costAccount: { formType },
-      currentVersion: { canSave, data },
+      currentVersion: { canSave, data, canExamine },
     } = this.props;
-    const { tableData, columns } = this.state;
+    const { tableData, columns, view_columns } = this.state;
 
     const components = {
       body: {
@@ -378,11 +442,35 @@ class CurrentVersion extends PureComponent {
         cell: EditableCell,
       },
     };
-
     const ecolumns = this.mapEditColumns(columns);
     return (
       <div>
         <EditableContext.Provider value={this.props.form}>
+          {
+            formType === "E" &&   <div style={{ marginTop: 0, marginBottom: 10, textAlign: 'left' }}>
+            <Button
+              type="primary"
+              disabled={!canSave}
+              style={{ marginRight: 20}}
+              onClick={() => {
+                this.selectCreateMode();
+              }}
+            >
+              保存版本
+            </Button>
+            <Button
+              type="primary"
+              disabled={!canSave}
+              onClick={() => {
+                this.submitAudit();
+              
+              }}
+            >
+              提交审核
+            </Button>
+          </div>
+          }
+        
           <Table
             components={components}
             bordered
@@ -394,17 +482,32 @@ class CurrentVersion extends PureComponent {
             scroll={{ y: 500, x: 'calc(100%)' }}
             rowClassName="editable-row"
           ></Table>
-          <div style={{ marginTop: 20, marginBottom: 20, textAlign: 'center' }}>
+          {
+            formType === 'E' && 
+            <div style={{ marginTop: 20, marginBottom: 20, textAlign: 'center' }}>
             <Button
               type="primary"
-              disabled={!canSave}
+              disabled={!canExamine}
+              style={{ marginRight: 20}}
               onClick={() => {
-                this.selectCreateMode();
+                this.auditPass();
               }}
             >
-              保存版本
+              通过
+            </Button>
+            <Button
+              type="primary"
+              disabled={!canExamine}
+             
+              onClick={() => {
+                this.auditReject();
+              }}
+            >
+              驳回
             </Button>
           </div>
+          }
+           
         </EditableContext.Provider>
         {this.renderSaveVersion()}
         {this.renderSelectNewMode()}

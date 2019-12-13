@@ -39,7 +39,6 @@ class SelectNewVersionMode extends PureComponent {
     });
     if (value === 1) {
       // 创建新的
-
       this.dispatch({
         type: 'currentVersion/fetchCompare',
         payload: {
@@ -60,7 +59,7 @@ class SelectNewVersionMode extends PureComponent {
           saveTitle: "更新版本",
           params: {
             project_id: formID,
-          list: ['current', 'beforeLast'],
+            list: ['current', 'beforeLast'],
           }
           
         },

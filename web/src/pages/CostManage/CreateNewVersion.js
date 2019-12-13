@@ -148,13 +148,15 @@ class CreateNewVersion extends PureComponent {
   };
 
   onOKClick = () => {
-    const { currentVersion : { compareTree, saveType},
+    const { currentVersion : { compareTree, saveVersionType},
     costAccount: { formID }
   
   } = this.props;
     console.log("暂存数据 ");
     console.log(compareTree);
-    if (saveType === '1') { // 创建新版本
+   
+    if (saveVersionType === '1') { // 创建新版本
+      console.log("创建新版本");
     this.dispatch({
       type: 'currentVersion/saveNewFormVisible',
       payload: false,
@@ -164,7 +166,7 @@ class CreateNewVersion extends PureComponent {
       payload: true,
     });
     }
-    else if (saveType === '2') { // 保存旧版本
+    else if (saveVersionType === '2') { // 保存旧版本
 
       this.dispatch({
         type: 'currentVersion/updateOldVersion',
@@ -294,48 +296,48 @@ class CreateNewVersion extends PureComponent {
       
       },
       {
-        title: <div>{compareVersionList[0] && compareVersionList[0].name || '上一版本'}<br></br>(万元/%)</div>,
+        title: <div>{compareVersionList[0] && compareVersionList[0].value || '上一版本'}<br></br>(万元/%)</div>,
         dataIndex: compareVersionList[0] && compareVersionList[0].key || 'last',
         width: '15%',
 
         align: 'center',
         render: (text, record) => {
-          if (text.indexOf("%") !== -1) {
+          if (text && text.indexOf("%") !== -1) {
             return <span>{text}</span>
         }
         else {
-            return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+            return <span>{ text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
         }
         }
       },
       {
-        title: <div>{compareVersionList[1] && compareVersionList[1].name || '当前版本'}<br></br>(万元/%)</div>,
+        title: <div>{compareVersionList[1] && compareVersionList[1].value || '当前版本'}<br></br>(万元/%)</div>,
         dataIndex: compareVersionList[1] && compareVersionList[1].key || 'current',
         width: '15%',
         align: 'center',
         render: (text, record) => {
-          if (text.indexOf("%") !== -1) {
+          if (text && text.indexOf("%") !== -1) {
             return <span>{text}</span>
         }
         else {
-            return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+            return <span>{text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
         }
         }
       },
-      // {
-      //   title: <div>差额<br></br>(万元/%)</div>,
-      //   dataIndex: 'difference',
-      //   width: '15%',
-      //   align: 'center',
-      //   render: (text, record) => {
-      //     if (text.indexOf("%") !== -1) {
-      //       return <span>{text}</span>
-      //   }
-      //   else {
-      //       return <span>{this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
-      //   }
-      //   }
-      // },
+      {
+        title: <div>差额<br></br>(万元/%)</div>,
+        dataIndex: 'changed',
+        width: '15%',
+        align: 'center',
+        render: (text, record) => {
+          if (text && text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
+      },
       {
         title: '备注',
         dataIndex: 'memo',
@@ -389,6 +391,70 @@ class CreateNewVersion extends PureComponent {
         },
       },
     ];
+    const view_columns = [
+      {
+        title: '科目名称',
+        dataIndex: 'name',
+        width: '20%',
+      
+      },
+      {
+        title: <div>{compareVersionList[0] && compareVersionList[0].value || '上一版本'}<br></br>(万元/%)</div>,
+        dataIndex: compareVersionList[0] && compareVersionList[0].key || 'last',
+        width: '15%',
+
+        align: 'center',
+        render: (text, record) => {
+          if (text && text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{ text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
+      },
+      {
+        title: <div>{compareVersionList[1] && compareVersionList[1].value || '当前版本'}<br></br>(万元/%)</div>,
+        dataIndex: compareVersionList[1] && compareVersionList[1].key || 'current',
+        width: '15%',
+        align: 'center',
+        render: (text, record) => {
+          if (text && text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
+      },
+      {
+        title: <div>差额<br></br>(万元/%)</div>,
+        dataIndex: 'changed',
+        width: '15%',
+        align: 'center',
+        render: (text, record) => {
+          if (text && text.indexOf("%") !== -1) {
+            return <span>{text}</span>
+        }
+        else {
+            return <span>{text && this.statusValueW(text).replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}</span>
+        }
+        }
+      },
+      {
+        title: '备注',
+        dataIndex: 'memo',
+        width: '20%',
+        editable: true,
+        inputType: 'text',
+        align: 'center',
+      },
+    ];
+
+    if (compareVersionList.length === 1) {
+      columns.splice(2, 2);
+      view_columns.splice(2, 2);
+    }
     const components = {
       body: {
         //row: EditableFormRow,

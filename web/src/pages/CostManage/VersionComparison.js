@@ -138,15 +138,21 @@ class VersionComparison extends PureComponent {
       console.log(formData);
       // 更新table 表头
    
-      this.setState({ columns: [...columns_new] });
+      // let co = {
+      //   title: JSON.parse(formData.start_version).version_name,
+      //   dataIndex: 'test',
+      //   width: 150,
+      // };
+      // columns_new.splice(1, 0 , co);
+      // this.setState({ columns: [...columns_new] });
 
       let list = [];
-      list.push(JSON.parse(formData.start_version).record_id);
+      list.push(formData.start_version);
       for (let i = 0; i < formData.middle_version.length; i++) {
-        list.push(JSON.parse(formData.middle_version[i]).record_id);
+        list.push(formData.middle_version[i]);
       }
 
-      list.push(JSON.parse(formData.end_version).record_id);
+      list.push(formData.end_version);
 
       this.dispatch({
         type: 'versionComparison/fetchCompare',
@@ -175,9 +181,21 @@ class VersionComparison extends PureComponent {
       form: { getFieldDecorator },
 
       hisVersion: { data },
+      versionComparison: { compareVersionList}
     } = this.props;
     const { versionList } = this.state;
     let versions = [...data];
+    let compareVersionList_temp = [];
+
+   for (let i = 0; i < compareVersionList.length; i++) {
+
+    if (i === 0 || i === (compareVersionList.length - 1)) {
+
+      continue;
+    }
+
+    compareVersionList_temp.push(compareVersionList[i].key);
+   }
     return (
       <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
         <Row gutter={16}>
@@ -186,11 +204,13 @@ class VersionComparison extends PureComponent {
               label="起始版本"
               style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
-              {getFieldDecorator('start_version')(
+              {getFieldDecorator('start_version', {
+                initialValue: compareVersionList[0] && compareVersionList[0].key,
+              })(
                 <Select placeholder="请选择起始版本" style={{ width: '100%' }}>
                   {versions &&
                     versions.map(item => (
-                      <Select.Option key={item.record_id} value={JSON.stringify(item)}>
+                      <Select.Option key={item.record_id} value={item.record_id}>
                         {item.version_name}
                       </Select.Option>
                     ))}
@@ -203,11 +223,13 @@ class VersionComparison extends PureComponent {
               label="中间版本"
               style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
-              {getFieldDecorator('middle_version')(
+              {getFieldDecorator('middle_version', {
+                initialValue: compareVersionList_temp,
+              })(
                 <Select placeholder="请选择中间版本" style={{ width: '100%' }} mode="multiple">
                   {versions &&
                     versions.map(item => (
-                      <Select.Option key={item.record_id} value={JSON.stringify(item)}>
+                      <Select.Option key={item.record_id} value={item.record_id}>
                         {item.version_name}
                       </Select.Option>
                     ))}
@@ -220,11 +242,13 @@ class VersionComparison extends PureComponent {
               label="最终版本"
               style={{ paddingBottom: 10, paddingTop: 0, marginBottom: 0 }}
             >
-              {getFieldDecorator('end_version')(
+              {getFieldDecorator('end_version', {
+                initialValue: compareVersionList[compareVersionList.length - 1] && compareVersionList[compareVersionList.length - 1].key,
+              })(
                 <Select placeholder="请选择最终版本" style={{ width: '100%' }}>
                   {versions &&
                     versions.map(item => (
-                      <Select.Option key={item.record_id} value={JSON.stringify(item)}>
+                      <Select.Option key={item.record_id} value={item.record_id}>
                         {item.version_name}
                       </Select.Option>
                     ))}
@@ -254,9 +278,9 @@ class VersionComparison extends PureComponent {
       loading,
       form: { getFieldDecorator },
       costAccount: { formType },
-      versionComparison: { data },
+      versionComparison: { data,  columns },
     } = this.props;
-    const { columns } = this.state;
+   
 
     return (
       <div className={styles.tableList}>
@@ -267,7 +291,7 @@ class VersionComparison extends PureComponent {
             loading={loading}
             rowKey={record => record.record_id}
             dataSource={data}
-            columns={columns} //{view_columns}
+            columns={columns} 
             pagination={false}
             scroll={{ y: 800, x: 'calc(100%)' }}
             // rowClassName="editable-row"
