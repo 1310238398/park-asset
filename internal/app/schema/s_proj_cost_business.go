@@ -46,7 +46,7 @@ func (a ProjCostBusinesses) ToProjBusinIDs() []string {
 }
 
 // FillPrice 填充价格
-func (a ProjCostBusinesses) FillPrice(m map[string]*ProjBusinessFormat) (float64, ProjCostBusinesses) {
+func (a ProjCostBusinesses) FillPrice(m map[string]*ProjBusinessFormat) ProjCostBusinesses {
 	var price float64
 	for _, item := range a {
 		if pBusinItem, ok := m[item.ProjBusinessID]; ok {
@@ -55,5 +55,5 @@ func (a ProjCostBusinesses) FillPrice(m map[string]*ProjBusinessFormat) (float64
 		}
 	}
 
-	return price, a
+	return a
 }

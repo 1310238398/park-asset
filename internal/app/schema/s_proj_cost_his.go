@@ -26,7 +26,7 @@ type ProjCostHisQueryParam struct {
 	ProjectID    string  // 项目ID
 	ProjIncomeID string  // 项目收益测算ID
 	CostParentID *string // 成本模板上级ID
-	Label        int     //科目类型1.成本科目，2.测算科目
+	Label        int     // 科目类型1.成本科目，2.测算科目
 }
 
 // ProjCostHisQueryOptions 查询可选参数项

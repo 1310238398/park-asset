@@ -6,17 +6,17 @@ import (
 
 // ProjCostItem 项目成本项
 type ProjCostItem struct {
-	RecordID     string              `json:"record_id" swaggo:"false,记录ID"`                       // 记录ID
-	ProjectID    string              `json:"project_id" binding:"required" swaggo:"false,成本项目ID"` // 成本项目ID
-	CostID       string              `json:"cost_id" swaggo:"false,成本项ID"`                        // 成本项ID
-	TaxRate      float64             `json:"tax_rate" swaggo:"false,税率"`                          // 税率
-	TaxPrice     float64             `json:"tax_price" swaggo:"false,缴税税额"`                       // 缴税税额
-	Name         string              `json:"name" swaggo:"false,项目成本项名称"`                         // 名称
-	Price        float64             `json:"price" swaggo:"false,成本项价格"`                          // 成本项价格
-	Memo         string              `json:"memo" swaggo:"false,备注"`                              // 备注
-	Principal    string              `json:"principal" swaggo:"false,负责人"`                        // 负责人
-	ProjIncomeID string              `json:"proj_income_id" swaggo:"false,项目收益测算ID"`              // 项目收益测算ID
-	BusinessList []*ProjCostBusiness `json:"business_list" swaggo:"false,成本下业态列表"`                // 成本下业态列表
+	RecordID     string             `json:"record_id" swaggo:"false,记录ID"`                       // 记录ID
+	ProjectID    string             `json:"project_id" binding:"required" swaggo:"false,成本项目ID"` // 成本项目ID
+	CostID       string             `json:"cost_id" swaggo:"false,成本项ID"`                        // 成本项ID
+	TaxRate      float64            `json:"tax_rate" swaggo:"false,税率"`                          // 税率
+	TaxPrice     float64            `json:"tax_price" swaggo:"false,缴税税额"`                       // 缴税税额
+	Name         string             `json:"name" swaggo:"false,项目成本项名称"`                         // 名称
+	Price        float64            `json:"price" swaggo:"false,成本项价格"`                          // 成本项价格
+	Memo         string             `json:"memo" swaggo:"false,备注"`                              // 备注
+	Principal    string             `json:"principal" swaggo:"false,负责人"`                        // 负责人
+	ProjIncomeID string             `json:"proj_income_id" swaggo:"false,项目收益测算ID"`              // 项目收益测算ID
+	BusinessList ProjCostBusinesses `json:"business_list" swaggo:"false,成本下业态列表"`                // 成本下业态列表
 }
 
 // ProjCostItem 项目成本项展示
@@ -186,5 +186,61 @@ func (a ProjCostItemShows) ToNodeTrees() []*ProjCostItemTree {
 
 	}
 
+	return list
+}
+
+// ProjContractCostTree 项目合约规划成本项树结构
+type ProjContractCostTree struct {
+	RecordID       string                 `json:"record_id" swaggo:"false,记录ID"`           // 记录ID
+	Name           string                 `json:"name" swaggo:"false,成本项名称"`               // 成本项名称
+	ProjectID      string                 `json:"project_id" swaggo:"false,成本项目ID"`        // 成本项目ID
+	CostID         string                 `json:"cost_id" swaggo:"false,成本项ID"`            // 成本项ID
+	CostParentID   string                 `json:"cost_parent_id" swaggo:"false,成本项父级ID"`   // 父级成本项ID
+	CostParentPath string                 `json:"cost_parent_path" swaggo:"false,成本项父级路经"` // 成本项父级路经
+	Level          int                    `json:"level" swaggo:"false,层级"`                 // 层级
+	Children       *ProjContractCostTrees `json:"children,omitempty" swaggo:"fasle,下级成本项"` // 下级成本项
+
+}
+
+// ProjContractCostTrees 项目合约规划成本项列表
+type ProjContractCostTrees []*ProjContractCostTree
+
+// ToContractTrees 转换为项目合约规划成本项列表
+func (a ProjCostItemShows) ToContractTrees() ProjContractCostTrees {
+	list := make(ProjContractCostTrees, len(a))
+	for i, item := range a {
+		list[i] = &ProjContractCostTree{
+			RecordID:       item.RecordID,
+			Name:           item.Name,
+			CostParentID:   item.CostParentID,
+			CostParentPath: item.CostParentPath,
+			ProjectID:      item.ProjectID,
+		}
+	}
+	return list
+
+}
+
+// ToTree 转换为树形结构
+func (a ProjContractCostTrees) ToTree() []*ProjContractCostTree {
+	mi := make(map[string]*ProjContractCostTree)
+	for _, item := range a {
+		mi[item.RecordID] = item
+	}
+
+	var list []*ProjContractCostTree
+	for _, item := range a {
+		if pitem, ok := mi[item.CostParentID]; ok {
+			if pitem.Children == nil {
+				var children ProjContractCostTrees
+				children = append(children, item)
+				pitem.Children = &children
+				continue
+			}
+			*pitem.Children = append(*pitem.Children, item)
+			continue
+		}
+		list = append(list, item)
+	}
 	return list
 }

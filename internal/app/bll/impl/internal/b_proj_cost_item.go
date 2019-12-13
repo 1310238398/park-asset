@@ -17,9 +17,9 @@ func NewProjCostItem(
 	mTaxCalculation model.ITaxCalculation,
 	mCostBusiness model.ICostBusiness,
 	mProjCostBusiness model.IProjCostBusiness,
+	mProjCostHis model.IProjCostHis,
 	mTrans model.ITrans,
 	mProjIncomeCalculation model.IProjIncomeCalculation,
-	mProjCostHis model.IProjCostHis,
 ) *ProjCostItem {
 	return &ProjCostItem{
 		ProjBusinessFormatModel:    mProjBusinessFormat,
@@ -28,9 +28,9 @@ func NewProjCostItem(
 		TaxCalculationModel:        mTaxCalculation,
 		CostBusinessModel:          mCostBusiness,
 		ProjCostBusinessModel:      mProjCostBusiness,
+		ProjCostHisModel:           mProjCostHis,
 		TransModel:                 mTrans,
 		ProjIncomeCalculationModel: mProjIncomeCalculation,
-		ProjCostHisModel:           mProjCostHis,
 	}
 }
 
@@ -43,8 +43,8 @@ type ProjCostItem struct {
 	CostBusinessModel          model.ICostBusiness
 	ProjCostBusinessModel      model.IProjCostBusiness
 	TransModel                 model.ITrans
-	ProjIncomeCalculationModel model.IProjIncomeCalculation
 	ProjCostHisModel           model.IProjCostHis
+	ProjIncomeCalculationModel model.IProjIncomeCalculation
 }
 
 // Init 项目成本项生成
@@ -351,9 +351,7 @@ func (a *ProjCostItem) Get(ctx context.Context, recordID string, opts ...schema.
 		RecordIDs: pCostBusinResult.Data.ToProjBusinIDs(),
 	})
 
-	item.Price, item.BusinessList = pCostBusinResult.Data.FillPrice(pBusinResult.Data.ToMap())
-
-	item.Price = util.DecimalFloat64(item.Price)
+	item.BusinessList = pCostBusinResult.Data.FillPrice(pBusinResult.Data.ToMap())
 	item.Name = costItem.Name
 
 	return item, nil
@@ -480,12 +478,13 @@ func (a *ProjCostItem) Update(ctx context.Context, recordID string, item schema.
 						return err
 					}
 				}
-				//删除旧业态信息
-				for k, v := range oldm {
-					if v == 0 {
-						if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
-							return err
-						}
+
+			}
+			//删除旧业态信息
+			for k, v := range oldm {
+				if v == 0 {
+					if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
+						return err
 					}
 				}
 			}
@@ -637,26 +636,25 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 						if w.ProjBusinessID == v.RecordID {
 							price += w.UnitPrice * v.FloorArea
 							b = false
-							t.Price = price
 							oldm[w.RecordID] = false
-							if err := a.ProjCostBusinessModel.Update(ctx, w.RecordID, *w); err != nil {
-								return b, t.Price, t.TaxPrice, err
-							}
 
 						}
 					}
 					if b { //需要新增业态信息
 						//不进行新增业态信息
 					}
-					//删除旧业态信息
-					for k, v := range oldm {
-						if v {
-							if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
-								return b, t.Price, t.TaxPrice, err
-							}
+
+				}
+
+				//删除旧业态信息
+				for k, v := range oldm {
+					if v {
+						if err := a.ProjCostBusinessModel.Delete(ctx, k); err != nil {
+							return b, t.Price, t.TaxPrice, err
 						}
 					}
 				}
+
 			} else { //总价算单价
 				price = t.Price
 				unitprice := util.DecimalFloat64(price / projectArea)
@@ -737,4 +735,27 @@ func (a *ProjCostItem) renew(ctx context.Context, projectID string) error {
 		check(v)
 	}
 	return nil
+}
+
+// QueryContract 查询合约规划成本项
+func (a *ProjCostItem) QueryContract(ctx context.Context, projectID string) (schema.ProjCostItemShows, error) {
+	pIncomeResult, err := a.ProjIncomeCalculationModel.Query(ctx, schema.ProjIncomeCalculationQueryParam{
+		ProjectID: projectID,
+		Flag:      4,
+	})
+	if err != nil {
+		return nil, err
+	} else if len(pIncomeResult.Data) != 1 {
+		return nil, errors.ErrNoInCome
+	}
+
+	pCostHisResult, err := a.ProjCostHisModel.QueryShow(ctx, schema.ProjCostHisQueryParam{
+		ProjIncomeID: pIncomeResult.Data[0].RecordID,
+		ProjectID:    projectID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return pCostHisResult, nil
 }

@@ -52,13 +52,16 @@ func (a *ProjCostHis) Query(ctx context.Context, params schema.ProjCostHisQueryP
 func (a *ProjCostHis) QueryShow(ctx context.Context, params schema.ProjCostHisQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error) {
 	db := entity.GetProjCostHisDB(ctx, a.db)
 
-	db = db.Order("id DESC")
-
 	db = db.Where("proj_income_id=?", params.ProjIncomeID)
 
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", params.ProjectID)
+	}
 	if v := params.Label; v != 0 {
 		db = db.Where("label=?", v)
 	}
+
+	db = db.Order("id DESC")
 
 	var list entity.ProjCostHises
 

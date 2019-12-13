@@ -28,7 +28,7 @@ func (a *CostItem) Query(c *gin.Context) {
 	q := c.Query("q")
 	switch q {
 	case "list":
-		a.query(c)
+		a.QueryList(c)
 	case "tree":
 		a.queryTree(c)
 	default:
@@ -45,13 +45,36 @@ func (a *CostItem) Query(c *gin.Context) {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/cost-items?q=list
+// @Router GET /api/v1/cost-items?q=page
 func (a *CostItem) query(c *gin.Context) {
 	var params schema.CostItemQueryParam
 
 	result, err := a.CostItemBll.Query(ginplus.NewContext(c), params, schema.CostItemQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param name query string false "成本科目名称(模糊查询)"
+// @Param label query int false "科目类型：1.成本科目，2.测算科目"
+// @Success 200 []schema.CostItem "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/cost-items?q=list
+func (a *CostItem) QueryList(c *gin.Context) {
+	var params schema.CostItemQueryParam
+	params.LikeName = c.Query("name")
+	params.Label = util.S(c.Query("label")).DefaultInt(0)
+
+	result, err := a.CostItemBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -72,12 +95,14 @@ func (a *CostItem) query(c *gin.Context) {
 func (a *CostItem) queryTree(c *gin.Context) {
 	var params schema.CostItemQueryParam
 
-	if i, err := util.S(c.Query("label")).Int(); err != nil {
-		ginplus.ResError(c, err)
-		return
-	} else {
-		params.Label = i
-	}
+	// if i, err := util.S(c.Query("label")).Int(); err != nil {
+	// 	ginplus.ResError(c, err)
+	// 	return
+	// } else {
+	// 	params.Label = i
+	// }
+
+	params.Label = util.S(c.Query("label")).DefaultInt(0)
 
 	result, err := a.CostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
