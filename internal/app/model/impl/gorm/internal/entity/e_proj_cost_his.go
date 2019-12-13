@@ -55,7 +55,7 @@ type ProjCostHis struct {
 	Principal      *string  `gorm:"column:principal;size:200;index;"`     // 负责人
 	ProjIncomeID   *string  `gorm:"column:proj_income_id;size:36;index;"` // 项目收益测算ID
 	Label          *int     `gorm:"column:label"`                         // 标签(1:成本科目 2:测算科目)
-	BusinessData   *string  `gorm:"column:business_data;size:1024"`       // 业态数据
+	BusinessData   *string  `gorm:"column:business_data;type:longtext"`   // 业态数据
 }
 
 func (a ProjCostHis) String() string {
