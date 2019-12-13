@@ -3,7 +3,7 @@ package schema
 // BusinessFormat 业态
 type BusinessFormat struct {
 	RecordID       string `json:"record_id" swaggo:"false,记录ID"`                  // 记录ID
-	Name           string `json:"name" swaggo:"false,业态名称"`                       // 业态名称
+	Name           string `json:"name" binding:"required" swaggo:"false,业态名称"`    // 业态名称
 	ISUnderground  int    `json:"is_underground" swaggo:"false,是否位于地下(1:是2:否)"`   // 是否位于地下(1:是2:否)
 	ISCivilDefense int    `json:"is_civil_defense" swaggo:"false,是否属于人防(1:是2:否)"` // 是否属于人防(1:是2:否)
 	Memo           string `json:"memo" swaggo:"false,备注"`                         // 备注

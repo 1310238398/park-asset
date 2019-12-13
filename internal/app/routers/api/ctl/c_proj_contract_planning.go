@@ -9,26 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// NewProjCostHis 创建项目成本项历史控制器
-func NewProjCostHis(bProjCostHis bll.IProjCostHis) *ProjCostHis {
-	return &ProjCostHis{
-		ProjCostHisBll: bProjCostHis,
+// NewProjContractPlanning 创建项目合约规划控制器
+func NewProjContractPlanning(bProjContractPlanning bll.IProjContractPlanning) *ProjContractPlanning {
+	return &ProjContractPlanning{
+		ProjContractPlanningBll: bProjContractPlanning,
 	}
 }
 
-// ProjCostHis 项目成本项历史
-// @Name ProjCostHis
-// @Description 项目成本项历史控制器
-type ProjCostHis struct {
-	ProjCostHisBll bll.IProjCostHis
+// ProjContractPlanning 项目合约规划
+// @Name ProjContractPlanning
+// @Description 项目合约规划控制器
+type ProjContractPlanning struct {
+	ProjContractPlanningBll bll.IProjContractPlanning
 }
 
 // Query 查询数据
-func (a *ProjCostHis) Query(c *gin.Context) {
+func (a *ProjContractPlanning) Query(c *gin.Context) {
 	switch c.Query("q") {
 	case "page":
 		a.QueryPage(c)
-
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -39,15 +38,23 @@ func (a *ProjCostHis) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
-// @Success 200 []schema.ProjCostHis "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Param project_id query string true "项目ID"
+// @Param cost_id query string false "成本项ID"
+// @Success 200 []schema.ProjContractPlanning "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-cost-his?q=page
-func (a *ProjCostHis) QueryPage(c *gin.Context) {
-	var params schema.ProjCostHisQueryParam
+// @Router GET /api/v1/proj-contract-plannings
+func (a *ProjContractPlanning) QueryPage(c *gin.Context) {
+	var params schema.ProjContractPlanningQueryParam
+	params.ProjectID = c.Query("project_id")
+	params.CostID = c.Query("cost_id")
+	if params.ProjectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
 
-	result, err := a.ProjCostHisBll.Query(ginplus.NewContext(c), params, schema.ProjCostHisQueryOptions{
+	result, err := a.ProjContractPlanningBll.Query(ginplus.NewContext(c), params, schema.ProjContractPlanningQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
 	})
 	if err != nil {
@@ -61,13 +68,13 @@ func (a *ProjCostHis) QueryPage(c *gin.Context) {
 // @Summary 查询指定数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 schema.ProjCostHis
+// @Success 200 schema.ProjContractPlanning
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-cost-his/{id}
-func (a *ProjCostHis) Get(c *gin.Context) {
-	item, err := a.ProjCostHisBll.Get(ginplus.NewContext(c), c.Param("id"))
+// @Router GET /api/v1/proj-contract-plannings/{id}
+func (a *ProjContractPlanning) Get(c *gin.Context) {
+	item, err := a.ProjContractPlanningBll.Get(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -78,20 +85,20 @@ func (a *ProjCostHis) Get(c *gin.Context) {
 // Create 创建数据
 // @Summary 创建数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param body body schema.ProjCostHis true
-// @Success 200 schema.ProjCostHis
+// @Param body body schema.ProjContractPlanning true
+// @Success 200 schema.ProjContractPlanning
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router POST /api/v1/proj-cost-his
-func (a *ProjCostHis) Create(c *gin.Context) {
-	var item schema.ProjCostHis
+// @Router POST /api/v1/proj-contract-plannings
+func (a *ProjContractPlanning) Create(c *gin.Context) {
+	var item schema.ProjContractPlanning
 	if err := ginplus.ParseJSON(c, &item); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	nitem, err := a.ProjCostHisBll.Create(ginplus.NewContext(c), item)
+	nitem, err := a.ProjContractPlanningBll.Create(ginplus.NewContext(c), item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -103,20 +110,20 @@ func (a *ProjCostHis) Create(c *gin.Context) {
 // @Summary 更新数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Param body body schema.ProjCostHis true
-// @Success 200 schema.ProjCostHis
+// @Param body body schema.ProjContractPlanning true
+// @Success 200 schema.ProjContractPlanning
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/proj-cost-his/{id}
-func (a *ProjCostHis) Update(c *gin.Context) {
-	var item schema.ProjCostHis
+// @Router PUT /api/v1/proj-contract-plannings/{id}
+func (a *ProjContractPlanning) Update(c *gin.Context) {
+	var item schema.ProjContractPlanning
 	if err := ginplus.ParseJSON(c, &item); err != nil {
 		ginplus.ResError(c, err)
 		return
 	}
 
-	nitem, err := a.ProjCostHisBll.Update(ginplus.NewContext(c), c.Param("id"), item)
+	nitem, err := a.ProjContractPlanningBll.Update(ginplus.NewContext(c), c.Param("id"), item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -131,9 +138,9 @@ func (a *ProjCostHis) Update(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router DELETE /api/v1/proj-cost-his/{id}
-func (a *ProjCostHis) Delete(c *gin.Context) {
-	err := a.ProjCostHisBll.Delete(ginplus.NewContext(c), c.Param("id"))
+// @Router DELETE /api/v1/proj-contract-plannings/{id}
+func (a *ProjContractPlanning) Delete(c *gin.Context) {
+	err := a.ProjContractPlanningBll.Delete(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
 		ginplus.ResError(c, err)
 		return

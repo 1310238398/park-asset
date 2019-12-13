@@ -47,7 +47,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjBusinessFormat *ctl.ProjBusinessFormat,
 		cProjCapitalizedHis *ctl.ProjCapitalizedHis,
 		cProjCapitalizedInterest *ctl.ProjCapitalizedInterest,
-		cProjCostBusiness *ctl.ProjCostBusiness,
 		cProjCostHis *ctl.ProjCostHis,
 		cProjCostItem *ctl.ProjCostItem,
 		cProjDeliveryStandard *ctl.ProjDeliveryStandard,
@@ -57,6 +56,9 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjSalesHis *ctl.ProjSalesHis,
 		cProjSalesPlan *ctl.ProjSalesPlan,
 		cTaxCalculation *ctl.TaxCalculation,
+		cContractPlanningTemplate *ctl.ContractPlanningTemplate,
+		cBusinessPartner *ctl.BusinessPartner,
+		cProjContractPlanning *ctl.ProjContractPlanning,
 	) error {
 
 		g := app.Group("/api")
@@ -326,16 +328,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjCapitalizedInterest.DELETE(":id", cProjCapitalizedInterest.Delete)
 			}
 
-			// 注册/api/v1/proj-cost-businesses
-			gProjCostBusiness := v1.Group("proj-cost-businesses")
-			{
-				gProjCostBusiness.GET("", cProjCostBusiness.Query)
-				gProjCostBusiness.GET(":id", cProjCostBusiness.Get)
-				gProjCostBusiness.POST("", cProjCostBusiness.Create)
-				gProjCostBusiness.PUT(":id", cProjCostBusiness.Update)
-				gProjCostBusiness.DELETE(":id", cProjCostBusiness.Delete)
-			}
-
 			// 注册/api/v1/proj-cost-his
 			gProjCostHis := v1.Group("proj-cost-his")
 			{
@@ -442,6 +434,36 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gTaxCalculation.POST("", cTaxCalculation.Create)
 				gTaxCalculation.PUT(":id", cTaxCalculation.Update)
 				gTaxCalculation.DELETE(":id", cTaxCalculation.Delete)
+			}
+
+			// 注册/api/v1/contract-planning-templates
+			gContractPlanningTemplate := v1.Group("contract-planning-templates")
+			{
+				gContractPlanningTemplate.GET("", cContractPlanningTemplate.Query)
+				gContractPlanningTemplate.GET(":id", cContractPlanningTemplate.Get)
+				gContractPlanningTemplate.POST("", cContractPlanningTemplate.Create)
+				gContractPlanningTemplate.PUT(":id", cContractPlanningTemplate.Update)
+				gContractPlanningTemplate.DELETE(":id", cContractPlanningTemplate.Delete)
+			}
+
+			// 注册/api/v1/business-partners
+			gBusinessPartner := v1.Group("business-partners")
+			{
+				gBusinessPartner.GET("", cBusinessPartner.Query)
+				gBusinessPartner.GET(":id", cBusinessPartner.Get)
+				gBusinessPartner.POST("", cBusinessPartner.Create)
+				gBusinessPartner.PUT(":id", cBusinessPartner.Update)
+				gBusinessPartner.DELETE(":id", cBusinessPartner.Delete)
+			}
+
+			// 注册/api/v1/proj-contract-plannings
+			gProjContractPlanning := v1.Group("proj-contract-plannings")
+			{
+				gProjContractPlanning.GET("", cProjContractPlanning.Query)
+				gProjContractPlanning.GET(":id", cProjContractPlanning.Get)
+				gProjContractPlanning.POST("", cProjContractPlanning.Create)
+				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
+				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
 			}
 
 		}

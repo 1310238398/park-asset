@@ -7,13 +7,13 @@ import (
 
 // ProjIncomeCalculation 项目收益测算
 type ProjIncomeCalculation struct {
-	RecordID    string    `json:"record_id" swaggo:"false,记录ID"`                                   // 记录ID
-	VersionName string    `json:"version_name" swaggo:"false,版本名称"`                                // 版本名称
-	Sequence    int       `json:"sequence" swaggo:"false,排序值"`                                     // 排序值
-	Principal   string    `json:"principal" swaggo:"false,负责人"`                                    // 负责人
-	DoneTime    time.Time `json:"done_time" swaggo:"false,生成时间"`                                   // 生成时间
-	ProjectID   string    `json:"project_id" swaggo:"false,成本项目ID"`                                // 成本项目ID
-	Flag        int       `json:"flag" swaggo:"false,标记(1:当前版本 2:历史版本 3:最终版本(目标成本) 领导审核后 不得轻易修改)"` // 标记(1:当前版本 2:历史版本 3:最终版本 4:目标成本 领导审核后 不得轻易修改)
+	RecordID    string    `json:"record_id" swaggo:"false,记录ID"`                                         // 记录ID
+	VersionName string    `json:"version_name" swaggo:"false,版本名称"`                                      // 版本名称
+	Sequence    int       `json:"sequence" swaggo:"false,排序值"`                                           // 排序值
+	Principal   string    `json:"principal" swaggo:"false,负责人"`                                          // 负责人
+	DoneTime    time.Time `json:"done_time" swaggo:"false,生成时间"`                                         // 生成时间
+	ProjectID   string    `json:"project_id" swaggo:"false,成本项目ID"`                                      // 成本项目ID
+	Flag        int       `json:"flag" swaggo:"false,标记(1:当前版本 2:历史版本 3:审核中 4:最终版本(目标成本) 领导审核后 不得轻易修改)"` // 标记(1:当前版本 2:历史版本 3:最终版本 4:目标成本 领导审核后 不得轻易修改)
 
 	TotalSale            float64 `json:"total_sale" swaggo:"false,总销售收入"`              // 总销售收入
 	TotalSaleMemo        string  `json:"total_sale_memo" swaggo:"false,总销售收入备注"`       // 总销售收入备注
@@ -183,11 +183,64 @@ type ProjVersionValue struct {
 // ProjCompareItem 成本核算对比项
 type ProjCompareItem struct {
 	RecordID string              `json:"record_id"` //项目ID
+	ParentID string              `json:"parent_id"` //父级ID
 	Type     int                 `json:"type"`      //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
 	Name     string              `json:"name"`      //项目名
 	Versions []*ProjVersionValue `json:"versions"`  //版本信息
+	Changed  string              `json:"changed"`   //变动量
 	Memo     string              `json:"memo"`      //版本注释
 	Children []*ProjCompareItem  `json:"children"`  //下级目录
+}
+
+type ProjCompareItems []*ProjCompareItem
+
+func (a *ProjCompareItem) ToMap() map[string]interface{} {
+	result := map[string]interface{}{}
+	result["record_id"] = a.RecordID
+	result["type"] = a.Type
+	result["name"] = a.Name
+	result["memo"] = a.Memo
+	result["parent_id"] = a.ParentID
+	result["changed"] = a.Changed
+
+	for _, v := range a.Versions {
+		result[v.VersionID] = v.Value
+	}
+
+	if len(a.Children) > 0 {
+		data := []map[string]interface{}{}
+		for _, v := range a.Children {
+			data = append(data, v.ToMap())
+		}
+		result["children"] = data
+	}
+
+	return result
+}
+
+//ProjCompareQueryResult
+type ProjCompareQueryResult struct {
+	VersionList []*KVItem                `json:"version_list"`
+	Data        []map[string]interface{} `json:"data"`
+}
+
+// ToProjCompareQueryResult 转化为比对输出结果
+func (a ProjCompareItems) ToProjCompareQueryResult() *ProjCompareQueryResult {
+	result := new(ProjCompareQueryResult)
+	if len(a) == 0 {
+		return nil
+	}
+	for _, v := range a[0].Versions {
+		result.VersionList = append(result.VersionList, &KVItem{
+			Key:   v.VersionID,
+			Value: v.Version,
+		})
+	}
+	for _, v := range a {
+		result.Data = append(result.Data, v.ToMap())
+	}
+
+	return result
 }
 
 // HasChange 对比项是否有变化

@@ -39,3 +39,9 @@ type PaginationParam struct {
 type PaginationResult struct {
 	Total int // 总数据条数
 }
+
+// KVItem 通用键值对数据
+type KVItem struct {
+	Key   string      `json:"key"`
+	Value interface{} `json:"value"`
+}

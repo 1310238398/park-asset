@@ -24,4 +24,6 @@ type IProjCostItem interface {
 	Delete(ctx context.Context, recordID string) error
 	// 刷新项目成本项
 	Renew(ctx context.Context, projectID string) error
+	// 查询项目合约规划成本项
+	QueryContract(ctx context.Context, projectID string) (schema.ProjCostItemShows, error)
 }

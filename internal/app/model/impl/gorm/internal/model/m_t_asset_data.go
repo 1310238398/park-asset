@@ -66,9 +66,7 @@ func (a *TAssetData) QueryProjectName(ctx context.Context, params schema.TAssetD
 	}
 	db = db.Select("project_name").Group("project_name")
 
-	var result []struct {
-		ProjectName string `grom:"column:project_name"`
-	}
+	var result entity.TAssetDatas
 	dbResult := db.Find(&result)
 	if err := dbResult.Error; err != nil {
 		return nil, errors.WithStack(err)
@@ -76,7 +74,9 @@ func (a *TAssetData) QueryProjectName(ctx context.Context, params schema.TAssetD
 
 	names := make([]string, len(result))
 	for i, item := range result {
-		names[i] = item.ProjectName
+		if s := item.ProjectName; s != nil {
+			names[i] = *s
+		}
 	}
 
 	return names, nil

@@ -20,6 +20,9 @@ func NewProjIncomeCalculation(
 	mLandAppreciationTax model.ILandAppreciationTax,
 	mProjSalesPlan model.IProjSalesPlan,
 	mProjCostItem model.IProjCostItem,
+	mProjCostHis model.IProjCostHis,
+	mProjBusinessFormat model.IProjBusinessFormat,
+	mProjCostBusiness model.IProjCostBusiness,
 ) bll.IProjIncomeCalculation {
 	return &ProjIncomeCalculation{
 		TransModel:                 mTrans,
@@ -28,6 +31,9 @@ func NewProjIncomeCalculation(
 		LandAppreciationTaxModel:   mLandAppreciationTax,
 		ProjSalesPlanModel:         mProjSalesPlan,
 		ProjCostItemModel:          mProjCostItem,
+		ProjCostHisModel:           mProjCostHis,
+		ProjBusinessFormatModel:    mProjBusinessFormat,
+		ProjCostBusinessModel:      mProjCostBusiness,
 	}
 }
 
@@ -39,6 +45,9 @@ type ProjIncomeCalculation struct {
 	LandAppreciationTaxModel   model.ILandAppreciationTax
 	ProjSalesPlanModel         model.IProjSalesPlan
 	ProjCostItemModel          model.IProjCostItem
+	ProjCostHisModel           model.IProjCostHis
+	ProjBusinessFormatModel    model.IProjBusinessFormat
+	ProjCostBusinessModel      model.IProjCostBusiness
 }
 
 // Renew 更新收益测算
@@ -355,6 +364,62 @@ func (a *ProjIncomeCalculation) CreateVersion(ctx context.Context, projectID, na
 			return err
 		}
 		//TODO 复制成本项
+		pciqp := schema.ProjCostItemQueryParam{}
+		pciqp.ProjectID = projectID
+		pciData, err := a.ProjCostItemModel.QueryShow(ctx, pciqp)
+		if err != nil {
+			return err
+		}
+		pchList := []*schema.ProjCostHis{}
+
+		// 获取项目业态面积
+		pbfqp := schema.ProjBusinessFormatQueryParam{}
+		pbfqp.ProjectID = projectID
+		pbfqr, err := a.ProjBusinessFormatModel.Query(ctx, pbfqp)
+		if err != nil {
+			return err
+		}
+
+		for _, v := range pciData {
+			if v.RecordID == "" {
+				continue
+			}
+			pch := new(schema.ProjCostHis)
+			pch.RecordID = util.MustUUID()
+			pch.ProjectID = projectID
+			pch.ProjIncomeID = item.RecordID
+			pch.CostID = v.CostID
+			pch.CostName = v.Name
+			pch.CostParentID = v.CostParentID
+			pch.CostParentPath = v.CostParentPath
+			pch.Price = v.Price
+			pch.TaxPrice = v.TaxPrice
+			pch.TaxRate = v.TaxRate
+			pch.Label = v.Label
+
+			ps := schema.ProjCostBusinessQueryParam{}
+			ps.ProjCostID = v.RecordID
+			pcbqr, err := a.ProjCostBusinessModel.Query(ctx, ps)
+			if err != nil {
+				return err
+			}
+
+			for _, w := range pcbqr.Data {
+				for _, x := range pbfqr.Data {
+					if w.ProjBusinessID == x.RecordID {
+						w.Name = x.Name
+						w.Price = util.DecimalFloat64(w.UnitPrice * x.FloorArea)
+					}
+				}
+			}
+			pch.BusinessData = util.JSONMarshalToString(pcbqr.Data)
+
+			pchList = append(pchList, pch)
+		}
+		if err := a.ProjCostHisModel.CreateList(ctx, pchList); err != nil {
+			return err
+		}
+
 		//TODO 复制收益测算
 		//TODO 复制资本化利息
 		return nil
@@ -386,7 +451,7 @@ func (a *ProjIncomeCalculation) UpdateVersion(ctx context.Context, projectID str
 
 //GetVersionComparison 获取版本比对
 func (a *ProjIncomeCalculation) GetVersionComparison(ctx context.Context,
-	projectID string, versions ...string) ([]*schema.ProjCompareItem, error) {
+	projectID string, versions ...string) (schema.ProjCompareItems, error) {
 	//获取版本列表（收益测算）
 	list := []*schema.ProjIncomeCalculation{}
 	for _, v := range versions {
@@ -474,10 +539,12 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.TotalSale)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].TotalSale - vList[0].TotalSale))
 
 	subItem := new(schema.ProjCompareItem)
 	subItem.Type = 1
 	subItem.RecordID = "1.1"
+	subItem.ParentID = "1"
 	subItem.Name = "销售税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -486,6 +553,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.SaledTax)
 		subItem.Versions = append(subItem.Versions, nv)
 	}
+	subItem.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].SaledTax - vList[0].SaledTax))
 
 	item.Children = append(item.Children, subItem)
 	result = append(result, item)
@@ -502,10 +570,12 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.TotalCost)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].TotalCost - vList[0].TotalCost))
 
 	subItem = new(schema.ProjCompareItem)
 	subItem.Type = 1
 	subItem.RecordID = "2.1"
+	subItem.ParentID = "2"
 	subItem.Name = "土地出让金"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -514,10 +584,12 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.LandTransferFee)
 		subItem.Versions = append(subItem.Versions, nv)
 	}
+	subItem.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].LandTransferFee - vList[0].LandTransferFee))
 	item.Children = append(item.Children, subItem)
 	subItem = new(schema.ProjCompareItem)
 	subItem.Type = 1
 	subItem.RecordID = "2.2"
+	subItem.ParentID = "2"
 	subItem.Name = "契税及土地使用税"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -526,10 +598,12 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.DeedLandTax)
 		subItem.Versions = append(subItem.Versions, nv)
 	}
+	subItem.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].DeedLandTax - vList[0].DeedLandTax))
 	item.Children = append(item.Children, subItem)
 	subItem = new(schema.ProjCompareItem)
 	subItem.Type = 1
 	subItem.RecordID = "2.3"
+	subItem.ParentID = "2"
 	subItem.Name = "资本化利息"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -538,10 +612,12 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.CapitalizedInterest)
 		subItem.Versions = append(subItem.Versions, nv)
 	}
+	subItem.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].CapitalizedInterest - vList[0].CapitalizedInterest))
 	item.Children = append(item.Children, subItem)
 	subItem = new(schema.ProjCompareItem)
 	subItem.Type = 1
 	subItem.RecordID = "2.4"
+	subItem.ParentID = "2"
 	subItem.Name = "进项税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -550,6 +626,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.InputTax)
 		subItem.Versions = append(subItem.Versions, nv)
 	}
+	subItem.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].InputTax - vList[0].InputTax))
 	item.Children = append(item.Children, subItem)
 	result = append(result, item)
 
@@ -565,6 +642,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.ValueAddTax)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].ValueAddTax - vList[0].ValueAddTax))
 	result = append(result, item)
 
 	//增值税附加
@@ -579,6 +657,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.ValueAddTaxSurcharge)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].ValueAddTaxSurcharge - vList[0].ValueAddTaxSurcharge))
 	result = append(result, item)
 
 	//增值税附加
@@ -593,6 +672,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.LandValueAddedTax)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].LandValueAddedTax - vList[0].LandValueAddedTax))
 	result = append(result, item)
 
 	//增值税附加
@@ -607,6 +687,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.ProfitBeforeTax)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].ProfitBeforeTax - vList[0].ProfitBeforeTax))
 	result = append(result, item)
 
 	//增值税附加
@@ -621,6 +702,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f%%", v.ProfitBeforeTaxRate*100)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f%%", (vList[len(vList)-1].ProfitBeforeTaxRate-vList[0].ProfitBeforeTaxRate)*100)
 	result = append(result, item)
 	//增值税附加
 	item = new(schema.ProjCompareItem)
@@ -634,6 +716,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.CorporateIncomeTax)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].CorporateIncomeTax - vList[0].CorporateIncomeTax))
 	result = append(result, item)
 	//增值税附加
 	item = new(schema.ProjCompareItem)
@@ -647,6 +730,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.NetProfit)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].NetProfit - vList[0].NetProfit))
 	result = append(result, item)
 	//增值税附加
 	item = new(schema.ProjCompareItem)
@@ -660,6 +744,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f%%", v.NetProfitRate*100)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f%%", (vList[len(vList)-1].NetProfitRate-vList[0].NetProfitRate)*100)
 	result = append(result, item)
 	//增值税附加
 	item = new(schema.ProjCompareItem)
@@ -673,6 +758,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 		nv.Value = fmt.Sprintf("%.2f", v.PaybackRate)
 		item.Versions = append(item.Versions, nv)
 	}
+	item.Changed = fmt.Sprintf("%.2f", (vList[len(vList)-1].PaybackRate - vList[0].PaybackRate))
 	result = append(result, item)
 
 	return result
