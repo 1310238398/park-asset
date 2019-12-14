@@ -91,9 +91,9 @@ class LandValueAddedTax extends PureComponent{  //土增
         list[0] = { key : "income", name : "不含税销售收入",money : data.income };
         list[1] = { key : "cost", name : "扣除项目金额",money : data.cost };
         list[2] = { key : "additional_tax", name : "附加税", money : data.additional_tax };
-        list[3] = { key : "finance_add_rate",name : "财务费用", scal : data.finance_add_rate, money : data.cost * data.finance_add_rate }; // 财务
-        list[4] = { key : "manage_add_rate", name : "管理和销售费用", scal : data.manage_add_rate, money : data.cost * data.manage_add_rate };
-        list[5] = { key : "cost_add_rate" , name : "加计费用", scal : data.cost_add_rate, money : data.cost * data.cost_add_rate };
+        list[3] = { key : "finance_add_rate",name : "财务费用", scal : data.finance_add_rate, money : (data.cost * data.finance_add_rate).toFixed(2) }; // 财务
+        list[4] = { key : "manage_add_rate", name : "管理和销售费用", scal : data.manage_add_rate, money : (data.cost * data.manage_add_rate).toFixed(2) };
+        list[5] = { key : "cost_add_rate" , name : "加计费用", scal : data.cost_add_rate, money : (data.cost * data.cost_add_rate).toFixed(2) };
         list[6] = { key : "tax", name : "土地增值税", money : data.tax };
         return list;
     }

@@ -7,6 +7,10 @@ export function query(){
     return request(`/v1/${router}?q=tree&show=map`);
 }
 
+export function queryContactTree(){
+    return request(`/v1/${router}?q=tree&label=1`);
+}
+
 export async function create(params) {
     return request(`/v1/${router}`, {
         method: 'POST',

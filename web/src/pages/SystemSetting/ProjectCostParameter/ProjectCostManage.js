@@ -259,7 +259,7 @@ class ProjectCostManage extends PureComponent {
         return;
     }
 
-    findItem = (objList, key) => {  //---没有问题
+    findItem = (objList, key) => {  
         for(let i=0;i<objList.length;i++){
             if(key == objList[i].record_id){
                 return objList[i];
@@ -269,7 +269,7 @@ class ProjectCostManage extends PureComponent {
         }
     }
 
-    moveAdd = (item, arr) => { //--没有问题
+    moveAdd = (item, arr) => { 
         const data = arr;
         if(data.length==0){
             data.push(item);
@@ -282,7 +282,7 @@ class ProjectCostManage extends PureComponent {
         return data;
     }
 
-    getMenu = (record) => { //--没有问题
+    getMenu = (record) => { 
         return (
         <Menu >
           <Menu.Item onClick={() => this.brotherLevelAdd(record)} >
@@ -373,7 +373,7 @@ class ProjectCostManage extends PureComponent {
             this.setState({ editingKey: "" });
         });
     }
-    cancel = () => {  //---没有问题
+    cancel = () => {  
         const { temp_data, chooseBtn } = this.state;
         if(chooseBtn =='A'){ //添加的操作
             this.setState({ dataList : JSON.parse(JSON.stringify(temp_data)) });
@@ -381,7 +381,7 @@ class ProjectCostManage extends PureComponent {
         this.setState({ editingKey: "" });
     }
 
-    edit = (rid) => {  // 没有问题
+    edit = (rid) => {  
         this.setState({ editingKey: rid, chooseBtn : "E" });
     }
 
