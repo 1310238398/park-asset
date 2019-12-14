@@ -34,7 +34,7 @@ class IncomeMeasure extends PureComponent {
              defaultActiveKey="1" 
              tabPosition="left"
              >
-              <TabPane tab="最新版本" key="1" >
+              <TabPane tab="当前版本" key="1" >
                <CurrentVersion></CurrentVersion>
               </TabPane>
               <TabPane tab="历史版本" key="2">

@@ -252,6 +252,7 @@ export default class Step3 extends PureComponent {
           if (key === "") {
             row.parent_path= "";
             row.parent_id = "";
+            row.record_id = "";
             response = await createStandard(row);
           }
           else {
@@ -309,6 +310,7 @@ export default class Step3 extends PureComponent {
           if (keychild === "") {
             row.parent_path= key.substring(0,key.lastIndexOf("/"));
             row.parent_id = keys[keys.length -2];
+            row.record_id = "";
             response = await createStandard(row);
           }
           else {

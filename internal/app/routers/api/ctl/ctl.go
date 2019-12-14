@@ -38,7 +38,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewProjBusinessFormat)
 	container.Provide(NewProjCapitalizedHis)
 	container.Provide(NewProjCapitalizedInterest)
-	container.Provide(NewProjCostBusiness)
 	container.Provide(NewProjCostHis)
 	container.Provide(NewProjCostItem)
 	container.Provide(NewProjDeliveryStandard)
@@ -48,5 +47,8 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewProjSalesHis)
 	container.Provide(NewProjSalesPlan)
 	container.Provide(NewTaxCalculation)
+	container.Provide(NewContractPlanningTemplate)
+	container.Provide(NewBusinessPartner)
+	container.Provide(NewProjContractPlanning)
 	return nil
 }

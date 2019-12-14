@@ -57,7 +57,11 @@ func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditu
 
 	}
 
-	db = db.Order("sequence DESC, id DESC")
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN (?)", v)
+	}
+
+	db = db.Order("sequence, id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.ProjExpenditures

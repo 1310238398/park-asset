@@ -1,0 +1,64 @@
+{
+    "struct_name": "ProjContractPlanning",
+    "comment": "项目合约规划",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "struct_field_required": false,
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "comment": "合同名称",
+            "struct_field_required": true,
+            "struct_field_type": "string",
+            "gorm_options": "size:100;index;"
+        },
+        {
+            "struct_field_name": "ProjectID",
+            "comment": "项目ID",
+            "struct_field_required": true,
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;" 
+        },
+        {
+            "struct_field_name": "CostID",
+            "comment": "成本项ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "ContractType",
+            "comment": "合同类型",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "Information",
+            "comment": "合同包内容",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;"
+        },
+        {
+            "struct_field_name": "PlanningPrice",
+            "comment": "规划金额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);" 
+        },
+        {
+            "struct_field_name": "PlanningChange",
+            "comment": "预计变更金额",
+            "struct_field_type": "float64",
+            "gorm_options": "type:decimal(20,4);"    
+        },
+        {
+            "struct_field_name": "Memo",
+            "comment": "备注",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;"
+        }
+
+    ]
+}

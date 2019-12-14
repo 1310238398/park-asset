@@ -109,8 +109,6 @@ export default {
         ];
       }
       else if (payload.type === 'A') {
-
-
         yield [
           put({
             type: 'saveFormType',
@@ -175,15 +173,21 @@ export default {
       else {
         console.log("这是编辑");
         const response = yield call(projectManageService.getProInfo, payload);
-       
-        let newFiles=[];
-        for (let i = 0; i < response.files.length; i++) {
 
-          let item = response.files[i].path;
-          newFiles.push(item);
+        let newFiles = [];
+        if (response.files !== null) {
+          for (let i = 0; i < response.files.length; i++) {
 
+            let item = response.files[i].path;
+            newFiles.push(item);
+
+          }
+          response.files = [...newFiles];
         }
-        response.files = [...newFiles];
+        else {
+          response.files = [];
+        }
+
         // console.log("格式化之后的数据 ");
         // console.log(response);
         yield [
@@ -222,19 +226,19 @@ export default {
         const businessFormat = yield select(state => state.projectManage.businessFormat);
 
         for (let i = 0; i < allBusinessFormat.length; i++) {
-        
+
           for (let j = 0; j < businessFormat.length; j++) {
-           
+
             if (allBusinessFormat[i].record_id === businessFormat[j].business_format_id) {
               allBusinessFormat[i].checked = true;
               allBusinessFormat[i].floor_area = businessFormat[j].floor_area;
-              
+
               break;
             }
 
             if (j === businessFormat.length - 1) {
               allBusinessFormat[i].checked = false;
-             
+
             }
           }
         }
@@ -246,7 +250,7 @@ export default {
           }),
         ];
 
-       
+
 
 
         // 交付标准
@@ -413,7 +417,7 @@ export default {
       return { ...state, formID: payload };
     },
     saveCurrentIndex(state, { payload }) {
-    
+
       return { ...state, currentIndex: payload };
     },
     saveFormatData(state, { payload }) {

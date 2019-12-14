@@ -142,9 +142,6 @@
 			<index name="idx_pa_menu_record_id_4" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_assets_pa_project" virtual="y" to_schema="parkassets" to_table="pa_project" >
-				<fk_column name="project_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_asset_group" >
 			<comment><![CDATA[资产组管理]]></comment>
@@ -192,9 +189,6 @@
 			<index name="idx_pa_menu_deleted_at_20" unique="NORMAL" >
 				<column name="deleted_at" />
 			</index>
-			<fk name="fk_pa_asset_group_detail_pa_asset_group" virtual="y" to_schema="parkassets" to_table="pa_asset_group" >
-				<fk_column name="group_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_asset_history" >
 			<comment><![CDATA[资产历史表]]></comment>
@@ -239,9 +233,6 @@
 			<index name="idx_pa_menu_record_id_7" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_asset_history_pa_asset_group" virtual="y" to_schema="parkassets" to_table="pa_asset_group" >
-				<fk_column name="group_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_asset_rent_payment" >
 			<comment><![CDATA[资产租金缴费明细]]></comment>
@@ -286,9 +277,6 @@
 			<index name="idx_pa_menu_record_id_11" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_asset_rent_payment_pa_asset_group" virtual="y" to_schema="parkassets" to_table="pa_asset_group" >
-				<fk_column name="group_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_car_changer" >
 			<comment><![CDATA[车改商管理]]></comment>
@@ -401,9 +389,6 @@
 			<index name="idx_pa_menu_record_id_9" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_contract_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_asset_history" >
-				<fk_column name="history_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_dictionary" >
 			<comment><![CDATA[字典管理]]></comment>
@@ -604,9 +589,6 @@
 			<index name="idx_pa_menu_action_menu_id" unique="NORMAL" >
 				<column name="menu_id" />
 			</index>
-			<fk name="fk_pa_menu_action_pa_menu" virtual="y" to_schema="parkassets" to_table="pa_menu" >
-				<fk_column name="menu_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_menu_resource" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -630,9 +612,6 @@
 			<index name="idx_pa_menu_resource_menu_id" unique="NORMAL" >
 				<column name="menu_id" />
 			</index>
-			<fk name="fk_pa_menu_resource_pa_menu" virtual="y" to_schema="parkassets" to_table="pa_menu" >
-				<fk_column name="menu_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_office_building" >
 			<comment><![CDATA[写字楼管理]]></comment>
@@ -695,9 +674,6 @@
 			<index name="idx_pa_menu_record_id_5" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_office_building_pa_asset" virtual="y" to_schema="parkassets" to_table="pa_asset" >
-				<fk_column name="record_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_organization" >
 			<comment><![CDATA[组织机构管理]]></comment>
@@ -857,12 +833,6 @@
 			<index name="idx_pa_menu_record_id_3" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_project_pa_plot" virtual="y" to_schema="parkassets" to_table="pa_plot" >
-				<fk_column name="plot_id" pk="record_id" />
-			</fk>
-			<fk name="fk_pa_project_pa_organization" virtual="y" to_schema="parkassets" to_table="pa_organization" >
-				<fk_column name="org_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_rent_detail" >
 			<comment><![CDATA[租金明细]]></comment>
@@ -913,9 +883,6 @@
 			<index name="idx_pa_menu_record_id_10" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_rent_details_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_asset_history" >
-				<fk_column name="history_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_role" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -964,12 +931,6 @@
 			<index name="idx_pa_role_menu_role_id" unique="NORMAL" >
 				<column name="role_id" />
 			</index>
-			<fk name="fk_pa_role_menu_pa_menu" virtual="y" to_schema="parkassets" to_table="pa_menu" >
-				<fk_column name="menu_id" pk="record_id" />
-			</fk>
-			<fk name="fk_pa_role_menu_pa_role" virtual="y" to_schema="parkassets" to_table="pa_role" >
-				<fk_column name="role_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_shop" >
 			<comment><![CDATA[商铺管理]]></comment>
@@ -1109,9 +1070,6 @@
 			<index name="idx_pa_menu_record_id_6" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_tenant_customer_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_asset_history" >
-				<fk_column name="history_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_user" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -1153,9 +1111,6 @@
 			<index name="idx_pa_user_user_name" unique="NORMAL" >
 				<column name="user_name" />
 			</index>
-			<fk name="fk_pa_user_pa_organization" virtual="y" to_schema="parkassets" to_table="pa_organization" >
-				<fk_column name="org_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_user_role" >
 			<column name="id" type="int" length="10" decimal="0" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
@@ -1176,12 +1131,6 @@
 			<index name="idx_pa_user_role_user_id" unique="NORMAL" >
 				<column name="user_id" />
 			</index>
-			<fk name="fk_pa_user_role_pa_role" virtual="y" to_schema="parkassets" to_table="pa_role" >
-				<fk_column name="role_id" pk="record_id" />
-			</fk>
-			<fk name="fk_pa_user_role_pa_user" virtual="y" to_schema="parkassets" to_table="pa_user" >
-				<fk_column name="user_id" pk="record_id" />
-			</fk>
 		</table>
 		<table name="pa_withdrawal" >
 			<comment><![CDATA[退租管理]]></comment>
@@ -1223,74 +1172,1315 @@
 			<index name="idx_pa_menu_record_id_8" unique="NORMAL" >
 				<column name="record_id" />
 			</index>
-			<fk name="fk_pa_withdrawal_pa_assets_history" virtual="y" to_schema="parkassets" to_table="pa_asset_history" >
-				<fk_column name="history_id" pk="record_id" />
-			</fk>
 		</table>
 	</schema>
+	<schema name="parkcost" >
+		<table name="cost_model" >
+			<comment><![CDATA[成本项模板]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<index name="pk_cost_model_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="func_change_resp" >
+			<comment><![CDATA[公式变动响应表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="uodated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="change_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[变动项ID]]></comment>
+			</column>
+			<column name="response_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[响应项ID]]></comment>
+			</column>
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[状态(1:启用 2:禁用)]]></comment>
+			</column>
+			<index name="pk_func_change_resp_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="pc_business_format" >
+			<comment><![CDATA[业态]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="is_underground" type="int" jt="4" >
+				<comment><![CDATA[是否位于地下(1:是2:否)]]></comment>
+			</column>
+			<column name="is_civil_defense" type="int" jt="4" >
+				<comment><![CDATA[是否属于人防(1:是2:否)]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<index name="pk_business_format_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_business_format_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="pc_business_partner" >
+			<comment><![CDATA[业务往来企业]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="record_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[记录ID]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[企业名称]]></comment>
+			</column>
+			<column name="partner_type" type="int" jt="4" >
+				<comment><![CDATA[伙伴类型]]></comment>
+			</column>
+			<column name="in_charge_list" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[负责人列表]]></comment>
+			</column>
+			<index name="pk_pc_business_partner_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pc_business_partner" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="pc_contract_planning_template" >
+			<comment><![CDATA[合约规划模板]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="record_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[记录ID]]></comment>
+			</column>
+			<column name="cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[成本项ID 关联成本项模板]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[合同名称]]></comment>
+			</column>
+			<column name="contract_type" type="int" jt="4" >
+				<comment><![CDATA[合同类型]]></comment>
+			</column>
+			<column name="information" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[合同包内容]]></comment>
+			</column>
+			<index name="pk_pc_contract_planning_template_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pc_contract_planning_template" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pc_contract_planning_template" to_schema="parkcost" to_table="pc_cost_item" >
+				<fk_column name="cost_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_cost_business" >
+			<comment><![CDATA[成本项业态]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="undated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[成本项id]]></comment>
+			</column>
+			<column name="business_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[业态id]]></comment>
+			</column>
+			<column name="unit_price" type="decimal" jt="3" >
+				<comment><![CDATA[单价]]></comment>
+			</column>
+			<index name="pk_pc_cost_business_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pc_cost_business_pc_business_format" to_schema="parkcost" to_table="pc_business_format" >
+				<fk_column name="business_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pc_cost_business_pc_cost_item" to_schema="parkcost" to_table="pc_cost_item" >
+				<fk_column name="cost_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_cost_item" >
+			<comment><![CDATA[成本项]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="parent_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级ID]]></comment>
+			</column>
+			<column name="parent_path" type="varchar" length="516" jt="12" >
+				<comment><![CDATA[父级路经]]></comment>
+			</column>
+			<column name="level" type="int" jt="4" >
+				<comment><![CDATA[层级]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="tax_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[税目id]]></comment>
+			</column>
+			<column name="status" type="int" length="1" jt="4" >
+				<comment><![CDATA[状态(1:启用2:停用)]]></comment>
+			</column>
+			<column name="label" type="int" jt="4" >
+				<comment><![CDATA[标签(1:成本科目 2:测算科目)]]></comment>
+			</column>
+			<index name="pk_cost_id_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_cost_id_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pc_cost_item_pc_tax_calculation" to_schema="parkcost" to_table="pc_tax_calculation" >
+				<fk_column name="tax_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_delivery_standard" >
+			<comment><![CDATA[交付标准表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="block_type" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[地块类型(住宅/商业)]]></comment>
+			</column>
+			<column name="building_position" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[部位]]></comment>
+			</column>
+			<column name="device" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[设备(空调)]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="creator" type="varchar" length="36" jt="12" />
+			<index name="pk_delivery_standard_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_delivery_standard_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+				<column name="record_id" />
+				<column name="block_type" />
+			</index>
+			<index name="unq_delivery_standard_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="pc_expenditure" >
+			<comment><![CDATA[成本支出节点]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="name" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="category" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[工作类别(大纲 里程碑 一级 二级)]]></comment>
+			</column>
+			<column name="parent_d" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级ID]]></comment>
+			</column>
+			<column name="parent_path" type="varchar" length="518" jt="12" >
+				<comment><![CDATA[父级路经]]></comment>
+			</column>
+			<index name="pk_work_plan_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_work_plan_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="pc_impartant_phase_plan" >
+			<comment><![CDATA[关键节点表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="important_stage" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[关键节点]]></comment>
+			</column>
+			<column name="finish_time" type="timestamp" jt="93" >
+				<comment><![CDATA[完成时间]]></comment>
+			</column>
+			<column name="sequence" type="int" jt="4" >
+				<comment><![CDATA[排序值]]></comment>
+			</column>
+			<column name="creator" type="varchar" length="36" jt="12" />
+			<index name="pk_impartant_phase_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_impartant_phase_plan_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_land_appreciation_tax" >
+			<comment><![CDATA[土地增值税]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="int" jt="4" />
+			<column name="saled_area" type="decimal" jt="3" >
+				<comment><![CDATA[销售面积]]></comment>
+			</column>
+			<column name="value_added" type="decimal" jt="3" >
+				<comment><![CDATA[增值额]]></comment>
+			</column>
+			<column name="value_added_rate" type="int" jt="4" >
+				<comment><![CDATA[增值率]]></comment>
+			</column>
+			<column name="tax" type="decimal" jt="3" >
+				<comment><![CDATA[增值税]]></comment>
+			</column>
+			<column name="saled_without_tax" type="decimal" jt="3" >
+				<comment><![CDATA[不含税销售收入]]></comment>
+			</column>
+			<index name="pk_land_appreciation_tax_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="pc_pro_target" >
+			<comment><![CDATA[项目指标表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="target_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[指标ID]]></comment>
+			</column>
+			<column name="construction_name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[工程名称]]></comment>
+			</column>
+			<column name="value" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[数值]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="sequence" type="int" jt="4" >
+				<comment><![CDATA[排序值]]></comment>
+			</column>
+			<column name="floor_area" type="int" jt="4" >
+				<comment><![CDATA[建筑面积]]></comment>
+			</column>
+			<index name="pk_target_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_target_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+			<fk name="fk_target_project_target" to_schema="parkcost" to_table="pc_target" >
+				<fk_column name="target_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_business_format" >
+			<comment><![CDATA[项目业态]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="business_format_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[成本项ID]]></comment>
+			</column>
+			<column name="floor_area" type="decimal" jt="3" >
+				<comment><![CDATA[建筑面积]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[项目业态名称]]></comment>
+			</column>
+			<index name="pk_pro_business_format_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_pro_business_format_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pro_business_format_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_capitalized_his" >
+			<comment><![CDATA[资本化利息历史表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" />
+			<column name="year" type="int" jt="4" >
+				<comment><![CDATA[年]]></comment>
+			</column>
+			<column name="quarter" type="int" jt="4" >
+				<comment><![CDATA[季度]]></comment>
+			</column>
+			<column name="saled_payback" type="decimal" jt="3" >
+				<comment><![CDATA[销售回款]]></comment>
+			</column>
+			<column name="cost_expenditure" type="decimal" jt="3" >
+				<comment><![CDATA[成本支出]]></comment>
+			</column>
+			<column name="tax_payment" type="decimal" jt="3" >
+				<comment><![CDATA[税额]]></comment>
+			</column>
+			<column name="funds_occupied_amount" type="decimal" jt="3" >
+				<comment><![CDATA[资本占用金额]]></comment>
+			</column>
+			<column name="accumulative_occupancy_funds" type="decimal" jt="3" >
+				<comment><![CDATA[累计占用金额]]></comment>
+			</column>
+			<column name="fund_possession_cost" type="decimal" jt="3" >
+				<comment><![CDATA[资金占用费]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<column name="proj_income_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目收益测算id]]></comment>
+			</column>
+			<column name="tax_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[税目id]]></comment>
+			</column>
+			<index name="pk_pc_proj_capitalized_his_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="pc_proj_capitalized_interest" >
+			<comment><![CDATA[资本化利息测算表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="year" type="int" length="36" jt="4" >
+				<comment><![CDATA[年份]]></comment>
+			</column>
+			<column name="quarter" type="int" jt="4" >
+				<comment><![CDATA[季度]]></comment>
+			</column>
+			<column name="saled_payback" type="decimal" jt="3" >
+				<comment><![CDATA[销售回款]]></comment>
+			</column>
+			<column name="cost_expenditure" type="decimal" jt="3" >
+				<comment><![CDATA[成本支出]]></comment>
+			</column>
+			<column name="tax_payment" type="decimal" jt="3" >
+				<comment><![CDATA[税金缴纳]]></comment>
+			</column>
+			<column name="funds_occupied_amount" type="decimal" jt="3" >
+				<comment><![CDATA[资本占用金额]]></comment>
+			</column>
+			<column name="accumulative_occupancy_funds" type="decimal" jt="3" >
+				<comment><![CDATA[累计占用金额]]></comment>
+			</column>
+			<column name="fund_possession_cost" type="decimal" jt="3" >
+				<comment><![CDATA[资金占用费]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<column name="proj_income_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目收益测算id]]></comment>
+			</column>
+			<column name="tax_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[税目]]></comment>
+			</column>
+			<index name="pk_capitalized_interest_estimation_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_pc_capitalized_interest_estimation_proj_income_id" unique="UNIQUE" >
+				<column name="proj_income_id" />
+			</index>
+			<fk name="fk_capitalized_interest_estimation_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_contract_planning" >
+			<comment><![CDATA[项目合同规划表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="record_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[记录ID]]></comment>
+			</column>
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[成本项ID]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[合同名称]]></comment>
+			</column>
+			<column name="contract_type" type="int" jt="4" >
+				<comment><![CDATA[合同类型]]></comment>
+			</column>
+			<column name="information" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[合同包内容]]></comment>
+			</column>
+			<column name="planning_price" type="decimal" jt="3" >
+				<comment><![CDATA[规划金额]]></comment>
+			</column>
+			<column name="planning_change" type="decimal" jt="3" >
+				<comment><![CDATA[预计变更金额]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<index name="pk_pc_proj_contract_planning_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_pc_proj_contract_planning" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_pc_proj_contract_planning_0" unique="NORMAL" >
+				<column name="project_id" />
+			</index>
+		</table>
+		<table name="pc_proj_cost_business" >
+			<comment><![CDATA[项目成本项业态]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="proj_business_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目业态id]]></comment>
+			</column>
+			<column name="proj_cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目成本项ID]]></comment>
+			</column>
+			<column name="unit_price" type="decimal" jt="3" >
+				<comment><![CDATA[单价]]></comment>
+			</column>
+			<index name="pk_businness_format_pj_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pc_proj_business_cost_pc_proj_business_format" to_schema="parkcost" to_table="pc_proj_business_format" >
+				<fk_column name="proj_business_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pc_proj_business_cost_pc_proj_cost_item" to_schema="parkcost" to_table="pc_proj_cost_item" >
+				<fk_column name="proj_cost_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_cost_his" >
+			<comment><![CDATA[项目成本项历史表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[成本项id]]></comment>
+			</column>
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目id]]></comment>
+			</column>
+			<column name="tax_rate" type="int" jt="4" >
+				<comment><![CDATA[税率]]></comment>
+			</column>
+			<column name="tax_prise" type="decimal" jt="3" >
+				<comment><![CDATA[缴税税额]]></comment>
+			</column>
+			<column name="price" type="decimal" jt="3" >
+				<comment><![CDATA[价格]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="proj_income_id" type="int" jt="4" >
+				<comment><![CDATA[项目收益id]]></comment>
+			</column>
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<column name="parent_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级ID]]></comment>
+			</column>
+			<column name="parent_path" type="varchar" length="518" jt="12" >
+				<comment><![CDATA[父级路经]]></comment>
+			</column>
+			<index name="pk_pc_proj_cost_history_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="pc_proj_cost_item" >
+			<comment><![CDATA[项目成本项]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[成本项ID]]></comment>
+			</column>
+			<column name="project_id" type="int" jt="4" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="tax_rete" type="int" jt="4" >
+				<comment><![CDATA[税率]]></comment>
+			</column>
+			<column name="tax_price" type="decimal" jt="3" >
+				<comment><![CDATA[缴税税额]]></comment>
+			</column>
+			<column name="price" type="decimal" jt="3" >
+				<comment><![CDATA[成本项价格]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="proj_income_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目收益测算id]]></comment>
+			</column>
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<index name="pk_cost_item_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_cost_item_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pro_cost_item_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_delivery_standard" >
+			<comment><![CDATA[项目交付表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="timestamp" jt="93" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="content" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[标准内容]]></comment>
+			</column>
+			<column name="part" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[部位]]></comment>
+			</column>
+			<column name="parent_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级ID]]></comment>
+			</column>
+			<column name="parent_path" type="varchar" length="518" jt="12" >
+				<comment><![CDATA[父级路经]]></comment>
+			</column>
+			<index name="pk_pro_delivery_standard_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pro_delivery_standard_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pro_delivery_standard_delivery_standard" to_schema="parkcost" to_table="pc_delivery_standard" />
+		</table>
+		<table name="pc_proj_expend_cost" >
+			<comment><![CDATA[项目支出节点成本项表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="proj_cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目成本项]]></comment>
+			</column>
+			<column name="proj_expenditure_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目支出id]]></comment>
+			</column>
+			<column name="amount" type="decimal" jt="3" >
+				<comment><![CDATA[支出金额]]></comment>
+			</column>
+			<column name="cost_price" type="decimal" jt="3" >
+				<comment><![CDATA[项目成本项价格]]></comment>
+			</column>
+			<index name="pk_pc_proj_expend_cost_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pc_proj_expend_cost_pc_proj_expenditure" to_schema="parkcost" to_table="pc_proj_expenditure" >
+				<fk_column name="proj_expenditure_id" pk="record_id" />
+			</fk>
+			<fk name="fk_pc_proj_expend_cost_pc_proj_cost_item" to_schema="parkcost" to_table="pc_proj_cost_item" >
+				<fk_column name="proj_cost_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_expenditure" >
+			<comment><![CDATA[项目支出节点]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="start_time" type="date" jt="91" >
+				<comment><![CDATA[开始时间]]></comment>
+			</column>
+			<column name="end_time" type="date" jt="91" >
+				<comment><![CDATA[结束时间]]></comment>
+			</column>
+			<column name="expenditure_time_type" type="int" jt="4" >
+				<comment><![CDATA[资金支出时间方式
+(1:完成时间前30天 
+ 2:完成时间 
+ 3:完成时间后30天
+ 4:完成时间后2个月
+ 5:完成时间后6个月
+ 6:完成时间后1年
+ 7:平摊道每个月
+ 8:平摊道每个季度
+)]]></comment>
+			</column>
+			<column name="acc_expend_rate" type="int" jt="4" >
+				<comment><![CDATA[累计支出比例]]></comment>
+			</column>
+			<column name="parent_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级id]]></comment>
+			</column>
+			<column name="parent_path" type="varchar" length="516" jt="12" >
+				<comment><![CDATA[父级路经]]></comment>
+			</column>
+			<column name="total_cost" type="decimal" jt="3" >
+				<comment><![CDATA[支出总额(对应项目成本项的和)]]></comment>
+			</column>
+			<column name="sequence" type="decimal" jt="3" >
+				<comment><![CDATA[排序值]]></comment>
+			</column>
+			<index name="unq_pc_proj_expenditure_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pro_work_plan_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_expenditure_time" >
+			<comment><![CDATA[项目支出节点时间表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="year" type="int" jt="4" >
+				<comment><![CDATA[年]]></comment>
+			</column>
+			<column name="quarter" type="int" jt="4" >
+				<comment><![CDATA[季度]]></comment>
+			</column>
+			<column name="month" type="int" jt="4" >
+				<comment><![CDATA[月]]></comment>
+			</column>
+			<column name="day" type="int" jt="4" >
+				<comment><![CDATA[天]]></comment>
+			</column>
+			<column name="expenditure_amount" type="decimal" jt="3" >
+				<comment><![CDATA[支出额度]]></comment>
+			</column>
+			<column name="proj_expenditure_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目支出id]]></comment>
+			</column>
+			<index name="pk_proj_expenditure_time_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pc_proj_expenditure_time_pc_proj_expenditure" to_schema="parkcost" to_table="pc_proj_expenditure" >
+				<fk_column name="proj_expenditure_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_file" >
+			<comment><![CDATA[项目文件]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="int" jt="4" />
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="path" type="varchar" length="512" jt="12" >
+				<comment><![CDATA[路经]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目id]]></comment>
+			</column>
+			<column name="size" type="int" jt="4" >
+				<comment><![CDATA[大小(单位:字节)]]></comment>
+			</column>
+			<column name="type" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[类型]]></comment>
+			</column>
+			<index name="pk_pc_proj_file_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pc_proj_file_pc_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_income_calculation" >
+			<comment><![CDATA[项目收益测算]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="version_name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[版本名]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="sequence" type="int" jt="4" >
+				<comment><![CDATA[排序值]]></comment>
+			</column>
+			<column name="total_sale" type="decimal" jt="3" >
+				<comment><![CDATA[总销售收入]]></comment>
+			</column>
+			<column name="saled_tax" type="decimal" jt="3" >
+				<comment><![CDATA[销售税税额]]></comment>
+			</column>
+			<column name="total_cost" type="decimal" jt="3" >
+				<comment><![CDATA[开发总成本]]></comment>
+			</column>
+			<column name="land_transfer_fee" type="decimal" jt="3" >
+				<comment><![CDATA[土地出让金]]></comment>
+			</column>
+			<column name="net_profit" type="decimal" jt="3" >
+				<comment><![CDATA[项目净利润]]></comment>
+			</column>
+			<column name="payback_rate" type="int" jt="4" >
+				<comment><![CDATA[投资回报率]]></comment>
+			</column>
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<column name="done_time" type="timestamp" jt="93" >
+				<comment><![CDATA[生成时间]]></comment>
+			</column>
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目id]]></comment>
+			</column>
+			<column name="deed_tax" type="decimal" jt="3" >
+				<comment><![CDATA[契税]]></comment>
+			</column>
+			<column name="land_use_tax" type="decimal" jt="3" >
+				<comment><![CDATA[土地使用税]]></comment>
+			</column>
+			<column name="capitalized_interest" type="decimal" jt="3" >
+				<comment><![CDATA[资本化利息]]></comment>
+			</column>
+			<column name="flag" type="int" jt="4" >
+				<comment><![CDATA[标记(
+1:当前版本 
+2:历史版本 
+3:最终版本 
+4:目标成本 领导审核后 不得轻易修改
+)]]></comment>
+			</column>
+			<column name="input_tax" type="decimal" jt="3" >
+				<comment><![CDATA[进项税税额]]></comment>
+			</column>
+			<column name="value_add_tax" type="decimal" jt="3" >
+				<comment><![CDATA[增值税额]]></comment>
+			</column>
+			<column name="value_add_tax_surcharge" type="decimal" jt="3" >
+				<comment><![CDATA[增值税附加]]></comment>
+			</column>
+			<column name="land_value_added_tax" type="decimal" jt="3" >
+				<comment><![CDATA[土地增值税]]></comment>
+			</column>
+			<column name="corporate_income_tax" type="decimal" jt="3" >
+				<comment><![CDATA[企业所得税]]></comment>
+			</column>
+			<column name="profit_before_tax" type="decimal" jt="3" >
+				<comment><![CDATA[税前利润]]></comment>
+			</column>
+			<column name="profit_before_tax_rate" type="decimal" jt="3" >
+				<comment><![CDATA[税前利润率]]></comment>
+			</column>
+			<column name="net_profit_rate" type="decimal" jt="3" >
+				<comment><![CDATA[净利润率]]></comment>
+			</column>
+			<index name="pk_pc_income_calculation_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_pc_income_calculation_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<fk name="fk_pc_proj_income_calculation_pc_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_sales_his" >
+			<comment><![CDATA[项目销售计划历史表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" />
+			<column name="year" type="int" jt="4" >
+				<comment><![CDATA[年]]></comment>
+			</column>
+			<column name="quarter" type="int" jt="4" >
+				<comment><![CDATA[季度]]></comment>
+			</column>
+			<column name="sale_area" type="decimal" jt="3" >
+				<comment><![CDATA[销售面积]]></comment>
+			</column>
+			<column name="contract_amount" type="decimal" jt="3" >
+				<comment><![CDATA[合同额]]></comment>
+			</column>
+			<column name="payback" type="decimal" jt="3" >
+				<comment><![CDATA[销售回款]]></comment>
+			</column>
+			<column name="tax_price" type="decimal" jt="3" >
+				<comment><![CDATA[税额]]></comment>
+			</column>
+			<column name="average_prise" type="int" jt="4" >
+				<comment><![CDATA[均价]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" />
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<column name="proj_income_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目收益id]]></comment>
+			</column>
+			<column name="proj_businessp_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目业态id]]></comment>
+			</column>
+			<index name="pk_pc_proj_sales_his_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="pc_proj_sales_plan" >
+			<comment><![CDATA[项目销售计划表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="year" type="int" length="36" jt="4" >
+				<comment><![CDATA[年份]]></comment>
+			</column>
+			<column name="quarter" type="int" jt="4" >
+				<comment><![CDATA[季度]]></comment>
+			</column>
+			<column name="sale_area" type="decimal" jt="3" >
+				<comment><![CDATA[销售面积]]></comment>
+			</column>
+			<column name="contract_amount" type="decimal" jt="3" >
+				<comment><![CDATA[合同额]]></comment>
+			</column>
+			<column name="payback" type="decimal" jt="3" >
+				<comment><![CDATA[回款]]></comment>
+			</column>
+			<column name="tax_price" type="decimal" jt="3" >
+				<comment><![CDATA[销售税额]]></comment>
+			</column>
+			<column name="average_prise" type="decimal" jt="3" >
+				<comment><![CDATA[均价]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="principal" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[负责人]]></comment>
+			</column>
+			<column name="proj_income_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目收益测算id]]></comment>
+			</column>
+			<column name="proj_business_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目业态id]]></comment>
+			</column>
+			<index name="pk_sales_plan_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_sales_plan_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_proj_tax" >
+			<comment><![CDATA[项目税额]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="amount" type="bigint" jt="-5" >
+				<comment><![CDATA[税额]]></comment>
+			</column>
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目id]]></comment>
+			</column>
+			<column name="tax_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[税目id]]></comment>
+			</column>
+			<index name="pk_pc_proj_tax_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_pc_proj_tax_pc_project" to_schema="parkcost" to_table="pc_project" >
+				<fk_column name="project_id" pk="record_id" />
+			</fk>
+		</table>
+		<table name="pc_project" >
+			<comment><![CDATA[项目表]]></comment>
+			<column name="id " type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="creator" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[创建人]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[项目名称]]></comment>
+			</column>
+			<column name="parent_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级项目ID]]></comment>
+			</column>
+			<column name="parent_path" type="varchar" length="518" jt="12" >
+				<comment><![CDATA[父级路经]]></comment>
+			</column>
+			<column name="building_coverage" type="decimal" jt="3" >
+				<comment><![CDATA[建筑密度]]></comment>
+			</column>
+			<column name="slag_volume" type="decimal" jt="3" >
+				<comment><![CDATA[渣土工程量]]></comment>
+			</column>
+			<column name="civil_air_defense_area" type="decimal" jt="3" >
+				<comment><![CDATA[人防面积]]></comment>
+			</column>
+			<column name="type" type="int" jt="4" >
+				<comment><![CDATA[项目类型(1:住宅 2:商业)]]></comment>
+			</column>
+			<column name="cover_area" type="decimal" jt="3" >
+				<comment><![CDATA[占地面积]]></comment>
+			</column>
+			<column name="address" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[项目地址]]></comment>
+			</column>
+			<column name="underground_floor_area" type="decimal" jt="3" >
+				<comment><![CDATA[地下建筑面积]]></comment>
+			</column>
+			<column name="ground_floor_area" type="decimal" jt="3" >
+				<comment><![CDATA[地上建筑面积]]></comment>
+			</column>
+			<column name="underground_volume_rate" type="decimal" jt="3" >
+				<comment><![CDATA[地下容积率]]></comment>
+			</column>
+			<column name="ground_volume_rate" type="decimal" jt="3" >
+				<comment><![CDATA[地上容积率]]></comment>
+			</column>
+			<column name="sale_area" type="decimal" jt="3" >
+				<comment><![CDATA[可售面积]]></comment>
+			</column>
+			<column name="start_time" type="timestamp" jt="93" >
+				<comment><![CDATA[项目开始时间]]></comment>
+			</column>
+			<column name="end_time" type="timestamp" jt="93" >
+				<comment><![CDATA[结束时间]]></comment>
+			</column>
+			<column name="total_using_area" type="decimal" jt="3" >
+				<comment><![CDATA[总用地面积]]></comment>
+			</column>
+			<column name="construction_area" type="decimal" jt="3" >
+				<comment><![CDATA[建设用地面积]]></comment>
+			</column>
+			<column name="org_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目所属子公司]]></comment>
+			</column>
+			<column name="location" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[项目地址(经纬度)]]></comment>
+			</column>
+			<column name="plot_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[所属地块]]></comment>
+			</column>
+			<column name="identi_area" type="decimal" jt="3" >
+				<comment><![CDATA[可确权面积]]></comment>
+			</column>
+			<index name="pk_project_id " unique="PRIMARY_KEY" >
+				<column name="id " />
+			</index>
+			<index name="unq_project_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+			<index name="idx_project_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+				<column name="record_id" />
+				<column name="name" />
+				<column name="creator" />
+			</index>
+		</table>
+		<table name="pc_target" >
+			<comment><![CDATA[指标表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[指标名称]]></comment>
+			</column>
+			<column name="definition" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[指标定义]]></comment>
+			</column>
+			<column name="project_type" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[项目类型(商业/住宅)]]></comment>
+			</column>
+			<column name="unit" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[单位]]></comment>
+			</column>
+			<column name="numerical_formula" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[数值公式]]></comment>
+			</column>
+			<column name="parent_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[父级ID]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="200" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<column name="creator" type="varchar" length="36" jt="12" />
+			<index name="pk_project_target_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_project_target_deleted_at" unique="NORMAL" >
+				<column name="deleted_at" />
+			</index>
+			<index name="idx_project_target_deleted_at_0" unique="NORMAL" >
+				<column name="deleted_at" />
+				<column name="record_id" />
+			</index>
+			<index name="unq_project_target_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="pc_tax_calculation" >
+			<comment><![CDATA[税目计算表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="category" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[类别]]></comment>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[税目名称]]></comment>
+			</column>
+			<column name="calculation_formula" type="varchar" length="50" jt="12" >
+				<comment><![CDATA[计算公式]]></comment>
+			</column>
+			<column name="type" type="int" length="50" jt="4" >
+				<comment><![CDATA[税率类型(1:含税计算 2:不含税计算)]]></comment>
+			</column>
+			<column name="tax_rate" type="datetime" jt="93" >
+				<comment><![CDATA[税率]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="1024" jt="12" >
+				<comment><![CDATA[备注]]></comment>
+			</column>
+			<index name="pk_tax_calculation_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_tax_calculation_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+		<table name="table" />
+		<table name="table_0" />
+		<table name="table_1" />
+		<table name="table_2" />
+		<table name="version" >
+			<comment><![CDATA[版本]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="updated_at" type="timestamp" jt="93" />
+			<column name="deleted_at" type="timestamp" jt="93" />
+			<column name="record_id" type="varchar" length="36" jt="12" />
+			<column name="name" type="varchar" length="100" jt="12" >
+				<comment><![CDATA[名称]]></comment>
+			</column>
+			<column name="memo" type="varchar" length="200" jt="12" />
+			<column name="sequence" type="int" jt="4" >
+				<comment><![CDATA[排序值]]></comment>
+			</column>
+			<index name="pk_version_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_version_record_id" unique="UNIQUE" >
+				<column name="record_id" />
+			</index>
+		</table>
+	</schema>
+	<connector name="" database="MySql" host="localhost" port="3306" user="root" />
 	<layout name="Default Layout" id="Layout_3c6862d" show_column_type="y" show_relation="columns" >
 		<comment><![CDATA[资产管理]]></comment>
-		<entity schema="parkassets" name="pa_menu_action" color="C4E0F9" x="48" y="736" />
-		<entity schema="parkassets" name="pa_menu_resource" color="C4E0F9" x="48" y="912" />
-		<entity schema="parkassets" name="pa_role" color="C4E0F9" x="528" y="960" />
-		<entity schema="parkassets" name="pa_role_menu" color="C4E0F9" x="528" y="752" />
-		<entity schema="parkassets" name="pa_user_role" color="C4E0F9" x="288" y="1040" />
-		<entity schema="parkassets" name="pa_menu" color="C4E0F9" x="288" y="752" />
-		<entity schema="parkassets" name="pa_system_parameter" color="FFE6CC" x="272" y="1520" />
-		<entity schema="parkassets" name="pa_dictionary" color="FFE6CC" x="48" y="1520" />
-		<entity schema="parkassets" name="pa_plot" color="E6CCFF" x="912" y="112" />
-		<entity schema="parkassets" name="pa_withdrawal" color="E6CCFF" x="1792" y="400" />
-		<entity schema="parkassets" name="pa_rent_detail" color="E6CCFF" x="2032" y="832" />
-		<entity schema="parkassets" name="pa_organization" color="C4E0F9" x="512" y="1184" />
-		<entity schema="parkassets" name="pa_user" color="C4E0F9" x="224" y="1200" />
-		<entity schema="parkassets" name="pa_asset_history" color="E6CCFF" x="1680" y="800" />
-		<entity schema="parkassets" name="pa_contract" color="E6CCFF" x="2016" y="400" />
-		<entity schema="parkassets" name="pa_project" color="E6CCFF" x="912" y="384" />
-		<entity schema="parkassets" name="pa_tenant_customer" color="E6CCFF" x="1504" y="400" />
-		<entity schema="parkassets" name="pa_asset_group" color="E6CCFF" x="1584" y="96" />
-		<entity schema="parkassets" name="pa_asset_group_detail" color="E6CCFF" x="1392" y="96" />
-		<entity schema="parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1824" y="80" />
-		<entity schema="parkassets" name="pa_shop" color="E6CCFF" x="912" y="1328" />
-		<entity schema="parkassets" name="pa_apartment" color="E6CCFF" x="1424" y="1264" />
-		<entity schema="parkassets" name="pa_hotel" color="E6CCFF" x="1168" y="1264" />
-		<entity schema="parkassets" name="pa_agricultural_market" color="E6CCFF" x="912" y="1696" />
-		<entity schema="parkassets" name="pa_car_changer" color="E6CCFF" x="1168" y="1696" />
-		<entity schema="parkassets" name="pa_factory_building" color="E6CCFF" x="1424" y="1696" />
-		<entity schema="parkassets" name="pa_asset" color="E6CCFF" x="1184" y="800" />
-		<entity schema="parkassets" name="pa_office_building" color="E6CCFF" x="912" y="928" />
+		<entity schema="parkassets.parkassets" name="pa_menu_action" color="C4E0F9" x="64" y="1168" />
+		<entity schema="parkassets.parkassets" name="pa_menu_resource" color="C4E0F9" x="64" y="1344" />
+		<entity schema="parkassets.parkassets" name="pa_role" color="C4E0F9" x="544" y="1392" />
+		<entity schema="parkassets.parkassets" name="pa_role_menu" color="C4E0F9" x="544" y="1184" />
+		<entity schema="parkassets.parkassets" name="pa_menu" color="C4E0F9" x="304" y="1184" />
+		<entity schema="parkassets.parkassets" name="pa_system_parameter" color="FFE6CC" x="336" y="1952" />
+		<entity schema="parkassets.parkassets" name="pa_dictionary" color="FFE6CC" x="112" y="1952" />
+		<entity schema="parkassets.parkassets" name="pa_plot" color="E6CCFF" x="784" y="112" />
+		<entity schema="parkassets.parkassets" name="pa_withdrawal" color="E6CCFF" x="1664" y="400" />
+		<entity schema="parkassets.parkassets" name="pa_organization" color="C4E0F9" x="528" y="1616" />
+		<entity schema="parkassets.parkassets" name="pa_contract" color="E6CCFF" x="1888" y="400" />
+		<entity schema="parkassets.parkassets" name="pa_tenant_customer" color="E6CCFF" x="1376" y="400" />
+		<entity schema="parkassets.parkassets" name="pa_asset_group" color="E6CCFF" x="1456" y="96" />
+		<entity schema="parkassets.parkassets" name="pa_asset_group_detail" color="E6CCFF" x="1264" y="96" />
+		<entity schema="parkassets.parkassets" name="pa_asset_rent_payment" color="E6CCFF" x="1696" y="80" />
+		<entity schema="parkassets.parkassets" name="pa_apartment" color="E6CCFF" x="1296" y="1264" />
+		<entity schema="parkassets.parkassets" name="pa_hotel" color="E6CCFF" x="1040" y="1264" />
+		<entity schema="parkassets.parkassets" name="pa_car_changer" color="E6CCFF" x="1040" y="1696" />
+		<entity schema="parkassets.parkassets" name="pa_asset" color="E6CCFF" x="1056" y="800" />
+		<entity schema="parkassets.parkassets" name="pa_office_building" color="E6CCFF" x="784" y="928" />
+		<entity schema="parkassets.parkassets" name="pa_agricultural_market" color="E6CCFF" x="784" y="1696" />
+		<entity schema="parkassets.parkassets" name="pa_shop" color="E6CCFF" x="784" y="1328" />
+		<entity schema="parkassets.parkassets" name="pa_factory_building" color="E6CCFF" x="1296" y="1696" />
+		<entity schema="parkassets.parkassets" name="pa_rent_detail" color="E6CCFF" x="1904" y="832" />
+		<entity schema="parkcost" name="pc_business_format" color="3986C1" x="80" y="2336" />
+		<entity schema="parkassets.parkassets" name="pa_asset_history" color="E6CCFF" x="1552" y="800" />
+		<entity schema="parkassets.parkassets" name="pa_project" color="E6CCFF" x="784" y="384" />
+		<entity schema="parkcost" name="pc_tax_calculation" color="3986C1" x="288" y="2320" />
+		<entity schema="parkassets.parkassets" name="pa_user_role" color="C4E0F9" x="304" y="1472" />
+		<entity schema="parkcost" name="pc_proj_file" color="C1D8EE" x="816" y="2096" />
+		<entity schema="parkcost" name="pc_project" color="3986C1" x="1104" y="2080" />
+		<entity schema="parkcost" name="pc_proj_delivery_standard" color="3986C1" x="832" y="2352" />
+		<entity schema="parkcost" name="pc_proj_business_format" color="3986C1" x="1104" y="2640" />
+		<entity schema="parkcost" name="pc_proj_sales_plan" color="3986C1" x="1568" y="2080" />
+		<entity schema="parkcost" name="pc_proj_capitalized_interest" color="3986C1" x="1840" y="2064" />
+		<entity schema="parkcost" name="pc_proj_sales_his" color="C1D8EE" x="1568" y="2432" />
+		<entity schema="parkcost" name="pc_proj_income_calculation" color="C1D8EE" x="2128" y="2064" />
+		<entity schema="parkcost" name="pc_proj_cost_business" color="3986C1" x="1568" y="2848" />
+		<entity schema="parkcost" name="pc_proj_cost_item" color="3986C1" x="1824" y="2848" />
+		<entity schema="parkcost" name="pc_proj_cost_his" color="C1D8EE" x="1808" y="3120" />
+		<entity schema="parkcost" name="pc_proj_capitalized_his" color="C1D8EE" x="1824" y="2432" />
+		<entity schema="parkcost" name="pc_proj_expenditure" color="3986C1" x="2064" y="2816" />
+		<entity schema="parkcost" name="pc_proj_expend_cost" color="C1D8EE" x="2336" y="2816" />
+		<entity schema="parkcost" name="pc_expenditure" color="3986C1" x="2352" y="3072" />
+		<entity schema="parkcost" name="pc_proj_expenditure_time" color="C1D8EE" x="2080" y="3152" />
+		<entity schema="parkassets.parkassets" name="pa_user" color="C4E0F9" x="288" y="1632" />
+		<entity schema="parkcost" name="pc_cost_item" color="3986C1" x="288" y="2560" />
+		<entity schema="parkcost" name="pc_cost_business" color="C1D8EE" x="80" y="2576" />
+		<entity schema="parkcost" name="pc_contract_planning_template" color="C1D8EE" x="272" y="2816" />
+		<entity schema="parkcost" name="pc_land_appreciation_tax" color="C1D8EE" x="2384" y="2048" />
+		<entity schema="parkcost" name="pc_proj_contract_planning" color="C1D8EE" x="1120" y="2896" />
+		<entity schema="parkcost" name="pc_business_partner" color="C1D8EE" x="48" y="2816" />
 		<group name="权限管理" color="C4E0F9" >
-			<entity schema="parkassets" name="pa_menu" />
-			<entity schema="parkassets" name="pa_menu_action" />
-			<entity schema="parkassets" name="pa_menu_resource" />
-			<entity schema="parkassets" name="pa_role" />
-			<entity schema="parkassets" name="pa_role_menu" />
-			<entity schema="parkassets" name="pa_user" />
-			<entity schema="parkassets" name="pa_user_role" />
-			<entity schema="parkassets" name="pa_organization" />
+			<entity schema="parkassets.parkassets" name="pa_menu" />
+			<entity schema="parkassets.parkassets" name="pa_menu_action" />
+			<entity schema="parkassets.parkassets" name="pa_menu_resource" />
+			<entity schema="parkassets.parkassets" name="pa_role" />
+			<entity schema="parkassets.parkassets" name="pa_role_menu" />
+			<entity schema="parkassets.parkassets" name="pa_user" />
+			<entity schema="parkassets.parkassets" name="pa_user_role" />
+			<entity schema="parkassets.parkassets" name="pa_organization" />
 		</group>
 		<group name="基础数据模块" color="FFE6CC" >
-			<entity schema="parkassets" name="pa_dictionary" />
-			<entity schema="parkassets" name="pa_system_parameter" />
+			<entity schema="parkassets.parkassets" name="pa_dictionary" />
+			<entity schema="parkassets.parkassets" name="pa_system_parameter" />
 		</group>
 		<group name="资产管理" color="E6CCFF" >
-			<entity schema="parkassets" name="pa_agricultural_market" />
-			<entity schema="parkassets" name="pa_apartment" />
-			<entity schema="parkassets" name="pa_asset" />
-			<entity schema="parkassets" name="pa_asset_group" />
-			<entity schema="parkassets" name="pa_asset_history" />
-			<entity schema="parkassets" name="pa_asset_rent_payment" />
-			<entity schema="parkassets" name="pa_car_changer" />
-			<entity schema="parkassets" name="pa_contract" />
-			<entity schema="parkassets" name="pa_factory_building" />
-			<entity schema="parkassets" name="pa_hotel" />
-			<entity schema="parkassets" name="pa_office_building" />
-			<entity schema="parkassets" name="pa_plot" />
-			<entity schema="parkassets" name="pa_project" />
-			<entity schema="parkassets" name="pa_rent_detail" />
-			<entity schema="parkassets" name="pa_shop" />
-			<entity schema="parkassets" name="pa_tenant_customer" />
-			<entity schema="parkassets" name="pa_withdrawal" />
-			<entity schema="parkassets" name="pa_asset_group_detail" />
+			<entity schema="parkassets.parkassets" name="pa_agricultural_market" />
+			<entity schema="parkassets.parkassets" name="pa_apartment" />
+			<entity schema="parkassets.parkassets" name="pa_asset" />
+			<entity schema="parkassets.parkassets" name="pa_asset_group" />
+			<entity schema="parkassets.parkassets" name="pa_asset_history" />
+			<entity schema="parkassets.parkassets" name="pa_asset_rent_payment" />
+			<entity schema="parkassets.parkassets" name="pa_car_changer" />
+			<entity schema="parkassets.parkassets" name="pa_contract" />
+			<entity schema="parkassets.parkassets" name="pa_factory_building" />
+			<entity schema="parkassets.parkassets" name="pa_hotel" />
+			<entity schema="parkassets.parkassets" name="pa_office_building" />
+			<entity schema="parkassets.parkassets" name="pa_plot" />
+			<entity schema="parkassets.parkassets" name="pa_project" />
+			<entity schema="parkassets.parkassets" name="pa_rent_detail" />
+			<entity schema="parkassets.parkassets" name="pa_shop" />
+			<entity schema="parkassets.parkassets" name="pa_tenant_customer" />
+			<entity schema="parkassets.parkassets" name="pa_withdrawal" />
+			<entity schema="parkassets.parkassets" name="pa_asset_group_detail" />
+		</group>
+		<group name="成本核算" color="C4E0F9" >
+			<entity schema="parkcost" name="pc_proj_capitalized_interest" />
+			<entity schema="parkcost" name="pc_proj_cost_business" />
+			<entity schema="parkcost" name="pc_proj_cost_item" />
+			<entity schema="parkcost" name="pc_proj_expenditure" />
+			<entity schema="parkcost" name="pc_proj_sales_plan" />
+			<entity schema="parkcost" name="pc_expenditure" />
+			<entity schema="parkcost" name="pc_land_appreciation_tax" />
+			<entity schema="parkcost" name="pc_proj_expend_cost" />
+			<entity schema="parkcost" name="pc_proj_expenditure_time" />
+			<entity schema="parkcost" name="pc_proj_income_calculation" />
+			<entity schema="parkcost" name="pc_proj_capitalized_his" />
+			<entity schema="parkcost" name="pc_proj_cost_his" />
+			<entity schema="parkcost" name="pc_proj_sales_his" />
+		</group>
+		<group name="成本项目" color="C4E0F9" >
+			<entity schema="parkcost" name="pc_project" />
+			<entity schema="parkcost" name="pc_proj_file" />
+			<entity schema="parkcost" name="pc_proj_delivery_standard" />
+			<entity schema="parkcost" name="pc_proj_business_format" />
+		</group>
+		<group name="模板表" color="C4E0F9" >
+			<entity schema="parkcost" name="pc_business_format" />
+			<entity schema="parkcost" name="pc_cost_item" />
+			<entity schema="parkcost" name="pc_cost_business" />
+			<entity schema="parkcost" name="pc_tax_calculation" />
+			<entity schema="parkcost" name="pc_contract_planning_template" />
+			<entity schema="parkcost" name="pc_business_partner" />
+		</group>
+		<group name="合约规划表" color="C4E0F9" >
+			<entity schema="parkcost" name="pc_proj_contract_planning" />
 		</group>
 	</layout>
 </project>

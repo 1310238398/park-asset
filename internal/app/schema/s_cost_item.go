@@ -1,12 +1,16 @@
 package schema
 
+import (
+	"strings"
+)
+
 // CostItem 成本项
 type CostItem struct {
 	RecordID      string          `json:"record_id" swaggo:"false,记录ID"`                       // 记录ID
 	ParentID      string          `json:"parent_id" swaggo:"false,父级ID"`                       // 父级ID
 	ParentPath    string          `json:"parent_path" swaggo:"false,父级路经"`                     // 父级路经
 	Level         int             `json:"level" swaggo:"false,层级"`                             // 层级
-	Name          string          `json:"name" swaggo:"false,成本项名称"`                           // 名称
+	Name          string          `json:"name" binding:"required" swaggo:"false,成本项名称"`        // 名称
 	TaxID         string          `json:"tax_id" swaggo:"false,税目ID"`                          // 税目ID
 	Status        int             `json:"status" swaggo:"false,状态(1:启用2:停用)"`                  // 状态(1:启用2:停用)
 	Label         int             `json:"label" swaggo:"false,标签(1:成本科目 2:测算科目)"`              // 标签(1:成本科目 2:测算科目)
@@ -18,11 +22,14 @@ type CostItem struct {
 
 // CostItemQueryParam 查询条件
 type CostItemQueryParam struct {
-	ParentID         string // 父级ID
-	PrefixParentPath string // 父级路经(前缀模糊查询)
-	Level            int    // 层级
-	LikeName         string // 成本项名称(模糊查询)
-	Name             string // 成本项名称
+	ParentID         string   // 父级ID
+	PrefixParentPath string   // 父级路经(前缀模糊查询)
+	SuffixParentPath string   // 父级路经(后缀模糊查询)
+	Level            int      // 层级
+	LikeName         string   // 成本项名称(模糊查询)
+	Label            int      // 标签(1:成本科目 2:测算科目)
+	Name             string   // 成本项名称
+	RecordIDs        []string // 成本项ID列表
 }
 
 // CostItemQueryOptions 查询可选参数项
@@ -82,4 +89,40 @@ func (a *CostItem) ToMap(deep *int, tmpDeep ...int) map[string]interface{} {
 type CostResult struct {
 	Tree []map[string]interface{} `json:"tree" swaggo:"false,数据结果"`  // 返回结果
 	Deep int                      `json:"deep" swaggo:"false,树最大深度"` // 树最大深度
+}
+
+// ToNameMap 转为路经名称映射(/分割)
+func (a CostItems) ToNameMap() map[string]string {
+	mName := make(map[string]string, len(a))
+	for _, item := range a {
+		mName[item.RecordID] = item.Name
+	}
+
+	mNamePath := make(map[string]string, len(a))
+	for _, item := range a {
+		pathOfRecordID := append(strings.Split(item.ParentPath, "/"), item.RecordID)
+		pathOfName := make([]string, len(pathOfRecordID))
+		for _, recordID := range pathOfRecordID {
+			pathOfName = append(pathOfName, mName[recordID])
+		}
+		mNamePath[item.RecordID] = strings.Trim(strings.Join(pathOfName, "/"), "/")
+	}
+
+	return mNamePath
+}
+
+// FillBusiness 填充业态
+func (a CostItems) FillBusiness(buisnItems CostBusinesses) {
+	for _, costItem := range a {
+		if costItem.BusinessList == nil {
+			var list CostBusinesses
+			costItem.BusinessList = &list
+		}
+
+		for _, businItem := range buisnItems {
+			if costItem.RecordID == businItem.CostID {
+				*costItem.BusinessList = append(*costItem.BusinessList, businItem)
+			}
+		}
+	}
 }
