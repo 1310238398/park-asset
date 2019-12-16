@@ -28,6 +28,8 @@ func (a *ProjContractPlanning) Query(c *gin.Context) {
 	switch c.Query("q") {
 	case "page":
 		a.QueryPage(c)
+	case "list":
+		a.QueryList(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -44,7 +46,7 @@ func (a *ProjContractPlanning) Query(c *gin.Context) {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-contract-plannings
+// @Router GET /api/v1/proj-contract-plannings?q=page
 func (a *ProjContractPlanning) QueryPage(c *gin.Context) {
 	var params schema.ProjContractPlanningQueryParam
 	params.ProjectID = c.Query("project_id")
@@ -62,6 +64,33 @@ func (a *ProjContractPlanning) QueryPage(c *gin.Context) {
 		return
 	}
 	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryList 查询分页数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id query string true "项目ID"
+// @Param cost_id query string true "成本项ID"
+// @Success 200 []schema.ProjContractPlanning "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-contract-plannings?q=list
+func (a *ProjContractPlanning) QueryList(c *gin.Context) {
+	var params schema.ProjContractPlanningQueryParam
+	params.ProjectID = c.Query("project_id")
+	params.CostID = c.Query("cost_id")
+	if params.ProjectID == "" || params.CostID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+
+	result, err := a.ProjContractPlanningBll.Query(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result.Data)
 }
 
 // Get 查询指定数据

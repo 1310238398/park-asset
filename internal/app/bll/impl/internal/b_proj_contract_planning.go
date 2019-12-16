@@ -91,7 +91,13 @@ func (a *ProjContractPlanning) Update(ctx context.Context, recordID string, item
 		return nil, errors.ErrNotFound
 	}
 
-	err = a.ProjContractPlanningModel.Update(ctx, recordID, item)
+	newItem := oldItem
+	newItem.Name = item.Name
+	newItem.Information = item.Information
+	newItem.PlanningChange = item.PlanningChange
+	newItem.PlanningPrice = item.PlanningPrice
+	newItem.Memo = item.Memo
+	err = a.ProjContractPlanningModel.Update(ctx, recordID, *newItem)
 	if err != nil {
 		return nil, err
 	}
@@ -133,9 +139,10 @@ func (a *ProjContractPlanning) generate(ctx context.Context, projectID string) e
 		return err
 	}
 
-	if pIncomeResult.PageResult.Total != 1 && sizeResult.PageResult.Total != 0 {
+	if pIncomeResult.PageResult.Total != 1 || sizeResult.PageResult.Total != 0 {
 		return nil
 	}
+
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		templateResult, err := a.ContractPlanningTemplateModel.Query(ctx, schema.ContractPlanningTemplateQueryParam{})
 		if err != nil {
