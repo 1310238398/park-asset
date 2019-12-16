@@ -203,6 +203,7 @@ func (a *ProjCompareItem) ToMap() map[string]interface{} {
 	result["memo"] = a.Memo
 	result["parent_id"] = a.ParentID
 	result["changed"] = a.Changed
+	result["parent_path"] = a.ParentPath
 
 	for _, v := range a.Versions {
 		result[v.VersionID] = v.Value
