@@ -58,6 +58,8 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjSalesPlan *ctl.ProjSalesPlan,
 		cTaxCalculation *ctl.TaxCalculation,
 		cComContract *ctl.ComContract,
+		cSettlementRecord *ctl.SettlementRecord,
+		cComContractAlter *ctl.ComContractAlter,
 	) error {
 
 		g := app.Group("/api")
@@ -452,6 +454,26 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gComContract.DELETE("/:id", cComContract.Delete)
 				// 合同生效
 				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
+			}
+
+			// 注册/api/v1/settlement-records
+			gSettlementRecord := v1.Group("settlement-records")
+			{
+				gSettlementRecord.GET("", cSettlementRecord.Query)
+				gSettlementRecord.GET(":id", cSettlementRecord.Get)
+				gSettlementRecord.POST("", cSettlementRecord.Create)
+				gSettlementRecord.PUT(":id", cSettlementRecord.Update)
+				gSettlementRecord.DELETE(":id", cSettlementRecord.Delete)
+			}
+
+			// 注册/api/v1/com-contract-alters
+			gComContractAlter := v1.Group("com-contract-alters")
+			{
+				gComContractAlter.GET("", cComContractAlter.Query)
+				gComContractAlter.GET(":id", cComContractAlter.Get)
+				gComContractAlter.POST("", cComContractAlter.Create)
+				gComContractAlter.PUT(":id", cComContractAlter.Update)
+				gComContractAlter.DELETE(":id", cComContractAlter.Delete)
 			}
 
 		}

@@ -11,7 +11,9 @@ type ComContract struct {
 	Creator               string                   `json:"creator"`                                   // 创建者
 	CreatedAt             time.Time                `json:"created_at"`                                // 创建时间
 	UpdatedAt             time.Time                `json:"updated_at"`                                // 更新时间
+	ProjectID             string                   `json:"project_id"`                                //所属项目id
 	ContractPlanningID    string                   `json:"contract_planning_id"`                      //所属合约规划
+	ContractPlanningDone  uint8                    `json:"contract_planning_done"`                    // 合约规划是否引用完
 	Category              string                   `json:"category"`                                  //合同类别
 	Subject               string                   `json:"subject"`                                   //合同科目
 	SubjectSubItem        string                   `json:"subject_subitem"`                           //所属科目分项
@@ -28,14 +30,16 @@ type ComContract struct {
 	YifangSign            string                   `json:"yifang_sign"`                               //乙方签字
 	Bingfang              string                   `json:"bingfang"`                                  //丙方
 	BingfangSign          string                   `json:"bingfang_sign"`                             //丙方签字
-	Amount                uint                     `json:"amount"`                                    //合同金额
+	Amount                float64                  `json:"amount"`                                    //合同金额
 	OverAmountSource      string                   `json:"over_amount_source"`                        //合同金额超出合约规划后 需要注明来源
-	JiaStuffsAmount       uint                     `json:"jia_stuffs_amount"`                         //甲方供应材料金额
-	UnCostAmount          uint                     `json:"uncost_amount"`                             //不计成本金额
-	ValiSignAmount        uint                     `json:"vali_sign_amount"`                          //有效签约金额
+	JiaStuffsAmount       float64                  `json:"jia_stuffs_amount"`                         //甲方供应材料金额
+	UnCostAmount          float64                  `json:"uncost_amount"`                             //不计成本金额
+	ValiSignAmount        float64                  `json:"vali_sign_amount"`                          //有效签约金额
 	SignDate              string                   `json:"sign_date"`                                 //签约日期
 	PayType               string                   `json:"pay_type"`                                  //付款方式
 	PayPrecondition       string                   `json:"pay_precondition"`                          //付款条件
+	Settlement            uint8                    `json:"settlement"`                                // 是否结算
+	Content               string                   `json:"content"`                                   // 合同内容
 	Attas                 []*ComContractAttachment `json:"attas"`                                     //合同附件
 	//合同状态 0暂存 1 审批中 2 审批驳回  3 审批通过(未生效)5 合同生效(填上合同编号)
 	Status uint   `json:"status"`
@@ -146,10 +150,10 @@ type ComContractStuffApprPrice struct {
 
 // ComContractQueryParam 查询条件
 type ComContractQueryParam struct {
-	Status   int    `json:"stattus"` // 合同状态
-	Name     string `json:"name"`    // 合同名称
-	SN       string `json:"sn"`      // 合同编号
-	Category string `json:"cate"`    // 合同类别
+	Status   int    `json:"status"` // 合同状态
+	Name     string `json:"name"`   // 合同名称
+	SN       string `json:"sn"`     // 合同编号
+	Category string `json:"cate"`   // 合同类别
 }
 
 // ComContractQueryOptions 查询可选参数项

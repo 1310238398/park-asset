@@ -117,7 +117,7 @@ func (a *ComContract) Update(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-
+	item.Creator = ginplus.GetUserID(c)
 	nitem, err := a.ComContractBll.Update(ginplus.NewContext(c), c.Param("id"), item)
 	if err != nil {
 		ginplus.ResError(c, err)

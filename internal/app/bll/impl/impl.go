@@ -59,5 +59,9 @@ func Inject(container *dig.Container) error {
 	_ = container.Provide(func(b *internal.ComContract) bll.IComContract { return b })
 	_ = container.Provide(internal.NewComContractAttachment)
 	_ = container.Provide(func(b *internal.ComContractAttachment) bll.IComContractAttachment { return b })
+	_ = container.Provide(internal.NewSettlementRecord)
+	_ = container.Provide(func(b *internal.SettlementRecord) bll.ISettlementRecord { return b })
+	_ = container.Provide(internal.NewComContractAlter)
+	_ = container.Provide(func(b *internal.ComContractAlter) bll.IComContractAlter { return b })
 	return nil
 }
