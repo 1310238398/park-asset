@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { createPro, updateProInfo } from '@/services/projectManage';
 import { Form, Input, Modal, Row, Col, Select, Radio, DatePicker, message , InputNumber} from 'antd';
-import PicturesWall from '../../components/PicturesWall/PicturesWall';
+import PicturesWall2 from '../../components/PicturesWall2/PicturesWall2';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import moment from 'moment';
 
@@ -58,7 +58,12 @@ export default class Step1 extends PureComponent {
         console.log("保存的数据  ");
         console.log(formData);
         if (formData.files && formData.files.length > 0) {
-          formData.files = formData.files.join('');
+          //formData.files = formData.files.join('');
+        
+          for (let i = 0; i < formData.files.length; i++) {
+           
+            formData.files[i].project_id = formID;
+          }
         } else {
           formData.files = [];
         }
@@ -141,7 +146,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
             <Form.Item {...formItemLayout} label="项目类型">
               {getFieldDecorator('type', {
-              initialValue: formData.type +"",
+              initialValue:formData.type === undefined ? undefined: formData.type +"",
               rules: [
                 {
                   required: true,
@@ -177,7 +182,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
           <Form.Item {...formItemLayout} label="所属地块">
             {getFieldDecorator('plot_id', {
-              initialValue: formData.plot_id,
+              initialValue:   formData.plot_id,
               rules: [
                 {
                   required: true,
@@ -226,7 +231,7 @@ export default class Step1 extends PureComponent {
         <Col span={12}>
         <Form.Item {...formItemLayout} label="总用地面积(km²)">
             {getFieldDecorator('total_using_area', {
-              initialValue: formData.total_using_area,
+              initialValue: formData.total_using_area === undefined ? undefined :(formData.total_using_area/1000000.00).toFixed(2),
               rules: [
                 {
                   required: true,
@@ -234,7 +239,11 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入总用地面积" />
+              <InputNumber placeholder="请输入总用地面积" 
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col>
@@ -290,7 +299,7 @@ export default class Step1 extends PureComponent {
       <Col span={12}>
       <Form.Item {...formItemLayout} label="地上建筑面积(km²)">
             {getFieldDecorator('ground_floor_area', {
-              initialValue: formData.ground_floor_area,
+              initialValue:  formData.ground_floor_area === undefined ? undefined : (formData.ground_floor_area/1000000.00).toFixed(2),
               rules: [
                 {
                   required: true,
@@ -298,14 +307,18 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入地上建筑面积" />
+              <InputNumber placeholder="请输入地上建筑面积" 
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item {...formItemLayout} label="地下建筑面积(km²)">
             {getFieldDecorator('underground_floor_area', {
-              initialValue: formData.underground_floor_area,
+              initialValue: formData.underground_floor_area === undefined ? undefined: (formData.underground_floor_area/1000000.00).toFixed(2),
               rules: [
                 {
                   required: true,
@@ -313,7 +326,11 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入地下建筑面积" />
+              <InputNumber placeholder="请输入地下建筑面积" 
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col>
@@ -330,7 +347,11 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入地上容积率" />
+              <InputNumber placeholder="请输入地上容积率" 
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col> 
@@ -345,7 +366,11 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入地下容积率" />
+              <InputNumber placeholder="请输入地下容积率" 
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col> 
@@ -355,7 +380,7 @@ export default class Step1 extends PureComponent {
       <Col span={12}>
           <Form.Item {...formItemLayout} label="可确权面积(km²)">
             {getFieldDecorator('identi_area', {
-              initialValue: formData.identi_area,
+              initialValue: formData.identi_area === undefined ? undefined :  (formData.identi_area/1000000.00).toFixed(2),
               rules: [
                 {
                   required: true,
@@ -363,14 +388,18 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入可确权面积" />
+              <InputNumber placeholder="请输入可确权面积" 
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col> 
         <Col span={12}>
           <Form.Item {...formItemLayout} label="可售面积(km²)">
             {getFieldDecorator('sale_area', {
-              initialValue: formData.sale_area,
+              initialValue:  formData.sale_area === undefined ? undefined :  (formData.sale_area/1000000.00).toFixed(2),
               rules: [
                 {
                   required: true,
@@ -378,7 +407,11 @@ export default class Step1 extends PureComponent {
                 },
               ],
             })(
-              <InputNumber placeholder="请输入可售面积" />
+              <InputNumber placeholder="请输入可售面积"
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\\s?|(,*)/g, '')}
+              style={{width: '100%'}}
+              />
             )}
           </Form.Item>
         </Col> 
@@ -386,18 +419,29 @@ export default class Step1 extends PureComponent {
       <Row>
       
 
-        <Col span={12}>
-          <Form.Item {...formItemLayout} label="项目相关证书">
+        <Col span={24} style={{ textAlign: "left"}}>
+          <Form.Item   
+          labelCol= {{
+              span: 4,
+          }
+      
+      }
+      wrapperCol= {
+        {
+           span: 20,
+        }
+       
+      } label="项目相关证书">
           <span style={{ color: 'red' }}>（图片上传格式jpg,jpeg,png）</span>
             {getFieldDecorator('files', {
-             // initialValue: formData.files ? [formData.files] : '',
+              initialValue: formData.files ? formData.files : '',
               rules: [
                 {
                   required: false,
                   message: '请选择',
                 },
               ],
-            })(<PicturesWall num={1} bucket="oper" listType="picture-card" />)}
+            })(<PicturesWall2  num={5} listType="picture-card" />)}
           </Form.Item>
         </Col>
       </Row>

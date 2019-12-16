@@ -84,6 +84,7 @@ func (a *ProjExpenditure) QueryTree(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return
 	}
+
 	result, err := a.ProjExpenditureBll.Query(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
@@ -175,19 +176,3 @@ func (a *ProjExpenditure) Delete(c *gin.Context) {
 	}
 	ginplus.ResOK(c)
 }
-
-// // Generate 生成数据
-// // @Summary 生成数据
-// // @Param Authorization header string false "Bearer 用户令牌"
-// // @Param project_id body string true ""
-// // @Success 200 schema.HTTPStatus "{status:OK}"
-// // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
-// // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// // @Router Post /api/v1/proj-expenditures/generate
-// func (a *ProjExpenditure) Generate(c *gin.Context) {
-// 	projectID := c.Query("project_id")
-// 	if projectID == "" {
-// 		ginplus.ResError(c, errors.ErrBadRequest)
-// 	}
-
-// }

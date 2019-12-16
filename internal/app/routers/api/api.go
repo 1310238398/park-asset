@@ -47,7 +47,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjBusinessFormat *ctl.ProjBusinessFormat,
 		cProjCapitalizedHis *ctl.ProjCapitalizedHis,
 		cProjCapitalizedInterest *ctl.ProjCapitalizedInterest,
-		cProjCostBusiness *ctl.ProjCostBusiness,
 		cProjCostHis *ctl.ProjCostHis,
 		cProjCostItem *ctl.ProjCostItem,
 		cProjDeliveryStandard *ctl.ProjDeliveryStandard,
@@ -60,6 +59,9 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cComContract *ctl.ComContract,
 		cSettlementRecord *ctl.SettlementRecord,
 		cComContractAlter *ctl.ComContractAlter,
+		cContractPlanningTemplate *ctl.ContractPlanningTemplate,
+		cBusinessPartner *ctl.BusinessPartner,
+		cProjContractPlanning *ctl.ProjContractPlanning,
 	) error {
 
 		g := app.Group("/api")
@@ -329,16 +331,6 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjCapitalizedInterest.DELETE(":id", cProjCapitalizedInterest.Delete)
 			}
 
-			// 注册/api/v1/proj-cost-businesses
-			gProjCostBusiness := v1.Group("proj-cost-businesses")
-			{
-				gProjCostBusiness.GET("", cProjCostBusiness.Query)
-				gProjCostBusiness.GET(":id", cProjCostBusiness.Get)
-				gProjCostBusiness.POST("", cProjCostBusiness.Create)
-				gProjCostBusiness.PUT(":id", cProjCostBusiness.Update)
-				gProjCostBusiness.DELETE(":id", cProjCostBusiness.Delete)
-			}
-
 			// 注册/api/v1/proj-cost-his
 			gProjCostHis := v1.Group("proj-cost-his")
 			{
@@ -398,6 +390,20 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjIncomeCalculation.POST("", cProjIncomeCalculation.Create)
 				gProjIncomeCalculation.PUT(":id", cProjIncomeCalculation.Update)
 				gProjIncomeCalculation.DELETE(":id", cProjIncomeCalculation.Delete)
+				gProjIncomeCalculation.POST("version", cProjIncomeCalculation.CreateVersion)
+
+				// /api/v1/proj-income-calculations/version
+			}
+
+			// 注册/api/v1/proj-income-calculations
+			gProjVersion := v1.Group("proj-version")
+			{
+				gProjVersion.GET(":id/compare", cProjIncomeCalculation.QueryVersionCompare)
+				gProjVersion.POST(":id", cProjIncomeCalculation.CreateVersion)
+				gProjVersion.PUT(":id", cProjIncomeCalculation.UpdateVersion)
+				gProjVersion.PUT(":id/apply", cProjIncomeCalculation.Apply)
+				gProjVersion.PUT(":id/pass", cProjIncomeCalculation.Pass)
+				gProjVersion.PUT(":id/reject", cProjIncomeCalculation.Reject)
 			}
 
 			// 注册/api/v1/proj-sales-his
@@ -474,6 +480,35 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gComContractAlter.POST("", cComContractAlter.Create)
 				gComContractAlter.PUT(":id", cComContractAlter.Update)
 				gComContractAlter.DELETE(":id", cComContractAlter.Delete)
+			}
+			// 注册/api/v1/contract-planning-templates
+			gContractPlanningTemplate := v1.Group("contract-planning-templates")
+			{
+				gContractPlanningTemplate.GET("", cContractPlanningTemplate.Query)
+				gContractPlanningTemplate.GET(":id", cContractPlanningTemplate.Get)
+				gContractPlanningTemplate.POST("", cContractPlanningTemplate.Create)
+				gContractPlanningTemplate.PUT(":id", cContractPlanningTemplate.Update)
+				gContractPlanningTemplate.DELETE(":id", cContractPlanningTemplate.Delete)
+			}
+
+			// 注册/api/v1/business-partners
+			gBusinessPartner := v1.Group("business-partners")
+			{
+				gBusinessPartner.GET("", cBusinessPartner.Query)
+				gBusinessPartner.GET(":id", cBusinessPartner.Get)
+				gBusinessPartner.POST("", cBusinessPartner.Create)
+				gBusinessPartner.PUT(":id", cBusinessPartner.Update)
+				gBusinessPartner.DELETE(":id", cBusinessPartner.Delete)
+			}
+
+			// 注册/api/v1/proj-contract-plannings
+			gProjContractPlanning := v1.Group("proj-contract-plannings")
+			{
+				gProjContractPlanning.GET("", cProjContractPlanning.Query)
+				gProjContractPlanning.GET(":id", cProjContractPlanning.Get)
+				gProjContractPlanning.POST("", cProjContractPlanning.Create)
+				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
+				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
 			}
 
 		}

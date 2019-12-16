@@ -57,7 +57,11 @@ func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditu
 
 	}
 
-	db = db.Order("sequence DESC, id DESC")
+	if v := params.RecordIDs; len(v) > 0 {
+		db = db.Where("record_id IN (?)", v)
+	}
+
+	db = db.Order("sequence, id DESC")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.ProjExpenditures
@@ -113,16 +117,5 @@ func (a *ProjExpenditure) Delete(ctx context.Context, recordID string) error {
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}
-	return nil
-}
-
-// Generate 生成数据
-func (a *ProjExpenditure) Generate(ctx context.Context, projectID string, list *schema.ProjExpenditures) error {
-	entity.GetProjExpenditureDB(ctx, a.db).Begin()
-	// elist := make([]*schema.ProjExpenditure, len(a))
-	// for i, item := range *list {
-	// 	list[i] = item.ToSchemaProjExpenditure()
-	// }
-
 	return nil
 }

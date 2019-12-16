@@ -11,7 +11,7 @@ type IProjCostItem interface {
 	// 成本项目初始化
 	Init(ctx context.Context, projectID string) error
 	// 查询树结构
-	QueryTree(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error)
+	QueryTree(ctx context.Context, params schema.ProjCostItemQueryParam) (int, schema.ProjCostItemShows, error)
 	// 查询数据
 	Query(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItemQueryResult, error)
 	// 查询指定数据
@@ -22,4 +22,9 @@ type IProjCostItem interface {
 	Update(ctx context.Context, recordID string, item schema.ProjCostItem) (*schema.ProjCostItem, error)
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 刷新项目成本项
+	Renew(ctx context.Context, projectID string) error
+
+	// 查询项目合约规划成本项
+	QueryContract(ctx context.Context, projectID string) (schema.ProjCostItemShows, error)
 }

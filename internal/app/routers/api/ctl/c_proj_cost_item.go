@@ -10,9 +10,13 @@ import (
 )
 
 // NewProjCostItem 创建项目成本项控制器
-func NewProjCostItem(bProjCostItem bll.IProjCostItem) *ProjCostItem {
+func NewProjCostItem(
+	bProjCostItem bll.IProjCostItem,
+	bProjIncomeCalculation bll.IProjIncomeCalculation,
+) *ProjCostItem {
 	return &ProjCostItem{
-		ProjCostItemBll: bProjCostItem,
+		ProjCostItemBll:          bProjCostItem,
+		ProjIncomeCalculationBll: bProjIncomeCalculation,
 	}
 }
 
@@ -20,7 +24,8 @@ func NewProjCostItem(bProjCostItem bll.IProjCostItem) *ProjCostItem {
 // @Name ProjCostItem
 // @Description 项目成本项控制器
 type ProjCostItem struct {
-	ProjCostItemBll bll.IProjCostItem
+	ProjCostItemBll          bll.IProjCostItem
+	ProjIncomeCalculationBll bll.IProjIncomeCalculation
 }
 
 func (a *ProjCostItem) Query(c *gin.Context) {
@@ -30,6 +35,8 @@ func (a *ProjCostItem) Query(c *gin.Context) {
 		a.queryTree(c)
 	case "node":
 		a.QueryNodeTree(c)
+	case "contract":
+		a.QueryContractTree(c)
 	default:
 		a.queryTree(c)
 	}
@@ -55,7 +62,7 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 		return
 	}
 
-	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	level, result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
 		return
 	}
@@ -64,9 +71,15 @@ func (a *ProjCostItem) queryTree(c *gin.Context) {
 		for _, v := range result {
 			mapResult = append(mapResult, v.ToMap())
 		}
-		ginplus.ResSuccess(c, mapResult)
+		ginplus.ResSuccess(c, map[string]interface{}{
+			"level": level,
+			"list":  mapResult,
+		})
 	} else {
-		ginplus.ResSuccess(c, result)
+		ginplus.ResSuccess(c, map[string]interface{}{
+			"level": level,
+			"list":  result,
+		})
 	}
 }
 
@@ -86,7 +99,7 @@ func (a *ProjCostItem) QueryNodeTree(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return
 	}
-	result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
+	_, result, err := a.ProjCostItemBll.QueryTree(ginplus.NewContext(c), params)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return
@@ -109,7 +122,10 @@ func (a *ProjCostItem) Get(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, item)
+	if item == nil {
+		return
+	}
+	ginplus.ResSuccess(c, item.ToMap())
 }
 
 // Create 创建数据
@@ -133,6 +149,12 @@ func (a *ProjCostItem) Create(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
+
+	//TODO 更新成本支出节点
+	//TODO 更新资本化利息
+	// 更新收益测算
+	a.ProjIncomeCalculationBll.Renew(c, item.ProjectID)
+
 	ginplus.ResSuccess(c, nitem)
 }
 
@@ -162,7 +184,10 @@ func (a *ProjCostItem) Update(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResSuccess(c, nitem)
+	if nitem == nil {
+		return
+	}
+	ginplus.ResSuccess(c, nitem.ToMap())
 }
 
 // Delete 删除数据
@@ -180,4 +205,27 @@ func (a *ProjCostItem) Delete(c *gin.Context) {
 		return
 	}
 	ginplus.ResOK(c)
+}
+
+// QueryContractTree 查询数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id query string true "项目ID"
+// @Success 200 []schema.ProjContractCostTree "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-cost-items?q=contract
+func (a *ProjCostItem) QueryContractTree(c *gin.Context) {
+	projectID := c.Query("projectID")
+	if projectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+	result, err := a.ProjCostItemBll.QueryContract(ginplus.NewContext(c), projectID)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResList(c, result.ToContractTrees().ToTree())
 }

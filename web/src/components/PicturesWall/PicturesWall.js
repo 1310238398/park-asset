@@ -136,6 +136,8 @@ export default class PicturesWall extends React.Component {
 
   triggerChange = ({ fileList }) => {
     // Should provide an event to pass value to Form.
+    console.log("triggerChange ");
+    console.log(fileList);
     const { onChange } = this.props;
     if (onChange) {
       const tmp = fileList.filter(item => {
@@ -148,6 +150,8 @@ export default class PicturesWall extends React.Component {
           return '';
         }
       });
+      console.log("out ");
+      console.log(out);
       if (this.isChg(out)) {
         this.validFilelist = [...out];
         onChange(out);
@@ -178,6 +182,7 @@ export default class PicturesWall extends React.Component {
 
   handleChange = info => {
     let { fileList } = info;
+
 
     // 1. Limit the number of uploaded files
     // Only to show two recent uploaded files, and old ones will be replaced by the new

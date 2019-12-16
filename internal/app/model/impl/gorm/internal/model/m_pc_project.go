@@ -32,6 +32,10 @@ func (a *PcProject) getQueryOption(opts ...schema.PcProjectQueryOptions) schema.
 func (a *PcProject) Query(ctx context.Context, params schema.PcProjectQueryParam, opts ...schema.PcProjectQueryOptions) (*schema.PcProjectQueryResult, error) {
 	db := entity.GetPcProjectDB(ctx, a.db)
 
+	if v := params.Name; v != "" {
+		db = db.Where("name  = ?", v)
+	}
+
 	if v := params.LikeName; v != "" {
 		db = db.Where("name like ?", "%"+v+"%")
 	}

@@ -74,6 +74,9 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.ComContractAlterDesign),
 		new(entity.ComContractAlterSign),
 		new(entity.ComContractAlterStuffPrice),
+		new(entity.ContractPlanningTemplate),
+		new(entity.BusinessPartner),
+		new(entity.ProjContractPlanning),
 	).Error
 }
 
@@ -140,5 +143,8 @@ func Inject(container *dig.Container) error {
 	_ = container.Provide(func(m *imodel.SettlementRecord) model.ISettlementRecord { return m })
 	_ = container.Provide(imodel.NewComContractAlter)
 	_ = container.Provide(func(m *imodel.ComContractAlter) model.IComContractAlter { return m })
+	container.Provide(imodel.NewContractPlanningTemplate, dig.As(new(model.IContractPlanningTemplate)))
+	container.Provide(imodel.NewBusinessPartner, dig.As(new(model.IBusinessPartner)))
+	container.Provide(imodel.NewProjContractPlanning, dig.As(new(model.IProjContractPlanning)))
 	return nil
 }

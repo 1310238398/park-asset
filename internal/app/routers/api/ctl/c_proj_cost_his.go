@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -23,6 +24,17 @@ type ProjCostHis struct {
 }
 
 // Query 查询数据
+func (a *ProjCostHis) Query(c *gin.Context) {
+	switch c.Query("q") {
+	case "page":
+		a.QueryPage(c)
+
+	default:
+		ginplus.ResError(c, errors.ErrUnknownQuery)
+	}
+}
+
+// QueryPage 查询分页数据
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
@@ -31,8 +43,8 @@ type ProjCostHis struct {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/proj-cost-his
-func (a *ProjCostHis) Query(c *gin.Context) {
+// @Router GET /api/v1/proj-cost-his?q=page
+func (a *ProjCostHis) QueryPage(c *gin.Context) {
 	var params schema.ProjCostHisQueryParam
 
 	result, err := a.ProjCostHisBll.Query(ginplus.NewContext(c), params, schema.ProjCostHisQueryOptions{

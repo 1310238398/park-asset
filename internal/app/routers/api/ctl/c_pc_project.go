@@ -36,6 +36,8 @@ func (a *PcProject) Query(c *gin.Context) {
 		a.QueryPage(c)
 	case "tree":
 		a.QueryTree(c)
+	case "nodes":
+		a.queryNodes(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
@@ -98,13 +100,55 @@ func (a *PcProject) QueryList(c *gin.Context) {
 // QueryTree 查询树状数据
 // @Summary 查询树状数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param name query string false "名称"
+// @Param name query string false "项目名称(模糊查询)"
 // @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/pc-projects?q=tree
 func (a *PcProject) QueryTree(c *gin.Context) {
+	var (
+		pjParams  schema.PcProjectQueryParam
+		orgParams schema.OrganizationQueryParam
+		orgResult *schema.OrganizationQueryResult
+	)
+
+	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), orgParams)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	pjParams.OrgIDs = orgResult.Data.ToRecordIDs()
+
+	if !ginplus.CheckIsRootUser(c) {
+		orgResult, err := a.OrganizationBll.QueryCompany(ginplus.NewContext(c), ginplus.GetUserID(c))
+		if err != nil {
+			ginplus.ResError(c, err)
+			return
+		}
+		pjParams.OrgIDs = orgResult.Data.ToRecordIDs()
+
+	}
+
+	pcResult, err := a.PcProjectBll.Query(ginplus.NewContext(c), pjParams)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResList(c, orgResult.Data.ToProjectTrees().ToTree(pcResult.Data.ToProjectTrees()))
+}
+
+// QueryNodes 查询树状数据
+// @Summary 查询树状数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param name query string false "名称"
+// @Success 200 schema.ProjectNodes "查询结果：{list:列表数据}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/pc-projects?q=nodes
+func (a *PcProject) queryNodes(c *gin.Context) {
 	var (
 		pjParams  schema.PcProjectQueryParam
 		orgResult *schema.OrganizationQueryResult
@@ -133,7 +177,8 @@ func (a *PcProject) QueryTree(c *gin.Context) {
 		return
 	}
 
-	ginplus.ResList(c, orgResult.Data.ToProjectTrees().ToTree(pcResult.Data.ToProjectTrees()))
+	ginplus.ResList(c, orgResult.Data.ToProjectTrees().
+		ToTree(pcResult.Data.ToProjectTrees()).ToProjectNodes())
 }
 
 // Get 查询指定数据

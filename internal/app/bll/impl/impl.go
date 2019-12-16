@@ -63,5 +63,8 @@ func Inject(container *dig.Container) error {
 	_ = container.Provide(func(b *internal.SettlementRecord) bll.ISettlementRecord { return b })
 	_ = container.Provide(internal.NewComContractAlter)
 	_ = container.Provide(func(b *internal.ComContractAlter) bll.IComContractAlter { return b })
+	container.Provide(internal.NewContractPlanningTemplate, dig.As(new(bll.IContractPlanningTemplate)))
+	container.Provide(internal.NewBusinessPartner, dig.As(new(bll.IBusinessPartner)))
+	container.Provide(internal.NewProjContractPlanning, dig.As(new(bll.IProjContractPlanning)))
 	return nil
 }

@@ -1,10 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Input, InputNumber, Popconfirm, Form, message, Button,  Dropdown, Menu } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, message, Button,  Dropdown, Menu, Tag } from 'antd';
 import PicturesWall from '../../components/PicturesWall/PicturesWall';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-
-
+import styles from './ProjectManage.less';
 const FormItem = Form.Item;
 import * as menuService from '@/services/menu';
 import { updateStandard, createStandard, deleteStandard } from '@/services/projectManage';
@@ -106,7 +105,6 @@ export default class Step3 extends PureComponent {
           parent_path: "",
           part:"交付部位",
           record_id:"",
-
         }
       ],
       
@@ -115,6 +113,7 @@ export default class Step3 extends PureComponent {
 
       expandHang: [],
       expandedRowKeys: [],
+     
      
       //所有的二级key
       //所有的三级key
@@ -253,6 +252,7 @@ export default class Step3 extends PureComponent {
           if (key === "") {
             row.parent_path= "";
             row.parent_id = "";
+            row.record_id = "";
             response = await createStandard(row);
           }
           else {
@@ -310,6 +310,7 @@ export default class Step3 extends PureComponent {
           if (keychild === "") {
             row.parent_path= key.substring(0,key.lastIndexOf("/"));
             row.parent_id = keys[keys.length -2];
+            row.record_id = "";
             response = await createStandard(row);
           }
           else {
@@ -445,7 +446,9 @@ export default class Step3 extends PureComponent {
 
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    
+  }
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -817,6 +820,7 @@ export default class Step3 extends PureComponent {
     this.setState({currentItem: item});
   }
 
+ 
   render() {
     const { defaultData } = this.state;
     const {
@@ -825,7 +829,8 @@ export default class Step3 extends PureComponent {
       projectManage: { deliveryStandard },
       onCancel,
     } = this.props;
-    // const {columns, data} = this.state;
+  
+    
 
     const formItemLayout = {
       labelCol: {
@@ -838,17 +843,7 @@ export default class Step3 extends PureComponent {
       },
     };
 
-    // const rowSelection = {
-    //   onChange: (selectedRowKeys, selectedRows) => {
-    //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    //   },
-    //   onSelect: (record, selected, selectedRows) => {
-    //     console.log(record, selected, selectedRows);
-    //   },
-    //   onSelectAll: (selected, selectedRows, changeRows) => {
-    //     console.log(selected, selectedRows, changeRows);
-    //   },
-    // };
+   
 
     const components = {
       body: {
@@ -865,7 +860,7 @@ export default class Step3 extends PureComponent {
         ...col,
         onCell: record => ({
           record,
-          inputType: 'tyext', //col.dataIndex === 'age' ? 'number' : 'text',
+          inputType: 'text', //col.dataIndex === 'age' ? 'number' : 'text',
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing(record),
@@ -876,37 +871,7 @@ export default class Step3 extends PureComponent {
 
     return (
       <EditableContext.Provider value={this.props.form}>
-        <Button
-          onClick={() => {
-            this.expandRow(1);
-          }}
-        >
-          一级
-        </Button>
-        <Button
-          onClick={() => {
-            this.expandRow(2);
-          }}
-        >
-          二级
-        </Button>
-        <Button
-          onClick={() => {
-            this.expandRow(3);
-          }}
-        >
-          三级
-        </Button>
-        <Button
-          onClick={() => {
-            this.expandRow(4);
-          }}
-        >
-          四级
-        </Button>
-        {/* <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
-          Add a row
-        </Button> */}
+      
         <Table
           components={components}
           bordered
@@ -924,6 +889,7 @@ export default class Step3 extends PureComponent {
             onChange: this.cancel,
           }}
         />
+       
       </EditableContext.Provider>
     );
   }

@@ -43,7 +43,7 @@ var (
 	ErrLoginInvalidOldPwd     = New("旧密码不正确")
 	ErrLoginInvalidVerifyCode = New("无效的验证码")
 
-	//成本核算
+	// 成本核算
 	ErrNoProjCostItem  = New("缺少成本测算")
 	ErrNoProjSalesPlan = New("缺少销售计划")
 	ErrNoTaxIncome     = New("未设置所得税")
@@ -59,6 +59,8 @@ var (
 	ErrComContractNotCommit          = New("该合同还未提交审核")
 	ErrNoComContractSignDate         = New("请输入合同签署日期")
 	ErrNoComContractSN               = New("请输入合同正式编号")
+	// 合约规划
+	ErrNoInCome = New("未生成目标成本")
 )
 
 func init() {
@@ -103,4 +105,6 @@ func init() {
 
 	//合同管理
 	newBadRequestError(ErrNotRightStatusForCancelCommit)
+	// 合约规划
+	newBadRequestError(ErrNoInCome)
 }

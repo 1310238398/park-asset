@@ -1,0 +1,33 @@
+{
+    "struct_name": "BusinessPartner",
+    "comment": "业务往来企业",
+    "fields":[
+        {
+            "struct_field_name": "RecordID",
+            "struct_field_required": false,
+            "comment": "记录ID",
+            "struct_field_type": "string",
+            "gorm_options": "size:36;index;"
+        },
+        {
+            "struct_field_name": "Name",
+            "struct_field_required": true,
+            "comment": "企业名称",
+            "struct_field_type": "string",
+            "gorm_options": "size:100;index;"
+        },
+        {
+            "struct_field_name": "PartnerType",
+            "struct_field_required": false,
+            "comment": "伙伴类型",
+            "struct_field_type": "int",
+            "gorm_options": "index;"
+        },
+        {
+            "struct_field_name": "InChargeList",
+            "comment": "负责人列表",
+            "struct_field_type": "string",
+            "gorm_options": "size:200;"
+        }
+    ]
+}

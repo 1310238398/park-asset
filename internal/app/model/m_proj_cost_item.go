@@ -14,6 +14,8 @@ type IProjCostItem interface {
 	QueryShow(ctx context.Context, params schema.ProjCostItemQueryParam, opts ...schema.ProjCostItemQueryOptions) (schema.ProjCostItemShows, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.ProjCostItemQueryOptions) (*schema.ProjCostItem, error)
+	// 根据项目ID及成本项名称查询项目成本
+	GetByProjectIDAndCostName(ctx context.Context, projectID, costName string) (*schema.ProjCostItem, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.ProjCostItem) error
 	// 更新数据

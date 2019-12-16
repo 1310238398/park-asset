@@ -64,6 +64,7 @@ func (a Expenditures) ToTrees() ExpenditureTrees {
 			Name:       item.Name,
 			ParentID:   item.ParentID,
 			ParentPath: item.ParentPath,
+			Category:   item.Category,
 		}
 	}
 	return list
@@ -93,9 +94,12 @@ func (a ExpenditureTrees) ToTree() ExpenditureTrees {
 	return list
 }
 
-// ToProjList 转为项目支出节点创建时间列表
-func (a ExpenditureTrees) ToProjList(pitem ...*ProjExpenditure) ProjExpenditures {
-	var projExpendList ProjExpenditures
+// ToProjExpendList 转为项目支出节点创建时间列表
+func (a ExpenditureTrees) ToProjExpendList(projExpendList *ProjExpenditures, pitem ...*ProjExpenditure) *ProjExpenditures {
+	if projExpendList == nil {
+		return projExpendList
+	}
+
 	for _, treeItem := range a {
 		recordID := util.MustUUID()
 		parentID := ""
@@ -117,12 +121,12 @@ func (a ExpenditureTrees) ToProjList(pitem ...*ProjExpenditure) ProjExpenditures
 			Category:   treeItem.Category,
 			Name:       treeItem.Name,
 		}
-		projExpendList = append(projExpendList, temp)
+		*projExpendList = append(*projExpendList, temp)
 		if treeItem.Children == nil {
 			continue
 		}
 
-		treeItem.Children.ToProjList(temp)
+		treeItem.Children.ToProjExpendList(projExpendList, temp)
 
 	}
 

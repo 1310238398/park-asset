@@ -36,6 +36,12 @@ func (a *CostItem) QueryTree(ctx context.Context, params schema.CostItemQueryPar
 	if err != nil {
 		return nil, err
 	}
+
+	costBusinResult, err := a.CostBusinessModel.Query(ctx, schema.CostBusinessQueryParam{})
+	if err != nil {
+		return nil, err
+	}
+	list.Data.FillBusiness(costBusinResult.Data)
 	result := schema.CostItems{}
 	for _, v := range list.Data {
 		if v.ParentID != "" {
@@ -48,18 +54,18 @@ func (a *CostItem) QueryTree(ctx context.Context, params schema.CostItemQueryPar
 			result = append(result, v)
 		}
 		//补充业态信息
-		cbqp := schema.CostBusinessQueryParam{}
-		cbqp.CostID = v.RecordID
-		cbqr, err := a.CostBusinessModel.Query(ctx, cbqp)
-		if err != nil {
-			return nil, err
-		}
-		if len(cbqr.Data) == 0 {
-			var bList schema.CostBusinesses
-			v.BusinessList = &bList
-			continue
-		}
-		v.BusinessList = &cbqr.Data
+		// cbqp := schema.CostBusinessQueryParam{}
+		// cbqp.CostID = v.RecordID
+		// cbqr, err := a.CostBusinessModel.Query(ctx, cbqp)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// if len(cbqr.Data) == 0 {
+		// 	var bList schema.CostBusinesses
+		// 	v.BusinessList = &bList
+		// 	continue
+		// }
+		// v.BusinessList = &cbqr.Data
 	}
 
 	return result, nil
@@ -85,12 +91,12 @@ func (a *CostItem) getUpdate(ctx context.Context, recordID string) (*schema.Cost
 func (a *CostItem) Create(ctx context.Context, item schema.CostItem) (*schema.CostItem, error) {
 	err := ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		item.RecordID = util.MustUUID()
-		parentPath, err := a.getParentPath(ctx, item.ParentID)
+		parentPath, parentLevel, err := a.getParentPathAndLevel(ctx, item.ParentID)
 		if err != nil {
 			return err
 		}
 		item.ParentPath = parentPath
-
+		item.Level = parentLevel + 1
 		err = a.CostItemModel.Create(ctx, item)
 		if err != nil {
 			return nil
@@ -171,7 +177,7 @@ func (a *CostItem) Update(ctx context.Context, recordID string, item schema.Cost
 
 		addItems := a.compare(ctx, *item.BusinessList, cbqr.Data)
 		delItems := a.compare(ctx, cbqr.Data, *item.BusinessList)
-		updateItems := a.compare(ctx, cbqr.Data, append(addItems, delItems...))
+		updateItems := a.compare(ctx, *item.BusinessList, append(addItems, delItems...))
 		// 新增业态
 		for _, addItem := range addItems {
 			addItem.RecordID = util.MustUUID()
@@ -179,6 +185,7 @@ func (a *CostItem) Update(ctx context.Context, recordID string, item schema.Cost
 			if err := a.CostBusinessModel.Create(ctx, *addItem); err != nil {
 				return err
 			}
+
 		}
 		// 删除业态
 		for _, delItem := range delItems {
@@ -298,20 +305,20 @@ func (a *CostItem) compare(ctx context.Context, sitems, titems schema.CostBusine
 	return nitems
 }
 
-// 获取父级路径
-func (a *CostItem) getParentPath(ctx context.Context, parentID string) (string, error) {
+// 获取父级路径和层级
+func (a *CostItem) getParentPathAndLevel(ctx context.Context, parentID string) (string, int, error) {
 	if parentID == "" {
-		return "", nil
+		return "", 0, nil
 	}
 
 	pitem, err := a.CostItemModel.Get(ctx, parentID)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	} else if pitem == nil {
-		return "", errors.ErrInvalidParent
+		return "", 0, errors.ErrInvalidParent
 	}
 
-	return a.joinParentPath(pitem.ParentPath, pitem.RecordID), nil
+	return a.joinParentPath(pitem.ParentPath, pitem.RecordID), pitem.Level, nil
 }
 
 func (a *CostItem) joinParentPath(parentPath, parentID string) string {

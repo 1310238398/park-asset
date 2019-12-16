@@ -188,8 +188,8 @@ class AddNewSalesPlan extends PureComponent {
                           })(<label>{item.proj_business_name}</label>)}
                         </Form.Item>
                       </Col>
-                      <Col span={5}>
-                        <Form.Item {...formItemLayout} label="销售面积">
+                      <Col span={6}>
+                        <Form.Item wrapperCol={{ span: 15 }} labelCol={{ span: 9}} label="销售面积(m²)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'sale_area', {
                             initialValue: 0,
                             // rules: [
@@ -198,11 +198,14 @@ class AddNewSalesPlan extends PureComponent {
                             //     message: '请输入销售面积',
                             //   },
                             // ],
-                          })(<InputNumber placeholder="请输入销售面积" style={{ width: 100 }} />)}
+                          })(<InputNumber placeholder="请输入销售面积" style={{ width: 150 }} 
+                          formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                          parser={value => value.replace(/\\s?|(,*)/g, '')}
+                          />)}
                         </Form.Item>
                       </Col>
                       <Col span={5}>
-                        <Form.Item {...formItemLayout} label="销售单价">
+                        <Form.Item {...formItemLayout} label="销售单价(元)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'average_price', {
                             initialValue: 0,
                             // rules: [
@@ -211,11 +214,14 @@ class AddNewSalesPlan extends PureComponent {
                             //     message: '请输入销售面积',
                             //   },
                             // ],
-                          })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} />)}
+                          })(<InputNumber placeholder="请输入销售单价" style={{ width: 100 }} 
+                          formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                          parser={value => value.replace(/\\s?|(,*)/g, '')}
+                          />)}
                         </Form.Item>
                       </Col>
-                      <Col span={4}>
-                        <Form.Item {...formItemLayout} label="合同额">
+                      <Col span={3}>
+                        <Form.Item wrapperCol={{ span: 14 }} labelCol={{ span: 10}} label="合同额(元)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'contract_amount', {
                             initialValue: 0,
                           })(
@@ -227,16 +233,14 @@ class AddNewSalesPlan extends PureComponent {
                         </Form.Item>
                       </Col>
                       <Col span={6}>
-                        <Form.Item {...formItemLayout} label="销售回款额">
+                        <Form.Item {...formItemLayout} label="销售回款额(元)">
                           {getFieldDecorator(quarter_item.key + item.proj_business_id + 'payback', {
                             initialValue: 0,
-                            // rules: [
-                            //   {
-                            //     required: getFieldValue(item.code),
-                            //     message: '请输入销售面积',
-                            //   },
-                            // ],
-                          })(<InputNumber placeholder="请输入销售回款" style={{ width: 100 }} />)}
+                  
+                          })(<InputNumber placeholder="请输入销售回款" style={{ width: 150 }}
+                          formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                          parser={value => value.replace(/\\s?|(,*)/g, '')}
+                          />)}
                         </Form.Item>
                       </Col>
                     </Row>

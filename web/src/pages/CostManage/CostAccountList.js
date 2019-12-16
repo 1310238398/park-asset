@@ -114,11 +114,7 @@ class CostAccountList extends PureComponent {
         return;
       }
       const formData = { ...values };
-      if (formData.asset_type && formData.asset_type.length > 0) {
-        formData.asset_type = formData.asset_type.join(',');
-      } else {
-        formData.asset_type = '';
-      }
+    
       this.dispatch({
         type: 'projectManage/fetch',
         search: formData,
@@ -146,7 +142,7 @@ class CostAccountList extends PureComponent {
               {getFieldDecorator('name')(<Input placeholder="请输入项目名称" />)}
             </Form.Item>
           </Col>
-          <Col md={6} sm={24}>
+          {/* <Col md={6} sm={24}>
             <Form.Item label="资产类型">
               {getFieldDecorator('asset_type')(
                 <DicSelect
@@ -157,7 +153,7 @@ class CostAccountList extends PureComponent {
                 />
               )}
             </Form.Item>
-          </Col>
+          </Col> */}
           <Col md={6} sm={24}>
             <Form.Item label="项目类型">
               {getFieldDecorator('project_type')(
@@ -170,12 +166,10 @@ class CostAccountList extends PureComponent {
               )}
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col md={6} sm={24}>
-            <Form.Item label="所属公司">
+          <Col md={12} sm={24}>
+            <Form.Item label="所属公司" >
               {getFieldDecorator('org_id')(
-                <Select placeholder="请选择公司" style={{ width: '100%' }}>
+                <Select placeholder="请选择公司" style={{ width: 300 }}>
                   {companyList &&
                     companyList.map(item => (
                       <Select.Option key={item.record_id} value={item.record_id}>
@@ -186,6 +180,9 @@ class CostAccountList extends PureComponent {
               )}
             </Form.Item>
           </Col>
+        </Row>
+        <Row gutter={16}>
+    
           <Col md={6} sm={24}>
             <Form.Item label="所属地块">
               {getFieldDecorator('plot_id')(
@@ -262,7 +259,7 @@ class CostAccountList extends PureComponent {
     this.dispatch({
       type: 'costAccount/redirectDetail',
       payload: {
-        item: item,
+        record_id: item.record_id,
         operType: type1
       },
     
@@ -289,9 +286,7 @@ class CostAccountList extends PureComponent {
         title: '组织机构/项目',
         dataIndex: 'name',
         width: "20%",
-        ellipsis: true,
-       
-
+      //  ellipsis: true,
         // render: value => {
         //   return <img src={value} alt="" style={{ width: 60, height: 60 }} />;
         // },

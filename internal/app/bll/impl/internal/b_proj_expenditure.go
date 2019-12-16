@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"time"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model"
@@ -40,14 +41,11 @@ type ProjExpenditure struct {
 
 // Query 查询数据
 func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditureQueryParam, opts ...schema.ProjExpenditureQueryOptions) (*schema.ProjExpenditureQueryResult, error) {
-	result, err := a.ProjExpenditureModel.Query(ctx, params, opts...)
+	err := a.ReLoad(ctx, params.ProjectID)
 	if err != nil {
 		return nil, err
 	}
-
-	pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
-		ProjectID: params.ProjectID,
-	})
+	result, err := a.ProjExpenditureModel.Query(ctx, params, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +57,7 @@ func (a *ProjExpenditure) Query(ctx context.Context, params schema.ProjExpenditu
 		return nil, err
 	}
 
-	result.Data.FillProjCostItem(pCostResult.Data.ToMap(), pExpendCostResult.Data)
-
+	result.Data.FillProjCostItem(pExpendCostResult.Data)
 	return result, nil
 }
 
@@ -80,7 +77,7 @@ func (a *ProjExpenditure) Get(ctx context.Context, recordID string, opts ...sche
 		return nil, err
 	}
 
-	item.ProjCostItems = pExpendCostResult.Data.ToProjCostIDs()
+	item.ProjCostItemIDs = pExpendCostResult.Data.ToProjCostIDs()
 
 	return item, nil
 }
@@ -148,6 +145,37 @@ func (a *ProjExpenditure) Delete(ctx context.Context, recordID string) error {
 }
 
 func (a *ProjExpenditure) create(ctx context.Context, item schema.ProjExpenditure) error {
+	err := a.ReLoad(ctx, item.ProjectID)
+	if err != nil {
+		return err
+	}
+
+	if item.PreviousID != "" {
+		lastItem, err := a.ProjExpenditureModel.Get(ctx, item.PreviousID)
+		if err != nil {
+			return err
+		}
+
+		f := util.FracFloat(lastItem.Sequence)
+		if f > 0 {
+			item.Sequence = lastItem.Sequence + 0.1*f
+		} else {
+			item.Sequence = lastItem.Sequence + 0.1
+		}
+
+	} else if item.PreviousID == "" {
+		size, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
+			ProjectID: item.ProjectID,
+		}, schema.ProjExpenditureQueryOptions{
+			PageParam: &schema.PaginationParam{PageSize: -1},
+		})
+		if err != nil {
+			return err
+		}
+
+		item.Sequence = float64(size.PageResult.Total) + 1
+	}
+
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		parentPath, err := a.getParentPath(ctx, item.ParentID)
 		if err != nil {
@@ -156,17 +184,17 @@ func (a *ProjExpenditure) create(ctx context.Context, item schema.ProjExpenditur
 		item.ParentPath = parentPath
 
 		// 填充本次支出金额
-		err = a.fillProjCostsAmount(ctx, item)
+		err = a.fillProjCostsAmount(ctx, &item)
 		if err != nil {
 			return err
 		}
 		// 创建对应成本项
-		err = a.createProjExpenCost(ctx, item)
+		err = a.createProjExpenCost(ctx, &item)
 		if err != nil {
 			return err
 		}
 		// 创建对应支出时间表
-		err = a.createExpendTime(ctx, item)
+		err = a.createExpendTime(ctx, &item)
 		if err != nil {
 			return err
 		}
@@ -208,52 +236,59 @@ func (a *ProjExpenditure) joinParentPath(parentPath, parentID string) string {
 }
 
 // 创建项目支出节点对应的成本项
-func (a *ProjExpenditure) createProjExpenCost(ctx context.Context, item schema.ProjExpenditure) error {
+func (a *ProjExpenditure) createProjExpenCost(ctx context.Context, item *schema.ProjExpenditure) error {
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
 		mProjCost, err := a.getAccProjExpendCost(ctx, item)
 		if err != nil {
 			return nil
 		}
-
 		pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
-			RecordIDs: item.ProjCostItems,
+			RecordIDs: item.ProjCostItemIDs,
 		})
 		if err != nil {
 			return err
 		}
-		mCost := pCostResult.Data.ToMap()
 
-		for _, projCostItemID := range item.ProjCostItems {
+		mpCost := pCostResult.Data.ToMap()
+		var toatlAmount float64
+		for _, projCostItemID := range item.ProjCostItemIDs {
 			var projExpendCost schema.ProjExpendCost
 			projExpendCost.RecordID = util.MustUUID()
 			projExpendCost.ProjExpenditureID = item.RecordID
 			projExpendCost.ProjCostID = projCostItemID
+			if _, ok := mProjCost[projCostItemID]; !ok {
+				mProjCost[projCostItemID] = 0
+			}
+
 			// 本次累计金额 - 之前金额
-			projAmount := item.ExpendRate*mCost[projCostItemID].Price - mProjCost[projCostItemID]
+			projAmount := item.ExpendRate*mpCost[projCostItemID].Price - mProjCost[projCostItemID]
 			if projAmount < 0 {
 				projExpendCost.Amount = 0
 			}
-			projExpendCost.Amount = projAmount
 
+			projExpendCost.Amount = projAmount
+			projExpendCost.CostPrice = mpCost[projCostItemID].Price
+			toatlAmount += projAmount
 			err := a.ProjExpendCostModel.Create(ctx, projExpendCost)
 			if err != nil {
 				return err
 			}
 		}
 
+		item.TotalCost = toatlAmount
 		return nil
 	})
 
 }
 
 // 填充本次此项目支出节点金额(非累计)
-func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item schema.ProjExpenditure) error {
-	if len(item.ProjCostItems) == 0 {
+func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item *schema.ProjExpenditure) error {
+	if len(item.ProjCostItemIDs) == 0 {
 		return nil
 	}
 
 	pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
-		RecordIDs: item.ProjCostItems,
+		RecordIDs: item.ProjCostItemIDs,
 	})
 	if err != nil {
 		return err
@@ -283,10 +318,17 @@ func (a *ProjExpenditure) fillProjCostsAmount(ctx context.Context, item schema.P
 }
 
 // 此项目支出节点对应成本项累计支出金额 key:项目成本项ID value:之前累计金额 (不包括本次支出)
-func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.ProjExpenditure) (map[string]float64, error) {
+func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item *schema.ProjExpenditure) (map[string]float64, error) {
+	m := make(map[string]float64, len(item.ProjCostItemIDs))
+	if item.StartTime == nil {
+		for _, id := range item.ProjCostItemIDs {
+			m[id] = 0
+		}
+		return m, nil
+	}
 	projExpenedResult, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
 		ProjectID:       item.ProjectID,
-		BeforeStartTime: item.StartTime,
+		BeforeStartTime: *item.StartTime,
 	})
 	if err != nil {
 		return nil, err
@@ -297,13 +339,53 @@ func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.
 		NotProjExpenditureIDs: []string{item.RecordID},
 	})
 
-	var m map[string]float64
-	mProjCost := projExpendCostResult.Data.ToProjExpendCostsMap()
+	mProjCosts := projExpendCostResult.Data.ToProjExpendCostsMap()
 
-	for _, projCostItemID := range item.ProjCostItems {
-		list, ok := mProjCost[projCostItemID]
+	// 获得项目成本项ID 对应的之前的金额
+	for _, projCostItemID := range item.ProjCostItemIDs {
+		m[projCostItemID] = 0
+		list, ok := mProjCosts[projCostItemID]
 		if !ok {
 			continue
+
+		}
+		for _, v := range list {
+			m[projCostItemID] += v.Amount
+		}
+	}
+
+	return m, nil
+}
+
+//
+func (a *ProjExpenditure) getBeforeAmount(ctx context.Context, startTime time.Time, projectID string, projCostIDs ...string) (map[string]float64, error) {
+	if len(projCostIDs) == 0 {
+		return nil, nil
+	}
+
+	m := make(map[string]float64, len(projCostIDs))
+
+	projExpenedResult, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
+		ProjectID:       projectID,
+		BeforeStartTime: startTime,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	projExpendCostResult, err := a.ProjExpendCostModel.Query(ctx, schema.ProjExpendCostQueryParam{
+		ProjExpenditureIDs: projExpenedResult.Data.ToProjExpendIDs(),
+	})
+
+	mProjCosts := projExpendCostResult.Data.ToProjExpendCostsMap()
+
+	// 获得项目成本项ID 对应的之前的金额
+	for _, projCostItemID := range projCostIDs {
+		m[projCostItemID] = 0
+		list, ok := mProjCosts[projCostItemID]
+		if !ok {
+			continue
+
 		}
 		for _, v := range list {
 			m[projCostItemID] += v.Amount
@@ -314,18 +396,20 @@ func (a *ProjExpenditure) getAccProjExpendCost(ctx context.Context, item schema.
 }
 
 // 创建支出时间表
-func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.ProjExpenditure) error {
+func (a *ProjExpenditure) createExpendTime(ctx context.Context, item *schema.ProjExpenditure) error {
 	var expendTimeItem schema.ProjExpenditureTime
-	expendTimeItem.RecordID = util.MustUUID()
-	expendTimeItem.ProjExpenditureID = item.RecordID
+	if item.StartTime == nil || item.EndTime == nil {
+		return nil
+	}
 
 	years := item.EndTime.Year() - item.StartTime.Year()
 	if years < 0 {
-		return errors.New("结束时间不能早于开始时间")
+		return errors.ErrBadRequest
 	}
 
 	switch item.ExpenditureTimeType {
 	case 1:
+		expendTimeItem.RecordID = util.MustUUID()
 		payTime := item.EndTime.AddDate(0, 0, -30)
 		expendTimeItem.Day = payTime.Day()
 		expendTimeItem.Month = int(payTime.Month())
@@ -339,6 +423,7 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 		}
 
 	case 2:
+		expendTimeItem.RecordID = util.MustUUID()
 		expendTimeItem.Day = item.EndTime.Day()
 		expendTimeItem.Month = int(item.EndTime.Month())
 		expendTimeItem.Quarter = (int(item.EndTime.Month())-1)/3 + 1
@@ -353,6 +438,7 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	case 3:
 		payTime := item.EndTime.AddDate(0, 0, 30)
+		expendTimeItem.RecordID = util.MustUUID()
 		expendTimeItem.Day = payTime.Day()
 		expendTimeItem.Month = int(payTime.Month())
 		expendTimeItem.Quarter = (int(payTime.Month())-1)/3 + 1
@@ -367,6 +453,7 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	case 4:
 		payTime := item.EndTime.AddDate(0, 2, 0)
+		expendTimeItem.RecordID = util.MustUUID()
 		expendTimeItem.Day = payTime.Day()
 		expendTimeItem.Month = int(payTime.Month())
 		expendTimeItem.Quarter = (int(payTime.Month())-1)/3 + 1
@@ -376,6 +463,7 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	case 5:
 		payTime := item.EndTime.AddDate(0, 6, 0)
+		expendTimeItem.RecordID = util.MustUUID()
 		expendTimeItem.Day = payTime.Day()
 		expendTimeItem.Month = int(payTime.Month())
 		expendTimeItem.Quarter = (int(payTime.Month())-1)/3 + 1
@@ -390,6 +478,7 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	case 6:
 		payTime := item.EndTime.AddDate(1, 0, 0)
+		expendTimeItem.RecordID = util.MustUUID()
 		expendTimeItem.Day = payTime.Day()
 		expendTimeItem.Month = int(payTime.Month())
 		expendTimeItem.Quarter = (int(payTime.Month())-1)/3 + 1
@@ -404,14 +493,19 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	case 7:
 		// 分摊到每个月
+		expendTimeItem.ProjExpenditureID = item.RecordID
 		months := 12*years + int(item.EndTime.Month()) - int(item.StartTime.Month())
 		sMonth := int(item.StartTime.Month())
 		sQuarter := (sMonth-1)/3 + 1
-		expendTimeItem.ExpenditureAmount = item.TotalCost / float64(months)
-		expendTimeItem.ProjExpenditureID = item.RecordID
+		if months == 0 {
+			expendTimeItem.ExpenditureAmount = item.TotalCost
+		} else {
+			expendTimeItem.ExpenditureAmount = item.TotalCost / float64(months)
+		}
 
 		for month := 0; month <= months; month++ {
 			quarter := (month + 1) / 3
+			expendTimeItem.RecordID = util.MustUUID()
 			expendTimeItem.Year = item.StartTime.Year() + (sMonth+month-1)/12
 			expendTimeItem.Quarter = (sQuarter+quarter-1)%4 + 1
 			expendTimeItem.Month = (sMonth+month-1)%12 + 1
@@ -424,14 +518,20 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 
 	case 8:
 		// 分摊到每个季度
+		expendTimeItem.ProjExpenditureID = item.RecordID
 		months := 12*years + int(item.EndTime.Month()) - int(item.StartTime.Month())
 		sMonth := int(item.StartTime.Month())
-		quarters := months/3 + util.BoolToInt(0 > months%3)
+		quarters := months/3 + util.BoolToInt(months%3 > 0)
 		sQuarter := (sMonth-1)/3 + 1
-		expendTimeItem.ExpenditureAmount = item.TotalCost / float64(quarters)
-		expendTimeItem.ProjExpenditureID = item.RecordID
+		if quarters == 0 {
+			expendTimeItem.ExpenditureAmount = item.TotalCost
+
+		} else {
+			expendTimeItem.ExpenditureAmount = item.TotalCost / float64(quarters)
+		}
 
 		for quarter := 0; quarter <= quarters; quarter++ {
+			expendTimeItem.RecordID = util.MustUUID()
 			expendTimeItem.Year = item.StartTime.Year() + (sQuarter+quarter-1)/4
 			expendTimeItem.Quarter = (sQuarter+quarter-1)%4 + 1
 
@@ -448,61 +548,68 @@ func (a *ProjExpenditure) createExpendTime(ctx context.Context, item schema.Proj
 }
 
 func (a *ProjExpenditure) update(ctx context.Context, recordID string, item schema.ProjExpenditure) error {
-	oldItem, err := a.ProjExpenditureModel.Get(ctx, recordID)
+	oldItem, err := a.Get(ctx, recordID)
 	if err != nil {
 		return err
 	} else if oldItem == nil {
 		return errors.ErrNotFound
 	}
+
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
-		newItem := oldItem
-		switch {
-		case !item.StartTime.IsZero():
+		err := a.ReLoad(ctx, oldItem.ProjectID)
+		if err != nil {
+			return err
+		}
+
+		newItem := *oldItem
+		if item.StartTime != nil {
 			newItem.StartTime = item.StartTime
-			fallthrough
-		case !item.EndTime.IsZero():
+		}
+		if item.EndTime != nil {
 			newItem.EndTime = item.EndTime
-			fallthrough
-		case len(item.ProjCostItems) > 0:
-			newItem.ProjCostItems = item.ProjCostItems
-			fallthrough
-		case item.ExpendRate > 0:
+		}
+		if len(item.ProjCostItemIDs) > 0 {
+			newItem.ProjCostItemIDs = item.ProjCostItemIDs
+		}
+		if item.ExpendRate > 0 {
 			newItem.ExpendRate = item.ExpendRate
-			fallthrough
-		case item.ExpenditureTimeType > 0:
+		}
+		if item.ExpenditureTimeType > 0 {
 			newItem.ExpenditureTimeType = item.ExpenditureTimeType
-
+		}
+		if item.Sequence > 0 {
+			newItem.Sequence = item.Sequence
 		}
 
-		// 填充本次支出金额
-		err = a.fillProjCostsAmount(ctx, item)
-		if err != nil {
-			return err
+		if oldItem.StartTime != newItem.StartTime || oldItem.EndTime != newItem.EndTime ||
+			oldItem.ExpenditureTimeType != newItem.ExpenditureTimeType || len(item.ProjCostItemIDs) > 0 ||
+			oldItem.ExpendRate != newItem.ExpendRate {
+			// 删除对应成本项
+			err = a.ProjExpendCostModel.DeleteByProjExpendID(ctx, recordID)
+			if err != nil {
+				return err
+			}
+
+			// 创建对应成本项
+			err = a.createProjExpenCost(ctx, &newItem)
+			if err != nil {
+				return err
+			}
+
+			// 删除旧的支出时间表
+			err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, recordID)
+			if err != nil {
+				return err
+			}
+
+			// 创建对应支出时间表
+			err = a.createExpendTime(ctx, &newItem)
+			if err != nil {
+				return err
+			}
 		}
 
-		err = a.ProjExpendCostModel.DeleteByProjExpendID(ctx, recordID)
-		if err != nil {
-			return err
-		}
-
-		err = a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, recordID)
-		if err != nil {
-			return err
-		}
-
-		// 创建对应成本项
-		err = a.createProjExpenCost(ctx, *newItem)
-		if err != nil {
-			return err
-		}
-
-		// 创建对应支出时间表
-		err = a.createExpendTime(ctx, *newItem)
-		if err != nil {
-			return err
-		}
-
-		err = a.ProjExpenditureModel.Update(ctx, recordID, *newItem)
+		err = a.ProjExpenditureModel.Update(ctx, recordID, newItem)
 		if err != nil {
 			return err
 		}
@@ -511,13 +618,121 @@ func (a *ProjExpenditure) update(ctx context.Context, recordID string, item sche
 	})
 }
 
-// Generate 生成数据
-func (a *ProjExpenditure) Generate(ctx context.Context, projectID string) error {
-	eResult, err := a.ExpenditureModel.Query(ctx, schema.ExpenditureQueryParam{})
+// ReLoad 更新项目成本项价格数据(对比项目成本项价格和项目支出节点成本项价格 一致则不更新 不一致则更新)
+func (a *ProjExpenditure) ReLoad(ctx context.Context, projectID string) error {
+	pExpendCostResult, err := a.ProjExpendCostModel.Query(ctx, schema.ProjExpendCostQueryParam{
+		ProjectID: projectID,
+	})
 	if err != nil {
 		return err
 	}
-	list := eResult.Data.ToTrees().ToTree().ToProjList()
-	a.ProjExpenditureModel.Generate(ctx, projectID, &list)
+
+	pCostResult, err := a.ProjCostItemModel.Query(ctx, schema.ProjCostItemQueryParam{
+		RecordIDs: pExpendCostResult.Data.ToProjCostIDs(),
+	})
+	if err != nil {
+		return err
+	}
+
+	// 计算出需要更新的成本项
+	mProjExpendCosts := make(map[string][]*schema.ProjExpendCost)
+	mNotRate := map[string]struct{}{}
+	var rateProjExpendIDs, notRateProjExpendIDs []string
+
+	for _, pCostItem := range pCostResult.Data {
+		for _, pExpendCostItem := range pExpendCostResult.Data {
+			// 项目成本项价格非零
+			if pCostItem.RecordID == pExpendCostItem.ProjCostID && pCostItem.Price != pExpendCostItem.CostPrice && pExpendCostItem.CostPrice > 0 {
+				// 通过比例进行更新
+				changedRate := pCostItem.Price / pExpendCostItem.CostPrice
+				pExpendCostItem.Amount = pExpendCostItem.Amount * changedRate
+				pExpendCostItem.CostPrice = pCostItem.Price
+				// 需要更新的项目支出节点对应的成本项
+				// 需更新的项目支出节点ID列表
+				if _, ok := mProjExpendCosts[pExpendCostItem.ProjExpenditureID]; !ok {
+					rateProjExpendIDs = append(rateProjExpendIDs, pExpendCostItem.ProjExpenditureID)
+
+				}
+				mProjExpendCosts[pExpendCostItem.ProjExpenditureID] = append(mProjExpendCosts[pExpendCostItem.ProjExpenditureID], pExpendCostItem)
+			}
+			// 项目成本项价格为零
+			if pCostItem.RecordID == pExpendCostItem.ProjCostID && pCostItem.Price != pExpendCostItem.CostPrice && pExpendCostItem.CostPrice == 0 {
+				// 非比例进行更新 需要更新的项目支出节点
+				// 需更新的项目支出节点ID列表(去重)
+				if _, ok := mNotRate[pExpendCostItem.ProjExpenditureID]; !ok {
+					mNotRate[pExpendCostItem.ProjExpenditureID] = struct{}{}
+					notRateProjExpendIDs = append(notRateProjExpendIDs, pExpendCostItem.ProjExpenditureID)
+				}
+
+			}
+
+		}
+	}
+
+	projExpendIDs := append(rateProjExpendIDs, notRateProjExpendIDs...)
+	if len(projExpendIDs) == 0 {
+		return nil
+	}
+
+	updateResult, err := a.ProjExpenditureModel.Query(ctx, schema.ProjExpenditureQueryParam{
+		RecordIDs: projExpendIDs,
+	})
+	if err != nil {
+		return err
+	}
+
+	updateResult.Data.ToMap()
+	updateResult.Data.FillProjCostItem(pExpendCostResult.Data)
+
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		for _, updateItem := range updateResult.Data {
+			if _, ok := mNotRate[updateItem.RecordID]; ok {
+				err := a.update(ctx, updateItem.RecordID, *updateItem)
+				if err != nil {
+					return err
+				}
+				continue
+			}
+
+			err := a.reload(ctx, updateItem.RecordID, updateItem, mProjExpendCosts[updateItem.RecordID])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+}
+
+// reload 更新变更的项目成本项
+func (a *ProjExpenditure) reload(ctx context.Context, recordID string, item *schema.ProjExpenditure, projExpendCostItems []*schema.ProjExpendCost) error {
+	var totalCost float64
+	// 更新项目支出节点对应的成本项价格
+	for _, projExpendCostItem := range projExpendCostItems {
+		err := a.ProjExpendCostModel.Update(ctx, projExpendCostItem.RecordID, *projExpendCostItem)
+		if err != nil {
+			return err
+		}
+		totalCost += projExpendCostItem.Amount
+
+	}
+	// 新的项目支出节点的价格
+	item.TotalCost = totalCost
+	// 删除旧的支出时间表
+	err := a.ProjExpenditureTimeModel.DeleteByProjExpendID(ctx, recordID)
+	if err != nil {
+		return err
+	}
+	// 创建对应支出时间表
+	err = a.createExpendTime(ctx, item)
+	if err != nil {
+		return err
+	}
+
+	err = a.ProjExpenditureModel.Update(ctx, recordID, *item)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

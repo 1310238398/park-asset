@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewExpenditure 创建支出节点存储实例
@@ -31,7 +32,7 @@ func (a *Expenditure) getQueryOption(opts ...schema.ExpenditureQueryOptions) sch
 func (a *Expenditure) Query(ctx context.Context, params schema.ExpenditureQueryParam, opts ...schema.ExpenditureQueryOptions) (*schema.ExpenditureQueryResult, error) {
 	db := entity.GetExpenditureDB(ctx, a.db)
 
-	db = db.Order("id DESC")
+	db = db.Order("id")
 
 	opt := a.getQueryOption(opts...)
 	var list entity.Expenditures

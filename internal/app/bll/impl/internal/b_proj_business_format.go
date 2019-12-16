@@ -117,12 +117,16 @@ func (a *ProjBusinessFormat) update(ctx context.Context, projectID string, list 
 		return err
 	}
 
-	delIDs := result.Data.ToProjBusinessIDs()
-
+	m := result.Data.ToMap()
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+
+		addItems := a.compare(ctx, list, result.Data)
+		delItems := a.compare(ctx, result.Data, list)
+		updateItems := a.compare(ctx, list, append(addItems, delItems...))
+
 		// 删除
-		for _, recordID := range delIDs {
-			err := a.ProjBusinessFormatModel.Delete(ctx, recordID)
+		for _, delItem := range delItems {
+			err := a.ProjBusinessFormatModel.Delete(ctx, delItem.RecordID)
 			if err != nil {
 				return err
 			}
@@ -130,13 +134,36 @@ func (a *ProjBusinessFormat) update(ctx context.Context, projectID string, list 
 		}
 
 		// 新增
-		for _, item := range list {
-			item.RecordID = util.MustUUID()
-			err := a.ProjBusinessFormatModel.Create(ctx, *item)
+		for _, addItem := range addItems {
+			addItem.RecordID = util.MustUUID()
+			err := a.ProjBusinessFormatModel.Create(ctx, *addItem)
 			if err != nil {
 				return err
 			}
 
+		}
+
+		// 更新
+		for _, updateItem := range updateItems {
+			oldItem, ok := m[updateItem.RecordID]
+			if !ok {
+				continue
+			}
+
+			if updateItem.ProjectID == "" {
+				updateItem.ProjectID = oldItem.ProjectID
+			}
+			if updateItem.FloorArea == 0 {
+				updateItem.FloorArea = oldItem.FloorArea
+			}
+			if updateItem.Name == "" {
+				updateItem.Name = oldItem.Name
+			}
+
+			err := a.ProjBusinessFormatModel.Update(ctx, updateItem.RecordID, *updateItem)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -145,7 +172,7 @@ func (a *ProjBusinessFormat) update(ctx context.Context, projectID string, list 
 }
 
 // 比较获得新项目业态 旧项目业态
-func (a *ProjBusinessFormat) compareFile(ctx context.Context, sitems, titems schema.ProjBusinessFormats) schema.ProjBusinessFormats {
+func (a *ProjBusinessFormat) compare(ctx context.Context, sitems, titems schema.ProjBusinessFormats) schema.ProjBusinessFormats {
 	var nitems schema.ProjBusinessFormats
 	for _, fitem := range sitems {
 		exists := false

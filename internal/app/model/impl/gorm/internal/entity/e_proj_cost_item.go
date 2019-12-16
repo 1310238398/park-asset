@@ -104,7 +104,7 @@ type ProjCostItemShow struct {
 // ProjCostItemShows 项目成本项列表
 type ProjCostItemShows []*ProjCostItemShow
 
-// ToSchemaProjCostItem 转换为项目成本项对象
+// ToSchemaProjCostItemShow 转换为项目成本项展示实体
 func (a ProjCostItemShow) ToSchemaProjCostItemShow() *schema.ProjCostItemShow {
 	item := &schema.ProjCostItemShow{
 		CostID:         *a.CostID,
