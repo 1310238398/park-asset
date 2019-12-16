@@ -150,7 +150,7 @@ class HisVersionInfo extends PureComponent {
         centered={true}
         visible={infoModalVisible}
         maskClosable={false}
-        // confirmLoading={submitting}
+        // confirmLoading={subm itting}
         destroyOnClose={true}
         footer={null}
         onCancel={this.onCancelClick}
@@ -160,7 +160,7 @@ class HisVersionInfo extends PureComponent {
           bordered
           loading={loading}
           rowKey={record => record.index}
-          dataSource={tableData}
+          dataSource={formData}
           columns={columns}
           pagination={false}
           scroll={{ y: 500, x: 'calc(100%)' }}

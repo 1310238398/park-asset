@@ -9,9 +9,14 @@ export default {
     submitting: false,
     newFormVisible: false,
     selectNewModeVisile: false,
-    currentVersionID: "", // 当前版本的record_id
-    canSave: true, // 是否可以保存当前版本
-    
+    currentVersionID: '', // 当前版本的record_id
+    canSave: true, // 是否可以保存当前版本和提交审核
+    compareTree: [], // 保存版本前，查询回来的对比信息树
+    saveVersionType: '', // 1  创建新版本 2 更新版本
+    saveTitle: '', // 保存版本时的标题
+    compareVersionList: [], //进行对比的版本
+    versionNameVisible: false,
+    canExamine: false, // 可以审核
 
   },
   effects: {
@@ -22,11 +27,11 @@ export default {
           type: 'saveData',
           payload: response.list || [],
         });
-      
+
         if (response.info && response.info.record_id) {
           yield put({
             type: 'saveCurrentVersionID',
-            payload:response.info.record_id
+            payload: response.info.record_id,
           });
         }
 
@@ -37,9 +42,94 @@ export default {
             payload: false,
           });
         }
+         if (response.info && response.info.flag === 3) {
+          yield put({
+            type: 'saveCanExamine',
+            payload: true,
+          });
+        }
       }
     },
-    *createNewVersion({}, {}) {},
+    *fetchCompare({ payload }, { call, put }) {
+      yield put({
+        type: 'saveSaveVersionType',
+        payload: payload.saveType,
+      });
+      yield put({
+        type: 'saveSaveTitle',
+        payload: payload.saveTitle,
+      });
+      const response = yield call(costAccountService.queryBeforeSaveVersion, payload.params);
+      if (response && response.data) {
+        yield put({
+          type: 'saveCompareTree',
+          payload: response.data,
+        });
+        if (response && response.version_list) {
+          yield put({
+            type: 'saveCompareVersionList',
+            payload: response.version_list,
+          });
+        }
+        yield put({
+          type: 'saveNewFormVisible',
+          payload: true,
+        });
+      }
+    },
+    *createNewVersion({payload}, {call }) {
+      const response = yield call(costAccountService.saveNewVersion, payload);
+      console.log(response);
+      if (response.status === "OK") {
+        message.success("创建版本成功");
+      }
+    },
+    *updateOldVersion({payload}, {call }) {
+      const response = yield call(costAccountService.saveOldVersion, payload);
+      if (response.status === "OK") {
+        message.success("更新版本成功");
+      }
+    },
+    *submitExamine({payload}, {call, put }) {
+     
+
+      const response  = yield call(costAccountService.submitAudit, payload);
+      if (response.status === "OK") {
+
+        message.success("提交审核成功");
+        yield put({
+          type: 'saveCanSave',
+          payload: false,
+        });
+     
+
+      }
+    },
+    *auditPass({payload}, {call, put }) {
+      
+      const response  = yield call(costAccountService.auditPass, payload);
+      if (response.status === "OK") {
+
+        message.success("审核成功");
+        yield put({
+          type: 'saveCanExamine',
+          payload: false,
+        });
+       
+      }
+    },
+    *auditRejected({payload}, {call, put }) {
+      const response  = yield call(costAccountService.auditRejected, payload);
+      if (response.status === "OK") {
+
+        message.success("驳回成功");
+        yield put({
+          type: 'saveCanExamine',
+          payload: false,
+        });
+      }
+    }
+
   },
   reducers: {
     changeSubmitting(state, { payload }) {
@@ -59,6 +149,25 @@ export default {
     },
     saveCurrentVersionID(state, { payload }) {
       return { ...state, currentVersionID: payload };
+    },
+    saveCompareTree(state, { payload }) {
+      return { ...state, compareTree: payload };
+    },
+    saveSaveVersionType(state, { payload }) {
+      return { ...state, saveVersionType: payload };
+    },
+    saveSaveTitle(state, { payload }) {
+      return { ...state, saveTitle: payload };
+    },
+    saveCompareVersionList(state, { payload }) {
+      return { ...state, compareVersionList: payload };
+    },
+    saveVersionNameVisible(state, { payload }) {
+      return { ...state, versionNameVisible: payload};
+    },
+    saveCanExamine(state, { payload }) {
+      return { ...state, canExamine: payload};
     }
+
   },
 };

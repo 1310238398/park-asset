@@ -299,12 +299,10 @@ class ProjectManageList extends PureComponent {
               )}
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col md={6} sm={24}>
+          <Col md={12} sm={24}>
             <Form.Item label="所属公司">
               {getFieldDecorator('org_id')(
-                <Select placeholder="请选择公司" style={{ width: '100%' }}>
+                <Select placeholder="请选择公司" style={{ width: 300 }}>
                   {companyList &&
                     companyList.map(item => (
                       <Select.Option key={item.record_id} value={item.record_id}>
@@ -315,6 +313,9 @@ class ProjectManageList extends PureComponent {
               )}
             </Form.Item>
           </Col>
+        </Row>
+        <Row gutter={16}>
+         
           <Col md={6} sm={24}>
             <Form.Item label="所属地块">
               {getFieldDecorator('plot_id')(

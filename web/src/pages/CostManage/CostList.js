@@ -875,7 +875,7 @@ class CostList extends PureComponent {
           dataSource={businessData.length === 0 ? [] : data}
           columns={formType === 'E' ? ecolumns : formType === 'V' ? view_columns : null} //{view_columns}
           pagination={false}
-          scroll={{ y: 800, x: 'calc(100%)' }}
+          scroll={{  x: 'calc(100%)' }}
           rowClassName="editable-row"
           onExpand={this.handleOnExpand}
           // rowClassName={(record) => record.record_id !== "" ?  'editable-row' : "{background: 'blue'}"}

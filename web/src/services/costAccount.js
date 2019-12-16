@@ -169,6 +169,53 @@ export async function queryHisVersionDetail(record_id) {
   return request(`/v1/proj-income-calculations/${record_id}`);
 }
 
+// 保存版本前 先查询
+export async function queryBeforeSaveVersion(params) {
+ //  /api/v1/proj-version/:id/compare
+ return request(`/v1/proj-version/${params.project_id}/compare?list=${params.list}`);
+}
+
+// 保存旧版本（创建版本的时候覆盖上一版本）
+export async function saveOldVersion(params) {
+ // /api/v1/proj-version/:id
+  return request(`/v1/proj-version/${params.project_id}`, {
+    method: 'PUT',
+    body: params.body,
+  });
+}
+// 创建新版本
+export async function saveNewVersion(params) {
+  return request(`/v1/proj-version/${params.project_id}`, {
+    method: 'POST',
+    body: params.body,
+  });
+}
+// 提交审核
+export async function submitAudit(project_id) {
+  // /api/v1/proj-version/:id/apply
+  return request(`/v1/proj-version/${project_id}/apply`, {
+    method: 'PUT', 
+    body: {},
+  });
+}
+// 通过审核
+export async function auditPass(project_id) {
+ // /api/v1/proj-version/:id/pass
+ return request(`/v1/proj-version/${project_id}/pass`, {
+  method: 'PUT', 
+  body: {},
+});
+}
+
+// 审核驳回
+export async function auditRejected(project_id) {
+  // /api/v1/proj-version/:id/reject
+  return request(`/v1/proj-version/${project_id}/reject`, {
+   method: 'PUT', 
+   body: {},
+ });
+ }
+
 // 查询项目列表树状结构（treeselect用）
 export async function queryProTree(params) {
   // /api/v1/pc-projects?q=nodes
