@@ -12,6 +12,7 @@ type ProjContractPlanning struct {
 	PlanningChange float64 `json:"planning_change" swaggo:"false,预计变更金额"`             // 预计变更金额
 	Memo           string  `json:"memo" swaggo:"false,备注"`                            // 备注
 	CostNamePath   string  `json:"cost_name_path" swaggo:"false,成本名称路经"`              // 成本名称路经
+	SignedAmount   float64 `json:"signed_amount" swaggo:"false,合同签订金额"`               // 合同签订金额
 }
 
 // ProjContractPlanningQueryParam 查询条件

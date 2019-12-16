@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/util"
 
 	"github.com/jinzhu/gorm"
 )
@@ -63,8 +64,8 @@ func (a ProjContractPlanning) ToSchemaProjContractPlanning() *schema.ProjContrac
 		CostID:         *a.CostID,
 		ContractType:   *a.ContractType,
 		Information:    *a.Information,
-		PlanningPrice:  *a.PlanningPrice,
-		PlanningChange: *a.PlanningChange,
+		PlanningPrice:  util.DecimalFloat64(*a.PlanningPrice),
+		PlanningChange: util.DecimalFloat64(*a.PlanningChange),
 		Memo:           *a.Memo,
 	}
 	return item
