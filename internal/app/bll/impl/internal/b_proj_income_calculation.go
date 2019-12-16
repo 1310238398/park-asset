@@ -545,6 +545,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "1.1"
 	subItem.ParentID = "1"
+	subItem.ParentPath = "1"
 	subItem.Name = "销售税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -576,6 +577,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.1"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "土地出让金"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -590,6 +592,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.2"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "契税及土地使用税"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -604,6 +607,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.3"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "资本化利息"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -618,6 +622,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.4"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "进项税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)

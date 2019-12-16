@@ -78,7 +78,6 @@ func (a *ProjIncomeCalculation) getCurrent(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrInvalidRequestParameter)
 		return
 	}
-
 	result, err := a.ProjIncomeCalculationBll.GetCurrent(ginplus.NewContext(c), projectID)
 	if err != nil {
 		ginplus.ResError(c, err)
@@ -201,7 +200,7 @@ func (a *ProjIncomeCalculation) CreateVersion(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	return
+	ginplus.ResOK(c)
 }
 
 // UpdateVersion 保存旧版本
@@ -228,7 +227,7 @@ func (a *ProjIncomeCalculation) UpdateVersion(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	return
+	ginplus.ResOK(c)
 }
 
 // QueryVersionCompare 查询版本对比版本

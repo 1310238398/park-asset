@@ -182,14 +182,15 @@ type ProjVersionValue struct {
 
 // ProjCompareItem 成本核算对比项
 type ProjCompareItem struct {
-	RecordID string              `json:"record_id"` //项目ID
-	ParentID string              `json:"parent_id"` //父级ID
-	Type     int                 `json:"type"`      //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
-	Name     string              `json:"name"`      //项目名
-	Versions []*ProjVersionValue `json:"versions"`  //版本信息
-	Changed  string              `json:"changed"`   //变动量
-	Memo     string              `json:"memo"`      //版本注释
-	Children []*ProjCompareItem  `json:"children"`  //下级目录
+	RecordID   string              `json:"record_id"`   //项目ID
+	ParentID   string              `json:"parent_id"`   //父级ID
+	ParentPath string              `json:"parent_path"` //父级路径
+	Type       int                 `json:"type"`        //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
+	Name       string              `json:"name"`        //项目名
+	Versions   []*ProjVersionValue `json:"versions"`    //版本信息
+	Changed    string              `json:"changed"`     //变动量
+	Memo       string              `json:"memo"`        //版本注释
+	Children   []*ProjCompareItem  `json:"children"`    //下级目录
 }
 
 type ProjCompareItems []*ProjCompareItem
