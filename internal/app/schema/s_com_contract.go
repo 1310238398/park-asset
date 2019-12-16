@@ -18,7 +18,7 @@ type ComContract struct {
 	Subject               string                   `json:"subject"`                                   //合同科目
 	SubjectSubItem        string                   `json:"subject_subitem"`                           //所属科目分项
 	SN                    string                   `json:"sn"`                                        //合同编号
-	Name                  string                   `json:"name" binding="required" swago:"true,合同名称"` //合同名称
+	Name                  string                   `json:"name" binding:"required" swago:"true,合同名称"` //合同名称
 	Property              string                   `json:"property"`                                  //合同性质:直接合同，三方合同，其他
 	Supplement            string                   `json:"supplement"`                                //是否是补充合同
 	Virtual               string                   `json:"virtual"`                                   //是否虚拟合同
@@ -154,6 +154,8 @@ type ComContractQueryParam struct {
 	Name     string `json:"name"`   // 合同名称
 	SN       string `json:"sn"`     // 合同编号
 	Category string `json:"cate"`   // 合同类别
+	State    int    `json:"state"`  // 查询类别 1 =》 从合同草稿中查询 2 =》 从通过后的合同中查询
+	Yifang   string `json:"yifang"` // 乙方名称
 }
 
 // ComContractQueryOptions 查询可选参数项

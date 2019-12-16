@@ -43,6 +43,9 @@ func (a *ComContract) Query(c *gin.Context) {
 	params.Name = c.Query("name")
 	params.SN = c.Query("sn")
 	params.Category = c.Query("category")
+	params.Yifang = c.Query("yifang")
+	stateInt, _ := strconv.Atoi(c.Query("state"))
+	params.State = stateInt
 
 	result, err := a.ComContractBll.Query(ginplus.NewContext(c), params, schema.ComContractQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
@@ -224,5 +227,35 @@ func (a *ComContract) TakeEffect(c *gin.Context) {
 
 		return
 	}
+	ginplus.ResOK(c)
+}
+
+// CreateSettlement 新建合同结算信息
+// @Tags 合同管理
+// @Summary 添加合同结算信息
+// @param id post string true "合同id"
+// @Success 200 {object} schema.HTTPStatus "{status:OK}"
+// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router /api/v1/com-contracts/settlement post
+func (a *ComContract) CreateSettlement(c *gin.Context) {
+	//判断是否可以结算
+	// 合同信息是否勾选结算
+	// 合同是否已经结算完成
+	//
+	ginplus.ResOK(c)
+}
+
+// SettlementList 结算信息列表
+// @Tags 合同管理
+// @Summary 列出某个合同的结算信息列表
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" default(1)
+// @Param pageSize query int true "分页大小" default(10)
+// @Success 200 {array} schema.SettlementRecord "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router /api/v1/settlementlist [get]
+func (a *ComContract) SettlementList(c *gin.Context) {
 	ginplus.ResOK(c)
 }

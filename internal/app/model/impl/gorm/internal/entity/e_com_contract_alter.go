@@ -41,7 +41,7 @@ type ComContractAlterDesign struct {
 	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
 	ComContractName string  `gorm:"column:comcontract_name"`             // 合同名称
 	LaunchDept      string  `gorm:"column:launch_dept"`                  // 发起部门
-	LaunchPerson    string  `gorm:"column:launch_person`                 // 发起人
+	LaunchPerson    string  `gorm:"column:launch_person"`                // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                  // 发起日期
 	ModifyPosition  string  `gorm:"column:modify_position"`              // 变更部位
 	Reason          string  `gorm:"column:reason"`                       // 变更原因
@@ -71,7 +71,7 @@ type ComContractAlterSign struct {
 	AlterDesignID        string  `gorm:"column:alter_design_id"`              // 设计变更ID
 	AlterDesignName      string  `gorm:"column:alter_design_name"`            // 设计变更名称
 	LaunchDept           string  `gorm:"column:launch_dept"`                  // 发起部门
-	LaunchPerson         string  `gorm:"column:launch_person`                 // 发起人
+	LaunchPerson         string  `gorm:"column:launch_person"`                // 发起人
 	LaunchDate           string  `gorm:"column:launch_date"`                  // 发起日期
 	WorkingCompany       string  `gorm:"column:working_company"`              // 施工单位
 	SupervisionCompany   string  `gorm:"column:supervision_company"`          // 监理单位
@@ -109,7 +109,7 @@ type ComContractAlterStuffPrice struct {
 	AlterSignID     string  `gorm:"column:alter_sign_id"`                 // 签证变更ID
 	AlterSignName   string  `gorm:"column:alter_sign_name"`               // 签证变更名称
 	LaunchDept      string  `gorm:"column:launch_dept"`                   // 发起部门
-	LaunchPerson    string  `gorm:"column:launch_person`                  // 发起人
+	LaunchPerson    string  `gorm:"column:launch_person"`                 // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                   // 发起日期
 	WorkingCompany  string  `gorm:"column:working_company"`               // 施工单位
 	Reason          string  `gorm:"column:reason"`                        // 签证原因

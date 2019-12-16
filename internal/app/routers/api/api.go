@@ -460,6 +460,10 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gComContract.DELETE("/:id", cComContract.Delete)
 				// 合同生效
 				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
+				// 合同结算
+				gComContract.POST("/:id/settlement", cComContract.CreateSettlement)
+				// 合同结算列表
+				gComContract.GET("/:id/settlementlist", cComContract.SettlementList)
 			}
 
 			// 注册/api/v1/settlement-records

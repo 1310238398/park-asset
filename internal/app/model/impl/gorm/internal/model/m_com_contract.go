@@ -44,7 +44,16 @@ func (a *ComContract) Query(ctx context.Context, params schema.ComContractQueryP
 		db = db.Where("name like ?", "%"+params.Name+"%")
 	}
 	if params.Category != "" {
-		db = db.Where("category like ?", params.Category)
+		db = db.Where("category like ?", "%"+params.Category+"%")
+	}
+	if params.Yifang != "" {
+		db = db.Where("yifang like ?", "%"+params.Yifang+"%")
+	}
+	if params.State == 1 {
+		db = db.Where("status IN (0,1,2)")
+	}
+	if params.State == 2 {
+		db = db.Where("status IN (3,5)")
 	}
 	db = db.Order("id DESC")
 

@@ -64,8 +64,8 @@ type ComContract struct {
 	Category             string  `gorm:"column:category"`                 // 合同类别
 	Subject              string  `gorm:"column:subject"`                  // 合同科目
 	SubjectSubItem       string  `gorm:"column:subject_subitem"`          // 所属科目分项
-	SN                   string  `gorm:"column:sn";index`                 // 合同编号
-	Name                 string  `gorm:"column:name";index`               // 合同名称
+	SN                   string  `gorm:"column:sn;index"`                 // 合同编号
+	Name                 string  `gorm:"column:name;index"`               // 合同名称
 	Property             string  `gorm:"column:property"`                 // 合同性质
 	Supplement           string  `gorm:"column:supplement"`               // 是否是补充合同
 	ParentComContractID  string  `gorm:"column:parent_comcontract_id"`    // 是哪个合同的补充合同 record_id
