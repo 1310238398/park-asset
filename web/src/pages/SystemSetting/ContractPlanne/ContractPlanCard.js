@@ -96,7 +96,7 @@ class ContractPlanCard extends PureComponent{
         };
         return(
             <Modal
-                title={'编辑业态'}
+                title={info ? '编辑合约规划模板' : '添加合约规划模板'}
                 width = {800}
                 visible = {formVisible}
                 maskClosable = { false }
@@ -159,7 +159,6 @@ class ContractPlanCard extends PureComponent{
                             </Form.Item>
                         </Col>
                     </Row>
-
                 </Form>
 
             </Modal>

@@ -510,14 +510,19 @@ class ProjectCostManage extends PureComponent {
                 width: 200,
                 align: "center",
                 editable: true,
-                required: true,
+                required: false,
                 type: "select",
                 render : data =>{
-                    for(let i=0;i<taxList.length;i++){
-                        if(taxList[i].record_id == data){
-                            return taxList[i].name;
+                    if(data){
+                        for(let i=0;i<taxList.length;i++){
+                            if(taxList[i].record_id == data){
+                                return taxList[i].name;
+                            }
                         }
+                    }else{
+                        return '';
                     }
+                    
                 }
             },
             {
