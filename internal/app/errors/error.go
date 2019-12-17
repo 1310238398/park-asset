@@ -53,6 +53,12 @@ var (
 	ErrNoTaxAdditional = New("未设置地方附加税")
 	ErrNoTaxOutput     = New("未设置增值税销项税")
 
+	//合同管理
+	ErrNotRightStatusForCancelCommit = New("该合同状态不为审核中，不能进行撤销审核操作")
+	ErrComContractNotPassCheck       = New("该合同还未通过审核")
+	ErrComContractNotCommit          = New("该合同还未提交审核")
+	ErrNoComContractSignDate         = New("请输入合同签署日期")
+	ErrNoComContractSN               = New("请输入合同正式编号")
 	// 合约规划
 	ErrNoInCome = New("未生成目标成本")
 )
@@ -97,6 +103,8 @@ func init() {
 	newBadRequestError(ErrNoTaxAdditional)
 	newBadRequestError(ErrNoTaxOutput)
 
+	//合同管理
+	newBadRequestError(ErrNotRightStatusForCancelCommit)
 	// 合约规划
 	newBadRequestError(ErrNoInCome)
 }

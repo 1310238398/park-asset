@@ -56,6 +56,9 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cProjSalesHis *ctl.ProjSalesHis,
 		cProjSalesPlan *ctl.ProjSalesPlan,
 		cTaxCalculation *ctl.TaxCalculation,
+		cComContract *ctl.ComContract,
+		cSettlementRecord *ctl.SettlementRecord,
+		cComContractAlter *ctl.ComContractAlter,
 		cContractPlanningTemplate *ctl.ContractPlanningTemplate,
 		cBusinessPartner *ctl.BusinessPartner,
 		cProjContractPlanning *ctl.ProjContractPlanning,
@@ -436,6 +439,52 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gTaxCalculation.DELETE(":id", cTaxCalculation.Delete)
 			}
 
+			// 注册/api/v1/com-contracts
+			gComContract := v1.Group("com-contract")
+			{
+				// 查询列表
+				gComContract.GET("", cComContract.Query)
+				// 查询一条记录详细信息
+				gComContract.GET("/:id", cComContract.Get)
+				// 提交审核
+				gComContract.PUT("/:id/commit", cComContract.Commit)
+				// 取消提交审核
+				gComContract.PUT("/:id/cancelcommit", cComContract.CancelCommit)
+				// 通过审核
+				gComContract.PUT("/:id/passcheck", cComContract.PassCheck)
+				// 新建
+				gComContract.POST("", cComContract.Create)
+				// 更新
+				gComContract.PUT("/:id", cComContract.Update)
+				// 删除
+				gComContract.DELETE("/:id", cComContract.Delete)
+				// 合同生效
+				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
+				// 合同结算
+				gComContract.POST("/:id/settlement", cComContract.CreateSettlement)
+				// 合同结算列表
+				gComContract.GET("/:id/settlementlist", cComContract.SettlementList)
+			}
+
+			// 注册/api/v1/settlement-records
+			gSettlementRecord := v1.Group("settlement-records")
+			{
+				gSettlementRecord.GET("", cSettlementRecord.Query)
+				gSettlementRecord.GET(":id", cSettlementRecord.Get)
+				gSettlementRecord.POST("", cSettlementRecord.Create)
+				gSettlementRecord.PUT(":id", cSettlementRecord.Update)
+				gSettlementRecord.DELETE(":id", cSettlementRecord.Delete)
+			}
+
+			// 注册/api/v1/com-contract-alters
+			gComContractAlter := v1.Group("com-contract-alters")
+			{
+				gComContractAlter.GET("", cComContractAlter.Query)
+				gComContractAlter.GET(":id", cComContractAlter.Get)
+				gComContractAlter.POST("", cComContractAlter.Create)
+				gComContractAlter.PUT(":id", cComContractAlter.Update)
+				gComContractAlter.DELETE(":id", cComContractAlter.Delete)
+			}
 			// 注册/api/v1/contract-planning-templates
 			gContractPlanningTemplate := v1.Group("contract-planning-templates")
 			{
