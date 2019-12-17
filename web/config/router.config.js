@@ -226,7 +226,21 @@ export default [
           // { path: '/system/user', component: './User/UserList' },
           // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
         ],
-      }
+      },
+      // 合同管理
+      {
+
+        path: '/contractmanagement',
+        routes: [
+          // 合同签订
+          { path: '/contractmanagement/signingList', component: './ContractManagement/ContractSigning/ContractSigningList' },
+          // 合同变更
+           { path: '/contractmanagement/changeTab', component: './ContractManagement/ContractChange/ContractChangeTab'},
+          // { path: '/system/user', component: './User/UserList' },
+          // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
+        ],
+      },
+
     ],
   },
   {
