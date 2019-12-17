@@ -136,15 +136,13 @@ func Inject(container *dig.Container) error {
 	container.Provide(imodel.NewProjSalesHis, dig.As(new(model.IProjSalesHis)))
 	container.Provide(imodel.NewProjSalesPlan, dig.As(new(model.IProjSalesPlan)))
 	container.Provide(imodel.NewTaxCalculation, dig.As(new(model.ITaxCalculation)))
-	container.Provide(imodel.NewComContract, dig.As(new(model.IComContract)))
-	_ = container.Provide(imodel.NewComContractAttachment)
-	_ = container.Provide(func(m *imodel.ComContractAttachment) model.IComContractAttachment { return m })
-	_ = container.Provide(imodel.NewSettlementRecord)
-	_ = container.Provide(func(m *imodel.SettlementRecord) model.ISettlementRecord { return m })
-	_ = container.Provide(imodel.NewComContractAlter)
-	_ = container.Provide(func(m *imodel.ComContractAlter) model.IComContractAlter { return m })
 	container.Provide(imodel.NewContractPlanningTemplate, dig.As(new(model.IContractPlanningTemplate)))
 	container.Provide(imodel.NewBusinessPartner, dig.As(new(model.IBusinessPartner)))
 	container.Provide(imodel.NewProjContractPlanning, dig.As(new(model.IProjContractPlanning)))
+	//合同管理
+	container.Provide(imodel.NewComContract, dig.As(new(model.IComContract)))
+	container.Provide(imodel.NewComContractAttachment, dig.As(new(model.IComContractAttachment)))
+	container.Provide(imodel.NewSettlementRecord, dig.As(new(model.ISettlementRecord)))
+	container.Provide(imodel.NewComContractAlter, dig.As(new(model.IComContractAlter)))
 	return nil
 }
