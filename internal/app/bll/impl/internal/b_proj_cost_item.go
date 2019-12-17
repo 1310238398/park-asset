@@ -752,6 +752,7 @@ func (a *ProjCostItem) QueryContract(ctx context.Context, projectID string) (sch
 	pCostHisResult, err := a.ProjCostHisModel.QueryShow(ctx, schema.ProjCostHisQueryParam{
 		ProjIncomeID: pIncomeResult.Data[0].RecordID,
 		ProjectID:    projectID,
+		Label:        1,
 	})
 	if err != nil {
 		return nil, err
