@@ -157,6 +157,7 @@ type ProjIncomeCalculationQueryParam struct {
 	Sequence        int    // 排序值
 	ProjectID       string // 项目ID
 	Flag            int    // 标记(1:当前版本 2:历史版本 3:最终版本 领导审核后 不得轻易修改)
+	Flags           []int  // 标记(1:当前版本 2:历史版本 3:最终版本 领导审核后 不得轻易修改)
 }
 
 // ProjIncomeCalculationQueryOptions 查询可选参数项
@@ -182,14 +183,15 @@ type ProjVersionValue struct {
 
 // ProjCompareItem 成本核算对比项
 type ProjCompareItem struct {
-	RecordID string              `json:"record_id"` //项目ID
-	ParentID string              `json:"parent_id"` //父级ID
-	Type     int                 `json:"type"`      //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
-	Name     string              `json:"name"`      //项目名
-	Versions []*ProjVersionValue `json:"versions"`  //版本信息
-	Changed  string              `json:"changed"`   //变动量
-	Memo     string              `json:"memo"`      //版本注释
-	Children []*ProjCompareItem  `json:"children"`  //下级目录
+	RecordID   string              `json:"record_id"`   //项目ID
+	ParentID   string              `json:"parent_id"`   //父级ID
+	ParentPath string              `json:"parent_path"` //父级路径
+	Type       int                 `json:"type"`        //项目类型(1.收益测算，2.成本测算，3.销售计划，4.资本化利息)
+	Name       string              `json:"name"`        //项目名
+	Versions   []*ProjVersionValue `json:"versions"`    //版本信息
+	Changed    string              `json:"changed"`     //变动量
+	Memo       string              `json:"memo"`        //版本注释
+	Children   []*ProjCompareItem  `json:"children"`    //下级目录
 }
 
 type ProjCompareItems []*ProjCompareItem
@@ -202,6 +204,7 @@ func (a *ProjCompareItem) ToMap() map[string]interface{} {
 	result["memo"] = a.Memo
 	result["parent_id"] = a.ParentID
 	result["changed"] = a.Changed
+	result["parent_path"] = a.ParentPath
 
 	for _, v := range a.Versions {
 		result[v.VersionID] = v.Value

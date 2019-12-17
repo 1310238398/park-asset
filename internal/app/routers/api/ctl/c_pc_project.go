@@ -100,7 +100,7 @@ func (a *PcProject) QueryList(c *gin.Context) {
 // QueryTree 查询树状数据
 // @Summary 查询树状数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param name query string false "名称"
+// @Param name query string false "项目名称(模糊查询)"
 // @Success 200 []schema.PcProject "查询结果：{list:列表数据}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -109,10 +109,12 @@ func (a *PcProject) QueryList(c *gin.Context) {
 func (a *PcProject) QueryTree(c *gin.Context) {
 	var (
 		pjParams  schema.PcProjectQueryParam
+		orgParams schema.OrganizationQueryParam
 		orgResult *schema.OrganizationQueryResult
 	)
 
-	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), schema.OrganizationQueryParam{})
+	pjParams.LikeName = c.Query("name")
+	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), orgParams)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return

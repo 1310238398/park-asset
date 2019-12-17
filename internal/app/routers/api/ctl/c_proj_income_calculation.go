@@ -5,6 +5,7 @@ import (
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
+	"gxt-park-assets/pkg/util"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -41,6 +42,7 @@ func (a *ProjIncomeCalculation) Query(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
+// @Param projectID query string true "项目ID"
 // @Success 200 []schema.ProjIncomeCalculation "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
@@ -48,6 +50,18 @@ func (a *ProjIncomeCalculation) Query(c *gin.Context) {
 // @Router GET /api/v1/proj-income-calculations?q=list
 func (a *ProjIncomeCalculation) query(c *gin.Context) {
 	var params schema.ProjIncomeCalculationQueryParam
+
+	params.ProjectID = c.Query("projectID")
+	if flag, err := util.S(c.Query("flag")).Int(); err != nil {
+		ginplus.ResError(c, err)
+		return
+	} else {
+		if flag == 2 {
+			params.Flags = []int{2, 3, 4}
+		} else {
+			params.Flags = []int{flag}
+		}
+	}
 
 	result, err := a.ProjIncomeCalculationBll.Query(ginplus.NewContext(c), params, schema.ProjIncomeCalculationQueryOptions{
 		PageParam: ginplus.GetPaginationParam(c),
@@ -78,7 +92,6 @@ func (a *ProjIncomeCalculation) getCurrent(c *gin.Context) {
 		ginplus.ResError(c, errors.ErrInvalidRequestParameter)
 		return
 	}
-
 	result, err := a.ProjIncomeCalculationBll.GetCurrent(ginplus.NewContext(c), projectID)
 	if err != nil {
 		ginplus.ResError(c, err)
@@ -201,7 +214,7 @@ func (a *ProjIncomeCalculation) CreateVersion(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	return
+	ginplus.ResOK(c)
 }
 
 // UpdateVersion 保存旧版本
@@ -228,7 +241,7 @@ func (a *ProjIncomeCalculation) UpdateVersion(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	return
+	ginplus.ResOK(c)
 }
 
 // QueryVersionCompare 查询版本对比版本

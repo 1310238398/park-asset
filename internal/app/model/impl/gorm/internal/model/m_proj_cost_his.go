@@ -61,7 +61,7 @@ func (a *ProjCostHis) QueryShow(ctx context.Context, params schema.ProjCostHisQu
 		db = db.Where("label=?", v)
 	}
 
-	db = db.Order("id DESC")
+	db = db.Order("id")
 
 	var list entity.ProjCostHises
 

@@ -10,7 +10,8 @@ import (
 )
 
 // NewOrganization 创建组织机构管理
-func NewOrganization(mOrganization model.IOrganization,
+func NewOrganization(
+	mOrganization model.IOrganization,
 	mTrans model.ITrans,
 	mUser model.IUser,
 	mPcProject model.IPcProject,

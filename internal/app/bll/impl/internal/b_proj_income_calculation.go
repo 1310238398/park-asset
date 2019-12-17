@@ -23,6 +23,8 @@ func NewProjIncomeCalculation(
 	mProjCostHis model.IProjCostHis,
 	mProjBusinessFormat model.IProjBusinessFormat,
 	mProjCostBusiness model.IProjCostBusiness,
+	mPcProject model.IPcProject,
+
 ) bll.IProjIncomeCalculation {
 	return &ProjIncomeCalculation{
 		TransModel:                 mTrans,
@@ -34,6 +36,7 @@ func NewProjIncomeCalculation(
 		ProjCostHisModel:           mProjCostHis,
 		ProjBusinessFormatModel:    mProjBusinessFormat,
 		ProjCostBusinessModel:      mProjCostBusiness,
+		PcProjectModel:             mPcProject,
 	}
 }
 
@@ -48,6 +51,7 @@ type ProjIncomeCalculation struct {
 	ProjCostHisModel           model.IProjCostHis
 	ProjBusinessFormatModel    model.IProjBusinessFormat
 	ProjCostBusinessModel      model.IProjCostBusiness
+	PcProjectModel             model.IPcProject
 }
 
 // Renew 更新收益测算
@@ -545,6 +549,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "1.1"
 	subItem.ParentID = "1"
+	subItem.ParentPath = "1"
 	subItem.Name = "销售税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -576,6 +581,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.1"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "土地出让金"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -590,6 +596,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.2"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "契税及土地使用税"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -604,6 +611,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.3"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "资本化利息"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -618,6 +626,7 @@ func (a *ProjIncomeCalculation) getIncomeCompare(vList []*schema.ProjIncomeCalcu
 	subItem.Type = 1
 	subItem.RecordID = "2.4"
 	subItem.ParentID = "2"
+	subItem.ParentPath = "2"
 	subItem.Name = "进项税税额"
 	for _, v := range vList {
 		nv := new(schema.ProjVersionValue)
@@ -778,7 +787,19 @@ func (a *ProjIncomeCalculation) Apply(ctx context.Context, projectID string) err
 	}
 	item.Flag = 3
 
-	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		err = a.PcProjectModel.UpdateStage(ctx, projectID, 2)
+		if err != nil {
+			return err
+		}
+
+		err = a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
 }
 
 // Pass 通过审核
@@ -794,7 +815,19 @@ func (a *ProjIncomeCalculation) Pass(ctx context.Context, projectID string) erro
 		return errors.ErrBadRequest
 	}
 	item.Flag = 4
-	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		err = a.PcProjectModel.UpdateStage(ctx, projectID, 3)
+		if err != nil {
+			return err
+		}
+
+		err = a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 // Reject 拒绝审核

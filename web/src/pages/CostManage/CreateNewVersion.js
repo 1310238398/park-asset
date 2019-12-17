@@ -210,18 +210,18 @@ class CreateNewVersion extends PureComponent {
       keys = key.split('/');
       console.log(keys);
 
-      let index_ = -1;
+      let index = -1;
       let newData1 = [...newData];
 
       for (let i = 0; i < keys.length; i++) {
         let keychild = '';
         keychild = keys[i];
-        let index = newData1.findIndex(item => keychild === item.record_id);
+        index = newData1.findIndex(item => keychild === item.record_id);
         if (index > -1 && (i === keys.length - 1 )) {
-          const item = newData[index];
-          let item2 = {...newData[index]};
+          const item = newData1[index];
+          let item2 = {...newData1[index]};
           item2.memo = row.memo;
-          newData.splice(index, 1, {
+          newData1.splice(index, 1, {
             ...item,
             ...item2,
           });
@@ -233,13 +233,13 @@ class CreateNewVersion extends PureComponent {
           });
 
         }
-        else if (  index_ > -1 &&
-          newData1[index_].children &&
-          newData1[index_].children.length > 0 &&
+        else if (  index > -1 &&
+          newData1[index].children &&
+          newData1[index].children.length > 0 &&
           i < keys.length - 1) 
         {
           console.log('进入下一层');
-          newData1 = newData1[index_].children;
+          newData1 = newData1[index].children;
           console.log('newData1 ' + newData1.length);
         }
        

@@ -206,6 +206,12 @@ func (a *CostItem) Update(ctx context.Context, recordID string, item schema.Cost
 			}
 		}
 
+		newItem := oldItem
+		newItem.TaxID = item.TaxID
+		newItem.CalculateType = item.CalculateType
+		newItem.Status = item.Status
+		newItem.InLandTax = item.InLandTax
+		newItem.Label = item.Label
 		err = a.CostItemModel.Update(ctx, recordID, item)
 		if err != nil {
 			return err
