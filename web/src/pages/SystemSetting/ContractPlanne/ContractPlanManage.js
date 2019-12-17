@@ -158,7 +158,7 @@ class ContractPlanManage extends PureComponent{
             formVisiable : false,
             editFlag : false,
             editing : null,
-        })
+        });
     }
 
     //删除按钮
@@ -205,7 +205,6 @@ class ContractPlanManage extends PureComponent{
             treeData,
             data : { list , pagination },
             formVisiable,
-            cost_id,
             node,
             editing,
             editFlag,
@@ -274,13 +273,13 @@ class ContractPlanManage extends PureComponent{
                 width : 100,
                 align : 'center',
                 render : (text,record) => {
-                   return(
-                        <span>
-                            <a onClick={() => { this.editing(record)}}>编辑</a>  &nbsp;&nbsp;&nbsp;
-                            <a onClick={() => { this.handleDelClick(record) }}>删除</a>
-                        </span>
-                   ) 
-                 }
+                    return(
+                            <span>
+                                <a onClick={() => { this.editing(record)}}>编辑</a>  &nbsp;&nbsp;&nbsp;
+                                <a onClick={() => { this.handleDelClick(record) }}>删除</a>
+                            </span>
+                    ) 
+                }
             }
         ];
 
