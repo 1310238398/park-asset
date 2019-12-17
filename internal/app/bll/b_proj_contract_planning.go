@@ -18,4 +18,9 @@ type IProjContractPlanning interface {
 	Update(ctx context.Context, recordID string, item schema.ProjContractPlanning) (*schema.ProjContractPlanning, error)
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 查询统计数据
+	QueryStatistic(ctx context.Context, params schema.ProjContractPlanningQueryParam) (*schema.PContractStatistic, error)
+
+	// 提交审核 status (1:审核中 2:通过 3:拒绝)
+	Audit(ctx context.Context, projectID string, status int) error
 }

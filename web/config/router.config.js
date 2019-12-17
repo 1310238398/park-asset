@@ -214,6 +214,11 @@ export default [
             path : "/systemset/projectCostManage",
             component : './SystemSetting/ProjectCostParameter/ProjectCostManage',
           },
+          // 合约规划模板
+          { 
+            path : "/systemset/contractPlanManage",
+            component : './SystemSetting/ContractPlanne/ContractPlanManage',
+          },
         ]
       },
       // 成本管理
@@ -225,8 +230,26 @@ export default [
           { path: '/cost/detail', component: './CostManage/CostAccountDetail'},
           // { path: '/system/user', component: './User/UserList' },
           // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
+
+          //合约规划
+          { path: '/cost/contractPlan', component: './CostManage/ContractPlan/ContractPlanInfo' },
+
         ],
-      }
+      },
+      // 合同管理
+      {
+
+        path: '/contractmanagement',
+        routes: [
+          // 合同签订
+          { path: '/contractmanagement/signingList', component: './ContractManagement/ContractSigning/ContractSigningList' },
+          // 合同变更
+           { path: '/contractmanagement/changeTab', component: './ContractManagement/ContractChange/ContractChangeTab'},
+          // { path: '/system/user', component: './User/UserList' },
+          // { path: '/system/systemparameter', component: './SystemParameter/SystemParameterList' },
+        ],
+      },
+
     ],
   },
   {

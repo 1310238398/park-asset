@@ -108,3 +108,12 @@ func (a *PcProject) Delete(ctx context.Context, recordID string) error {
 	}
 	return nil
 }
+
+// UpdateStage 更新项目阶段
+func (a *PcProject) UpdateStage(ctx context.Context, recordID string, stage int) error {
+	result := entity.GetPcProjectDB(ctx, a.db).Where("record_id=?", recordID).Update("stage", stage)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}

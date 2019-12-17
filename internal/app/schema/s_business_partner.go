@@ -5,7 +5,7 @@ type BusinessPartner struct {
 	RecordID     string   `json:"record_id" swaggo:"false,记录ID"`               // 记录ID
 	Name         string   `json:"name" binding:"required" swaggo:"false,企业名称"` // 企业名称
 	PartnerType  int      `json:"partner_type" swaggo:"false,伙伴类型"`            // 伙伴类型
-	InChargeList []string `json:"in_charge_list" swaggo:"false,负责人列表"`         // 负责人列表
+	InChargeList []string `json:"in_charge_list" swaggo:"false,负责人列表 "`        // 负责人列表
 }
 
 // BusinessPartnerQueryParam 查询条件

@@ -79,7 +79,7 @@ func (a *CostItem) QueryList(c *gin.Context) {
 		ginplus.ResError(c, err)
 		return
 	}
-	ginplus.ResPage(c, result.Data, result.PageResult)
+	ginplus.ResList(c, result.Data)
 }
 
 // queryTree 查询数据

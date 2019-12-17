@@ -18,4 +18,6 @@ type IPcProject interface {
 	Update(ctx context.Context, recordID string, item schema.PcProject) error
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 更新项目阶段
+	UpdateStage(ctx context.Context, recordID string, stage int) error
 }
