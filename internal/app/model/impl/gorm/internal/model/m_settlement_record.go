@@ -3,10 +3,11 @@ package model
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
 	"gxt-park-assets/internal/app/schema"
+
+	"github.com/jinzhu/gorm"
 )
 
 // NewSettlementRecord 创建结算信息存储实例
@@ -32,6 +33,9 @@ func (a *SettlementRecord) Query(ctx context.Context, params schema.SettlementRe
 	opt := a.getQueryOption(opts...)
 	db := entity.GetSettlementRecordDB(ctx, a.db)
 	// TODO: 查询条件
+	if params.ComContractID != "" {
+		db = db.Where("comcontract_id = ?", params.ComContractID)
+	}
 	db = db.Order("id DESC")
 
 	var list entity.SettlementRecords

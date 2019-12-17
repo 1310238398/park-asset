@@ -461,17 +461,15 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				// 合同生效
 				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
 				// 合同结算
-				gComContract.POST("/:id/settlement", cComContract.CreateSettlement)
+				gComContract.POST("/:id/settlement", cSettlementRecord.Create)
 				// 合同结算列表
-				gComContract.GET("/:id/settlementlist", cComContract.SettlementList)
+				gComContract.GET("/:id/settlementlist", cSettlementRecord.QueryByComContractID)
 			}
 
 			// 注册/api/v1/settlement-records
 			gSettlementRecord := v1.Group("settlement-records")
 			{
-				gSettlementRecord.GET("", cSettlementRecord.Query)
 				gSettlementRecord.GET(":id", cSettlementRecord.Get)
-				gSettlementRecord.POST("", cSettlementRecord.Create)
 				gSettlementRecord.PUT(":id", cSettlementRecord.Update)
 				gSettlementRecord.DELETE(":id", cSettlementRecord.Delete)
 			}

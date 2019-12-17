@@ -10,15 +10,17 @@ import (
 )
 
 // NewSettlementRecord 创建结算信息
-func NewSettlementRecord(mSettlementRecord model.ISettlementRecord) *SettlementRecord {
+func NewSettlementRecord(mSettlementRecord model.ISettlementRecord, mComContract model.IComContract) *SettlementRecord {
 	return &SettlementRecord{
 		SettlementRecordModel: mSettlementRecord,
+		ComContractModel:      mComContract,
 	}
 }
 
 // SettlementRecord 结算信息业务逻辑
 type SettlementRecord struct {
 	SettlementRecordModel model.ISettlementRecord
+	ComContractModel      model.IComContract
 }
 
 // Query 查询数据
@@ -45,7 +47,19 @@ func (a *SettlementRecord) getUpdate(ctx context.Context, recordID string) (*sch
 // Create 创建数据
 func (a *SettlementRecord) Create(ctx context.Context, item schema.SettlementRecord) (*schema.SettlementRecord, error) {
 	item.RecordID = util.MustUUID()
-	err := a.SettlementRecordModel.Create(ctx, item)
+	// 检查是否存在合同信息
+	contractInfo, err := a.ComContractModel.Get(ctx, item.ComContractID)
+	if err != nil {
+		return nil, err
+	}
+	if contractInfo == nil {
+		return nil, errors.ErrNoComContract
+	}
+	// 检查合同是否结算完 是否选择结算
+	if contractInfo.Settlement != 1 {
+		return nil, errors.ErrNoSettlement
+	}
+	err = a.SettlementRecordModel.Create(ctx, item)
 	if err != nil {
 		return nil, err
 	}

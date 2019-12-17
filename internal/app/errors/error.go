@@ -59,6 +59,8 @@ var (
 	ErrComContractNotCommit          = New("该合同还未提交审核")
 	ErrNoComContractSignDate         = New("请输入合同签署日期")
 	ErrNoComContractSN               = New("请输入合同正式编号")
+	ErrNoSettlement                  = New("该合同信息没有选择结算")
+	ErrNoComContract                 = New("没有找到对应的合同")
 	// 合约规划
 	ErrNoInCome = New("未生成目标成本")
 )
@@ -105,6 +107,8 @@ func init() {
 
 	//合同管理
 	newBadRequestError(ErrNotRightStatusForCancelCommit)
+	newBadRequestError(ErrNoSettlement)
+	newBadRequestError(ErrNoComContract)
 	// 合约规划
 	newBadRequestError(ErrNoInCome)
 }

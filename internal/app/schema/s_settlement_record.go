@@ -35,6 +35,7 @@ type SettlementRecord struct {
 
 // SettlementRecordQueryParam 查询条件
 type SettlementRecordQueryParam struct {
+	ComContractID string // 合同id
 }
 
 // SettlementRecordQueryOptions 查询可选参数项

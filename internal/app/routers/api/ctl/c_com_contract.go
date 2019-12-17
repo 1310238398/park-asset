@@ -26,12 +26,12 @@ type ComContract struct {
 // @Tags 合同管理
 // @Summary 查询数据
 // @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" default(1)
-// @Param pageSize query int true "分页大小" default(10)
-// @Success 200 {array} schema.ComContract "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts [get]
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Success 200 []schema.ComContract "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contracts
 func (a *ComContract) Query(c *gin.Context) {
 	var params schema.ComContractQueryParam
 	statusStr := c.Query("status")
@@ -64,11 +64,11 @@ func (a *ComContract) Query(c *gin.Context) {
 // @Summary 查询指定数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 {object} schema.ComContract
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 404 {object} schema.HTTPError "{error:{code:0,message:资源不存在}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/{id} [get]
+// @Success 200 schema.ComContract
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contracts/{id}
 func (a *ComContract) Get(c *gin.Context) {
 	item, err := a.ComContractBll.Get(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -83,11 +83,11 @@ func (a *ComContract) Get(c *gin.Context) {
 // @Summary 创建数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param body body schema.ComContract true "创建数据"
-// @Success 200 {object} schema.ComContract
-// @Failure 400 {object} schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts [post]
+// @Success 200 schema.ComContract
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router POST /api/v1/com-contracts
 func (a *ComContract) Create(c *gin.Context) {
 	var item schema.ComContract
 	if err := ginplus.ParseJSON(c, &item); err != nil {
@@ -109,11 +109,11 @@ func (a *ComContract) Create(c *gin.Context) {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Param body body schema.ComContract true "更新数据"
-// @Success 200 {object} schema.ComContract
-// @Failure 400 {object} schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/{id} [put]
+// @Success 200 schema.ComContract
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contracts/{id}
 func (a *ComContract) Update(c *gin.Context) {
 	var item schema.ComContract
 	if err := ginplus.ParseJSON(c, &item); err != nil {
@@ -134,10 +134,10 @@ func (a *ComContract) Update(c *gin.Context) {
 // @Summary 删除数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
-// @Success 200 {object} schema.HTTPStatus "{status:OK}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/{id} [delete]
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router DELETE /api/v1/com-contracts/{id}
 func (a *ComContract) Delete(c *gin.Context) {
 	err := a.ComContractBll.Delete(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -151,10 +151,10 @@ func (a *ComContract) Delete(c *gin.Context) {
 // @Tags 合同管理
 // @Summary 合同审核通过
 // @param id post string true "合同id"
-// @Success 200 {object} schema.HTTPStatus "{status:OK}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/commit put
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contracts/{id}/passcheck
 func (a *ComContract) PassCheck(c *gin.Context) {
 	err := a.ComContractBll.PassCheck(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -170,10 +170,10 @@ func (a *ComContract) PassCheck(c *gin.Context) {
 // @Tags 合同管理
 // @Summary 提交合同审核
 // @param id post string true "合同id"
-// @Success 200 {object} schema.HTTPStatus "{status:OK}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/commit put
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contracts/{id}/commit
 func (a *ComContract) Commit(c *gin.Context) {
 	err := a.ComContractBll.Commit(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -189,10 +189,10 @@ func (a *ComContract) Commit(c *gin.Context) {
 // @Tags 合同管理
 // @Summary 取消提交合同审核
 // @param id post string true "合同id"
-// @Success 200 {object} schema.HTTPStatus "{status:OK}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/commit put
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contracts/{id}/cancelcommit
 func (a *ComContract) CancelCommit(c *gin.Context) {
 	err := a.ComContractBll.CancelCommit(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -209,10 +209,10 @@ func (a *ComContract) CancelCommit(c *gin.Context) {
 // @Tags 合同管理
 // @Summary 对合同设置使之生效
 // @param id post string true "合同id"
-// @Success 200 {object} schema.HTTPStatus "{status:OK}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/take-effect put
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contracts/{id}/take-effect
 func (a *ComContract) TakeEffect(c *gin.Context) {
 	var effectInfo schema.ComContractEffectInfo
 	if err := ginplus.ParseJSON(c, &effectInfo); err != nil {
@@ -227,35 +227,5 @@ func (a *ComContract) TakeEffect(c *gin.Context) {
 
 		return
 	}
-	ginplus.ResOK(c)
-}
-
-// CreateSettlement 新建合同结算信息
-// @Tags 合同管理
-// @Summary 添加合同结算信息
-// @param id post string true "合同id"
-// @Success 200 {object} schema.HTTPStatus "{status:OK}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/com-contracts/settlement post
-func (a *ComContract) CreateSettlement(c *gin.Context) {
-	//判断是否可以结算
-	// 合同信息是否勾选结算
-	// 合同是否已经结算完成
-	//
-	ginplus.ResOK(c)
-}
-
-// SettlementList 结算信息列表
-// @Tags 合同管理
-// @Summary 列出某个合同的结算信息列表
-// @Param Authorization header string false "Bearer 用户令牌"
-// @Param current query int true "分页索引" default(1)
-// @Param pageSize query int true "分页大小" default(10)
-// @Success 200 {array} schema.SettlementRecord "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
-// @Failure 401 {object} schema.HTTPError "{error:{code:0,message:未授权}}"
-// @Failure 500 {object} schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router /api/v1/settlementlist [get]
-func (a *ComContract) SettlementList(c *gin.Context) {
 	ginplus.ResOK(c)
 }
