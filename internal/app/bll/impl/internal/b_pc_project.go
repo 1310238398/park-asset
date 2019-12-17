@@ -145,6 +145,7 @@ func (a *PcProject) Delete(ctx context.Context, recordID string) error {
 
 func (a *PcProject) create(ctx context.Context, item schema.PcProject) error {
 	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		item.Stage = 1
 		err := a.PcProjectModel.Create(ctx, item)
 		if err != nil {
 			return err

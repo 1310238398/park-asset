@@ -212,6 +212,7 @@ func (a ProjCostItemShows) ToContractTrees() ProjContractCostTrees {
 		list[i] = &ProjContractCostTree{
 			RecordID:       item.RecordID,
 			Name:           item.Name,
+			CostID:         item.CostID,
 			CostParentID:   item.CostParentID,
 			CostParentPath: item.CostParentPath,
 			ProjectID:      item.ProjectID,
@@ -225,7 +226,7 @@ func (a ProjCostItemShows) ToContractTrees() ProjContractCostTrees {
 func (a ProjContractCostTrees) ToTree() []*ProjContractCostTree {
 	mi := make(map[string]*ProjContractCostTree)
 	for _, item := range a {
-		mi[item.RecordID] = item
+		mi[item.CostID] = item
 	}
 
 	var list []*ProjContractCostTree

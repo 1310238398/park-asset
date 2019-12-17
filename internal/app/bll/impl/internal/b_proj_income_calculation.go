@@ -23,6 +23,8 @@ func NewProjIncomeCalculation(
 	mProjCostHis model.IProjCostHis,
 	mProjBusinessFormat model.IProjBusinessFormat,
 	mProjCostBusiness model.IProjCostBusiness,
+	mPcProject model.IPcProject,
+
 ) bll.IProjIncomeCalculation {
 	return &ProjIncomeCalculation{
 		TransModel:                 mTrans,
@@ -34,6 +36,7 @@ func NewProjIncomeCalculation(
 		ProjCostHisModel:           mProjCostHis,
 		ProjBusinessFormatModel:    mProjBusinessFormat,
 		ProjCostBusinessModel:      mProjCostBusiness,
+		PcProjectModel:             mPcProject,
 	}
 }
 
@@ -48,6 +51,7 @@ type ProjIncomeCalculation struct {
 	ProjCostHisModel           model.IProjCostHis
 	ProjBusinessFormatModel    model.IProjBusinessFormat
 	ProjCostBusinessModel      model.IProjCostBusiness
+	PcProjectModel             model.IPcProject
 }
 
 // Renew 更新收益测算
@@ -783,7 +787,19 @@ func (a *ProjIncomeCalculation) Apply(ctx context.Context, projectID string) err
 	}
 	item.Flag = 3
 
-	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		err = a.PcProjectModel.UpdateStage(ctx, projectID, 2)
+		if err != nil {
+			return err
+		}
+
+		err = a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
 }
 
 // Pass 通过审核
@@ -799,7 +815,19 @@ func (a *ProjIncomeCalculation) Pass(ctx context.Context, projectID string) erro
 		return errors.ErrBadRequest
 	}
 	item.Flag = 4
-	return a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+
+	return ExecTrans(ctx, a.TransModel, func(ctx context.Context) error {
+		err = a.PcProjectModel.UpdateStage(ctx, projectID, 3)
+		if err != nil {
+			return err
+		}
+
+		err = a.ProjIncomeCalculationModel.Update(ctx, item.RecordID, *item)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 // Reject 拒绝审核

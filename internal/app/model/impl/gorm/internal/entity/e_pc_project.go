@@ -45,6 +45,7 @@ func (a SchemaPcProject) ToPcProject() *PcProject {
 		PlotID:                &a.PlotID,
 		Location:              &a.Location,
 		IdentiArea:            &a.IdentiArea,
+		Stage:                 &a.Stage,
 	}
 	return item
 }
@@ -78,6 +79,7 @@ type PcProject struct {
 	PlotID                *string    `gorm:"column:plot_id;size:36;index;"`                      // 所属地块
 	Location              *string    `gorm:"column:location;size:200;"`                          // 项目地址(经纬度)
 	IdentiArea            *float64   `gorm:"column:identi_area;type:decimal(20,4);"`             // 可确权面积
+	Stage                 *int       `gorm:"column:stage;index;"`                                // 项目阶段
 }
 
 func (a PcProject) String() string {
@@ -118,6 +120,7 @@ func (a PcProject) ToSchemaPcProject() *schema.PcProject {
 		PlotID:                *a.PlotID,
 		Location:              *a.Location,
 		IdentiArea:            *a.IdentiArea,
+		Stage:                 *a.Stage,
 	}
 	return item
 }

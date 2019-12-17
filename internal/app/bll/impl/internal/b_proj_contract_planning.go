@@ -16,6 +16,8 @@ func NewProjContractPlanning(
 	mContractPlanningTemplate model.IContractPlanningTemplate,
 	mProjIncomeCalculation model.IProjIncomeCalculation,
 	mCostItem model.ICostItem,
+	mProjCostHis model.IProjCostHis,
+	mPcProject model.IPcProject,
 
 ) *ProjContractPlanning {
 	return &ProjContractPlanning{
@@ -24,6 +26,8 @@ func NewProjContractPlanning(
 		ContractPlanningTemplateModel: mContractPlanningTemplate,
 		ProjIncomeCalculationModel:    mProjIncomeCalculation,
 		CostItemModel:                 mCostItem,
+		ProjCostHisModel:              mProjCostHis,
+		PcProjectModel:                mPcProject,
 	}
 }
 
@@ -34,6 +38,8 @@ type ProjContractPlanning struct {
 	ContractPlanningTemplateModel model.IContractPlanningTemplate
 	ProjIncomeCalculationModel    model.IProjIncomeCalculation
 	CostItemModel                 model.ICostItem
+	ProjCostHisModel              model.IProjCostHis
+	PcProjectModel                model.IPcProject
 }
 
 // Query 查询数据
@@ -179,6 +185,63 @@ func (a *ProjContractPlanning) FillCostNamePath(ctx context.Context, items schem
 	for _, item := range items {
 		if namePath, ok := m[item.CostID]; ok {
 			item.CostNamePath = namePath
+		}
+	}
+
+	return nil
+}
+
+// QueryStatistic 查询统计数据
+func (a *ProjContractPlanning) QueryStatistic(ctx context.Context, params schema.ProjContractPlanningQueryParam) (*schema.PContractStatistic, error) {
+	pIncomeResult, err := a.ProjIncomeCalculationModel.Query(ctx, schema.ProjIncomeCalculationQueryParam{
+		ProjectID: params.ProjectID,
+		Flag:      4,
+	})
+	if err != nil {
+		return nil, err
+	} else if len(pIncomeResult.Data) != 1 {
+		return nil, errors.ErrNoInCome
+	}
+
+	var item schema.PContractStatistic
+	pCostHisResult, err := a.ProjCostHisModel.Query(ctx, schema.ProjCostHisQueryParam{
+		CostID:       params.CostID,
+		ProjectID:    params.ProjectID,
+		ProjIncomeID: pIncomeResult.Data[0].RecordID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(pCostHisResult.Data) == 0 {
+		item.TargetCost = 0
+	} else if len(pCostHisResult.Data) > 0 {
+		item.TargetCost = util.DecimalFloat64(pCostHisResult.Data[0].Price)
+	}
+
+	pContractPlanResult, err := a.ProjContractPlanningModel.Query(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	item.Count = len(pContractPlanResult.Data)
+
+	for _, sitem := range pContractPlanResult.Data {
+		item.PlanAmount += sitem.PlanningPrice + sitem.PlanningChange
+	}
+	item.LeftAmount = item.TargetCost - item.PlanAmount
+
+	util.DecimalFloat64(item.PlanAmount)
+	util.DecimalFloat64(item.LeftAmount)
+	return &item, nil
+}
+
+// Audit 审核 status (1:审核中 2:通过 3:拒绝)
+func (a *ProjContractPlanning) Audit(ctx context.Context, projectID string, status int) error {
+	if status == 2 {
+		// 审核通过 合同执行阶段
+		err := a.PcProjectModel.UpdateStage(ctx, projectID, 5)
+		if err != nil {
+			return err
 		}
 	}
 
