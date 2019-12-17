@@ -157,6 +157,7 @@ type ProjIncomeCalculationQueryParam struct {
 	Sequence        int    // 排序值
 	ProjectID       string // 项目ID
 	Flag            int    // 标记(1:当前版本 2:历史版本 3:最终版本 领导审核后 不得轻易修改)
+	Flags           []int  // 标记(1:当前版本 2:历史版本 3:最终版本 领导审核后 不得轻易修改)
 }
 
 // ProjIncomeCalculationQueryOptions 查询可选参数项
