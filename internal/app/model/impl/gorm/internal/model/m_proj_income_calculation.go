@@ -2,6 +2,8 @@ package model
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model/impl/gorm/internal/entity"
@@ -32,11 +34,18 @@ func (a *ProjIncomeCalculation) getQueryOption(opts ...schema.ProjIncomeCalculat
 func (a *ProjIncomeCalculation) Query(ctx context.Context, params schema.ProjIncomeCalculationQueryParam, opts ...schema.ProjIncomeCalculationQueryOptions) (*schema.ProjIncomeCalculationQueryResult, error) {
 	db := entity.GetProjIncomeCalculationDB(ctx, a.db)
 
-	if v := params.Flag; v != 0 {
-		db = db.Where("flag = ?", v)
-	}
 	if v := params.ProjectID; v != "" {
-		db = db.Where("project_id = ?", v)
+		db = db.Where("project_id=?", v)
+	}
+
+	if v := params.Flag; v > 0 {
+		db = db.Where("flag=?", v)
+	} else if v := params.Flags; len(v) > 0 {
+		ss := []string{}
+		for _, i := range v {
+			ss = append(ss, fmt.Sprintf("%d", i))
+		}
+		db = db.Where(fmt.Sprintf("flag IN(%s)", strings.Join(ss, ",")))
 	}
 
 	db = db.Order("id DESC")
