@@ -206,7 +206,27 @@ func (a *ProjContractPlanning) Delete(c *gin.Context) {
 	ginplus.ResOK(c)
 }
 
-// Apply 审核
+// Apply 提交审核
+// @Summary 提交审核
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id path string true "项目ID"
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/proj-contract-plannings/{project_id}/apply
 func (a *ProjContractPlanning) Apply(c *gin.Context) {
+	if c.Param("id") == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+
+	// TODO 目前自动通过
+	err := a.ProjContractPlanningBll.Audit(ginplus.NewContext(c), c.Param("id"), 2)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResOK(c)
 
 }

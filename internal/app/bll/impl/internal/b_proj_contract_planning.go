@@ -17,6 +17,7 @@ func NewProjContractPlanning(
 	mProjIncomeCalculation model.IProjIncomeCalculation,
 	mCostItem model.ICostItem,
 	mProjCostHis model.IProjCostHis,
+	mPcProject model.IPcProject,
 
 ) *ProjContractPlanning {
 	return &ProjContractPlanning{
@@ -26,6 +27,7 @@ func NewProjContractPlanning(
 		ProjIncomeCalculationModel:    mProjIncomeCalculation,
 		CostItemModel:                 mCostItem,
 		ProjCostHisModel:              mProjCostHis,
+		PcProjectModel:                mPcProject,
 	}
 }
 
@@ -37,6 +39,7 @@ type ProjContractPlanning struct {
 	ProjIncomeCalculationModel    model.IProjIncomeCalculation
 	CostItemModel                 model.ICostItem
 	ProjCostHisModel              model.IProjCostHis
+	PcProjectModel                model.IPcProject
 }
 
 // Query 查询数据
@@ -230,4 +233,17 @@ func (a *ProjContractPlanning) QueryStatistic(ctx context.Context, params schema
 	util.DecimalFloat64(item.PlanAmount)
 	util.DecimalFloat64(item.LeftAmount)
 	return &item, nil
+}
+
+// Audit 审核 status (1:审核中 2:通过 3:拒绝)
+func (a *ProjContractPlanning) Audit(ctx context.Context, projectID string, status int) error {
+	if status == 2 {
+		// 审核通过 合同执行阶段
+		err := a.PcProjectModel.UpdateStage(ctx, projectID, 5)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

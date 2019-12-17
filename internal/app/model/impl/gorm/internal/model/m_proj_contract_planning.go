@@ -36,7 +36,12 @@ func (a *ProjContractPlanning) Query(ctx context.Context, params schema.ProjCont
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
 	if v := params.CostID; v != "" {
+		// subQuery1 := entity.GetCostItemDB(ctx, a.db).Select.("parent_path").Where("record_id = ?")
+
 		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ? or record_id = ?", v+"%", v).SubQuery()
+
+		// subQuery2 := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ? or record_id = ?", v+"%", v).SubQuery()
+
 		db = db.Where("cost_id IN(?)", subQuery)
 	}
 	if v := params.ContractType; v != 0 {

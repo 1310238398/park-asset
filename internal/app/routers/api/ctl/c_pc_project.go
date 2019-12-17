@@ -113,6 +113,7 @@ func (a *PcProject) QueryTree(c *gin.Context) {
 		orgResult *schema.OrganizationQueryResult
 	)
 
+	pjParams.LikeName = c.Query("name")
 	orgResult, err := a.OrganizationBll.Query(ginplus.NewContext(c), orgParams)
 	if err != nil {
 		ginplus.ResError(c, err)
