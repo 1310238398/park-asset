@@ -36,7 +36,12 @@ func (a *ProjContractPlanning) Query(ctx context.Context, params schema.ProjCont
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
 	if v := params.CostID; v != "" {
-		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ?", v+"%").Or("record_id = ?", v).SubQuery()
+		// subQuery1 := entity.GetCostItemDB(ctx, a.db).Select.("parent_path").Where("record_id = ?")
+
+		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ? or record_id = ?", v+"%", v).SubQuery()
+
+		// subQuery2 := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ? or record_id = ?", v+"%", v).SubQuery()
+
 		db = db.Where("cost_id IN(?)", subQuery)
 	}
 	if v := params.ContractType; v != 0 {
@@ -107,3 +112,17 @@ func (a *ProjContractPlanning) Delete(ctx context.Context, recordID string) erro
 	}
 	return nil
 }
+
+// // QueryStatistic 查询规划
+// func (a *ProjContractPlanning) QueryStatistic(ctx context.Context, params schema.ProjContractPlanningQueryParam) error {
+// 	db := entity.GetProjContractPlanningDB(ctx, a.db)
+
+// 	if v := params.CostID; v != "" {
+// 		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ?", v+"%").Or("record_id = ?", v).SubQuery()
+// 		db = db.Where("cost_id IN(?)", subQuery)
+// 	}
+
+// 	priceQuery := "SUM(PlanningPrice)''"
+// 	priceQuery = ""
+
+// }
