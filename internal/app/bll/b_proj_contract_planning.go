@@ -18,4 +18,6 @@ type IProjContractPlanning interface {
 	Update(ctx context.Context, recordID string, item schema.ProjContractPlanning) (*schema.ProjContractPlanning, error)
 	// 删除数据
 	Delete(ctx context.Context, recordID string) error
+	// 查询统计数据
+	QueryStatistic(ctx context.Context, params schema.ProjContractPlanningQueryParam) (*schema.PContractStatistic, error)
 }

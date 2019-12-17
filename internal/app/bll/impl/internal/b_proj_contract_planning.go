@@ -16,6 +16,7 @@ func NewProjContractPlanning(
 	mContractPlanningTemplate model.IContractPlanningTemplate,
 	mProjIncomeCalculation model.IProjIncomeCalculation,
 	mCostItem model.ICostItem,
+	mProjCostHis model.IProjCostHis,
 
 ) *ProjContractPlanning {
 	return &ProjContractPlanning{
@@ -24,6 +25,7 @@ func NewProjContractPlanning(
 		ContractPlanningTemplateModel: mContractPlanningTemplate,
 		ProjIncomeCalculationModel:    mProjIncomeCalculation,
 		CostItemModel:                 mCostItem,
+		ProjCostHisModel:              mProjCostHis,
 	}
 }
 
@@ -34,6 +36,7 @@ type ProjContractPlanning struct {
 	ContractPlanningTemplateModel model.IContractPlanningTemplate
 	ProjIncomeCalculationModel    model.IProjIncomeCalculation
 	CostItemModel                 model.ICostItem
+	ProjCostHisModel              model.IProjCostHis
 }
 
 // Query 查询数据
@@ -183,4 +186,48 @@ func (a *ProjContractPlanning) FillCostNamePath(ctx context.Context, items schem
 	}
 
 	return nil
+}
+
+// QueryStatistic 查询统计数据
+func (a *ProjContractPlanning) QueryStatistic(ctx context.Context, params schema.ProjContractPlanningQueryParam) (*schema.PContractStatistic, error) {
+	pIncomeResult, err := a.ProjIncomeCalculationModel.Query(ctx, schema.ProjIncomeCalculationQueryParam{
+		ProjectID: params.ProjectID,
+		Flag:      4,
+	})
+	if err != nil {
+		return nil, err
+	} else if len(pIncomeResult.Data) != 1 {
+		return nil, errors.ErrNoInCome
+	}
+
+	var item schema.PContractStatistic
+	pCostHisResult, err := a.ProjCostHisModel.Query(ctx, schema.ProjCostHisQueryParam{
+		CostID:       params.CostID,
+		ProjectID:    params.ProjectID,
+		ProjIncomeID: pIncomeResult.Data[0].RecordID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(pCostHisResult.Data) == 0 {
+		item.TargetCost = 0
+	} else if len(pCostHisResult.Data) > 0 {
+		item.TargetCost = util.DecimalFloat64(pCostHisResult.Data[0].Price)
+	}
+
+	pContractPlanResult, err := a.ProjContractPlanningModel.Query(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	item.Count = len(pContractPlanResult.Data)
+
+	for _, sitem := range pContractPlanResult.Data {
+		item.PlanAmount += sitem.PlanningPrice + sitem.PlanningChange
+	}
+	item.LeftAmount = item.TargetCost - item.PlanAmount
+
+	util.DecimalFloat64(item.PlanAmount)
+	util.DecimalFloat64(item.LeftAmount)
+	return &item, nil
 }

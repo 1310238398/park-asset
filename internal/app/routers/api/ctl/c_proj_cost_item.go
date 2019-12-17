@@ -217,7 +217,7 @@ func (a *ProjCostItem) Delete(c *gin.Context) {
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/proj-cost-items?q=contract
 func (a *ProjCostItem) QueryContractTree(c *gin.Context) {
-	projectID := c.Query("projectID")
+	projectID := c.Query("project_id")
 	if projectID == "" {
 		ginplus.ResError(c, errors.ErrBadRequest)
 		return

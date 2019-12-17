@@ -32,6 +32,13 @@ func (a *ProjIncomeCalculation) getQueryOption(opts ...schema.ProjIncomeCalculat
 func (a *ProjIncomeCalculation) Query(ctx context.Context, params schema.ProjIncomeCalculationQueryParam, opts ...schema.ProjIncomeCalculationQueryOptions) (*schema.ProjIncomeCalculationQueryResult, error) {
 	db := entity.GetProjIncomeCalculationDB(ctx, a.db)
 
+	if v := params.Flag; v != 0 {
+		db = db.Where("flag = ?", v)
+	}
+	if v := params.ProjectID; v != "" {
+		db = db.Where("project_id = ?", v)
+	}
+
 	db = db.Order("id DESC")
 
 	opt := a.getQueryOption(opts...)
