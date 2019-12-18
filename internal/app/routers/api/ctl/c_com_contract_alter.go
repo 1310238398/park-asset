@@ -26,10 +26,10 @@ type ComContractAlter struct {
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
-// @Success 200 []schema.ComContractAlter "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Success 200 []schema.ComContractAlterDesign "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/com-contract/{id}/alter/designs
+// @Router GET /api/v1/com-contract/{id}/alter/design
 func (a *ComContractAlter) QueryDesignByComContractID(c *gin.Context) {
 	var params schema.ComContractAlterQueryParam
 	ComContractID := c.Param("id")
@@ -54,7 +54,7 @@ func (a *ComContractAlter) QueryDesignByComContractID(c *gin.Context) {
 // @Success 200 []schema.ComContractAlter "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/com-contract/{id}/alter/signs
+// @Router GET /api/v1/com-contract/{id}/alter/sign
 func (a *ComContractAlter) QuerySignByComContractID(c *gin.Context) {
 	var params schema.ComContractAlterQueryParam
 	ComContractID := c.Param("id")
@@ -79,7 +79,7 @@ func (a *ComContractAlter) QuerySignByComContractID(c *gin.Context) {
 // @Success 200 []schema.ComContractAlter "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/com-contract/{id}/alter/stuffprices
+// @Router GET /api/v1/com-contract/{id}/alter/stuffprice
 func (a *ComContractAlter) QueryStuffPriceByComContractID(c *gin.Context) {
 	var params schema.ComContractAlterQueryParam
 	ComContractID := c.Param("id")
@@ -157,6 +157,32 @@ func (a *ComContractAlter) Create(c *gin.Context) {
 
 	item.Creator = ginplus.GetUserID(c)
 	nitem, err := a.ComContractAlterBll.Create(ginplus.NewContext(c), item)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResSuccess(c, nitem)
+}
+
+// CreateDesign 创建设计变更数据
+// @Tags 变更管理
+// @Summary 创建设计变更数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param body body schema.ComContractAlter true "创建数据"
+// @Success 200 schema.ComContractAlterDesign
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router POST /api/v1/com-contract/{id}/alter/design
+func (a *ComContractAlter) CreateDesign(c *gin.Context) {
+	var item schema.ComContractAlterDesign
+	if err := ginplus.ParseJSON(c, &item); err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	item.Creator = ginplus.GetUserID(c)
+	nitem, err := a.ComContractAlterBll.CreateDesign(ginplus.NewContext(c), item)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return

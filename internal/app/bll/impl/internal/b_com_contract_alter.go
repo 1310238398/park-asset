@@ -67,6 +67,17 @@ func (a *ComContractAlter) Create(ctx context.Context, item schema.ComContractAl
 	return a.getUpdate(ctx, item.RecordID)
 }
 
+// CreateDesign 创建设计变更数据
+func (a *ComContractAlter) CreateDesign(ctx context.Context, item schema.ComContractAlterDesign) (*schema.ComContractAlterDesign, error) {
+	item.RecordID = util.MustUUID()
+	err := a.ComContractAlterModel.CreateDesign(ctx, item)
+	if err != nil {
+		return nil, err
+	}
+	//return a.getUpdate(ctx, item.RecordID)
+	return nil, nil
+}
+
 // Update 更新数据
 func (a *ComContractAlter) Update(ctx context.Context, recordID string, item schema.ComContractAlter) (*schema.ComContractAlter, error) {
 	oldItem, err := a.ComContractAlterModel.Get(ctx, recordID)

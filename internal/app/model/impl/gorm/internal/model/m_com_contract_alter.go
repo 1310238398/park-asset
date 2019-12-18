@@ -51,9 +51,9 @@ func (a *ComContractAlter) Query(ctx context.Context, params schema.ComContractA
 // QueryDesignByComContractID 通过合同id查询设计变更
 func (a *ComContractAlter) QueryDesignByComContractID(ctx context.Context, comContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterDesignQueryResult, error) {
 	opt := a.getQueryOption(opts...)
-	db := entity.GetComContractAlterDB(ctx, a.db)
+	db := entity.GetComContractAlterDesignDB(ctx, a.db)
 	// TODO: 查询条件
-	db = db.Where("comcontract_id", comContractID)
+	db = db.Where("comcontract_id = ?", comContractID)
 	db = db.Order("id DESC")
 
 	var list entity.ComContractAlterDesigns
@@ -72,9 +72,9 @@ func (a *ComContractAlter) QueryDesignByComContractID(ctx context.Context, comCo
 // QuerySignByComContractID 通过合同id查询设计变更
 func (a *ComContractAlter) QuerySignByComContractID(ctx context.Context, comContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterSignQueryResult, error) {
 	opt := a.getQueryOption(opts...)
-	db := entity.GetComContractAlterDB(ctx, a.db)
+	db := entity.GetComContractAlterSignDB(ctx, a.db)
 	// TODO: 查询条件
-	db = db.Where("comcontract_id", comContractID)
+	db = db.Where("comcontract_id = ?", comContractID)
 	db = db.Order("id DESC")
 
 	var list entity.ComContractAlterSigns
@@ -93,9 +93,9 @@ func (a *ComContractAlter) QuerySignByComContractID(ctx context.Context, comCont
 // QueryStuffPriceByComContractID 通过合同id查询设计变更
 func (a *ComContractAlter) QueryStuffPriceByComContractID(ctx context.Context, comContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceQueryResult, error) {
 	opt := a.getQueryOption(opts...)
-	db := entity.GetComContractAlterDB(ctx, a.db)
+	db := entity.GetComContractAlterStuffPriceDB(ctx, a.db)
 	// TODO: 查询条件
-	db = db.Where("comcontract_id", comContractID)
+	db = db.Where("comcontract_id = ?", comContractID)
 	db = db.Order("id DESC")
 
 	var list entity.ComContractAlterStuffPrices
@@ -129,6 +129,16 @@ func (a *ComContractAlter) Get(ctx context.Context, recordID string, opts ...sch
 func (a *ComContractAlter) Create(ctx context.Context, item schema.ComContractAlter) error {
 	eitem := entity.SchemaComContractAlter(item).ToComContractAlter()
 	result := entity.GetComContractAlterDB(ctx, a.db).Create(eitem)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+// CreateDesign 创建数据
+func (a *ComContractAlter) CreateDesign(ctx context.Context, item schema.ComContractAlterDesign) error {
+	eitem := entity.SchemaComContractAlterDesign(item).ToComContractAlterDesign()
+	result := entity.GetComContractAlterDesignDB(ctx, a.db).Create(eitem)
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}

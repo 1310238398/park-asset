@@ -40,7 +40,7 @@ func (a *ComContract) Query(ctx context.Context, params schema.ComContractQueryP
 			item.YifangName = YifangInfo.Name
 		}
 		BingfangInfo, _ := a.BusinessPartnerModel.Get(ctx, item.Bingfang)
-		if YifangInfo != nil {
+		if BingfangInfo != nil {
 			item.BingfangName = BingfangInfo.Name
 		}
 	}
