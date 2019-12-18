@@ -2247,6 +2247,9 @@
 			<column name="identi_area" type="decimal" jt="3" >
 				<comment><![CDATA[可确权面积]]></comment>
 			</column>
+			<column name="stage" type="int" jt="4" >
+				<comment><![CDATA[项目阶段(1.成本测算，2成本测算审核，3.合约规划，4合约规划审核，5合同执行)]]></comment>
+			</column>
 			<index name="pk_project_id " unique="PRIMARY_KEY" >
 				<column name="id " />
 			</index>
@@ -2394,7 +2397,6 @@
 		<entity schema="parkcost" name="pc_tax_calculation" color="3986C1" x="288" y="2320" />
 		<entity schema="parkassets.parkassets" name="pa_user_role" color="C4E0F9" x="304" y="1472" />
 		<entity schema="parkcost" name="pc_proj_file" color="C1D8EE" x="816" y="2096" />
-		<entity schema="parkcost" name="pc_project" color="3986C1" x="1104" y="2080" />
 		<entity schema="parkcost" name="pc_proj_delivery_standard" color="3986C1" x="832" y="2352" />
 		<entity schema="parkcost" name="pc_proj_business_format" color="3986C1" x="1104" y="2640" />
 		<entity schema="parkcost" name="pc_proj_sales_plan" color="3986C1" x="1568" y="2080" />
@@ -2416,6 +2418,7 @@
 		<entity schema="parkcost" name="pc_land_appreciation_tax" color="C1D8EE" x="2384" y="2048" />
 		<entity schema="parkcost" name="pc_proj_contract_planning" color="C1D8EE" x="1120" y="2896" />
 		<entity schema="parkcost" name="pc_business_partner" color="C1D8EE" x="48" y="2816" />
+		<entity schema="parkcost" name="pc_project" color="3986C1" x="1104" y="2080" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets.parkassets" name="pa_menu" />
 			<entity schema="parkassets.parkassets" name="pa_menu_action" />

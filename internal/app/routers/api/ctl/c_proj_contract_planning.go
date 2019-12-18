@@ -30,13 +30,15 @@ func (a *ProjContractPlanning) Query(c *gin.Context) {
 		a.QueryPage(c)
 	case "list":
 		a.QueryList(c)
+	case "statistic":
+		a.QueryStatistic(c)
 	default:
 		ginplus.ResError(c, errors.ErrUnknownQuery)
 	}
 }
 
 // QueryPage 查询分页数据
-// @Summary 查询数据
+// @Summary 查询分页数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
@@ -66,8 +68,8 @@ func (a *ProjContractPlanning) QueryPage(c *gin.Context) {
 	ginplus.ResPage(c, result.Data, result.PageResult)
 }
 
-// QueryList 查询分页数据
-// @Summary 查询数据
+// QueryList 查询列表数据
+// @Summary 查询列表数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param project_id query string true "项目ID"
 // @Param cost_id query string true "成本项ID"
@@ -91,6 +93,33 @@ func (a *ProjContractPlanning) QueryList(c *gin.Context) {
 		return
 	}
 	ginplus.ResList(c, result.Data)
+}
+
+// QueryStatistic 查询统计数据
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id query string true "项目ID"
+// @Param cost_id query string true "成本项ID"
+// @Success 200 schema.PContractStatistic
+// @Failure 400 schema.HTTPError "{error:{code:0,message:未知的查询类型}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/proj-contract-plannings?q=statistic
+func (a *ProjContractPlanning) QueryStatistic(c *gin.Context) {
+	var params schema.ProjContractPlanningQueryParam
+	params.ProjectID = c.Query("project_id")
+	params.CostID = c.Query("cost_id")
+	if params.ProjectID == "" || params.CostID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+
+	item, err := a.ProjContractPlanningBll.QueryStatistic(ginplus.NewContext(c), params)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResSuccess(c, item)
 }
 
 // Get 查询指定数据
@@ -175,4 +204,29 @@ func (a *ProjContractPlanning) Delete(c *gin.Context) {
 		return
 	}
 	ginplus.ResOK(c)
+}
+
+// Apply 提交审核
+// @Summary 提交审核
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param project_id path string true "项目ID"
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/proj-contract-plannings/{project_id}/apply
+func (a *ProjContractPlanning) Apply(c *gin.Context) {
+	if c.Param("id") == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
+	}
+
+	// TODO 目前自动通过
+	err := a.ProjContractPlanningBll.Audit(ginplus.NewContext(c), c.Param("id"), 2)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResOK(c)
+
 }

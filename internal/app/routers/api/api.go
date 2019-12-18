@@ -516,6 +516,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjContractPlanning.GET(":id", cProjContractPlanning.Get)
 				gProjContractPlanning.POST("", cProjContractPlanning.Create)
 				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
+				//gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
 				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
 			}
 

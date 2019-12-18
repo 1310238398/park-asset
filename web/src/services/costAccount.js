@@ -105,6 +105,12 @@ export async function deleteCostItem(record_id) {
 
 }
 
+//根据项目查找成本项
+
+export async function queryCostItemByPro(projId){
+  return request(`/v1/proj-cost-items?q=contract&project_id=${projId}`);
+}
+
 //成本支出节点相关接口
 // 查询项目下所有的成本支出节点列表
 export async function queryCostExpenditureList(record_id) {

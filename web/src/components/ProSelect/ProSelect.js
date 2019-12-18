@@ -41,6 +41,7 @@ export default class ProSelect extends PureComponent {
   }
 
   getUser = value => {
+    console.log(value)
     const users = value.join('&id=');
     if (users) {
       get({ users }).then(data => {
