@@ -59,6 +59,44 @@ func (a *ComContract) Query(c *gin.Context) {
 	ginplus.ResPage(c, result.Data, result.PageResult)
 }
 
+// QueryByProjectID 查询数据 - 按项目查询
+// @Tags 合同管理
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Success 200 []schema.ComContract "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract/{id}/byproject
+func (a *ComContract) QueryByProjectID(c *gin.Context) {
+	var params schema.ComContractQueryParam
+	statusStr := c.Query("status")
+	if statusStr == "" {
+		params.Status = -1
+	} else {
+		params.Status, _ = strconv.Atoi(statusStr)
+	}
+	params.Name = c.Query("name")
+	params.SN = c.Query("sn")
+	params.Category = c.Query("category")
+	params.Yifang = c.Query("yifang")
+	params.ProjectID = c.Param("id")
+	stateInt, _ := strconv.Atoi(c.Query("state"))
+	params.State = stateInt
+
+	result, err := a.ComContractBll.Query(ginplus.NewContext(c), params, schema.ComContractQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+		//QueryParam: &getQuery,
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
 // Get 查询指定数据
 // @Tags 合同管理
 // @Summary 查询指定数据

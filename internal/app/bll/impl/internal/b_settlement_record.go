@@ -2,6 +2,8 @@ package internal
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/model"
@@ -59,6 +61,21 @@ func (a *SettlementRecord) Create(ctx context.Context, item schema.SettlementRec
 	if contractInfo.Settlement != 1 {
 		return nil, errors.ErrNoSettlement
 	}
+	// 生成报告编号
+	lastRecord, err := a.SettlementRecordModel.GetLastOneRecordByComContractID(ctx, item.ComContractID)
+	if err != nil {
+		return nil, err
+	}
+	lastNO := 0
+	if lastRecord != nil && lastRecord.ReportNO != "" {
+		lastNO, err = strconv.Atoi(lastRecord.ReportNO)
+		if err != nil {
+			lastNO = 0
+			return nil, err
+		}
+	}
+	lastNO++
+	item.ReportNO = fmt.Sprintf("%08d", lastNO)
 	err = a.SettlementRecordModel.Create(ctx, item)
 	if err != nil {
 		return nil, err

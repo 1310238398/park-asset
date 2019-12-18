@@ -49,6 +49,9 @@ func (a *ComContract) Query(ctx context.Context, params schema.ComContractQueryP
 	if params.Yifang != "" {
 		db = db.Where("yifang like ?", "%"+params.Yifang+"%")
 	}
+	if params.ProjectID != "" {
+		db = db.Where("project_id = ?", params.ProjectID)
+	}
 	if params.State == 1 {
 		db = db.Where("status IN (0,1,2)")
 	}

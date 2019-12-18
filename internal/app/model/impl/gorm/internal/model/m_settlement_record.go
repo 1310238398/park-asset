@@ -65,6 +65,19 @@ func (a *SettlementRecord) Get(ctx context.Context, recordID string, opts ...sch
 	return item.ToSchemaSettlementRecord(), nil
 }
 
+//GetLastOneRecordByComContractID 获取合同结算信息最后一条记录
+func (a *SettlementRecord) GetLastOneRecordByComContractID(ctx context.Context, ComContractID string) (*schema.SettlementRecord, error) {
+	db := entity.GetSettlementRecordDB(ctx, a.db).Where("comcontract_id=?", ComContractID).Order("id desc")
+	var item entity.SettlementRecord
+	ok, err := FindOne(ctx, db, &item)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	} else if !ok {
+		return nil, nil
+	}
+	return item.ToSchemaSettlementRecord(), nil
+}
+
 // Create 创建数据
 func (a *SettlementRecord) Create(ctx context.Context, item schema.SettlementRecord) error {
 	eitem := entity.SchemaSettlementRecord(item).ToSettlementRecord()

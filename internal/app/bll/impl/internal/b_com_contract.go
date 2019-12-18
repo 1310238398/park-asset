@@ -10,22 +10,41 @@ import (
 )
 
 // NewComContract 创建合同管理
-func NewComContract(mComContract model.IComContract, mAttachment model.IComContractAttachment) *ComContract {
+func NewComContract(mComContract model.IComContract, mAttachment model.IComContractAttachment, mBusinessPartner model.IBusinessPartner) *ComContract {
 	return &ComContract{
-		ComContractModel: mComContract,
-		AttachmentModel:  mAttachment,
+		ComContractModel:     mComContract,
+		AttachmentModel:      mAttachment,
+		BusinessPartnerModel: mBusinessPartner,
 	}
 }
 
 // ComContract 合同管理业务逻辑
 type ComContract struct {
-	ComContractModel model.IComContract
-	AttachmentModel  model.IComContractAttachment
+	ComContractModel     model.IComContract
+	AttachmentModel      model.IComContractAttachment
+	BusinessPartnerModel model.IBusinessPartner
 }
 
 // Query 查询数据
 func (a *ComContract) Query(ctx context.Context, params schema.ComContractQueryParam, opts ...schema.ComContractQueryOptions) (*schema.ComContractQueryResult, error) {
-	return a.ComContractModel.Query(ctx, params, opts...)
+	data, err := a.ComContractModel.Query(ctx, params, opts...)
+	//获取甲乙丙信息
+	for _, item := range data.Data {
+		//查询甲乙丙方名称
+		JiafangInfo, _ := a.BusinessPartnerModel.Get(ctx, item.Jiafang)
+		if JiafangInfo != nil {
+			item.JiafangName = JiafangInfo.Name
+		}
+		YifangInfo, _ := a.BusinessPartnerModel.Get(ctx, item.Yifang)
+		if YifangInfo != nil {
+			item.YifangName = YifangInfo.Name
+		}
+		BingfangInfo, _ := a.BusinessPartnerModel.Get(ctx, item.Bingfang)
+		if YifangInfo != nil {
+			item.BingfangName = BingfangInfo.Name
+		}
+	}
+	return data, err
 }
 
 // Get 查询指定数据
@@ -43,6 +62,19 @@ func (a *ComContract) Get(ctx context.Context, recordID string, opts ...schema.C
 		return nil, err
 	}
 	item.Attas = attas
+	//查询甲乙丙方名称
+	JiafangInfo, err := a.BusinessPartnerModel.Get(ctx, item.Jiafang)
+	if JiafangInfo != nil && JiafangInfo.Name != "" {
+		item.JiafangName = JiafangInfo.Name
+	}
+	YifangInfo, err := a.BusinessPartnerModel.Get(ctx, item.Yifang)
+	if YifangInfo != nil && YifangInfo.Name != "" {
+		item.YifangName = YifangInfo.Name
+	}
+	BingfangInfo, err := a.BusinessPartnerModel.Get(ctx, item.Bingfang)
+	if BingfangInfo != nil && BingfangInfo.Name != "" {
+		item.BingfangName = BingfangInfo.Name
+	}
 	return item, nil
 }
 

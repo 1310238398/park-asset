@@ -20,6 +20,81 @@ type ComContractAlter struct {
 	ComContractAlterBll bll.IComContractAlter
 }
 
+// QueryDesignByComContractID 通过合同ID查询设计变更数据
+// @Tags 变更管理
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Success 200 []schema.ComContractAlter "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract/{id}/alter/designs
+func (a *ComContractAlter) QueryDesignByComContractID(c *gin.Context) {
+	var params schema.ComContractAlterQueryParam
+	ComContractID := c.Param("id")
+
+	result, err := a.ComContractAlterBll.QueryDesignByComContractID(ginplus.NewContext(c), ComContractID, params, schema.ComContractAlterQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QuerySignByComContractID 通过合同ID查询设计变更数据
+// @Tags 变更管理
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Success 200 []schema.ComContractAlter "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract/{id}/alter/signs
+func (a *ComContractAlter) QuerySignByComContractID(c *gin.Context) {
+	var params schema.ComContractAlterQueryParam
+	ComContractID := c.Param("id")
+
+	result, err := a.ComContractAlterBll.QueryDesignByComContractID(ginplus.NewContext(c), ComContractID, params, schema.ComContractAlterQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryStuffPriceByComContractID 通过合同ID查询设计变更数据
+// @Tags 变更管理
+// @Summary 查询数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Success 200 []schema.ComContractAlter "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract/{id}/alter/stuffprices
+func (a *ComContractAlter) QueryStuffPriceByComContractID(c *gin.Context) {
+	var params schema.ComContractAlterQueryParam
+	ComContractID := c.Param("id")
+
+	result, err := a.ComContractAlterBll.QueryDesignByComContractID(ginplus.NewContext(c), ComContractID, params, schema.ComContractAlterQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
 // Query 查询数据
 // @Tags 变更管理
 // @Summary 查询数据

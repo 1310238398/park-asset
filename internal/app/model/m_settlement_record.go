@@ -12,6 +12,8 @@ type ISettlementRecord interface {
 	Query(ctx context.Context, params schema.SettlementRecordQueryParam, opts ...schema.SettlementRecordQueryOptions) (*schema.SettlementRecordQueryResult, error)
 	// 查询指定数据
 	Get(ctx context.Context, recordID string, opts ...schema.SettlementRecordQueryOptions) (*schema.SettlementRecord, error)
+	// 查询指定数据
+	GetLastOneRecordByComContractID(ctx context.Context, recordID string) (*schema.SettlementRecord, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.SettlementRecord) error
 	// 更新数据

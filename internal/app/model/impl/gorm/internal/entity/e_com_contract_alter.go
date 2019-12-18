@@ -123,6 +123,8 @@ type ComContractAlterStuffPrice struct {
 // ComContractAlterStuffPriceItem 材料批价表
 type ComContractAlterStuffPriceItem struct {
 	Model
+	RecordID          *string `gorm:"column:record_id;size:36;index;"`            // 记录ID
+	Creator           *string `gorm:"column:creator;size:36;index;"`              // 创建者
 	AlterStuffPriceID string  `gorm:"column:alter_stuff_price_id;size:36;index;"` // 材料批价id
 	Name              string  `gorm:"column:name"`                                // 合同名称
 	Specification     string  `gorm:"column:specification"`                       // 规格
@@ -183,6 +185,106 @@ func (a ComContractAlters) ToSchemaComContractAlters() []*schema.ComContractAlte
 	list := make([]*schema.ComContractAlter, len(a))
 	for i, item := range a {
 		list[i] = item.ToSchemaComContractAlter()
+	}
+	return list
+}
+
+/////////////////////////设计变更//////////////////////////////
+
+// ToSchemaComContractAlterDesign 转换为变更管理对象
+func (a ComContractAlterDesign) ToSchemaComContractAlterDesign() *schema.ComContractAlterDesign {
+	item := &schema.ComContractAlterDesign{
+		RecordID:  a.RecordID,
+		Creator:   *a.Creator,
+		CreatedAt: a.CreatedAt,
+		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ComContractAlterDesigns 变更管理列表
+type ComContractAlterDesigns []*ComContractAlterDesign
+
+// ToSchemaComContractAlterDesigns 转换为变更管理对象列表
+func (a ComContractAlterDesigns) ToSchemaComContractAlterDesigns() []*schema.ComContractAlterDesign {
+	list := make([]*schema.ComContractAlterDesign, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterDesign()
+	}
+	return list
+}
+
+////////////////////////////签证变更////////////////////////////
+
+// ToSchemaComContractAlterSign 转换为变更管理对象
+func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContractAlterSign {
+	item := &schema.ComContractAlterSign{
+		RecordID:  a.RecordID,
+		Creator:   a.Creator,
+		CreatedAt: a.CreatedAt,
+		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ComContractAlterSigns 变更管理列表
+type ComContractAlterSigns []*ComContractAlterSign
+
+// ToSchemaComContractAlterSigns 转换为变更管理对象列表
+func (a ComContractAlterSigns) ToSchemaComContractAlterSigns() []*schema.ComContractAlterSign {
+	list := make([]*schema.ComContractAlterSign, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterSign()
+	}
+	return list
+}
+
+///////////////////////////材料变更/////////////////////////////
+
+// ToSchemaComContractAlterStuffPrice 转换为变更管理对象
+func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema.ComContractAlterStuffPrice {
+	item := &schema.ComContractAlterStuffPrice{
+		RecordID:  a.RecordID,
+		Creator:   a.Creator,
+		CreatedAt: a.CreatedAt,
+		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ComContractAlterStuffPrices 变更管理列表
+type ComContractAlterStuffPrices []*ComContractAlterStuffPrice
+
+// ToSchemaComContractAlterStuffPrices 转换为变更管理对象列表
+func (a ComContractAlterStuffPrices) ToSchemaComContractAlterStuffPrices() []*schema.ComContractAlterStuffPrice {
+	list := make([]*schema.ComContractAlterStuffPrice, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterStuffPrice()
+	}
+	return list
+}
+
+/////////////////////////////材料变更///////////////////////////
+
+// ToSchemaComContractAlterStuffPriceItem 转换为变更管理对象
+func (a ComContractAlterStuffPriceItem) ToSchemaComContractAlterStuffPriceItem() *schema.ComContractAlterStuffPriceItem {
+	item := &schema.ComContractAlterStuffPriceItem{
+		RecordID:  a.RecordID,
+		Creator:   a.Creator,
+		CreatedAt: a.CreatedAt,
+		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ComContractAlterStuffPriceItems 变更管理列表
+type ComContractAlterStuffPriceItems []*ComContractAlterStuffPriceItem
+
+// ToSchemaComContractAlterStuffPriceItems 转换为变更管理对象列表
+func (a ComContractAlterStuffPriceItems) ToSchemaComContractAlterStuffPriceItems() []*schema.ComContractAlterStuffPriceItem {
+	list := make([]*schema.ComContractAlterStuffPriceItem, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterStuffPriceItem()
 	}
 	return list
 }

@@ -442,10 +442,12 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			// 注册/api/v1/com-contracts
 			gComContract := v1.Group("com-contract")
 			{
-				// 查询列表
+				// 查询列表-所有
 				gComContract.GET("", cComContract.Query)
 				// 查询一条记录详细信息
 				gComContract.GET("/:id", cComContract.Get)
+				// 查询列表-按项目
+				gComContract.GET("/:id/byproject", cComContract.QueryByProjectID)
 				// 提交审核
 				gComContract.PUT("/:id/commit", cComContract.Commit)
 				// 取消提交审核
@@ -464,6 +466,10 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gComContract.POST("/:id/settlement", cSettlementRecord.Create)
 				// 合同结算列表
 				gComContract.GET("/:id/settlementlist", cSettlementRecord.QueryByComContractID)
+				{
+					// 合同设计变更
+					gComContract.GET("/:id/alter/designs", cComContractAlter.QueryDesignByComContractID)
+				}
 			}
 
 			// 注册/api/v1/settlement-records
