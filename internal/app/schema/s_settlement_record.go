@@ -28,7 +28,7 @@ type SettlementRecord struct {
 	ReportDate         string    `json:"report_date" swaggo:"false, 报告日期"`               // 报告日期
 	Copies             float64   `json:"copies" swaggo:"false, 份数"`                      // 份数
 	ArchiveSN          string    `json:"archive_sn" swaggo:"false, 存档号 非必填"`             // 存档号 非必填
-	IsDone             string    `json:"is_donw" swaggo:"false, 是否终止"`                   // 是否终止
+	IsDone             string    `json:"is_done" swaggo:"false, 是否终止"`                   // 是否终止
 	OutstandingAmount  float64   `json:"outstanding_amount" swaggo:"false, 未结算金额"`       // 未结算金额
 	Remark             string    `json:"remark" swaggo:"false, 备注"`                      // 备注
 }
