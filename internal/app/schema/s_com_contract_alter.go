@@ -34,7 +34,7 @@ type ComContractAlters []*ComContractAlter
 
 // ComContractAlterDesign 设计变更
 type ComContractAlterDesign struct {
-	RecordID        *string   `json:"record_id"`        // 记录ID
+	RecordID        string    `json:"record_id"`        // 记录ID
 	Creator         string    `json:"creator"`          // 创建者
 	CreatedAt       time.Time `json:"created_at"`       // 创建时间
 	UpdatedAt       time.Time `json:"updated_at"`       // 更新时间
@@ -83,8 +83,8 @@ type ComContractAlterDesigns []*ComContractAlterDesign
 
 // ComContractAlterSign 签证变更
 type ComContractAlterSign struct {
-	RecordID             *string   `json:"record_id"`                    // 记录ID
-	Creator              *string   `json:"creator"`                      // 创建者
+	RecordID             string    `json:"record_id"`                    // 记录ID
+	Creator              string    `json:"creator"`                      // 创建者
 	CreatedAt            time.Time `json:"created_at"`                   // 创建时间
 	UpdatedAt            time.Time `json:"updated_at"`                   // 更新时间
 	SN                   string    `json:"sn"`                           // 变更编号
@@ -140,8 +140,8 @@ type ComContractAlterSigns []*ComContractAlterSign
 
 // ComContractAlterStuffPrice 材料批价
 type ComContractAlterStuffPrice struct {
-	RecordID        *string   `json:"record_id"`         // 记录ID
-	Creator         *string   `json:"creator"`           // 创建者
+	RecordID        string    `json:"record_id"`         // 记录ID
+	Creator         string    `json:"creator"`           // 创建者
 	CreatedAt       time.Time `json:"created_at"`        // 创建时间
 	UpdatedAt       time.Time `json:"updated_at"`        // 更新时间
 	SN              string    `json:"sn"`                //  批价编号
@@ -186,8 +186,8 @@ type ComContractAlterStuffPrices []*ComContractAlterStuffPrice
 
 // ComContractAlterStuffPriceItem 材料批价表
 type ComContractAlterStuffPriceItem struct {
-	RecordID          *string   `json:"record_id"`            // 记录ID
-	Creator           *string   `json:"creator"`              // 创建者
+	RecordID          string    `json:"record_id"`            // 记录ID
+	Creator           string    `json:"creator"`              // 创建者
 	CreatedAt         time.Time `json:"created_at"`           // 创建时间
 	UpdatedAt         time.Time `json:"updated_at"`           // 更新时间
 	AlterStuffPriceID string    `json:"alter_stuff_price_id"` // 材料批价id

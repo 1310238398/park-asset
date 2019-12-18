@@ -12,8 +12,32 @@ func GetComContractAlterDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 	return getDBWithModel(ctx, defDB, ComContractAlter{})
 }
 
+// GetComContractAlterDesignDB 变更管理
+func GetComContractAlterDesignDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterDesign{})
+}
+
+// GetComContractAlterSignDB 变更管理
+func GetComContractAlterSignDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterSign{})
+}
+
+// GetComContractAlterStuffPriceDB 变更管理
+func GetComContractAlterStuffPriceDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterStuffPrice{})
+}
+
 // SchemaComContractAlter 变更管理
 type SchemaComContractAlter schema.ComContractAlter
+
+// SchemaComContractAlterDesign 变更管理
+type SchemaComContractAlterDesign schema.ComContractAlterDesign
+
+// SchemaComContractAlterSign 变更管理
+type SchemaComContractAlterSign schema.ComContractAlterSign
+
+// SchemaComContractAlterStuffPrice 变更管理
+type SchemaComContractAlterStuffPrice schema.ComContractAlterStuffPrice
 
 // ToComContractAlter 转换为变更管理实体
 func (a SchemaComContractAlter) ToComContractAlter() *ComContractAlter {
@@ -194,10 +218,19 @@ func (a ComContractAlters) ToSchemaComContractAlters() []*schema.ComContractAlte
 // ToSchemaComContractAlterDesign 转换为变更管理对象
 func (a ComContractAlterDesign) ToSchemaComContractAlterDesign() *schema.ComContractAlterDesign {
 	item := &schema.ComContractAlterDesign{
-		RecordID:  a.RecordID,
+		RecordID:  *a.RecordID,
 		Creator:   *a.Creator,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ToComContractAlterDesign 转换为变更管理实体
+func (a SchemaComContractAlterDesign) ToComContractAlterDesign() *ComContractAlterDesign {
+	item := &ComContractAlterDesign{
+		RecordID: &a.RecordID,
+		Creator:  &a.Creator,
 	}
 	return item
 }
@@ -219,10 +252,19 @@ func (a ComContractAlterDesigns) ToSchemaComContractAlterDesigns() []*schema.Com
 // ToSchemaComContractAlterSign 转换为变更管理对象
 func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContractAlterSign {
 	item := &schema.ComContractAlterSign{
-		RecordID:  a.RecordID,
-		Creator:   a.Creator,
+		RecordID:  *a.RecordID,
+		Creator:   *a.Creator,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ToComContractAlterSign 转换为变更管理实体
+func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSign {
+	item := &ComContractAlterSign{
+		RecordID: &a.RecordID,
+		Creator:  &a.Creator,
 	}
 	return item
 }
@@ -244,10 +286,19 @@ func (a ComContractAlterSigns) ToSchemaComContractAlterSigns() []*schema.ComCont
 // ToSchemaComContractAlterStuffPrice 转换为变更管理对象
 func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema.ComContractAlterStuffPrice {
 	item := &schema.ComContractAlterStuffPrice{
-		RecordID:  a.RecordID,
-		Creator:   a.Creator,
+		RecordID:  *a.RecordID,
+		Creator:   *a.Creator,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
+	}
+	return item
+}
+
+// ToComContractAlterStuffPrice 转换为变更管理实体
+func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComContractAlterStuffPrice {
+	item := &ComContractAlterStuffPrice{
+		RecordID: &a.RecordID,
+		Creator:  &a.Creator,
 	}
 	return item
 }
@@ -269,8 +320,8 @@ func (a ComContractAlterStuffPrices) ToSchemaComContractAlterStuffPrices() []*sc
 // ToSchemaComContractAlterStuffPriceItem 转换为变更管理对象
 func (a ComContractAlterStuffPriceItem) ToSchemaComContractAlterStuffPriceItem() *schema.ComContractAlterStuffPriceItem {
 	item := &schema.ComContractAlterStuffPriceItem{
-		RecordID:  a.RecordID,
-		Creator:   a.Creator,
+		RecordID:  *a.RecordID,
+		Creator:   *a.Creator,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
 	}

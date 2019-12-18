@@ -467,8 +467,14 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				// 合同结算列表
 				gComContract.GET("/:id/settlementlist", cSettlementRecord.QueryByComContractID)
 				{
-					// 合同设计变更
-					gComContract.GET("/:id/alter/designs", cComContractAlter.QueryDesignByComContractID)
+					// 合同设计变更列表
+					gComContract.GET("/:id/alter/design", cComContractAlter.QueryDesignByComContractID)
+					// 合同签证变更列表
+					gComContract.GET("/:id/alter/sign", cComContractAlter.QuerySignByComContractID)
+					// 合同批价列表
+					gComContract.GET("/:id/alter/stuffprice", cComContractAlter.QueryStuffPriceByComContractID)
+					// 新建合同设计变更
+					gComContract.POST("/:id/alter/design", cComContractAlter.CreateDesign)
 				}
 			}
 
@@ -516,7 +522,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjContractPlanning.GET(":id", cProjContractPlanning.Get)
 				gProjContractPlanning.POST("", cProjContractPlanning.Create)
 				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
-				//gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
+				gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
 				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
 			}
 

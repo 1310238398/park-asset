@@ -20,6 +20,8 @@ type IComContractAlter interface {
 	Get(ctx context.Context, recordID string, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlter, error)
 	// 创建数据
 	Create(ctx context.Context, item schema.ComContractAlter) error
+	// 创建数据
+	CreateDesign(ctx context.Context, item schema.ComContractAlterDesign) error
 	// 更新数据
 	Update(ctx context.Context, recordID string, item schema.ComContractAlter) error
 	// 删除数据
