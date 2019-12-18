@@ -16,6 +16,7 @@ type LandAppreciationTax struct {
 
 // LandAppreciationTaxQueryParam 查询条件
 type LandAppreciationTaxQueryParam struct {
+	ProjectID string
 }
 
 // LandAppreciationTaxQueryOptions 查询可选参数项

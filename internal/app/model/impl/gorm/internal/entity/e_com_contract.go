@@ -77,7 +77,7 @@ type ComContract struct {
 	BingfangSign         string  `gorm:"column:bingfang_sign"`            // 丙方签字
 	Amount               float64 `gorm:"column:amount"`                   // 合同金额
 	ContractPlanningDone uint8   `gorm:"column:contract_planning_done"`   // 合约规划是否引用完 0 否 1是
-	OverAmountSource     string  `gorm:"column:over_amount_source"`       // 合同金额超出合约规划后 需要注明来源
+	OverAmountSource     string  `gorm:"column:over_amount_source"`       // 合同金额超出合约规划后需要注明来源
 	Settlement           uint8   `gorm:"column:settlement"`               // 是否结算 0 不结算 1结算
 	ValiSignAmount       float64 `gorm:"column:vali_sign_amount"`         // 有效签约金额
 	Virtual              string  `gorm:"column:virtual"`                  //是否虚拟合同

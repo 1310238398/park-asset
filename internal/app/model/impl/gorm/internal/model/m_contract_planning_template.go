@@ -36,7 +36,7 @@ func (a *ContractPlanningTemplate) Query(ctx context.Context, params schema.Cont
 		db = db.Where("name LIKE ?", "%"+v+"%")
 	}
 	if v := params.CostID; v != "" {
-		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ?", v+"%").Or("record_id = ?", v).SubQuery()
+		subQuery := entity.GetCostItemDB(ctx, a.db).Select("record_id").Where("parent_path LIKE ?", "%"+v+"%").Or("record_id = ?", v).SubQuery()
 		db = db.Where("cost_id IN(?)", subQuery)
 	}
 
