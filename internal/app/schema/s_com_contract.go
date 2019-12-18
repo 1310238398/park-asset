@@ -6,44 +6,47 @@ import (
 
 // ComContract 合同管理对象
 type ComContract struct {
-	ID                    uint                     `json:"id"`                                        //自增id
-	RecordID              string                   `json:"record_id"`                                 // 记录ID
-	Creator               string                   `json:"creator"`                                   // 创建者
-	CreatedAt             time.Time                `json:"created_at"`                                // 创建时间
-	UpdatedAt             time.Time                `json:"updated_at"`                                // 更新时间
-	ProjectID             string                   `json:"project_id"`                                //所属项目id
-	ContractPlanningID    string                   `json:"contract_planning_id"`                      //所属合约规划
-	ContractPlanningDone  uint8                    `json:"contract_planning_done"`                    // 合约规划是否引用完
-	Category              string                   `json:"category"`                                  //合同类别
-	Subject               string                   `json:"subject"`                                   //合同科目
-	SubjectSubItem        string                   `json:"subject_subitem"`                           //所属科目分项
-	SN                    string                   `json:"sn"`                                        //合同编号
-	Name                  string                   `json:"name" binding:"required" swago:"true,合同名称"` //合同名称
-	Property              string                   `json:"property"`                                  //合同性质:直接合同，三方合同，其他
-	Supplement            string                   `json:"supplement"`                                //是否是补充合同
-	Virtual               string                   `json:"virtual"`                                   //是否虚拟合同
-	ParentComContractID   string                   `json:"parent_comcontract_id"`                     //是哪个合同的补充合同 record_id
-	ParentComContractName string                   `json:"parent_comcontract_name"`                   //原合同名称
-	Jiafang               string                   `json:"jiafang"`                                   //甲方
-	JiafangSign           string                   `json:"jiafang_sign"`                              //甲方签字
-	Yifang                string                   `json:"yifang"`                                    //乙方
-	YifangSign            string                   `json:"yifang_sign"`                               //乙方签字
-	Bingfang              string                   `json:"bingfang"`                                  //丙方
-	BingfangSign          string                   `json:"bingfang_sign"`                             //丙方签字
-	Amount                float64                  `json:"amount"`                                    //合同金额
-	OverAmountSource      string                   `json:"over_amount_source"`                        //合同金额超出合约规划后 需要注明来源
-	JiaStuffsAmount       float64                  `json:"jia_stuffs_amount"`                         //甲方供应材料金额
-	UnCostAmount          float64                  `json:"uncost_amount"`                             //不计成本金额
-	ValiSignAmount        float64                  `json:"vali_sign_amount"`                          //有效签约金额
-	SignDate              string                   `json:"sign_date"`                                 //签约日期
-	PayType               string                   `json:"pay_type"`                                  //付款方式
-	PayPrecondition       string                   `json:"pay_precondition"`                          //付款条件
-	Settlement            uint8                    `json:"settlement"`                                // 是否结算
-	Content               string                   `json:"content"`                                   // 合同内容
-	Attas                 []*ComContractAttachment `json:"attas"`                                     //合同附件
+	ID                    uint                     `json:"id" swaggo:"false, 自增id"`                                    //自增id
+	RecordID              string                   `json:"record_id" swaggo:"false, 记录ID"`                             // 记录ID
+	Creator               string                   `json:"creator" swaggo:"false, 创建者"`                                // 创建者
+	CreatedAt             time.Time                `json:"created_at" swaggo:"false, 创建时间"`                            // 创建时间
+	UpdatedAt             time.Time                `json:"updated_at" swaggo:"false, 更新时间"`                            // 更新时间
+	ProjectID             string                   `json:"project_id" swaggo:"false, 所属项目id"`                          //所属项目id
+	ContractPlanningID    string                   `json:"contract_planning_id" swaggo:"false, 所属合约规划"`                //所属合约规划
+	ContractPlanningDone  uint8                    `json:"contract_planning_done" swaggo:"false, 合约规划是否引用完"`           // 合约规划是否引用完
+	Category              string                   `json:"category" swaggo:"false, 合同类别"`                              //合同类别
+	Subject               string                   `json:"subject" swaggo:"false, 合同科目"`                               //合同科目
+	SubjectSubItem        string                   `json:"subject_subitem" swaggo:"false, 所属科目分项"`                     //所属科目分项
+	SN                    string                   `json:"sn" swaggo:"false, 合同编号"`                                    //合同编号
+	Name                  string                   `json:"name" binding:"required" swago:"true,合同名称"`                  //合同名称
+	Property              string                   `json:"property" swaggo:"false, 合同性质:直接合同，三方合同，其他"`                 //合同性质:直接合同，三方合同，其他
+	Supplement            string                   `json:"supplement" swaggo:"false, 是否是补充合同"`                         //是否是补充合同
+	Virtual               string                   `json:"virtual" swaggo:"false, 是否虚拟合同"`                             //是否虚拟合同
+	ParentComContractID   string                   `json:"parent_comcontract_id" swaggo:"false, 是哪个合同的补充合同 record_id"` //是哪个合同的补充合同 record_id
+	ParentComContractName string                   `json:"parent_comcontract_name" swaggo:"false, 原合同名称"`              //原合同名称
+	Jiafang               string                   `json:"jiafang" swaggo:"false, 甲方"`                                 //甲方
+	JiafangName           string                   `json:"jiafang_name" swaggo:"false, 甲方名称"`                          //甲方名称
+	JiafangSign           string                   `json:"jiafang_sign" swaggo:"false, 甲方签字"`                          //甲方签字
+	Yifang                string                   `json:"yifang" swaggo:"false, 乙方 record_id"`                        //乙方 record_id
+	YifangName            string                   `json:"yifang_name" swaggo:"false, 乙方名称"`                           //乙方名称
+	YifangSign            string                   `json:"yifang_sign" swaggo:"false, 乙方签字"`                           //乙方签字
+	Bingfang              string                   `json:"bingfang" swaggo:"false, 丙方"`                                //丙方
+	BingfangName          string                   `json:"bingfang_name" swaggo:"false, 丙方姓名"`                         //丙方姓名
+	BingfangSign          string                   `json:"bingfang_sign" swaggo:"false, 丙方签字"`                         //丙方签字
+	Amount                float64                  `json:"amount" swaggo:"false, 合同金额"`                                //合同金额
+	OverAmountSource      string                   `json:"over_amount_source" swaggo:"false, 合同金额超出合约规划后 需要注明来源"`      //合同金额超出合约规划后 需要注明来源
+	JiaStuffsAmount       float64                  `json:"jia_stuffs_amount" swaggo:"false, 甲方供应材料金额"`                 //甲方供应材料金额
+	UnCostAmount          float64                  `json:"uncost_amount" swaggo:"false, 不计成本金额"`                       //不计成本金额
+	ValiSignAmount        float64                  `json:"vali_sign_amount" swaggo:"false, 有效签约金额"`                    //有效签约金额
+	SignDate              string                   `json:"sign_date" swaggo:"false, 签约日期"`                             //签约日期
+	PayType               string                   `json:"pay_type" swaggo:"false, 付款方式"`                              //付款方式
+	PayPrecondition       string                   `json:"pay_precondition" swaggo:"false, 付款条件"`                      //付款条件
+	Settlement            uint8                    `json:"settlement" swaggo:"false, 是否结算"`                            // 是否结算
+	Content               string                   `json:"content" swaggo:"false, 合同内容"`                               // 合同内容
+	Attas                 []*ComContractAttachment `json:"attas" swaggo:"false, 合同附件"`                                 //合同附件
 	//合同状态 0暂存 1 审批中 2 审批驳回  3 审批通过(未生效)5 合同生效(填上合同编号)
 	Status uint   `json:"status"`
-	Remark string `json:"remark"` //备注
+	Remark string `json:"remark" swaggo:"false, 备注"` //备注
 }
 
 //ComContractModify 合同变更
@@ -150,12 +153,13 @@ type ComContractStuffApprPrice struct {
 
 // ComContractQueryParam 查询条件
 type ComContractQueryParam struct {
-	Status   int    `json:"status"` // 合同状态
-	Name     string `json:"name"`   // 合同名称
-	SN       string `json:"sn"`     // 合同编号
-	Category string `json:"cate"`   // 合同类别
-	State    int    `json:"state"`  // 查询类别 1 =》 从合同草稿中查询 2 =》 从通过后的合同中查询
-	Yifang   string `json:"yifang"` // 乙方名称
+	Status    int    `json:"status"`     // 合同状态
+	Name      string `json:"name"`       // 合同名称
+	SN        string `json:"sn"`         // 合同编号
+	Category  string `json:"cate"`       // 合同类别
+	State     int    `json:"state"`      // 查询类别 1 =》 从合同草稿中查询 2 =》 从通过后的合同中查询
+	Yifang    string `json:"yifang"`     // 乙方名称
+	ProjectID string `json:"project_id"` //  项目ID
 }
 
 // ComContractQueryOptions 查询可选参数项

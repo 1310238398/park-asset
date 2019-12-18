@@ -442,10 +442,12 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			// 注册/api/v1/com-contracts
 			gComContract := v1.Group("com-contract")
 			{
-				// 查询列表
+				// 查询列表-所有
 				gComContract.GET("", cComContract.Query)
 				// 查询一条记录详细信息
 				gComContract.GET("/:id", cComContract.Get)
+				// 查询列表-按项目
+				gComContract.GET("/:id/byproject", cComContract.QueryByProjectID)
 				// 提交审核
 				gComContract.PUT("/:id/commit", cComContract.Commit)
 				// 取消提交审核
@@ -461,17 +463,19 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				// 合同生效
 				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
 				// 合同结算
-				gComContract.POST("/:id/settlement", cComContract.CreateSettlement)
+				gComContract.POST("/:id/settlement", cSettlementRecord.Create)
 				// 合同结算列表
-				gComContract.GET("/:id/settlementlist", cComContract.SettlementList)
+				gComContract.GET("/:id/settlementlist", cSettlementRecord.QueryByComContractID)
+				{
+					// 合同设计变更
+					gComContract.GET("/:id/alter/designs", cComContractAlter.QueryDesignByComContractID)
+				}
 			}
 
 			// 注册/api/v1/settlement-records
 			gSettlementRecord := v1.Group("settlement-records")
 			{
-				gSettlementRecord.GET("", cSettlementRecord.Query)
 				gSettlementRecord.GET(":id", cSettlementRecord.Get)
-				gSettlementRecord.POST("", cSettlementRecord.Create)
 				gSettlementRecord.PUT(":id", cSettlementRecord.Update)
 				gSettlementRecord.DELETE(":id", cSettlementRecord.Delete)
 			}
@@ -512,7 +516,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjContractPlanning.GET(":id", cProjContractPlanning.Get)
 				gProjContractPlanning.POST("", cProjContractPlanning.Create)
 				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
-				gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
+				//gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
 				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
 			}
 
