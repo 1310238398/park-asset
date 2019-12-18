@@ -88,7 +88,7 @@ class EditableCell extends React.Component {
 class SalesPlan extends PureComponent {
   state = {
     editingKey: '',
-    yearList: ['2020', '2019', '2018', '2017'],
+    //yearList: [],
     quarterList: [
       {
         name: '第一季度',
@@ -445,6 +445,7 @@ class SalesPlan extends PureComponent {
       costAccount: { formType, businessData },
       salesPlan: {
         data: { list, pagination },
+        yearList,
       },
     } = this.props;
 
@@ -455,7 +456,7 @@ class SalesPlan extends PureComponent {
       ...pagination,
     };
 
-    const { yearList, quarterList, editingKey, columns, view_columns } = this.state;
+    const { quarterList, editingKey, columns, view_columns } = this.state;
     const components = {
       body: {
         row: EditableFormRow,

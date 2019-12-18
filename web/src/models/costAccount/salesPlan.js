@@ -26,7 +26,7 @@ export default {
     formID: '', // 暂存项目ID
    
     addSalesPlanVisible: false,
-    //formData: {},
+    yearList: [],
   
   },
   // 调service  call 调service函数 put 调reducer函数 select 暂存
@@ -65,6 +65,23 @@ export default {
 
       const response = yield call(costAccountService.querySalesPlan, params);
       
+      let years = [];
+      if (response && response.list) {
+        for (let i = 0; i < response.list.length; i++) {
+
+          let index = years.findIndex(item => response.list[i].year === item);
+          if (index === -1) {
+            years.push(response.list[i].year);
+          }
+        }
+     
+      }
+
+      yield put({
+        type: 'saveYearList',
+        payload: [...years],
+      });
+
       yield put({
         type: 'saveData',
         payload: response,
@@ -73,6 +90,7 @@ export default {
         type: 'saveFormID',
         payload: pro_id,
       });
+
 
      
       // 请求所有业态
@@ -289,7 +307,6 @@ export default {
     saveData(state, { payload }) {
       return { ...state, data: payload };
     },
-    
     saveSearch(state, { payload }) {
       return { ...state, search: payload };
     },
@@ -327,5 +344,8 @@ export default {
     savePolt(state, { payload }) {
       return { ...state, poltList: payload };
     },
+    saveYearList(state, { payload }) {
+      return { ...state, yearList: payload };
+    }
   },
 };

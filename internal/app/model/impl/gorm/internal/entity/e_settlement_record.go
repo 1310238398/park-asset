@@ -21,6 +21,7 @@ func (a SchemaSettlementRecord) ToSettlementRecord() *SettlementRecord {
 		RecordID:           &a.RecordID,
 		Creator:            &a.Creator,
 		ComContractID:      a.ComContractID,
+		ReportNO:           a.ReportNO,
 		ReportName:         a.ReportName,
 		Songshen:           a.Songshen,
 		SongshenJiagong:    a.SongshenJiagong,
