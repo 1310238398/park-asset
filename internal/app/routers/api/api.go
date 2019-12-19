@@ -473,11 +473,10 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 					gComContract.GET("/:id/alter/sign", cComContractAlter.QuerySignByComContractID)
 					// 合同批价列表
 					gComContract.GET("/:id/alter/stuffprice", cComContractAlter.QueryStuffPriceByComContractID)
-					// 新建合同设计变更
-					gComContract.POST("/:id/alter/design", cComContractAlter.CreateDesign)
+					// 合同批价材料列表
+					gComContract.GET("/:id/alter/stuffpriceitem", cComContractAlter.QueryStuffPriceItemByStuffPriceID)
 				}
 			}
-
 			// 注册/api/v1/settlement-records
 			gSettlementRecord := v1.Group("settlement-records")
 			{
@@ -487,13 +486,45 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			}
 
 			// 注册/api/v1/com-contract-alters
-			gComContractAlter := v1.Group("com-contract-alters")
+			gComContractAlter := v1.Group("com-contract-alter")
 			{
-				gComContractAlter.GET("", cComContractAlter.Query)
-				gComContractAlter.GET(":id", cComContractAlter.Get)
-				gComContractAlter.POST("", cComContractAlter.Create)
-				gComContractAlter.PUT(":id", cComContractAlter.Update)
-				gComContractAlter.DELETE(":id", cComContractAlter.Delete)
+				designGroup := gComContractAlter.Group("design")
+				{
+					designGroup.POST("", cComContractAlter.CreateDesign)
+					designGroup.GET(":id", cComContractAlter.GetDesign)
+					designGroup.PUT(":id", cComContractAlter.UpdateDesign)
+					designGroup.DELETE(":id", cComContractAlter.DeleteDesign)
+					designGroup.PUT(":id/commit", cComContractAlter.CommitDesign)
+					designGroup.PUT(":id/passcheck", cComContractAlter.PassCheckDesign)
+					designGroup.PUT(":id/reback", cComContractAlter.RebackDesign)
+				}
+				signGroup := gComContractAlter.Group("sign")
+				{
+					signGroup.POST("", cComContractAlter.CreateSign)
+					signGroup.GET(":id", cComContractAlter.GetSign)
+					signGroup.PUT(":id", cComContractAlter.UpdateSign)
+					signGroup.DELETE(":id", cComContractAlter.DeleteSign)
+					signGroup.PUT(":id/commit", cComContractAlter.CommitSign)
+					signGroup.PUT(":id/passcheck", cComContractAlter.PassCheckSign)
+					signGroup.PUT(":id/reback", cComContractAlter.RebackSign)
+				}
+				stuffPriceGroup := gComContractAlter.Group("stuffprice")
+				{
+					stuffPriceGroup.POST("", cComContractAlter.CreateStuffPrice)
+					stuffPriceGroup.GET(":id", cComContractAlter.GetStuffPrice)
+					stuffPriceGroup.PUT(":id", cComContractAlter.UpdateStuffPrice)
+					stuffPriceGroup.DELETE(":id", cComContractAlter.DeleteStuffPrice)
+					stuffPriceGroup.PUT(":id/commit", cComContractAlter.CommitStuffPrice)
+					stuffPriceGroup.PUT(":id/passcheck", cComContractAlter.PassCheckStuffPrice)
+					stuffPriceGroup.PUT(":id/reback", cComContractAlter.RebackStuffPrice)
+				}
+				stuffPriceItemGroup := gComContractAlter.Group("stuffpriceitem")
+				{
+					stuffPriceItemGroup.POST("", cComContractAlter.CreateStuffPriceItem)
+					stuffPriceItemGroup.GET(":id", cComContractAlter.GetStuffPriceItem)
+					stuffPriceItemGroup.PUT(":id", cComContractAlter.UpdateStuffPriceItem)
+					stuffPriceItemGroup.DELETE(":id", cComContractAlter.DeleteStuffPriceItem)
+				}
 			}
 			// 注册/api/v1/contract-planning-templates
 			gContractPlanningTemplate := v1.Group("contract-planning-templates")

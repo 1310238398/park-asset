@@ -31,7 +31,7 @@ type ComContract struct {
 // @Success 200 []schema.ComContract "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/com-contracts
+// @Router GET /api/v1/com-contract
 func (a *ComContract) Query(c *gin.Context) {
 	var params schema.ComContractQueryParam
 	statusStr := c.Query("status")
@@ -106,7 +106,7 @@ func (a *ComContract) QueryByProjectID(c *gin.Context) {
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 404 schema.HTTPError "{error:{code:0,message:资源不存在}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router GET /api/v1/com-contracts/{id}
+// @Router GET /api/v1/com-contract/{id}
 func (a *ComContract) Get(c *gin.Context) {
 	item, err := a.ComContractBll.Get(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -125,7 +125,7 @@ func (a *ComContract) Get(c *gin.Context) {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router POST /api/v1/com-contracts
+// @Router POST /api/v1/com-contract
 func (a *ComContract) Create(c *gin.Context) {
 	var item schema.ComContract
 	if err := ginplus.ParseJSON(c, &item); err != nil {
@@ -151,7 +151,7 @@ func (a *ComContract) Create(c *gin.Context) {
 // @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/com-contracts/{id}
+// @Router PUT /api/v1/com-contract/{id}
 func (a *ComContract) Update(c *gin.Context) {
 	var item schema.ComContract
 	if err := ginplus.ParseJSON(c, &item); err != nil {
@@ -175,7 +175,7 @@ func (a *ComContract) Update(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router DELETE /api/v1/com-contracts/{id}
+// @Router DELETE /api/v1/com-contract/{id}
 func (a *ComContract) Delete(c *gin.Context) {
 	err := a.ComContractBll.Delete(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -192,7 +192,7 @@ func (a *ComContract) Delete(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/com-contracts/{id}/passcheck
+// @Router PUT /api/v1/com-contract/{id}/passcheck
 func (a *ComContract) PassCheck(c *gin.Context) {
 	err := a.ComContractBll.PassCheck(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -211,7 +211,7 @@ func (a *ComContract) PassCheck(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/com-contracts/{id}/commit
+// @Router PUT /api/v1/com-contract/{id}/commit
 func (a *ComContract) Commit(c *gin.Context) {
 	err := a.ComContractBll.Commit(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -230,7 +230,7 @@ func (a *ComContract) Commit(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/com-contracts/{id}/cancelcommit
+// @Router PUT /api/v1/com-contract/{id}/cancelcommit
 func (a *ComContract) CancelCommit(c *gin.Context) {
 	err := a.ComContractBll.CancelCommit(ginplus.NewContext(c), c.Param("id"))
 	if err != nil {
@@ -250,7 +250,7 @@ func (a *ComContract) CancelCommit(c *gin.Context) {
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
-// @Router PUT /api/v1/com-contracts/{id}/take-effect
+// @Router PUT /api/v1/com-contract/{id}/take-effect
 func (a *ComContract) TakeEffect(c *gin.Context) {
 	var effectInfo schema.ComContractEffectInfo
 	if err := ginplus.ParseJSON(c, &effectInfo); err != nil {

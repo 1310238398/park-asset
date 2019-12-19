@@ -74,6 +74,7 @@ func AutoMigrate(db *gormplus.DB) error {
 		new(entity.ComContractAlterDesign),
 		new(entity.ComContractAlterSign),
 		new(entity.ComContractAlterStuffPrice),
+		new(entity.ComContractAlterStuffPriceItem),
 		new(entity.ContractPlanningTemplate),
 		new(entity.BusinessPartner),
 		new(entity.ProjContractPlanning),
