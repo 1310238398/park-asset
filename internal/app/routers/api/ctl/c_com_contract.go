@@ -18,6 +18,8 @@ func NewComContract(bComContract bll.IComContract) *ComContract {
 }
 
 // ComContract 合同管理控制器
+// @Name ComContract
+// @Description 合同管理控制器
 type ComContract struct {
 	ComContractBll bll.IComContract
 }
@@ -247,6 +249,7 @@ func (a *ComContract) CancelCommit(c *gin.Context) {
 // @Tags 合同管理
 // @Summary 对合同设置使之生效
 // @param id post string true "合同id"
+// @Param body body schema.ComContractEffectInfo true "设置生效数据"
 // @Success 200 schema.HTTPStatus "{status:OK}"
 // @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"

@@ -50,6 +50,7 @@ func (a SchemaComContract) ToComContract() *ComContract {
 		Virtual:              a.Virtual,
 		Status:               a.Status,
 		Remark:               a.Remark,
+		EffectRemark:         a.EffectRemark,
 	}
 	return item
 }
@@ -88,6 +89,7 @@ type ComContract struct {
 	PayPrecondition      string  `gorm:"column:pay_precondition"`         // 付款条件
 	Content              string  `gorm:"column:content"`                  // 合同内容
 	Remark               string  `gorm:"column:remark"`                   // 备注
+	EffectRemark         string  `gorm:"column:effect_remark"`            // 合同生效备注
 	// 合同状态 0暂存 1 审批中 2 审批驳回  3 审批通过(未生效)5 合同生效(填上合同编号)
 	Status uint `gorm:"column:status"`
 }
@@ -135,6 +137,7 @@ func (a ComContract) ToSchemaComContract() *schema.ComContract {
 		Virtual:              a.Virtual,
 		Status:               a.Status,
 		Remark:               a.Remark,
+		EffectRemark:         a.EffectRemark,
 	}
 	return item
 }

@@ -16,6 +16,8 @@ func NewComContractAlter(bComContractAlter bll.IComContractAlter) *ComContractAl
 }
 
 // ComContractAlter 变更管理控制器
+// @Name ComContractAlter
+// @Description 变更管理控制器
 type ComContractAlter struct {
 	ComContractAlterBll bll.IComContractAlter
 }

@@ -164,7 +164,7 @@ func (a *ComContract) TakeEffect(ctx context.Context, recordID string, effectInf
 		return err
 	}
 	changeField := map[string]interface{}{
-		"status": 5, "sign_date": effectInfo.SignDate, "sn": effectInfo.SN}
+		"status": 5, "sign_date": effectInfo.SignDate, "sn": effectInfo.SN, "effect_remark": effectInfo.EffectRemark}
 
 	eitem := entity.SchemaComContract(*oldItem).ToComContract()
 	result := entity.GetComContractDB(ctx, a.db).Model(&eitem).Where("record_id=?", recordID).Updates(changeField)
