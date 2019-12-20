@@ -22,7 +22,7 @@ type ComContractAlter struct {
 
 // QueryDesignByComContractID 通过合同ID查询设计变更数据
 // @Tags 变更管理
-// @Summary 查询数据
+// @Summary 通过合同ID查询设计变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
@@ -45,9 +45,9 @@ func (a *ComContractAlter) QueryDesignByComContractID(c *gin.Context) {
 	ginplus.ResPage(c, result.Data, result.PageResult)
 }
 
-// QuerySignByComContractID 通过合同ID查询设计变更数据
+// QuerySignByComContractID 通过合同ID查询签证变更数据
 // @Tags 变更管理
-// @Summary 查询数据
+// @Summary 通过合同ID查询签证变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
@@ -70,9 +70,9 @@ func (a *ComContractAlter) QuerySignByComContractID(c *gin.Context) {
 	ginplus.ResPage(c, result.Data, result.PageResult)
 }
 
-// QueryStuffPriceByComContractID 通过合同ID查询设计变更数据
+// QueryStuffPriceByComContractID 通过合同ID查询材料批价数据
 // @Tags 变更管理
-// @Summary 查询数据
+// @Summary 通过合同ID查询材料批价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
@@ -95,9 +95,9 @@ func (a *ComContractAlter) QueryStuffPriceByComContractID(c *gin.Context) {
 	ginplus.ResPage(c, result.Data, result.PageResult)
 }
 
-// QueryStuffPriceItemByStuffPriceID 通过合同ID查询设计变更数据
+// QueryStuffPriceItemByStuffPriceID 通过材料批价ID查询材料批价报价数据
 // @Tags 变更管理
-// @Summary 查询数据
+// @Summary 通过材料批价ID查询材料批价报价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param current query int true "分页索引" 1
 // @Param pageSize query int true "分页大小" 10
@@ -234,9 +234,10 @@ func (a *ComContractAlter) Delete(c *gin.Context) {
 }
 
 /*  ==========   Design  start ==========  */
-// GetDesign 查询指定数据
+
+// GetDesign 查询指定设计变更数据
 // @Tags 变更管理
-// @Summary 查询指定数据
+// @Summary 查询指定设计变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.ComContractAlterDesign
@@ -253,9 +254,9 @@ func (a *ComContractAlter) GetDesign(c *gin.Context) {
 	ginplus.ResSuccess(c, item)
 }
 
-// CreateDesign 创建数据
+// CreateDesign 创建设计变更数据
 // @Tags 变更管理
-// @Summary 创建数据
+// @Summary 创建设计变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param body body schema.ComContractAlterDesign true "创建数据"
 // @Success 200 schema.ComContractAlterDesign
@@ -279,9 +280,9 @@ func (a *ComContractAlter) CreateDesign(c *gin.Context) {
 	ginplus.ResSuccess(c, nitem)
 }
 
-// UpdateDesign 更新数据
+// UpdateDesign 更新设计变更数据
 // @Tags 变更管理
-// @Summary 更新数据
+// @Summary 更新设计变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Param body body schema.ComContractAlterDesign true "更新数据"
@@ -365,9 +366,9 @@ func (a *ComContractAlter) RebackDesign(c *gin.Context) {
 	ginplus.ResOK(c)
 }
 
-// DeleteDesign 删除数据
+// DeleteDesign 删除设计变更数据
 // @Tags 变更管理
-// @Summary 删除数据
+// @Summary 删除设计变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.HTTPStatus "{status:OK}"
@@ -384,9 +385,10 @@ func (a *ComContractAlter) DeleteDesign(c *gin.Context) {
 }
 
 /*  ==========   Sign  start ==========  */
-// GetSign 查询指定数据
+
+// GetSign 查询指定签证变更数据
 // @Tags 变更管理
-// @Summary 查询指定数据
+// @Summary 查询指定签证变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.ComContractAlterSign
@@ -403,9 +405,9 @@ func (a *ComContractAlter) GetSign(c *gin.Context) {
 	ginplus.ResSuccess(c, item)
 }
 
-// CreateSign 创建数据
+// CreateSign 创建签证变更数据
 // @Tags 变更管理
-// @Summary 创建数据
+// @Summary 创建签证变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param body body schema.ComContractAlterSign true "创建数据"
 // @Success 200 schema.ComContractAlterSign
@@ -429,9 +431,9 @@ func (a *ComContractAlter) CreateSign(c *gin.Context) {
 	ginplus.ResSuccess(c, nitem)
 }
 
-// UpdateSign 更新数据
+// UpdateSign 更新签证变更数据
 // @Tags 变更管理
-// @Summary 更新数据
+// @Summary 更新签证变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Param body body schema.ComContractAlterSign true "更新数据"
@@ -515,9 +517,9 @@ func (a *ComContractAlter) RebackSign(c *gin.Context) {
 	ginplus.ResOK(c)
 }
 
-// DeleteSign 删除数据
+// DeleteSign 删除签证变更数据
 // @Tags 变更管理
-// @Summary 删除数据
+// @Summary 删除签证变更数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.HTTPStatus "{status:OK}"
@@ -534,9 +536,10 @@ func (a *ComContractAlter) DeleteSign(c *gin.Context) {
 }
 
 /*  ==========   StuffPrice  start ==========  */
-// GetStuffPrice 查询指定数据
+
+// GetStuffPrice 查询指定材料批价数据
 // @Tags 变更管理
-// @Summary 查询指定数据
+// @Summary 查询指定材料批价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.ComContractAlterStuffPrice
@@ -553,9 +556,9 @@ func (a *ComContractAlter) GetStuffPrice(c *gin.Context) {
 	ginplus.ResSuccess(c, item)
 }
 
-// CreateStuffPrice 创建数据
+// CreateStuffPrice 创建材料批价数据
 // @Tags 变更管理
-// @Summary 创建数据
+// @Summary 创建材料批价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param body body schema.ComContractAlterStuffPrice true "创建数据"
 // @Success 200 schema.ComContractAlterStuffPrice
@@ -579,9 +582,9 @@ func (a *ComContractAlter) CreateStuffPrice(c *gin.Context) {
 	ginplus.ResSuccess(c, nitem)
 }
 
-// UpdateStuffPrice 更新数据
+// UpdateStuffPrice 更新材料批价数据
 // @Tags 变更管理
-// @Summary 更新数据
+// @Summary 更新材料批价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Param body body schema.ComContractAlterStuffPrice true "更新数据"
@@ -665,9 +668,9 @@ func (a *ComContractAlter) RebackStuffPrice(c *gin.Context) {
 	ginplus.ResOK(c)
 }
 
-// DeleteStuffPrice 删除数据
+// DeleteStuffPrice 删除材料批价数据
 // @Tags 变更管理
-// @Summary 删除数据
+// @Summary 删除材料批价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.HTTPStatus "{status:OK}"
@@ -684,9 +687,10 @@ func (a *ComContractAlter) DeleteStuffPrice(c *gin.Context) {
 }
 
 /*  ==========   StuffPriceItem  start ==========  */
-// GetStuffPriceItem 查询指定数据
+
+// GetStuffPriceItem 查询指定材料批价报价数据
 // @Tags 变更管理
-// @Summary 查询指定数据
+// @Summary 查询指定材料批价报价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.ComContractAlterStuffPriceItem
@@ -703,9 +707,9 @@ func (a *ComContractAlter) GetStuffPriceItem(c *gin.Context) {
 	ginplus.ResSuccess(c, item)
 }
 
-// CreateStuffPriceItem 创建数据
+// CreateStuffPriceItem 创建材料批价报价数据
 // @Tags 变更管理
-// @Summary 创建数据
+// @Summary 创建材料批价报价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param body body schema.ComContractAlterStuffPriceItem true "创建数据"
 // @Success 200 schema.ComContractAlterStuffPriceItem
@@ -729,9 +733,9 @@ func (a *ComContractAlter) CreateStuffPriceItem(c *gin.Context) {
 	ginplus.ResSuccess(c, nitem)
 }
 
-// UpdateStuffPriceItem 更新数据
+// UpdateStuffPriceItem 更新材料批价报价数据
 // @Tags 变更管理
-// @Summary 更新数据
+// @Summary 更新材料批价报价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Param body body schema.ComContractAlterStuffPriceItem true "更新数据"
@@ -755,9 +759,9 @@ func (a *ComContractAlter) UpdateStuffPriceItem(c *gin.Context) {
 	ginplus.ResSuccess(c, nitem)
 }
 
-// DeleteStuffPriceItem 删除数据
+// DeleteStuffPriceItem 删除材料批价报价数据
 // @Tags 变更管理
-// @Summary 删除数据
+// @Summary 删除材料批价报价数据
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param id path string true "记录ID"
 // @Success 200 schema.HTTPStatus "{status:OK}"
