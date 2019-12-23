@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Form, TreeSelect, Card, Row, Col, Tree, Table, Modal } from 'antd';
+import { Form, TreeSelect, Card, Row, Col, Tree, Table, Modal,Layout } from 'antd';
 
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
@@ -75,7 +75,7 @@ class ContractPlanInfo extends PureComponent{
                 this.setState({ contract_type : res.list });
             }
         })
-        this.dispatch({
+        this.dispatch({  //项目列表
             type: 'costAccount/queryProTree',
             payload: {}
         });
@@ -87,7 +87,6 @@ class ContractPlanInfo extends PureComponent{
     };
 
     handleProChange = (value, label) => {
-          //选择项目--给projectID赋值。---查询项目下的科目类别。
         this.setState({ projectID : value });
         queryCostItemByPro(value).then(res => {
             if(res && res.error){
@@ -99,10 +98,6 @@ class ContractPlanInfo extends PureComponent{
                 this.getStaticInfo({ project_id : value, cost_id : res.list[0].cost_id });
             }
         })
-        //HD  接口---查询科目类别
-
-        //科目类别查询后--查询默认的第一个科目类别下的合约规划。
-        //得到node和科目id
     }
 
     getDataList(param){
@@ -164,6 +159,7 @@ class ContractPlanInfo extends PureComponent{
             projectID,
             cost_id,
         } = this.state;
+        this.setState({ loading : true });
         if(e.selected){
             //科目类别发生改变
             this.setState({ cost_id : selectedKeys[0] }); //得到新的科目Id
@@ -199,7 +195,7 @@ class ContractPlanInfo extends PureComponent{
 
     //编辑
     editing = record => {
-        this.setState({ formVisible : true});
+        this.setState({ formVisible : true,editInfo : record});
     }
 
     //添加
@@ -255,7 +251,6 @@ class ContractPlanInfo extends PureComponent{
             projectID,
             cost_id,
         } = this.state;
-        console.log('saved',saved)
         if(saved){
             this.setState({ loading : true });
             //查询接口，最新数据
@@ -264,6 +259,30 @@ class ContractPlanInfo extends PureComponent{
             this.getStaticInfo({ project_id : projectID, cost_id : cost_id });
         }
         this.setState({ formVisible : false, editInfo : null });
+    }
+
+    renderDataShow(){
+
+        const { staticInfo }= this.state;
+        return(
+            <Row gutter={8}>
+                <Col span={5}>
+                    目标成本 : {staticInfo.target_cost}
+                </Col>
+                <Col span={5}>
+                    规划余额 : {staticInfo.plan_amount}
+                </Col>
+                <Col span={5}>
+                    规划余量 : { staticInfo.left_amount }
+                </Col>
+                <Col span={5}>
+                    合约规划数 :{ staticInfo.count}
+                </Col>
+                <Col span={4}>
+                    未引用规划数 : { staticInfo.un_refer_count }
+                </Col>
+            </Row>
+        )
     }
 
     render(){
@@ -306,23 +325,40 @@ class ContractPlanInfo extends PureComponent{
             xl : { span : 20 },
         }
 
+        // 1:已引用 2:未引用 3:部分引用
         const columns = [
             {
                 title : '合同名称',
                 dataIndex : 'name',
                 key : 'name',
                 width : 150,
+                render : (text,record) => {
+                    if(record.refer_status == 1){
+                        return <span style={{ color :'red' }}>{text}</span>
+                    }else if(record.refer_status == 3){
+                        return <span style={{ color : 'green'}}>{text}</span>
+                    }else{
+                    return <span>{text}</span>
+                    }
+                }
             },
             {
                 title : '合同类别',
                 dataIndex : 'contract_type',
                 key : 'contract_type',
                 width: 150,
-                render : (data) => {
+                render : (data,record) => {
                     if(data){
                         for(let i=0; i<contract_type.length;i++){
                             if( contract_type[i].code == data.toString()){
-                                return contract_type[i].name;
+                                // return contract_type[i].name;
+                                if(record.refer_status == 1){
+                                    return <span style={{ color :'red' }}>{contract_type[i].name}</span>
+                                }else if(record.refer_status == 3){
+                                    return <span style={{ color : 'green'}}>{contract_type[i].name}</span>
+                                }else{
+                                return <span>{contract_type[i].name}</span>
+                                }
                             }
                         }
                     }else{
@@ -335,18 +371,30 @@ class ContractPlanInfo extends PureComponent{
                 dataIndex : 'planning_price',
                 key : 'planning_price',
                 width : 150,
-            },
-            {
-                title : '合同预估变更金额',
-                dataIndex : 'planning_change',
-                key : 'planning_change',
-                width: 150,
+                render : (text,record) => {
+                    if(record.refer_status == 1){
+                        return <span style={{ color :'red' }}>{text}</span>
+                    }else if(record.refer_status == 3){
+                        return <span style={{ color : 'green'}}>{text}</span>
+                    }else{
+                    return <span>{text}</span>
+                    }
+                }
             },
             {
                 title : '合同签订金额',
                 dataIndex : 'signed_amount',
                 key : 'signed_amount',
                 width : 150,
+                render : (text,record) => {
+                    if(record.refer_status == 1){
+                        return <span style={{ color :'red' }}>{text}</span>
+                    }else if(record.refer_status == 3){
+                        return <span style={{ color : 'green'}}>{text}</span>
+                    }else{
+                    return <span>{text}</span>
+                    }
+                }
             },
             {
                 title : '操作',
@@ -375,22 +423,28 @@ class ContractPlanInfo extends PureComponent{
         };
 
         return(
-            <PageHeaderLayout title={<div>
-                <span>当前项目：</span>
-                <TreeSelect
-                    value={ projectID }
-                    treeData = { projectTreeData }
-                    style = {{ width : 200 }}
-                    onChange={this.handleProChange}
-                >
-
-                </TreeSelect>
-            </div>} breadcrumbList={breadcrumbList}>
-                <Card bordered={false} className={ ( !projectID || projectID == "") ? styles.cardStyle : null }>
-                    {
-                        projectID && projectID != "" &&
-                        <Row gutter={[2,0]}>
-                            <Col {...col1} className={styles.colLine}>
+            <div>
+                {
+                    (projectID && projectID != "") ?
+                    <PageHeaderLayout title={<div>
+                        <span>当前项目：</span>
+                        <TreeSelect
+                            value={ projectID }
+                            treeData = { projectTreeData }
+                            style = {{ width : 200 }}
+                            onChange={this.handleProChange}
+                        >
+        
+                        </TreeSelect>
+                    </div>} breadcrumbList={breadcrumbList}>
+                        
+                        <Layout>
+                            <Layout.Sider
+                                width = {200}
+                                className={styles.siderSty}
+                                // style = {{ background : '#fff', borderRight :'1px solid lightGray' }}
+                            >
+                            
                                 <Tree
                                     className ="draggable-tree"
                                     draggable
@@ -399,39 +453,60 @@ class ContractPlanInfo extends PureComponent{
                                 >
                                     { this.getTreeNode(treeData) }
                                 </Tree>
-                            </Col>
-                            <Col {...col2} className={styles.tableCol}>
-                            {
-                                (node && !node.children) &&
-                                <div>
-                                    <PButton 
-                                        key='add' code="add" type='primary' style={ {marginLeft : 8, marginBottom : 10}}
-                                        onClick={() => this.handleAddClick()}
+                            </Layout.Sider>
+                            <Layout.Content>
+                                <Card bordered={false} >
+                                    <div className={styles.tableList}>
+                                        <div className={styles.tableListShow}>{this.renderDataShow()}</div>
+                                    {
+                                        (node && !node.children) &&
+                                        <div>
+                                            <PButton 
+                                                key='add' code="add" type='primary' style={ {marginLeft : 8, marginBottom : 10}}
+                                                onClick={() => this.handleAddClick()}
+                                            >
+                                                添加
+                                            </PButton> 
+                                        </div>
+                                    }
+                                    <Table
+                                        columns = { columns }
+                                        rowKey = { record => record.record_id}
+                                        scroll = { {x :1000,y : 700}  }
+                                        bordered = { true }
+                                        dataSource = { list }
+                                        pagination = {paginationProps}
+                                        loading = { loading }
                                     >
-                                        添加
-                                    </PButton> 
-                                </div>
-                            }
-                                <Table
-                                    columns = { columns }
-                                    rowKey = { record => record.record_id}
-                                    scroll = { {y : 700}  }
-                                    bordered = { true }
-                                    dataSource = { list }
-                                    pagination = {paginationProps}
-                                    loading = { loading }
-                                >
-
-                                </Table>
-                            </Col>
-                        </Row>
-                    }
-                </Card>
-                {
-                    formVisible &&
-                    <ContractProCard formVisible={ formVisible } editInfo = { editInfo } node = { node } onSave ={ this.onSave } topInfo ={ staticInfo } projectID = { projectID }></ContractProCard>
+        
+                                    </Table>
+                                    </div>
+                                </Card>
+                            </Layout.Content>
+                        </Layout>
+                        {
+                            formVisible &&
+                            <ContractProCard formVisible={ formVisible } editInfo = { editInfo } node = { node } onSave ={ this.onSave } topInfo ={ staticInfo } projectID = { projectID }></ContractProCard>
+                        }
+                    </PageHeaderLayout>
+                    :
+                    <PageHeaderLayout title={<div>
+                        <span>当前项目：</span>
+                        <TreeSelect
+                            value={ projectID }
+                            treeData = { projectTreeData }
+                            style = {{ width : 200 }}
+                            onChange={this.handleProChange}
+                        >
+        
+                        </TreeSelect>
+                    </div>} breadcrumbList={breadcrumbList}>
+                        <Card bordered={false} className={ styles.cardStyle}>
+                        </Card>
+                    </PageHeaderLayout>
                 }
-            </PageHeaderLayout>
+            </div>
+            
         )
     }
 }

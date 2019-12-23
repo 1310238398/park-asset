@@ -434,7 +434,7 @@ export class CapitalizedInterest extends PureComponent {
                     components = { components }
                     columns = { eColumns }
                     dataSource = { data }
-                    scroll = {{ x : 15  , y : 800 }} 
+                    scroll = {{ x : 1500  , y : 800 }} 
                     bordered = { true }
                     pagination={false}
                     rowKey = {record => record.record_id}

@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Modal, Form, Row, Col, Input, InputNumber } from 'antd';
+import { Modal, Form, Row, Col, Input, InputNumber, message } from 'antd';
 
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 
-import { createContractPlanProj } from '@/services/contractPlanProj';
+import { createContractPlanProj, getOneContractPlan, updateContractPlanProj } from '@/services/contractPlanProj';
 
 @Form.create()
 class ContractProCard extends PureComponent{
@@ -14,6 +14,16 @@ class ContractProCard extends PureComponent{
     }
 
     componentWillMount(){
+        const { editInfo }= this.props;
+        if(editInfo){
+            getOneContractPlan(editInfo.record_id).then(res => {
+                if( res && res.error){
+                    console.log(res.error.message);
+                }else{
+                    this.setState({ info: res });
+                }
+            })
+        }
         //若为修改的操作
         //查询接口数据--得到最新的数据--赋值给info
 
@@ -24,25 +34,42 @@ class ContractProCard extends PureComponent{
     }
 
     onOKClick = () => {
-        const { form, editInfo, node, onSave, projectID } = this.props;
+        const { form, editInfo, node, onSave, projectID, topInfo } = this.props;
         const { save_num } = this.state;
         let num = save_num +1;
         this.setState({ save_num : num });
+        console.log(num);
         if(num === 1){
             form.validateFieldsAndScroll((err,value) => {
                 if(err){
                     return;
                 }
                 const tempInfo = {...value};
+                if(tempInfo.planning_price > topInfo.left_amount){
+                    message.error('合同预估金额不能大于规划余量');
+                    this.setState({ save_num : 0 });
+                    console.log("true");
+                    return;
+                }else{
+                    console.log('false');
+                }
                 if(editInfo){
                     const submitInfo = {...editInfo };
                     submitInfo.name = tempInfo.name;
                     submitInfo.contract_type = parseInt(tempInfo.contract_type);
                     submitInfo.planning_price = tempInfo.planning_price;
-                    submitInfo.planning_change = tempInfo.planning_change;
+                    // submitInfo.planning_change = tempInfo.planning_change;
                     submitInfo.information = tempInfo.information;
                     submitInfo.memo = tempInfo.memo;
+                    updateContractPlanProj(submitInfo).then(res => {
+                        if(res && res.error){
+                            console.log(res.error.message);
+                        }else{
+                            onSave(true);
+                        }
+                    })
                 }else{
+                    tempInfo.contract_type = parseInt(tempInfo.contract_type);
                     tempInfo.cost_id = node.cost_id;
                     tempInfo.project_id = projectID;
                     createContractPlanProj(tempInfo).then(res => {
@@ -185,11 +212,11 @@ class ContractProCard extends PureComponent{
                                         }
                                     ],
 
-                                })(<InputNumber placeholder='请输入合同预估金额' min={0}/>)}
+                                })(<InputNumber placeholder='请输入合同预估金额' min={0} style={{ width : '100%'}} />)}
 
                             </Form.Item>
                         </Col>
-                        <Col span={12}>
+                        {/* <Col span={12}>
                             <Form.Item {...formItemLayout1} label='合同预估变更金额'>
                                 {getFieldDecorator('planning_change', {
                                     initialValue : info ? info.planning_change : 0, 
@@ -203,7 +230,7 @@ class ContractProCard extends PureComponent{
                                 })(<InputNumber placeholder='请输入合同预估变更金额' min={0} />)}
 
                             </Form.Item>
-                        </Col>
+                        </Col> */}
                     </Row>
                     <Row>
                         <Col span={18}>
