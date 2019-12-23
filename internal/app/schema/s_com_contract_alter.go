@@ -14,6 +14,11 @@ type ComContractAlter struct {
 
 // ComContractAlterQueryParam 查询条件
 type ComContractAlterQueryParam struct {
+	Name           string `json:"name"`            // 变更主题名称
+	SN             string `json:"sn"`              // 变更编号
+	ContractName   string `json:"contract_name"`   //合同名称
+	WorkingCompany string `json:"working_company"` //施工单位
+
 }
 
 // ComContractAlterQueryOptions 查询可选参数项
@@ -41,6 +46,7 @@ type ComContractAlterDesign struct {
 	SN              string    `json:"sn" swaggo:"false, 变更编号"`                     // 变更编号
 	Name            string    `json:"name" swaggo:"false, 变更主题名称"`                 // 变更主题名称
 	ComContractID   string    `json:"comcontract_id" swaggo:"false, 合同编号"`         // 合同编号
+	ProjectID       string    `json:"project_id" swaggo:"false, 项目ID"`             // 项目ID
 	ComContractName string    `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
 	LaunchDept      string    `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
 	LaunchPerson    string    `json:"launch_person" swaggo:"false, 发起人"`           // 发起人
@@ -90,6 +96,7 @@ type ComContractAlterSign struct {
 	SN                   string    `json:"sn" swaggo:"false, 变更编号"`                                   // 变更编号
 	Name                 string    `json:"name" swaggo:"false, 变更主题名称"`                               // 变更主题名称
 	ComContractID        string    `json:"comcontract_id" swaggo:"false, 合同编号"`                       // 合同编号
+	ProjectID            string    `json:"project_id" swaggo:"false, 项目ID"`                           // 项目ID
 	ComContractName      string    `json:"comcontract_name" swaggo:"false, 合同名称"`                     // 合同名称
 	AlterDesignID        string    `json:"alter_design_id" swaggo:"false, 设计变更ID"`                    // 设计变更ID
 	AlterDesignName      string    `json:"alter_design_name" swaggo:"false, 设计变更名称"`                  // 设计变更名称
@@ -147,6 +154,7 @@ type ComContractAlterStuffPrice struct {
 	SN              string                          `json:"sn" swaggo:"false, 批价编号"`                     //  批价编号
 	Name            string                          `json:"name" swaggo:"false, 合同名称"`                   // 合同名称
 	ComContractID   string                          `json:"comcontract_id" swaggo:"false, 合同编号"`         // 合同编号
+	ProjectID       string                          `json:"project_id" swaggo:"false, 项目ID"`             // 项目ID
 	ComContractName string                          `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
 	AlterDesignID   string                          `json:"alter_design_id" swaggo:"false, 设计变更ID"`      // 设计变更ID
 	AlterDesignName string                          `json:"alter_design_name" swaggo:"false, 设计变更名称"`    // 设计变更名称

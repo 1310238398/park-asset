@@ -132,6 +132,96 @@ func (a *ComContractAlter) QueryStuffPriceItemByStuffPriceID(ctx context.Context
 	return qr, nil
 }
 
+// QueryDesignByProjectID 通过项目id查询设计变更
+func (a *ComContractAlter) QueryDesignByProjectID(ctx context.Context, projectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterDesignQueryResult, error) {
+	opt := a.getQueryOption(opts...)
+	db := entity.GetComContractAlterDesignDB(ctx, a.db)
+	// TODO: 查询条件
+	db = db.Where("project_id = ?", projectID)
+	if params.SN != "" {
+		db = db.Where("sn = ?", params.SN)
+	}
+	if params.Name != "" {
+		db = db.Where("name like ?", "%"+params.Name+"%")
+	}
+	if params.ContractName != "" {
+		db = db.Where("comcontract_id like ?", "%"+params.ContractName+"%")
+	}
+	db = db.Order("comcontract_id DESC,id DESC")
+
+	var list entity.ComContractAlterDesigns
+	pr, err := WrapPageQuery(ctx, db, opt.PageParam, &list)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	qr := &schema.ComContractAlterDesignQueryResult{
+		PageResult: pr,
+		Data:       list.ToSchemaComContractAlterDesigns(),
+	}
+
+	return qr, nil
+}
+
+// QuerySignByProjectID 通过项目id查询设计变更
+func (a *ComContractAlter) QuerySignByProjectID(ctx context.Context, projectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterSignQueryResult, error) {
+	opt := a.getQueryOption(opts...)
+	db := entity.GetComContractAlterSignDB(ctx, a.db)
+	// TODO: 查询条件
+	db = db.Where("project_id = ?", projectID)
+	if params.SN != "" {
+		db = db.Where("sn = ?", params.SN)
+	}
+	if params.Name != "" {
+		db = db.Where("name like ?", "%"+params.Name+"%")
+	}
+	if params.ContractName != "" {
+		db = db.Where("comcontract_id like ?", "%"+params.ContractName+"%")
+	}
+	db = db.Order("comcontract_id DESC,id DESC")
+
+	var list entity.ComContractAlterSigns
+	pr, err := WrapPageQuery(ctx, db, opt.PageParam, &list)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	qr := &schema.ComContractAlterSignQueryResult{
+		PageResult: pr,
+		Data:       list.ToSchemaComContractAlterSigns(),
+	}
+
+	return qr, nil
+}
+
+// QueryStuffPriceByProjectID 通过项目id查询设计变更
+func (a *ComContractAlter) QueryStuffPriceByProjectID(ctx context.Context, projectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceQueryResult, error) {
+	opt := a.getQueryOption(opts...)
+	db := entity.GetComContractAlterStuffPriceDB(ctx, a.db)
+	// TODO: 查询条件
+	db = db.Where("project_id = ?", projectID)
+	if params.SN != "" {
+		db = db.Where("sn = ?", params.SN)
+	}
+	if params.Name != "" {
+		db = db.Where("name like ?", "%"+params.Name+"%")
+	}
+	if params.ContractName != "" {
+		db = db.Where("comcontract_id like ?", "%"+params.ContractName+"%")
+	}
+	db = db.Order("comcontract_id DESC,id DESC")
+
+	var list entity.ComContractAlterStuffPrices
+	pr, err := WrapPageQuery(ctx, db, opt.PageParam, &list)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	qr := &schema.ComContractAlterStuffPriceQueryResult{
+		PageResult: pr,
+		Data:       list.ToSchemaComContractAlterStuffPrices(),
+	}
+
+	return qr, nil
+}
+
 // Get 查询指定数据
 func (a *ComContractAlter) Get(ctx context.Context, recordID string, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlter, error) {
 	db := entity.GetComContractAlterDB(ctx, a.db).Where("record_id=?", recordID)

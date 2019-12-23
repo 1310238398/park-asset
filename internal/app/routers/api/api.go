@@ -488,6 +488,8 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			// 注册/api/v1/com-contract-alters
 			gComContractAlter := v1.Group("com-contract-alter")
 			{
+				//通过项目取设计变更
+				gComContractAlter.GET("designsbyproject/:id", cComContractAlter.QueryDesignByProjectID)
 				designGroup := gComContractAlter.Group("design")
 				{
 					designGroup.POST("", cComContractAlter.CreateDesign)
@@ -498,6 +500,8 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 					designGroup.PUT(":id/passcheck", cComContractAlter.PassCheckDesign)
 					designGroup.PUT(":id/reback", cComContractAlter.RebackDesign)
 				}
+				//通过项目取签证变更
+				gComContractAlter.GET("signsbyproject/:id", cComContractAlter.QuerySignByProjectID)
 				signGroup := gComContractAlter.Group("sign")
 				{
 					signGroup.POST("", cComContractAlter.CreateSign)
@@ -508,6 +512,8 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 					signGroup.PUT(":id/passcheck", cComContractAlter.PassCheckSign)
 					signGroup.PUT(":id/reback", cComContractAlter.RebackSign)
 				}
+				//通过项目取材料批价
+				gComContractAlter.GET("stuffpricesbyproject/:id", cComContractAlter.QueryStuffPriceByProjectID)
 				stuffPriceGroup := gComContractAlter.Group("stuffprice")
 				{
 					stuffPriceGroup.POST("", cComContractAlter.CreateStuffPrice)

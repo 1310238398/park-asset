@@ -71,6 +71,7 @@ type ComContractAlterDesign struct {
 	SN              string  `gorm:"column:sn"`                           // 变更编号
 	Name            string  `gorm:"column:name"`                         // 变更主题名称
 	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
+	ProjectID       string  `gorm:"column:project_id;size:36;index"`     // 项目ID
 	ComContractName string  `gorm:"column:comcontract_name"`             // 合同名称
 	LaunchDept      string  `gorm:"column:launch_dept"`                  // 发起部门
 	LaunchPerson    string  `gorm:"column:launch_person"`                // 发起人
@@ -99,6 +100,7 @@ type ComContractAlterSign struct {
 	SN                   string  `gorm:"column:sn"`                           // 变更编号
 	Name                 string  `gorm:"column:name"`                         // 变更主题名称
 	ComContractID        string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
+	ProjectID            string  `gorm:"column:project_id;size:36;index"`     // 项目ID
 	ComContractName      string  `gorm:"column:comcontract_name"`             // 合同名称
 	AlterDesignID        string  `gorm:"column:alter_design_id"`              // 设计变更ID
 	AlterDesignName      string  `gorm:"column:alter_design_name"`            // 设计变更名称
@@ -135,6 +137,7 @@ type ComContractAlterStuffPrice struct {
 	SN              string  `gorm:"column:sn"`                            //  批价编号
 	Name            string  `gorm:"column:name"`                          // 合同名称
 	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"`  // 合同编号
+	ProjectID       string  `gorm:"column:project_id;size:36;index"`      // 项目ID
 	ComContractName string  `gorm:"column:comcontract_name"`              // 合同名称
 	AlterDesignID   string  `gorm:"column:alter_design_id;size:36;index"` // 设计变更ID
 	AlterDesignName string  `gorm:"column:alter_design_name"`             // 设计变更名称
@@ -234,6 +237,7 @@ func (a ComContractAlterDesign) ToSchemaComContractAlterDesign() *schema.ComCont
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		LaunchDept:      a.LaunchDept,
 		LaunchPerson:    a.LaunchPerson,
@@ -264,6 +268,7 @@ func (a SchemaComContractAlterDesign) ToComContractAlterDesign() *ComContractAlt
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		LaunchDept:      a.LaunchDept,
 		LaunchPerson:    a.LaunchPerson,
@@ -310,6 +315,7 @@ func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContract
 		SN:                   a.SN,
 		Name:                 a.Name,
 		ComContractID:        a.ComContractID,
+		ProjectID:            a.ProjectID,
 		ComContractName:      a.ComContractName,
 		AlterDesignID:        a.AlterDesignID,
 		AlterDesignName:      a.AlterDesignName,
@@ -346,6 +352,7 @@ func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSi
 		SN:                   a.SN,
 		Name:                 a.Name,
 		ComContractID:        a.ComContractID,
+		ProjectID:            a.ProjectID,
 		ComContractName:      a.ComContractName,
 		AlterDesignID:        a.AlterDesignID,
 		AlterDesignName:      a.AlterDesignName,
@@ -398,6 +405,7 @@ func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		AlterDesignID:   a.AlterDesignID,
 		AlterDesignName: a.AlterDesignName,
@@ -426,6 +434,7 @@ func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComCon
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		AlterDesignID:   a.AlterDesignID,
 		AlterDesignName: a.AlterDesignName,

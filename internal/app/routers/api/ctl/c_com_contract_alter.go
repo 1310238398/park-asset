@@ -22,6 +22,104 @@ type ComContractAlter struct {
 	ComContractAlterBll bll.IComContractAlter
 }
 
+// QueryDesignByProjectID 通过项目ID查询设计变更数据
+// @Tags 变更管理
+// @Summary 通过项目ID查询设计变更数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Param name query string false "变更主题名称"
+// @Param sn query string false "设计编号"
+// @Param contract_name query string false "合同名称"
+// @Success 200 []schema.ComContractAlterDesign "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract-alter/designsbyproject/{id}
+func (a *ComContractAlter) QueryDesignByProjectID(c *gin.Context) {
+	var params schema.ComContractAlterQueryParam
+	ProjectID := c.Param("id")
+	//查询条件
+	params.Name = c.Query("name")
+	params.SN = c.Query("sn")
+	params.ContractName = c.Query("contract_name")
+
+	result, err := a.ComContractAlterBll.QueryDesignByProjectID(ginplus.NewContext(c), ProjectID, params, schema.ComContractAlterQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QuerySignByProjectID 通过项目ID查询签证变更数据
+// @Tags 变更管理
+// @Summary 通过项目ID查询签证变更数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Param name query string false "变更主题名称"
+// @Param sn query string false "设计编号"
+// @Param contract_name query string false "合同名称"
+// @Success 200 []schema.ComContractAlterSign "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract-alter/signsbyproject/{id}
+func (a *ComContractAlter) QuerySignByProjectID(c *gin.Context) {
+	var params schema.ComContractAlterQueryParam
+	ProjectID := c.Param("id")
+	//查询条件
+	params.Name = c.Query("name")
+	params.SN = c.Query("sn")
+	params.ContractName = c.Query("contract_name")
+
+	result, err := a.ComContractAlterBll.QuerySignByProjectID(ginplus.NewContext(c), ProjectID, params, schema.ComContractAlterQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
+// QueryStuffPriceByProjectID 通过项目ID查询材料批价数据
+// @Tags 变更管理
+// @Summary 通过项目ID查询材料批价数据
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param current query int true "分页索引" 1
+// @Param pageSize query int true "分页大小" 10
+// @Param name query string false "变更主题名称"
+// @Param sn query string false "设计编号"
+// @Param contract_name query string false "合同名称"
+// @Param working_company query string false "施工单位"
+// @Success 200 []schema.ComContractAlterStuffPrice "查询结果：{list:列表数据,pagination:{current:页索引,pageSize:页大小,total:总数量}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router GET /api/v1/com-contract-alter/stuffpricesbyproject/{id}
+func (a *ComContractAlter) QueryStuffPriceByProjectID(c *gin.Context) {
+	var params schema.ComContractAlterQueryParam
+	ProjectID := c.Param("id")
+	//查询条件
+	params.Name = c.Query("name")
+	params.SN = c.Query("sn")
+	params.ContractName = c.Query("contract_name")
+	params.WorkingCompany = c.Query("working_company")
+
+	result, err := a.ComContractAlterBll.QueryStuffPriceByProjectID(ginplus.NewContext(c), ProjectID, params, schema.ComContractAlterQueryOptions{
+		PageParam: ginplus.GetPaginationParam(c),
+	})
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResPage(c, result.Data, result.PageResult)
+}
+
 // QueryDesignByComContractID 通过合同ID查询设计变更数据
 // @Tags 变更管理
 // @Summary 通过合同ID查询设计变更数据

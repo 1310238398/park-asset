@@ -11,6 +11,12 @@ type IComContractAlter interface {
 	// 查询数据
 	Query(ctx context.Context, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterQueryResult, error)
 	// 查询设计变更数据
+	QueryDesignByProjectID(ctx context.Context, projectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterDesignQueryResult, error)
+	// 查询签证变更数据
+	QuerySignByProjectID(ctx context.Context, projectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterSignQueryResult, error)
+	// 查询材料批价数据
+	QueryStuffPriceByProjectID(ctx context.Context, projectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceQueryResult, error)
+	// 查询设计变更数据
 	QueryDesignByComContractID(ctx context.Context, comContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterDesignQueryResult, error)
 	// 查询签证变更数据
 	QuerySignByComContractID(ctx context.Context, comContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterSignQueryResult, error)

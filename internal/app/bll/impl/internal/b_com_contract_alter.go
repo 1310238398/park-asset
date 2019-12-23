@@ -26,6 +26,21 @@ func (a *ComContractAlter) Query(ctx context.Context, params schema.ComContractA
 	return a.ComContractAlterModel.Query(ctx, params, opts...)
 }
 
+// QueryDesignByProjectID 查询数据
+func (a *ComContractAlter) QueryDesignByProjectID(ctx context.Context, ProjectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterDesignQueryResult, error) {
+	return a.ComContractAlterModel.QueryDesignByProjectID(ctx, ProjectID, params, opts...)
+}
+
+// QuerySignByProjectID 查询数据
+func (a *ComContractAlter) QuerySignByProjectID(ctx context.Context, ProjectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterSignQueryResult, error) {
+	return a.ComContractAlterModel.QuerySignByProjectID(ctx, ProjectID, params, opts...)
+}
+
+// QueryStuffPriceByProjectID 查询数据
+func (a *ComContractAlter) QueryStuffPriceByProjectID(ctx context.Context, ProjectID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceQueryResult, error) {
+	return a.ComContractAlterModel.QueryStuffPriceByProjectID(ctx, ProjectID, params, opts...)
+}
+
 // QueryDesignByComContractID 查询数据
 func (a *ComContractAlter) QueryDesignByComContractID(ctx context.Context, ComContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterDesignQueryResult, error) {
 	return a.ComContractAlterModel.QueryDesignByComContractID(ctx, ComContractID, params, opts...)
