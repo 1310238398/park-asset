@@ -140,28 +140,29 @@ type ComContractAlterSigns []*ComContractAlterSign
 
 // ComContractAlterStuffPrice 材料批价
 type ComContractAlterStuffPrice struct {
-	RecordID        string    `json:"record_id" swaggo:"false, 记录ID"`              // 记录ID
-	Creator         string    `json:"creator" swaggo:"false, 创建者"`                 // 创建者
-	CreatedAt       time.Time `json:"created_at" swaggo:"false, 创建时间"`             // 创建时间
-	UpdatedAt       time.Time `json:"updated_at" swaggo:"false, 更新时间"`             // 更新时间
-	SN              string    `json:"sn" swaggo:"false, 批价编号"`                     //  批价编号
-	Name            string    `json:"name" swaggo:"false, 合同名称"`                   // 合同名称
-	ComContractID   string    `json:"comcontract_id" swaggo:"false, 合同编号"`         // 合同编号
-	ComContractName string    `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
-	AlterDesignID   string    `json:"alter_design_id" swaggo:"false, 设计变更ID"`      // 设计变更ID
-	AlterDesignName string    `json:"alter_design_name" swaggo:"false, 设计变更名称"`    // 设计变更名称
-	AlterSignID     string    `json:"alter_sign_id" swaggo:"false, 签证变更ID"`        // 签证变更ID
-	AlterSignName   string    `json:"alter_sign_name" swaggo:"false, 签证变更名称"`      // 签证变更名称
-	LaunchDept      string    `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
-	LaunchPerson    string    `json:"launch_person" swaggo:"false, 发起人"`           // 发起人
-	LaunchDate      string    `json:"launch_date" swaggo:"false, 发起日期"`            // 发起日期
-	WorkingCompany  string    `json:"working_company" swaggo:"false, 施工单位"`        // 施工单位
-	Reason          string    `json:"reason" swaggo:"false, 签证原因"`                 // 签证原因
-	ReasonOther     string    `json:"reason_other" swaggo:"false, 变更其他原因"`         // 变更其他原因
-	Content         string    `json:"content" swaggo:"false, 变更内容"`                // 变更内容
-	Remark          string    `json:"remark" swaggo:"false, 备注"`                   // 备注
-	Status          uint8     `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过"` // 状态： 0 保存 1提交审核 2审核通过
-	SignDate        string    `json:"sign_date" swaggo:"false, 签证日期"`              // 签证日期
+	RecordID        string                          `json:"record_id" swaggo:"false, 记录ID"`              // 记录ID
+	Creator         string                          `json:"creator" swaggo:"false, 创建者"`                 // 创建者
+	CreatedAt       time.Time                       `json:"created_at" swaggo:"false, 创建时间"`             // 创建时间
+	UpdatedAt       time.Time                       `json:"updated_at" swaggo:"false, 更新时间"`             // 更新时间
+	SN              string                          `json:"sn" swaggo:"false, 批价编号"`                     //  批价编号
+	Name            string                          `json:"name" swaggo:"false, 合同名称"`                   // 合同名称
+	ComContractID   string                          `json:"comcontract_id" swaggo:"false, 合同编号"`         // 合同编号
+	ComContractName string                          `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
+	AlterDesignID   string                          `json:"alter_design_id" swaggo:"false, 设计变更ID"`      // 设计变更ID
+	AlterDesignName string                          `json:"alter_design_name" swaggo:"false, 设计变更名称"`    // 设计变更名称
+	AlterSignID     string                          `json:"alter_sign_id" swaggo:"false, 签证变更ID"`        // 签证变更ID
+	AlterSignName   string                          `json:"alter_sign_name" swaggo:"false, 签证变更名称"`      // 签证变更名称
+	LaunchDept      string                          `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
+	LaunchPerson    string                          `json:"launch_person" swaggo:"false, 发起人"`           // 发起人
+	LaunchDate      string                          `json:"launch_date" swaggo:"false, 发起日期"`            // 发起日期
+	WorkingCompany  string                          `json:"working_company" swaggo:"false, 施工单位"`        // 施工单位
+	Reason          string                          `json:"reason" swaggo:"false, 签证原因"`                 // 签证原因
+	ReasonOther     string                          `json:"reason_other" swaggo:"false, 变更其他原因"`         // 变更其他原因
+	Content         string                          `json:"content" swaggo:"false, 变更内容"`                // 变更内容
+	Remark          string                          `json:"remark" swaggo:"false, 备注"`                   // 备注
+	Status          uint8                           `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过"` // 状态： 0 保存 1提交审核 2审核通过
+	SignDate        string                          `json:"sign_date" swaggo:"false, 签证日期"`              // 签证日期
+	Quotes          ComContractAlterStuffPriceItems `json:"quotes" swaggo:"false, 各材料报价列表"`              //各材料报价列表
 }
 
 // ComContractAlterStuffPriceQueryParam 查询条件

@@ -163,6 +163,12 @@ func (a *ComContractAlter) CreateStuffPrice(ctx context.Context, item schema.Com
 	if err != nil {
 		return nil, err
 	}
+	if len(item.Quotes) > 0 {
+		for _, v := range item.Quotes {
+			v.AlterStuffPriceID = item.RecordID
+			a.ComContractAlterModel.CreateStuffPriceItem(ctx, *v)
+		}
+	}
 	return a.getUpdateStuffPrice(ctx, item.RecordID)
 }
 
@@ -238,6 +244,14 @@ func (a *ComContractAlter) UpdateStuffPrice(ctx context.Context, recordID string
 	err = a.ComContractAlterModel.UpdateStuffPrice(ctx, recordID, item)
 	if err != nil {
 		return nil, err
+	}
+	//处理 材料报价信息
+	a.ComContractAlterModel.DeleteAllStuffPriceItem(ctx, recordID)
+	if len(item.Quotes) > 0 {
+		for _, v := range item.Quotes {
+			v.AlterStuffPriceID = recordID
+			a.ComContractAlterModel.CreateStuffPriceItem(ctx, *v)
+		}
 	}
 	return a.getUpdateStuffPrice(ctx, recordID)
 }

@@ -111,12 +111,12 @@ func (a *ComContractAlter) QueryStuffPriceByComContractID(ctx context.Context, c
 	return qr, nil
 }
 
-// QueryStuffPriceItemByStuffPriceID 通过合同id查询设计变更
-func (a *ComContractAlter) QueryStuffPriceItemByStuffPriceID(ctx context.Context, comContractID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceItemQueryResult, error) {
+// QueryStuffPriceItemByStuffPriceID 通过材料批价id查询材料批价列表
+func (a *ComContractAlter) QueryStuffPriceItemByStuffPriceID(ctx context.Context, SFID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceItemQueryResult, error) {
 	opt := a.getQueryOption(opts...)
 	db := entity.GetComContractAlterStuffPriceItemDB(ctx, a.db)
 	// TODO: 查询条件
-	db = db.Where("alter_stuff_price_id = ?", comContractID)
+	db = db.Where("alter_stuff_price_id = ?", SFID)
 	db = db.Order("id DESC")
 
 	var list entity.ComContractAlterStuffPriceItems
@@ -185,7 +185,18 @@ func (a *ComContractAlter) GetStuffPrice(ctx context.Context, recordID string, o
 		return nil, nil
 	}
 
-	return item.ToSchemaComContractAlterStuffPrice(), nil
+	sItem := item.ToSchemaComContractAlterStuffPrice()
+
+	p := schema.ComContractAlterQueryParam{}
+	qopts := schema.ComContractAlterQueryOptions{
+		PageParam: &schema.PaginationParam{PageIndex: 0, PageSize: 9999},
+	}
+	itemList, err := a.QueryStuffPriceItemByStuffPriceID(ctx, sItem.RecordID, p, qopts)
+	if err == nil {
+		sItem.Quotes = itemList.Data
+	}
+
+	return sItem, nil
 }
 
 // GetStuffPriceItem 查询指定数据
@@ -368,6 +379,15 @@ func (a *ComContractAlter) SetSignStatus(ctx context.Context, recordID string, v
 // SetStuffPriceStatus 设置design status字段
 func (a *ComContractAlter) SetStuffPriceStatus(ctx context.Context, recordID string, val uint8) error {
 	result := entity.GetComContractAlterStuffPriceDB(ctx, a.db).Where("record_id=?", recordID).Update("status", val)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+// DeleteAllStuffPriceItem 根据alter_stuff_price_id删除所有 stuffpriceitem数据
+func (a *ComContractAlter) DeleteAllStuffPriceItem(ctx context.Context, recordID string) error {
+	result := entity.GetComContractAlterStuffPriceDB(ctx, a.db).Where("alter_stuff_price_id=?", recordID).Delete(&entity.ComContractAlterStuffPriceItem{})
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}

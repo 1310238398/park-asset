@@ -62,4 +62,6 @@ type IComContractAlter interface {
 	DeleteStuffPrice(ctx context.Context, recordID string) error
 	// 删除数据
 	DeleteStuffPriceItem(ctx context.Context, recordID string) error
+	// 根据stuff_price_id 删除材料报价信息
+	DeleteAllStuffPriceItem(ctx context.Context, recordID string) error
 }
