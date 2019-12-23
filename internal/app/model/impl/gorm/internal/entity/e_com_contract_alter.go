@@ -140,6 +140,7 @@ type ComContractAlterStuffPrice struct {
 	AlterDesignName string  `gorm:"column:alter_design_name"`             // 设计变更名称
 	AlterSignID     string  `gorm:"column:alter_sign_id"`                 // 签证变更ID
 	AlterSignName   string  `gorm:"column:alter_sign_name"`               // 签证变更名称
+	ProjectName     string  `gorm:"column:project_name"`                  // 工程名称
 	LaunchDept      string  `gorm:"column:launch_dept"`                   // 发起部门
 	LaunchPerson    string  `gorm:"column:launch_person"`                 // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                   // 发起日期
@@ -406,6 +407,7 @@ func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema
 		LaunchPerson:    a.LaunchPerson,
 		LaunchDate:      a.LaunchDate,
 		WorkingCompany:  a.WorkingCompany,
+		ProjectName:     a.ProjectName,
 		Reason:          a.Reason,
 		ReasonOther:     a.ReasonOther,
 		Content:         a.Content,
@@ -433,6 +435,7 @@ func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComCon
 		LaunchPerson:    a.LaunchPerson,
 		LaunchDate:      a.LaunchDate,
 		WorkingCompany:  a.WorkingCompany,
+		ProjectName:     a.ProjectName,
 		Reason:          a.Reason,
 		ReasonOther:     a.ReasonOther,
 		Content:         a.Content,

@@ -150,6 +150,7 @@ type ComContractAlterStuffPrice struct {
 	ComContractName string                          `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
 	AlterDesignID   string                          `json:"alter_design_id" swaggo:"false, 设计变更ID"`      // 设计变更ID
 	AlterDesignName string                          `json:"alter_design_name" swaggo:"false, 设计变更名称"`    // 设计变更名称
+	ProjectName     string                          `json:"project_name" swaggo:"false, 工程名称"`           // 工程名称
 	AlterSignID     string                          `json:"alter_sign_id" swaggo:"false, 签证变更ID"`        // 签证变更ID
 	AlterSignName   string                          `json:"alter_sign_name" swaggo:"false, 签证变更名称"`      // 签证变更名称
 	LaunchDept      string                          `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
