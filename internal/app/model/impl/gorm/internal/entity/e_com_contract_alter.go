@@ -474,6 +474,7 @@ func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComCon
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
 		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		AlterDesignID:   a.AlterDesignID,
