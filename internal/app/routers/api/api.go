@@ -62,6 +62,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cContractPlanningTemplate *ctl.ContractPlanningTemplate,
 		cBusinessPartner *ctl.BusinessPartner,
 		cProjContractPlanning *ctl.ProjContractPlanning,
+		cProjDynamicCost *ctl.ProjDynamicCost,
 	) error {
 
 		g := app.Group("/api")
@@ -524,6 +525,18 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
 				gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
 				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
+			}
+			// 注册/api/v1/proj-dynamic-cost  项目动态成本
+			gProjDynamicCost := v1.Group("proj-dynamic-cost")
+			{
+				gProjDynamicCost.GET("", cProjDynamicCost.Query)
+				gProjDynamicCost.GET(":id", cProjDynamicCost.GetProjDynamicCost)
+				gProjDynamicCost.GET(":id/plans", cProjDynamicCost.QueryProjDynamicPlanning)
+				gProjDynamicCost.GET(":id/setteled", cProjDynamicCost.QueryProjDynamicSettled)
+				gProjDynamicCost.GET(":id/unsettled", cProjDynamicCost.QueryProjDynamicUnsettled)
+				gProjDynamicCost.GET(":id/on-approval", cProjDynamicCost.QueryProjDynamicOnApproval)
+				gProjDynamicCost.GET(":id/transfer", cProjDynamicCost.QueryProjDynamicTransfer)
+				gProjDynamicCost.POST("transfer", cProjDynamicCost.CreateTransfer)
 			}
 
 		}
