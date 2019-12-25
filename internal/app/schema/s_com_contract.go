@@ -42,11 +42,13 @@ type ComContract struct {
 	PayType               string                   `json:"pay_type" swaggo:"false, 付款方式"`                              //付款方式
 	PayPrecondition       string                   `json:"pay_precondition" swaggo:"false, 付款条件"`                      //付款条件
 	Settlement            uint8                    `json:"settlement" swaggo:"false, 是否结算"`                            // 是否结算
+	SettlementAmount      float64                  `json:"settlement_amount" swaggo:"false, 结算金额（每次添加结算信息时计算）"`        // 结算金额
 	Content               string                   `json:"content" swaggo:"false, 合同内容"`                               // 合同内容
 	Attas                 []*ComContractAttachment `json:"attas" swaggo:"false, 合同附件"`                                 //合同附件
 	//合同状态 0暂存 1 审批中 2 审批驳回  3 审批通过(未生效)5 合同生效(填上合同编号)
-	Status uint   `json:"status"`
-	Remark string `json:"remark" swaggo:"false, 备注"` //备注
+	Status       uint   `json:"status"`
+	Remark       string `json:"remark" swaggo:"false, 备注"`            //备注
+	EffectRemark string `json:"effect_remark" swaggo:"false, 合同生效备注"` //合同生效备注
 }
 
 //ComContractModify 合同变更
@@ -178,7 +180,8 @@ type ComContracts []*ComContract
 
 // ComContractEffectInfo 设置生效请求结构体
 type ComContractEffectInfo struct {
-	SN       string                   `json:"sn" binding:"required" swaggo:"true,合同正式编号"`         //合同正式编号
-	SignDate string                   `json:"sign_date" binding:"required" swaggo:"true,合同签署日期"`  //合同签署日期
-	Attas    []*ComContractAttachment `json:"attas" binding:"required,gt=0" swaggo:"true,正式合同附件"` //正式合同附件
+	SN           string                   `json:"sn" binding:"required" swaggo:"true,合同正式编号"`         //合同正式编号
+	SignDate     string                   `json:"sign_date" binding:"required" swaggo:"true,合同签署日期"`  //合同签署日期
+	Attas        []*ComContractAttachment `json:"attas" binding:"required,gt=0" swaggo:"true,正式合同附件"` //正式合同附件
+	EffectRemark string                   `json:"effect_remark" swaggo:"false, 合同生效备注"`               //合同生效备注
 }
