@@ -27,6 +27,23 @@ type ProjDynamicCostTree struct {
 	Children []*ProjDynamicCostTree `json:"children" swaggo:"false,下级列表"` //下级列表
 }
 
+// ProjDynamicCostTrees 项目动态成本科目树结构
+type ProjDynamicCostTrees []*ProjDynamicCostTree
+
+func (a ProjDynamicCostTrees) ToTree() ProjDynamicCostTrees {
+	result := ProjDynamicCostTrees{}
+	for _, v := range a {
+		for _, w := range a {
+			if v.CostParentID == "" {
+				result = append(result, v)
+			} else if v.CostParentID == w.CostID {
+				w.Children = append(w.Children, v)
+			}
+		}
+	}
+	return result
+}
+
 // ProjDynamicCostSimpleTree 项目动态成本科目简化树结构
 type ProjDynamicCostSimpleTree struct {
 	CostName       string  `json:"cost_name" swaggo:"false,成本项名称"`         //成本项名称

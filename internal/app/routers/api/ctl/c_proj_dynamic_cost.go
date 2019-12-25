@@ -1,8 +1,8 @@
 package ctl
 
 import (
-	// "gxt-park-assets/internal/app/bll"
-	// "gxt-park-assets/internal/app/errors"
+	"gxt-park-assets/internal/app/bll"
+	"gxt-park-assets/internal/app/errors"
 	"gxt-park-assets/internal/app/ginplus"
 	"gxt-park-assets/internal/app/schema"
 
@@ -10,14 +10,17 @@ import (
 )
 
 // NewProjCostItem 创建项目成本项控制器
-func NewProjDynamicCost() *ProjCostItem {
-	return &ProjCostItem{}
+func NewProjDynamicCost(bProjDynamicCost bll.IProjDynamicCost) *ProjDynamicCost {
+	return &ProjDynamicCost{
+		ProjDynamicCostBll: bProjDynamicCost,
+	}
 }
 
 // ProjDynamicCost 项目动态成本
 // @Name ProjDynamicCost
 // @Description 项目动态成本控制器
 type ProjDynamicCost struct {
+	ProjDynamicCostBll bll.IProjDynamicCost
 }
 
 func (a *ProjDynamicCost) Query(c *gin.Context) {
@@ -44,15 +47,20 @@ func (a *ProjDynamicCost) Query(c *gin.Context) {
 // @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
 // @Router GET /api/v1/proj-dynamic-cost?q=costTree
 func (a *ProjDynamicCost) queryCostTree(c *gin.Context) {
-	example := []*schema.ProjDynamicCostTree{
-		&schema.ProjDynamicCostTree{
-			CostID: "111",
-			Children: []*schema.ProjDynamicCostTree{
-				&schema.ProjDynamicCostTree{},
-			},
-		},
+
+	projectID := c.Query("projectID")
+	if projectID == "" {
+		ginplus.ResError(c, errors.ErrBadRequest)
+		return
 	}
-	ginplus.ResSuccess(c, example)
+
+	data, err := a.ProjDynamicCostBll.QueryCostTree(ginplus.NewContext(c), projectID)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	ginplus.ResSuccess(c, data)
 }
 
 // TODO queryCostSimpleTree 查询动态成本科目简化树结构
@@ -191,8 +199,8 @@ func (a *ProjDynamicCost) QueryProjDynamicTransfer(c *gin.Context) {
 	ginplus.ResSuccess(c, example)
 }
 
-// TODO CreateTransfer 资金调动
-// @Summary 查询科目调动信息
+// TODO CreateTransfer 创建资金调动
+// @Summary 创建资金调动
 // @Param Authorization header string false "Bearer 用户令牌"
 // @Param projectID query string true "项目ID"
 // @Param body body schema.ProjDynamicTransferRequest

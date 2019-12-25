@@ -1183,24 +1183,24 @@
 				<comment><![CDATA[项目ID]]></comment>
 			</column>
 			<column name="from_pool_type" type="int" jt="4" >
-				<comment><![CDATA[出项资金池类型（1.成本项，2.合约规划,3.无资金池）]]></comment>
+				<comment><![CDATA[调出资金池类型（1.成本项，2.合约规划,3.无资金池）]]></comment>
 			</column>
 			<column name="from_proj_cost_id" type="varchar" length="36" jt="12" >
-				<comment><![CDATA[出项项目成本项ID]]></comment>
+				<comment><![CDATA[调出项目成本项ID]]></comment>
 			</column>
 			<column name="from_proj_planning_id" type="varchar" length="36" jt="12" >
-				<comment><![CDATA[出项项目合约规划ID]]></comment>
+				<comment><![CDATA[调出项目合约规划ID]]></comment>
 			</column>
 			<column name="to_pool_type" type="int" jt="4" >
-				<comment><![CDATA[入项资金池类型（1.成本项，2.合约规划，3.非资金池）]]></comment>
+				<comment><![CDATA[调入资金池类型（1.成本项，2.合约规划，3.非资金池）]]></comment>
 			</column>
 			<column name="to_proj_cost_id" type="varchar" length="36" jt="12" >
-				<comment><![CDATA[入项项目成本ID]]></comment>
+				<comment><![CDATA[调入项目成本ID]]></comment>
 			</column>
 			<column name="to_proj_planning_id" type="int" jt="4" >
-				<comment><![CDATA[入项项目合约规划ID]]></comment>
+				<comment><![CDATA[调入项目合约规划ID]]></comment>
 			</column>
-			<column name="price" type="decimal" jt="3" >
+			<column name="amount" type="decimal" jt="3" >
 				<comment><![CDATA[金额]]></comment>
 			</column>
 			<column name="transfer_id" type="int" jt="4" >
@@ -2481,8 +2481,8 @@
 		<entity schema="parkcost" name="pc_project" color="3986C1" x="1104" y="2080" />
 		<entity schema="parkcost" name="pc_proj_cost_business" color="3986C1" x="1568" y="2848" />
 		<entity schema="parkcost" name="pc_proj_contract_planning" color="C1D8EE" x="1136" y="2912" />
-		<entity schema="parkassets.parkassets" name="pc_proj_capital_pool_record" color="C1D8EE" x="816" y="2912" />
 		<entity schema="parkassets.parkassets" name="pc_proj_capital_transfer" color="C1D8EE" x="832" y="3168" />
+		<entity schema="parkassets.parkassets" name="pc_proj_capital_pool_record" color="C1D8EE" x="816" y="2912" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets.parkassets" name="pa_menu" />
 			<entity schema="parkassets.parkassets" name="pa_menu_action" />

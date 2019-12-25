@@ -66,5 +66,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(internal.NewContractPlanningTemplate, dig.As(new(bll.IContractPlanningTemplate)))
 	container.Provide(internal.NewBusinessPartner, dig.As(new(bll.IBusinessPartner)))
 	container.Provide(internal.NewProjContractPlanning, dig.As(new(bll.IProjContractPlanning)))
+	container.Provide(internal.NewProjDynamicCost, dig.As(new(bll.IProjDynamicCost)))
 	return nil
 }
