@@ -27,4 +27,6 @@ type IComContract interface {
 
 	// 设置生效
 	TakeEffect(ctx context.Context, recordID string, data schema.ComContractEffectInfo) error
+	// 更新合同结算金额
+	UpdateSettlementAmount(ctx context.Context, data schema.SettlementRecord) error
 }

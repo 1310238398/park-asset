@@ -189,3 +189,18 @@ func (a *ComContract) PassCheck(ctx context.Context, recordID string) error {
 	}
 	return nil
 }
+
+// UpdateSettlementAmount 更新合同结算值
+func (a *ComContract) UpdateSettlementAmount(ctx context.Context, data schema.SettlementRecord) error {
+	oldItem, err := a.Get(ctx, data.ComContractID)
+	if err != nil {
+		return err
+	}
+	eitem := entity.SchemaComContract(*oldItem).ToComContract()
+	result := entity.GetComContractDB(ctx, a.db).Model(&eitem).Where("record_id=?",
+		data.ComContractID).Update("settlement_amount", eitem.SettlementAmount+data.Zuizhong)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}

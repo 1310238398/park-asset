@@ -42,6 +42,7 @@ type ComContract struct {
 	PayType               string                   `json:"pay_type" swaggo:"false, 付款方式"`                              //付款方式
 	PayPrecondition       string                   `json:"pay_precondition" swaggo:"false, 付款条件"`                      //付款条件
 	Settlement            uint8                    `json:"settlement" swaggo:"false, 是否结算"`                            // 是否结算
+	SettlementAmount      float64                  `json:"settlement_amount" swaggo:"false, 结算金额（每次添加结算信息时计算）"`        // 结算金额
 	Content               string                   `json:"content" swaggo:"false, 合同内容"`                               // 合同内容
 	Attas                 []*ComContractAttachment `json:"attas" swaggo:"false, 合同附件"`                                 //合同附件
 	//合同状态 0暂存 1 审批中 2 审批驳回  3 审批通过(未生效)5 合同生效(填上合同编号)
