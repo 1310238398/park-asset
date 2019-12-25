@@ -1173,6 +1173,68 @@
 				<column name="record_id" />
 			</index>
 		</table>
+		<table name="pc_proj_capital_pool_record" >
+			<comment><![CDATA[项目资金池记录]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="record_id" type="varchar" length="36" jt="12" mandatory="y" >
+				<comment><![CDATA[记录ID]]></comment>
+			</column>
+			<column name="project_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[项目ID]]></comment>
+			</column>
+			<column name="from_pool_type" type="int" jt="4" >
+				<comment><![CDATA[出项资金池类型（1.成本项，2.合约规划,3.无资金池）]]></comment>
+			</column>
+			<column name="from_proj_cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[出项项目成本项ID]]></comment>
+			</column>
+			<column name="from_proj_planning_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[出项项目合约规划ID]]></comment>
+			</column>
+			<column name="to_pool_type" type="int" jt="4" >
+				<comment><![CDATA[入项资金池类型（1.成本项，2.合约规划，3.非资金池）]]></comment>
+			</column>
+			<column name="to_proj_cost_id" type="varchar" length="36" jt="12" >
+				<comment><![CDATA[入项项目成本ID]]></comment>
+			</column>
+			<column name="to_proj_planning_id" type="int" jt="4" >
+				<comment><![CDATA[入项项目合约规划ID]]></comment>
+			</column>
+			<column name="price" type="decimal" jt="3" >
+				<comment><![CDATA[金额]]></comment>
+			</column>
+			<column name="transfer_id" type="int" jt="4" >
+				<comment><![CDATA[调动ID]]></comment>
+			</column>
+			<index name="pk_pc_proj_capital_pool_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="pc_proj_capital_transfer" >
+			<comment><![CDATA[项目资金调动表]]></comment>
+			<column name="id" type="int" jt="4" mandatory="y" unsigned="y" autoincrement="y" >
+				<comment><![CDATA[自增主键]]></comment>
+			</column>
+			<column name="record_id" type="varchar" length="36" jt="12" mandatory="y" >
+				<comment><![CDATA[记录ID]]></comment>
+			</column>
+			<column name="transfer_type" type="int" jt="4" >
+				<comment><![CDATA[调整类型（1.初始化，2.内部调整，3.夸科目调整）]]></comment>
+			</column>
+			<column name="status" type="int" jt="4" >
+				<comment><![CDATA[调整状态（1.审核，2.通过，3.不生效）]]></comment>
+			</column>
+			<column name="approval_comments" type="longtext" jt="-1" >
+				<comment><![CDATA[审批意见]]></comment>
+			</column>
+			<column name="approval_time" type="timestamp" jt="93" >
+				<comment><![CDATA[审批时间]]></comment>
+			</column>
+			<index name="pk_pc_proj_capital_transfer_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="table" />
 	</schema>
 	<schema name="parkcost" >
 		<table name="cost_model" >
@@ -1630,10 +1692,10 @@
 		</table>
 		<table name="pc_proj_contract_planning" >
 			<comment><![CDATA[项目合同规划表]]></comment>
-			<column name="id" type="int" jt="4" mandatory="y" autoincrement="y" />
 			<column name="record_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[记录ID]]></comment>
 			</column>
+			<column name="id" type="int" jt="4" mandatory="y" autoincrement="y" />
 			<column name="project_id" type="varchar" length="36" jt="12" >
 				<comment><![CDATA[项目ID]]></comment>
 			</column>
@@ -2403,7 +2465,6 @@
 		<entity schema="parkcost" name="pc_proj_capitalized_interest" color="3986C1" x="1840" y="2064" />
 		<entity schema="parkcost" name="pc_proj_sales_his" color="C1D8EE" x="1568" y="2432" />
 		<entity schema="parkcost" name="pc_proj_income_calculation" color="C1D8EE" x="2128" y="2064" />
-		<entity schema="parkcost" name="pc_proj_cost_business" color="3986C1" x="1568" y="2848" />
 		<entity schema="parkcost" name="pc_proj_cost_item" color="3986C1" x="1824" y="2848" />
 		<entity schema="parkcost" name="pc_proj_cost_his" color="C1D8EE" x="1808" y="3120" />
 		<entity schema="parkcost" name="pc_proj_capitalized_his" color="C1D8EE" x="1824" y="2432" />
@@ -2416,9 +2477,12 @@
 		<entity schema="parkcost" name="pc_cost_business" color="C1D8EE" x="80" y="2576" />
 		<entity schema="parkcost" name="pc_contract_planning_template" color="C1D8EE" x="272" y="2816" />
 		<entity schema="parkcost" name="pc_land_appreciation_tax" color="C1D8EE" x="2384" y="2048" />
-		<entity schema="parkcost" name="pc_proj_contract_planning" color="C1D8EE" x="1120" y="2896" />
 		<entity schema="parkcost" name="pc_business_partner" color="C1D8EE" x="48" y="2816" />
 		<entity schema="parkcost" name="pc_project" color="3986C1" x="1104" y="2080" />
+		<entity schema="parkcost" name="pc_proj_cost_business" color="3986C1" x="1568" y="2848" />
+		<entity schema="parkcost" name="pc_proj_contract_planning" color="C1D8EE" x="1136" y="2912" />
+		<entity schema="parkassets.parkassets" name="pc_proj_capital_pool_record" color="C1D8EE" x="816" y="2912" />
+		<entity schema="parkassets.parkassets" name="pc_proj_capital_transfer" color="C1D8EE" x="832" y="3168" />
 		<group name="权限管理" color="C4E0F9" >
 			<entity schema="parkassets.parkassets" name="pa_menu" />
 			<entity schema="parkassets.parkassets" name="pa_menu_action" />
@@ -2484,6 +2548,10 @@
 		</group>
 		<group name="合约规划表" color="C4E0F9" >
 			<entity schema="parkcost" name="pc_proj_contract_planning" />
+		</group>
+		<group name="动态成本表" color="C4E0F9" >
+			<entity schema="parkassets.parkassets" name="pc_proj_capital_pool_record" />
+			<entity schema="parkassets.parkassets" name="pc_proj_capital_transfer" />
 		</group>
 	</layout>
 </project>

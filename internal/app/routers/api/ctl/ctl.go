@@ -53,5 +53,6 @@ func Inject(container *dig.Container) error {
 	container.Provide(NewContractPlanningTemplate)
 	container.Provide(NewBusinessPartner)
 	container.Provide(NewProjContractPlanning)
+	container.Provide(NewProjDynamicCost)
 	return nil
 }
