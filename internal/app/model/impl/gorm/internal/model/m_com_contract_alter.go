@@ -214,9 +214,21 @@ func (a *ComContractAlter) QueryStuffPriceByProjectID(ctx context.Context, proje
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	listStuffPriceSchema := list.ToSchemaComContractAlterStuffPrices()
+	// fetch quotes
+	for _, pI := range listStuffPriceSchema {
+		p := schema.ComContractAlterQueryParam{}
+		qopts := schema.ComContractAlterQueryOptions{
+			PageParam: &schema.PaginationParam{PageIndex: 0, PageSize: 9999},
+		}
+		itemList, err := a.QueryStuffPriceItemByStuffPriceID(ctx, pI.RecordID, p, qopts)
+		if err == nil {
+			pI.Quotes = itemList.Data
+		}
+	}
 	qr := &schema.ComContractAlterStuffPriceQueryResult{
 		PageResult: pr,
-		Data:       list.ToSchemaComContractAlterStuffPrices(),
+		Data:       listStuffPriceSchema,
 	}
 
 	return qr, nil

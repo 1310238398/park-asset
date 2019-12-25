@@ -233,6 +233,7 @@ func (a *ComContractAlter) CreateStuffPrice(ctx context.Context, item schema.Com
 	}
 	if len(item.Quotes) > 0 {
 		for _, v := range item.Quotes {
+			v.RecordID = util.MustUUID()
 			v.AlterStuffPriceID = item.RecordID
 			a.ComContractAlterModel.CreateStuffPriceItem(ctx, *v)
 		}
