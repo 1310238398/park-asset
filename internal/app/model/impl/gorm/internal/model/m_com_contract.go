@@ -164,7 +164,7 @@ func (a *ComContract) TakeEffect(ctx context.Context, recordID string, effectInf
 		return err
 	}
 	changeField := map[string]interface{}{
-		"status": 5, "sign_date": effectInfo.SignDate, "sn": effectInfo.SN}
+		"status": 5, "sign_date": effectInfo.SignDate, "sn": effectInfo.SN, "effect_remark": effectInfo.EffectRemark}
 
 	eitem := entity.SchemaComContract(*oldItem).ToComContract()
 	result := entity.GetComContractDB(ctx, a.db).Model(&eitem).Where("record_id=?", recordID).Updates(changeField)
@@ -184,6 +184,21 @@ func (a *ComContract) PassCheck(ctx context.Context, recordID string) error {
 	oldItem.Status = 3
 	eitem := entity.SchemaComContract(*oldItem).ToComContract()
 	result := entity.GetComContractDB(ctx, a.db).Model(&eitem).Where("record_id=?", recordID).Select("status").Updates(eitem)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+// UpdateSettlementAmount 更新合同结算值
+func (a *ComContract) UpdateSettlementAmount(ctx context.Context, data schema.SettlementRecord) error {
+	oldItem, err := a.Get(ctx, data.ComContractID)
+	if err != nil {
+		return err
+	}
+	eitem := entity.SchemaComContract(*oldItem).ToComContract()
+	result := entity.GetComContractDB(ctx, a.db).Model(&eitem).Where("record_id=?",
+		data.ComContractID).Update("settlement_amount", eitem.SettlementAmount+data.Zuizhong)
 	if err := result.Error; err != nil {
 		return errors.WithStack(err)
 	}

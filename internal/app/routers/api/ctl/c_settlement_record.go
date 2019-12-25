@@ -16,6 +16,8 @@ func NewSettlementRecord(bSettlementRecord bll.ISettlementRecord) *SettlementRec
 }
 
 // SettlementRecord 结算信息控制器
+// @Name SettlementRecord
+// @Description 结算信息控制器
 type SettlementRecord struct {
 	SettlementRecordBll bll.ISettlementRecord
 }

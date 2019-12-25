@@ -46,10 +46,12 @@ func (a SchemaComContract) ToComContract() *ComContract {
 		PayPrecondition:      a.PayPrecondition,
 		Content:              a.Content,
 		Settlement:           a.Settlement,
+		SettlementAmount:     a.SettlementAmount,
 		ContractPlanningDone: a.ContractPlanningDone,
 		Virtual:              a.Virtual,
 		Status:               a.Status,
 		Remark:               a.Remark,
+		EffectRemark:         a.EffectRemark,
 	}
 	return item
 }
@@ -79,6 +81,7 @@ type ComContract struct {
 	ContractPlanningDone uint8   `gorm:"column:contract_planning_done"`   // 合约规划是否引用完 0 否 1是
 	OverAmountSource     string  `gorm:"column:over_amount_source"`       // 合同金额超出合约规划后需要注明来源
 	Settlement           uint8   `gorm:"column:settlement"`               // 是否结算 0 不结算 1结算
+	SettlementAmount     float64 `gorm:"column:settlement_amount"`        // 结算金额
 	ValiSignAmount       float64 `gorm:"column:vali_sign_amount"`         // 有效签约金额
 	Virtual              string  `gorm:"column:virtual"`                  //是否虚拟合同
 	JiaStuffsAmount      float64 `gorm:"column:jia_stuffs_amount"`        // 甲方供应材料金额
@@ -88,6 +91,7 @@ type ComContract struct {
 	PayPrecondition      string  `gorm:"column:pay_precondition"`         // 付款条件
 	Content              string  `gorm:"column:content"`                  // 合同内容
 	Remark               string  `gorm:"column:remark"`                   // 备注
+	EffectRemark         string  `gorm:"column:effect_remark"`            // 合同生效备注
 	// 合同状态 0暂存 1 审批中 2 审批驳回  3 审批通过(未生效)5 合同生效(填上合同编号)
 	Status uint `gorm:"column:status"`
 }
@@ -131,10 +135,12 @@ func (a ComContract) ToSchemaComContract() *schema.ComContract {
 		PayPrecondition:      a.PayPrecondition,
 		Content:              a.Content,
 		Settlement:           a.Settlement,
+		SettlementAmount:     a.SettlementAmount,
 		ContractPlanningDone: a.ContractPlanningDone,
 		Virtual:              a.Virtual,
 		Status:               a.Status,
 		Remark:               a.Remark,
+		EffectRemark:         a.EffectRemark,
 	}
 	return item
 }

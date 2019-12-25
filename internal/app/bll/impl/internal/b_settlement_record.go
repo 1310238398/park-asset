@@ -80,6 +80,11 @@ func (a *SettlementRecord) Create(ctx context.Context, item schema.SettlementRec
 	if err != nil {
 		return nil, err
 	}
+	//更新合同记录计算金额
+	err = a.ComContractModel.UpdateSettlementAmount(ctx, item)
+	if err != nil {
+		return nil, err
+	}
 	return a.getUpdate(ctx, item.RecordID)
 }
 
