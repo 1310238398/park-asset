@@ -10,15 +10,17 @@ import (
 )
 
 // NewComContractAlter 创建变更管理
-func NewComContractAlter(mComContractAlter model.IComContractAlter) *ComContractAlter {
+func NewComContractAlter(mComContractAlter model.IComContractAlter, mComContractAttachment model.IComContractAttachment) *ComContractAlter {
 	return &ComContractAlter{
 		ComContractAlterModel: mComContractAlter,
+		AttachmentModel:       mComContractAttachment,
 	}
 }
 
 // ComContractAlter 变更管理业务逻辑
 type ComContractAlter struct {
 	ComContractAlterModel model.IComContractAlter
+	AttachmentModel       model.IComContractAttachment
 }
 
 // Query 查询数据
@@ -56,7 +58,7 @@ func (a *ComContractAlter) QueryStuffPriceByComContractID(ctx context.Context, C
 	return a.ComContractAlterModel.QueryStuffPriceByComContractID(ctx, ComContractID, params, opts...)
 }
 
-// QueryStuffPriceItemByComContractID 查询数据
+// QueryStuffPriceItemByStuffPriceID 查询数据
 func (a *ComContractAlter) QueryStuffPriceItemByStuffPriceID(ctx context.Context, stuffPriceID string, params schema.ComContractAlterQueryParam, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPriceItemQueryResult, error) {
 	return a.ComContractAlterModel.QueryStuffPriceItemByStuffPriceID(ctx, stuffPriceID, params, opts...)
 }
@@ -81,6 +83,12 @@ func (a *ComContractAlter) GetDesign(ctx context.Context, recordID string, opts 
 	} else if item == nil {
 		return nil, errors.ErrNotFound
 	}
+	//获取附件
+	attas, err := a.AttachmentModel.QueryByBizID(ctx, item.RecordID)
+	if err != nil {
+		return nil, err
+	}
+	item.Attas = attas
 
 	return item, nil
 }
@@ -93,6 +101,12 @@ func (a *ComContractAlter) GetSign(ctx context.Context, recordID string, opts ..
 	} else if item == nil {
 		return nil, errors.ErrNotFound
 	}
+	//获取附件
+	attas, err := a.AttachmentModel.QueryByBizID(ctx, item.RecordID)
+	if err != nil {
+		return nil, err
+	}
+	item.Attas = attas
 	return item, nil
 }
 
@@ -104,7 +118,12 @@ func (a *ComContractAlter) GetStuffPrice(ctx context.Context, recordID string, o
 	} else if item == nil {
 		return nil, errors.ErrNotFound
 	}
-
+	//获取附件
+	attas, err := a.AttachmentModel.QueryByBizID(ctx, item.RecordID)
+	if err != nil {
+		return nil, err
+	}
+	item.Attas = attas
 	return item, nil
 }
 
@@ -158,6 +177,23 @@ func (a *ComContractAlter) CreateDesign(ctx context.Context, item schema.ComCont
 	if err != nil {
 		return nil, err
 	}
+	//处理附件
+	if len(item.Attas) > 0 {
+		// 删除已有的附件记录
+		err = a.AttachmentModel.DeleteByBizID(ctx, item.RecordID)
+		if err != nil {
+			return nil, err
+		}
+		// 保存附件
+		for _, attachment := range item.Attas {
+			attachment.BizID = item.RecordID
+			attachment.RecordID = util.MustUUID()
+			err := a.AttachmentModel.Create(ctx, *attachment)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	return a.getUpdateDesign(ctx, item.RecordID)
 }
 
@@ -167,6 +203,23 @@ func (a *ComContractAlter) CreateSign(ctx context.Context, item schema.ComContra
 	err := a.ComContractAlterModel.CreateSign(ctx, item)
 	if err != nil {
 		return nil, err
+	}
+	//处理附件
+	if len(item.Attas) > 0 {
+		// 删除已有的附件记录
+		err = a.AttachmentModel.DeleteByBizID(ctx, item.RecordID)
+		if err != nil {
+			return nil, err
+		}
+		// 保存附件
+		for _, attachment := range item.Attas {
+			attachment.BizID = item.RecordID
+			attachment.RecordID = util.MustUUID()
+			err := a.AttachmentModel.Create(ctx, *attachment)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 	return a.getUpdateSign(ctx, item.RecordID)
 }
@@ -182,6 +235,23 @@ func (a *ComContractAlter) CreateStuffPrice(ctx context.Context, item schema.Com
 		for _, v := range item.Quotes {
 			v.AlterStuffPriceID = item.RecordID
 			a.ComContractAlterModel.CreateStuffPriceItem(ctx, *v)
+		}
+	}
+	//处理附件
+	if len(item.Attas) > 0 {
+		// 删除已有的附件记录
+		err = a.AttachmentModel.DeleteByBizID(ctx, item.RecordID)
+		if err != nil {
+			return nil, err
+		}
+		// 保存附件
+		for _, attachment := range item.Attas {
+			attachment.BizID = item.RecordID
+			attachment.RecordID = util.MustUUID()
+			err := a.AttachmentModel.Create(ctx, *attachment)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	return a.getUpdateStuffPrice(ctx, item.RecordID)
@@ -228,6 +298,23 @@ func (a *ComContractAlter) UpdateDesign(ctx context.Context, recordID string, it
 	if err != nil {
 		return nil, err
 	}
+	//处理附件
+	if len(item.Attas) > 0 {
+		// 删除已有的附件记录
+		err = a.AttachmentModel.DeleteByBizID(ctx, recordID)
+		if err != nil {
+			return nil, err
+		}
+		// 保存附件
+		for _, attachment := range item.Attas {
+			attachment.BizID = recordID
+			attachment.RecordID = util.MustUUID()
+			err := a.AttachmentModel.Create(ctx, *attachment)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	return a.getUpdateDesign(ctx, recordID)
 }
 
@@ -243,6 +330,23 @@ func (a *ComContractAlter) UpdateSign(ctx context.Context, recordID string, item
 	err = a.ComContractAlterModel.UpdateSign(ctx, recordID, item)
 	if err != nil {
 		return nil, err
+	}
+	//处理附件
+	if len(item.Attas) > 0 {
+		// 删除已有的附件记录
+		err = a.AttachmentModel.DeleteByBizID(ctx, recordID)
+		if err != nil {
+			return nil, err
+		}
+		// 保存附件
+		for _, attachment := range item.Attas {
+			attachment.BizID = recordID
+			attachment.RecordID = util.MustUUID()
+			err := a.AttachmentModel.Create(ctx, *attachment)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 	return a.getUpdateSign(ctx, recordID)
 }
@@ -266,6 +370,24 @@ func (a *ComContractAlter) UpdateStuffPrice(ctx context.Context, recordID string
 		for _, v := range item.Quotes {
 			v.AlterStuffPriceID = recordID
 			a.ComContractAlterModel.CreateStuffPriceItem(ctx, *v)
+		}
+	}
+
+	//处理附件
+	if len(item.Attas) > 0 {
+		// 删除已有的附件记录
+		err = a.AttachmentModel.DeleteByBizID(ctx, recordID)
+		if err != nil {
+			return nil, err
+		}
+		// 保存附件
+		for _, attachment := range item.Attas {
+			attachment.BizID = recordID
+			attachment.RecordID = util.MustUUID()
+			err := a.AttachmentModel.Create(ctx, *attachment)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	return a.getUpdateStuffPrice(ctx, recordID)
@@ -454,6 +576,31 @@ func (a *ComContractAlter) RebackDesign(ctx context.Context, recordID string) er
 	return nil
 }
 
+// AffirmDesign 提交审核
+func (a *ComContractAlter) AffirmDesign(ctx context.Context, recordID string, info schema.ComContractAlterDesignAffirmInfo) error {
+	oldItem, err := a.ComContractAlterModel.GetDesign(ctx, recordID)
+	if err != nil {
+		return err
+	} else if oldItem == nil {
+		return errors.ErrNotFound
+	}
+	err = a.ComContractAlterModel.AffirmDesign(ctx, recordID, info)
+	//
+	// 保存附件
+	for _, attachment := range info.Attas {
+		attachment.BizID = recordID
+		attachment.RecordID = util.MustUUID()
+		err := a.AttachmentModel.Create(ctx, *attachment)
+		if err != nil {
+			return err
+		}
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // RebackSign 提交审核
 func (a *ComContractAlter) RebackSign(ctx context.Context, recordID string) error {
 	oldItem, err := a.ComContractAlterModel.GetSign(ctx, recordID)
@@ -465,6 +612,30 @@ func (a *ComContractAlter) RebackSign(ctx context.Context, recordID string) erro
 	err = a.ComContractAlterModel.SetSignStatus(ctx, recordID, 0)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// AffirmSign 提交审核
+func (a *ComContractAlter) AffirmSign(ctx context.Context, recordID string, info schema.ComContractAlterSignAffirmInfo) error {
+	oldItem, err := a.ComContractAlterModel.GetSign(ctx, recordID)
+	if err != nil {
+		return err
+	} else if oldItem == nil {
+		return errors.ErrNotFound
+	}
+	err = a.ComContractAlterModel.AffirmSign(ctx, recordID, info)
+	if err != nil {
+		return err
+	}
+	// 保存附件
+	for _, attachment := range info.Attas {
+		attachment.BizID = recordID
+		attachment.RecordID = util.MustUUID()
+		err := a.AttachmentModel.Create(ctx, *attachment)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

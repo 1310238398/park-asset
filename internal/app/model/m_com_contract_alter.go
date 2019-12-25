@@ -70,4 +70,8 @@ type IComContractAlter interface {
 	DeleteStuffPriceItem(ctx context.Context, recordID string) error
 	// 根据stuff_price_id 删除材料报价信息
 	DeleteAllStuffPriceItem(ctx context.Context, recordID string) error
+	// 确认设计变更
+	AffirmDesign(ctx context.Context, recordID string, info schema.ComContractAlterDesignAffirmInfo) error
+	// 确认签证变更
+	AffirmSign(ctx context.Context, recordID string, info schema.ComContractAlterSignAffirmInfo) error
 }

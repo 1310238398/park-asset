@@ -466,6 +466,31 @@ func (a *ComContractAlter) RebackDesign(c *gin.Context) {
 	ginplus.ResOK(c)
 }
 
+// AffirmDesign 设计变更确认
+// @Tags 变更管理
+// @Summary 确认设计变更信息
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param id path string true "记录ID"
+// @Param body body schema.ComContractAlterDesignAffirmInfo true "设计变更确认信息"
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contract-alter/design/{id}/affirm
+func (a *ComContractAlter) AffirmDesign(c *gin.Context) {
+	var info schema.ComContractAlterDesignAffirmInfo
+	if err := ginplus.ParseJSON(c, &info); err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	err := a.ComContractAlterBll.AffirmDesign(ginplus.NewContext(c), c.Param("id"), info)
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResOK(c)
+}
+
 // DeleteDesign 删除设计变更数据
 // @Tags 变更管理
 // @Summary 删除设计变更数据
@@ -610,6 +635,32 @@ func (a *ComContractAlter) PassCheckSign(c *gin.Context) {
 func (a *ComContractAlter) RebackSign(c *gin.Context) {
 
 	err := a.ComContractAlterBll.RebackSign(ginplus.NewContext(c), c.Param("id"))
+	if err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+	ginplus.ResOK(c)
+}
+
+// AffirmSign 签证变更确认
+// @Tags 变更管理
+// @Summary 确认签证变更信息
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Param id path string true "记录ID"
+// @Param body body schema.ComContractAlterSignAffirmInfo true "设计变更确认信息"
+// @Success 200 schema.HTTPStatus "{status:OK}"
+// @Failure 400 schema.HTTPError "{error:{code:0,message:无效的请求参数}}"
+// @Failure 401 schema.HTTPError "{error:{code:0,message:未授权}}"
+// @Failure 500 schema.HTTPError "{error:{code:0,message:服务器错误}}"
+// @Router PUT /api/v1/com-contract-alter/sign/{id}/affirm
+func (a *ComContractAlter) AffirmSign(c *gin.Context) {
+	var info schema.ComContractAlterSignAffirmInfo
+	if err := ginplus.ParseJSON(c, &info); err != nil {
+		ginplus.ResError(c, err)
+		return
+	}
+
+	err := a.ComContractAlterBll.AffirmSign(ginplus.NewContext(c), c.Param("id"), info)
 	if err != nil {
 		ginplus.ResError(c, err)
 		return

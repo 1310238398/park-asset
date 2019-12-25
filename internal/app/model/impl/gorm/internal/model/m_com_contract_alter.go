@@ -483,3 +483,33 @@ func (a *ComContractAlter) DeleteAllStuffPriceItem(ctx context.Context, recordID
 	}
 	return nil
 }
+
+// AffirmDesign 确认设计变更
+func (a *ComContractAlter) AffirmDesign(ctx context.Context, recordID string, info schema.ComContractAlterDesignAffirmInfo) error {
+	vals := map[string]interface{}{
+		"affirm_amount": info.AffirmAmount,
+		"affirm_remark": info.AffirmRemark,
+		"status":        3,
+		"affirm_date":   info.AffirmDate}
+	result := entity.GetComContractAlterDesignDB(ctx, a.db).Where("record_id=?", recordID).Updates(vals)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+//AffirmSign 确认签证变更
+func (a *ComContractAlter) AffirmSign(ctx context.Context, recordID string, info schema.ComContractAlterSignAffirmInfo) error {
+	vals := map[string]interface{}{
+		"affirm_amount":          info.AffirmAmount,
+		"affirm_remark":          info.AffirmRemark,
+		"affirm_working_company": info.AffirmWorkingCompany,
+		"affirm_work_num":        info.AffirmWorkNum,
+		"status":                 3,
+		"affirm_date":            info.AffirmDate}
+	result := entity.GetComContractAlterSignDB(ctx, a.db).Where("record_id=?", recordID).Updates(vals)
+	if err := result.Error; err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}

@@ -47,6 +47,8 @@ type IComContractAlter interface {
 	PassCheckDesign(ctx context.Context, recordID string) error
 	// 审核退回
 	RebackDesign(ctx context.Context, recordID string) error
+	// 确认
+	AffirmDesign(ctx context.Context, recordID string, info schema.ComContractAlterDesignAffirmInfo) error
 	// 查询指定数据
 	GetSign(ctx context.Context, recordID string, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterSign, error)
 	// 创建数据
@@ -61,6 +63,8 @@ type IComContractAlter interface {
 	PassCheckSign(ctx context.Context, recordID string) error
 	// 审核退回
 	RebackSign(ctx context.Context, recordID string) error
+	// 确认
+	AffirmSign(ctx context.Context, recordID string, info schema.ComContractAlterSignAffirmInfo) error
 	// 查询指定数据
 	GetStuffPrice(ctx context.Context, recordID string, opts ...schema.ComContractAlterQueryOptions) (*schema.ComContractAlterStuffPrice, error)
 	// 创建数据

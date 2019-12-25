@@ -70,9 +70,10 @@ type ComContractAlterDesign struct {
 	Creator         *string `gorm:"column:creator;size:36;index;"`       // 创建者
 	SN              string  `gorm:"column:sn"`                           // 变更编号
 	Name            string  `gorm:"column:name"`                         // 变更主题名称
-	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
-	ProjectID       string  `gorm:"column:project_id;size:36;index"`     // 项目ID
+	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"` // 合同ID
+	ComContractSN   string  `gorm:"column:comcontract_sn;"`              // 合同编号
 	ComContractName string  `gorm:"column:comcontract_name"`             // 合同名称
+	ProjectID       string  `gorm:"column:project_id;size:36;index"`     // 项目ID
 	LaunchDept      string  `gorm:"column:launch_dept"`                  // 发起部门
 	LaunchPerson    string  `gorm:"column:launch_person"`                // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                  // 发起日期
@@ -90,6 +91,9 @@ type ComContractAlterDesign struct {
 	AlterType       string  `gorm:"column:alter_type"`                   // 变更类型: 一般变更 重大变更
 	Remark          string  `gorm:"column:remark"`                       // 备注
 	Status          uint8   `gorm:"column:status"`                       // 状态： 0 保存 1提交审核 2审核通过
+	AffirmAmount    float64 `gorm:"column:affirm_amount"`                // 确认结算金额
+	AffirmRemark    string  `gorm:"column:affirm_remark"`                // 确认结算备注
+	AffirmDate      string  `gorm:"affirm_date"`                         // 结算日期
 }
 
 // ComContractAlterSign 签证变更
@@ -99,10 +103,12 @@ type ComContractAlterSign struct {
 	Creator              *string `gorm:"column:creator;size:36;index;"`       // 创建者
 	SN                   string  `gorm:"column:sn"`                           // 变更编号
 	Name                 string  `gorm:"column:name"`                         // 变更主题名称
-	ComContractID        string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
-	ProjectID            string  `gorm:"column:project_id;size:36;index"`     // 项目ID
+	ComContractID        string  `gorm:"column:comcontract_id;size:36;index"` // 合同ID
+	ComContractSN        string  `gorm:"column:comcontract_sn;"`              // 合同编号
 	ComContractName      string  `gorm:"column:comcontract_name"`             // 合同名称
+	ProjectID            string  `gorm:"column:project_id;size:36;index"`     // 项目ID
 	AlterDesignID        string  `gorm:"column:alter_design_id"`              // 设计变更ID
+	AlterDesignSN        string  `gorm:"column:alter_design_sn"`              // 设计变更编号
 	AlterDesignName      string  `gorm:"column:alter_design_name"`            // 设计变更名称
 	LaunchDept           string  `gorm:"column:launch_dept"`                  // 发起部门
 	LaunchPerson         string  `gorm:"column:launch_person"`                // 发起人
@@ -127,6 +133,12 @@ type ComContractAlterSign struct {
 	Remark   string `gorm:"column:remark"`    // 备注
 	Status   uint8  `gorm:"column:status"`    // 状态： 0 保存 1提交审核 2审核通过
 	SignDate string `gorm:"column:sign_date"` // 签证日期
+
+	AffirmWorkingCompany string  `gorm:"affirm_working_company"` //确认信息-施工单位
+	AffirmWorkNum        string  `gorm:"affirm_work_num"`        //确认信息-工程量
+	AffirmAmount         float64 `gorm:"affirm_amount"`          // 结算金额
+	AffirmDate           string  `gorm:"affirm_date"`            // 结算日期
+	AffirmRemark         string  `gorm:"affirm_remark"`          // 结算备注
 }
 
 // ComContractAlterStuffPrice 材料批价
@@ -136,12 +148,15 @@ type ComContractAlterStuffPrice struct {
 	Creator         *string `gorm:"column:creator;size:36;index;"`        // 创建者
 	SN              string  `gorm:"column:sn"`                            //  批价编号
 	Name            string  `gorm:"column:name"`                          // 合同名称
-	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"`  // 合同编号
+	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"`  // 合同ID
+	ComContractSN   string  `gorm:"column:comcontract_sn;"`               // 合同编号
 	ProjectID       string  `gorm:"column:project_id;size:36;index"`      // 项目ID
 	ComContractName string  `gorm:"column:comcontract_name"`              // 合同名称
 	AlterDesignID   string  `gorm:"column:alter_design_id;size:36;index"` // 设计变更ID
+	AlterDesignSN   string  `gorm:"column:alter_design_sn"`               // 设计变更编号
 	AlterDesignName string  `gorm:"column:alter_design_name"`             // 设计变更名称
 	AlterSignID     string  `gorm:"column:alter_sign_id"`                 // 签证变更ID
+	AlterSignSN     string  `gorm:"column:alter_sign_sn"`                 // 签证变更编号
 	AlterSignName   string  `gorm:"column:alter_sign_name"`               // 签证变更名称
 	ProjectName     string  `gorm:"column:project_name"`                  // 工程名称
 	LaunchDept      string  `gorm:"column:launch_dept"`                   // 发起部门
@@ -237,6 +252,7 @@ func (a ComContractAlterDesign) ToSchemaComContractAlterDesign() *schema.ComCont
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
 		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		LaunchDept:      a.LaunchDept,
@@ -256,6 +272,9 @@ func (a ComContractAlterDesign) ToSchemaComContractAlterDesign() *schema.ComCont
 		AlterType:       a.AlterType,
 		Remark:          a.Remark,
 		Status:          a.Status,
+		AffirmAmount:    a.AffirmAmount,
+		AffirmDate:      a.AffirmDate,
+		AffirmRemark:    a.AffirmRemark,
 	}
 	return item
 }
@@ -268,6 +287,7 @@ func (a SchemaComContractAlterDesign) ToComContractAlterDesign() *ComContractAlt
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
 		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		LaunchDept:      a.LaunchDept,
@@ -287,6 +307,9 @@ func (a SchemaComContractAlterDesign) ToComContractAlterDesign() *ComContractAlt
 		AlterType:       a.AlterType,
 		Remark:          a.Remark,
 		Status:          a.Status,
+		AffirmAmount:    a.AffirmAmount,
+		AffirmDate:      a.AffirmDate,
+		AffirmRemark:    a.AffirmRemark,
 	}
 	return item
 }
@@ -315,9 +338,11 @@ func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContract
 		SN:                   a.SN,
 		Name:                 a.Name,
 		ComContractID:        a.ComContractID,
+		ComContractSN:        a.ComContractSN,
 		ProjectID:            a.ProjectID,
 		ComContractName:      a.ComContractName,
 		AlterDesignID:        a.AlterDesignID,
+		AlterDesignSN:        a.AlterDesignSN,
 		AlterDesignName:      a.AlterDesignName,
 		LaunchDept:           a.LaunchDept,
 		LaunchPerson:         a.LaunchPerson,
@@ -340,6 +365,11 @@ func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContract
 		Remark:               a.Remark,
 		Status:               a.Status,
 		SignDate:             a.SignDate,
+		AffirmAmount:         a.AffirmAmount,
+		AffirmDate:           a.AffirmDate,
+		AffirmRemark:         a.AffirmRemark,
+		AffirmWorkingCompany: a.AffirmWorkingCompany,
+		AffirmWorkNum:        a.AffirmWorkNum,
 	}
 	return item
 }
@@ -352,9 +382,11 @@ func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSi
 		SN:                   a.SN,
 		Name:                 a.Name,
 		ComContractID:        a.ComContractID,
+		ComContractSN:        a.ComContractSN,
 		ProjectID:            a.ProjectID,
 		ComContractName:      a.ComContractName,
 		AlterDesignID:        a.AlterDesignID,
+		AlterDesignSN:        a.AlterDesignSN,
 		AlterDesignName:      a.AlterDesignName,
 		LaunchDept:           a.LaunchDept,
 		LaunchPerson:         a.LaunchPerson,
@@ -377,6 +409,11 @@ func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSi
 		Remark:               a.Remark,
 		Status:               a.Status,
 		SignDate:             a.SignDate,
+		AffirmAmount:         a.AffirmAmount,
+		AffirmDate:           a.AffirmDate,
+		AffirmRemark:         a.AffirmRemark,
+		AffirmWorkingCompany: a.AffirmWorkingCompany,
+		AffirmWorkNum:        a.AffirmWorkNum,
 	}
 	return item
 }
@@ -405,11 +442,14 @@ func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema
 		SN:              a.SN,
 		Name:            a.Name,
 		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
 		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		AlterDesignID:   a.AlterDesignID,
+		AlterDesignSN:   a.AlterDesignSN,
 		AlterDesignName: a.AlterDesignName,
 		AlterSignID:     a.AlterSignID,
+		AlterSignSN:     a.AlterSignSN,
 		AlterSignName:   a.AlterSignName,
 		LaunchDept:      a.LaunchDept,
 		LaunchPerson:    a.LaunchPerson,
@@ -437,8 +477,10 @@ func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComCon
 		ProjectID:       a.ProjectID,
 		ComContractName: a.ComContractName,
 		AlterDesignID:   a.AlterDesignID,
+		AlterDesignSN:   a.AlterDesignSN,
 		AlterDesignName: a.AlterDesignName,
 		AlterSignID:     a.AlterSignID,
+		AlterSignSN:     a.AlterSignSN,
 		AlterSignName:   a.AlterSignName,
 		LaunchDept:      a.LaunchDept,
 		LaunchPerson:    a.LaunchPerson,

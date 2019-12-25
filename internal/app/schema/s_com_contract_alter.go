@@ -39,32 +39,38 @@ type ComContractAlters []*ComContractAlter
 
 // ComContractAlterDesign 设计变更
 type ComContractAlterDesign struct {
-	RecordID        string    `json:"record_id" swaggo:"false, 记录ID"`              // 记录ID
-	Creator         string    `json:"creator" swaggo:"false, 创建者"`                 // 创建者
-	CreatedAt       time.Time `json:"created_at" swaggo:"false, 创建时间"`             // 创建时间
-	UpdatedAt       time.Time `json:"updated_at" swaggo:"false, 更新时间"`             // 更新时间
-	SN              string    `json:"sn" swaggo:"false, 变更编号"`                     // 变更编号
-	Name            string    `json:"name" swaggo:"false, 变更主题名称"`                 // 变更主题名称
-	ComContractID   string    `json:"comcontract_id" swaggo:"false, 合同编号"`         // 合同编号
-	ProjectID       string    `json:"project_id" swaggo:"false, 项目ID"`             // 项目ID
-	ComContractName string    `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
-	LaunchDept      string    `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
-	LaunchPerson    string    `json:"launch_person" swaggo:"false, 发起人"`           // 发起人
-	LaunchDate      string    `json:"launch_date" swaggo:"false, 发起日期"`            // 发起日期
-	ModifyPosition  string    `json:"modify_position" swaggo:"false, 变更部位"`        // 变更部位
-	Reason          string    `json:"reason" swaggo:"false, 变更原因"`                 // 变更原因
-	ReasonOther     string    `json:"reason_other" swaggo:"false, 变更其他原因"`         // 变更其他原因
-	Content         string    `json:"content" swaggo:"false, 变更内容"`                // 变更内容
-	EstiMate        float64   `json:"estimate" swaggo:"false, 估算金额"`               // 估算金额
-	OfficialAmount  float64   `json:"official_amount" swaggo:"false, 正式金额"`        // 正式金额
-	WorkingState    uint8     `json:"working_state" swaggo:"false, 是否施工  0否 1 是"`  // 是否施工  0否 1 是
-	PurchaseState   uint8     `json:"purchase_state" swaggo:"false, 是否采购  0否 1 是"` // 是否采购  0否 1 是
-	CostInitial     uint8     `json:"cost_initial" swaggo:"false, 费用变化初判 0否 1 是"`  // 费用变化初判 0否 1 是
-	NeedCheck       uint8     `json:"need_check" swaggo:"false, 是否需报批  0否 1是"`     // 是否需报批  0否 1是
-	CostChange      uint8     `json:"cost_change" swaggo:"false, 成本增减  0否 1是"`     // 成本增减  0否 1是
-	AlterType       string    `json:"alter_type" swaggo:"false, 变更类型: 一般变更 重大变更"`  // 变更类型: 一般变更 重大变更
-	Remark          string    `json:"remark" swaggo:"false, 备注"`                   // 备注
-	Status          uint8     `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过"` // 状态： 0 保存 1提交审核 2审核通过
+	RecordID        string                   `json:"record_id" swaggo:"false, 记录ID"`                    // 记录ID
+	Creator         string                   `json:"creator" swaggo:"false, 创建者"`                       // 创建者
+	CreatedAt       time.Time                `json:"created_at" swaggo:"false, 创建时间"`                   // 创建时间
+	UpdatedAt       time.Time                `json:"updated_at" swaggo:"false, 更新时间"`                   // 更新时间
+	SN              string                   `json:"sn" swaggo:"false, 变更编号"`                           // 变更编号
+	Name            string                   `json:"name" swaggo:"false, 变更主题名称"`                       // 变更主题名称
+	ComContractID   string                   `json:"comcontract_id" swaggo:"false, 合同ID"`               // 合同ID
+	ComContractSN   string                   `json:"comcontract_sn" swaggo:"false, 合同编号"`               // 合同编号
+	ComContractName string                   `json:"comcontract_name" swaggo:"false, 合同名称"`             // 合同名称
+	ProjectID       string                   `json:"project_id" swaggo:"false, 项目ID"`                   // 项目ID
+	LaunchDept      string                   `json:"launch_dept" swaggo:"false, 发起部门"`                  // 发起部门
+	LaunchPerson    string                   `json:"launch_person" swaggo:"false, 发起人"`                 // 发起人
+	LaunchDate      string                   `json:"launch_date" swaggo:"false, 发起日期"`                  // 发起日期
+	ModifyPosition  string                   `json:"modify_position" swaggo:"false, 变更部位"`              // 变更部位
+	Reason          string                   `json:"reason" swaggo:"false, 变更原因"`                       // 变更原因
+	ReasonOther     string                   `json:"reason_other" swaggo:"false, 变更其他原因"`               // 变更其他原因
+	Content         string                   `json:"content" swaggo:"false, 变更内容"`                      // 变更内容
+	EstiMate        float64                  `json:"estimate" swaggo:"false, 估算金额"`                     // 估算金额
+	OfficialAmount  float64                  `json:"official_amount" swaggo:"false, 正式金额"`              // 正式金额
+	WorkingState    uint8                    `json:"working_state" swaggo:"false, 是否施工  0否 1 是"`        // 是否施工  0否 1 是
+	PurchaseState   uint8                    `json:"purchase_state" swaggo:"false, 是否采购  0否 1 是"`       // 是否采购  0否 1 是
+	CostInitial     uint8                    `json:"cost_initial" swaggo:"false, 费用变化初判 0否 1 是"`        // 费用变化初判 0否 1 是
+	NeedCheck       uint8                    `json:"need_check" swaggo:"false, 是否需报批  0否 1是"`           // 是否需报批  0否 1是
+	CostChange      uint8                    `json:"cost_change" swaggo:"false, 成本增减  0否 1是"`           // 成本增减  0否 1是
+	AlterType       string                   `json:"alter_type" swaggo:"false, 变更类型: 一般变更 重大变更"`        // 变更类型: 一般变更 重大变更
+	Remark          string                   `json:"remark" swaggo:"false, 备注"`                         // 备注
+	Status          uint8                    `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过 3经过确认"` // 状态： 0 保存 1提交审核 2审核通过 3经过确认
+	Attas           []*ComContractAttachment `json:"attas" swago:"false, 附件列表"`                         // 附件列表
+
+	AffirmAmount float64 `json:"affirm_amount" swaggo:"false, 结算金额"` // 结算金额
+	AffirmDate   string  `json:"affirm_date" swaggo:"false, 结算日期"`   // 结算日期
+	AffirmRemark string  `json:"affirm_remark" swaggo:"false, 结算备注"` // 结算备注
 }
 
 // ComContractAlterDesignQueryParam 查询条件
@@ -95,10 +101,12 @@ type ComContractAlterSign struct {
 	UpdatedAt            time.Time `json:"updated_at" swaggo:"false, 更新时间"`                           // 更新时间
 	SN                   string    `json:"sn" swaggo:"false, 变更编号"`                                   // 变更编号
 	Name                 string    `json:"name" swaggo:"false, 变更主题名称"`                               // 变更主题名称
-	ComContractID        string    `json:"comcontract_id" swaggo:"false, 合同编号"`                       // 合同编号
-	ProjectID            string    `json:"project_id" swaggo:"false, 项目ID"`                           // 项目ID
+	ComContractID        string    `json:"comcontract_id" swaggo:"false, 合同ID"`                       // 合同ID
+	ComContractSN        string    `json:"comcontract_sn" swaggo:"false, 合同编号"`                       // 合同编号
 	ComContractName      string    `json:"comcontract_name" swaggo:"false, 合同名称"`                     // 合同名称
+	ProjectID            string    `json:"project_id" swaggo:"false, 项目ID"`                           // 项目ID
 	AlterDesignID        string    `json:"alter_design_id" swaggo:"false, 设计变更ID"`                    // 设计变更ID
+	AlterDesignSN        string    `json:"alter_design_sn" swaggo:"false, 设计变更编号"`                    // 设计变更编号
 	AlterDesignName      string    `json:"alter_design_name" swaggo:"false, 设计变更名称"`                  // 设计变更名称
 	LaunchDept           string    `json:"launch_dept" swaggo:"false, 发起部门"`                          // 发起部门
 	LaunchPerson         string    `json:"launch_person" swaggo:"false, 发起人"`                         // 发起人
@@ -120,9 +128,16 @@ type ComContractAlterSign struct {
 	XianChangChengben uint8   `json:"xianchangchengben" swaggo:"false, 成本增减： 0减少  1增加"` // 成本增减： 0减少  1增加
 	XianChangGusuan   float64 `json:"xianchanggusuan" swaggo:"false, 现场 估算金额"`          // 现场 估算金额
 
-	Remark   string `json:"remark" swaggo:"false, 备注"`                   // 备注
-	Status   uint8  `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过"` // 状态： 0 保存 1提交审核 2审核通过
-	SignDate string `json:"sign_date" swaggo:"false, 签证日期"`              // 签证日期
+	Remark   string                   `json:"remark" swaggo:"false, 备注"`                   // 备注
+	Status   uint8                    `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过"` // 状态： 0 保存 1提交审核 2审核通过
+	SignDate string                   `json:"sign_date" swaggo:"false, 签证日期"`              // 签证日期
+	Attas    []*ComContractAttachment `json:"attas" swago:"false, 附件列表"`                   // 附件列表
+
+	AffirmWorkingCompany string  `json:"affiirm_working_company" swaggo:"false, 施工单位"` //确认信息-施工单位
+	AffirmWorkNum        string  `json:"affiirm_work_num" swaggo:"false, 工程量"`         //确认信息-工程量
+	AffirmAmount         float64 `json:"affirm_amount" swaggo:"false, 结算金额"`           // 结算金额
+	AffirmDate           string  `json:"affirm_date" swaggo:"false, 结算日期"`             // 结算日期
+	AffirmRemark         string  `json:"affirm_remark" swaggo:"false, 结算备注"`           // 结算备注
 }
 
 // ComContractAlterSignQueryParam 查询条件
@@ -153,13 +168,16 @@ type ComContractAlterStuffPrice struct {
 	UpdatedAt       time.Time                       `json:"updated_at" swaggo:"false, 更新时间"`             // 更新时间
 	SN              string                          `json:"sn" swaggo:"false, 批价编号"`                     //  批价编号
 	Name            string                          `json:"name" swaggo:"false, 合同名称"`                   // 合同名称
-	ComContractID   string                          `json:"comcontract_id" swaggo:"false, 合同编号"`         // 合同编号
-	ProjectID       string                          `json:"project_id" swaggo:"false, 项目ID"`             // 项目ID
+	ComContractID   string                          `json:"comcontract_id" swaggo:"false, 合同ID"`         // 合同ID
+	ComContractSN   string                          `json:"comcontract_sn" swaggo:"false, 合同编号"`         // 合同编号
 	ComContractName string                          `json:"comcontract_name" swaggo:"false, 合同名称"`       // 合同名称
+	ProjectID       string                          `json:"project_id" swaggo:"false, 项目ID"`             // 项目ID
 	AlterDesignID   string                          `json:"alter_design_id" swaggo:"false, 设计变更ID"`      // 设计变更ID
+	AlterDesignSN   string                          `json:"alter_design_sn" swaggo:"false, 设计变更编号"`      // 设计变更编号
 	AlterDesignName string                          `json:"alter_design_name" swaggo:"false, 设计变更名称"`    // 设计变更名称
 	ProjectName     string                          `json:"project_name" swaggo:"false, 工程名称"`           // 工程名称
 	AlterSignID     string                          `json:"alter_sign_id" swaggo:"false, 签证变更ID"`        // 签证变更ID
+	AlterSignSN     string                          `json:"alter_sign_sn" swaggo:"false, 签证变更编号"`        // 签证变更编号
 	AlterSignName   string                          `json:"alter_sign_name" swaggo:"false, 签证变更名称"`      // 签证变更名称
 	LaunchDept      string                          `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
 	LaunchPerson    string                          `json:"launch_person" swaggo:"false, 发起人"`           // 发起人
@@ -172,6 +190,7 @@ type ComContractAlterStuffPrice struct {
 	Status          uint8                           `json:"status" swaggo:"false, 状态： 0 保存 1提交审核 2审核通过"` // 状态： 0 保存 1提交审核 2审核通过
 	SignDate        string                          `json:"sign_date" swaggo:"false, 签证日期"`              // 签证日期
 	Quotes          ComContractAlterStuffPriceItems `json:"quotes" swaggo:"false, 各材料报价列表"`              //各材料报价列表
+	Attas           []*ComContractAttachment        `json:"attas" swago:"false, 附件列表"`                   // 附件列表
 }
 
 // ComContractAlterStuffPriceQueryParam 查询条件
@@ -229,3 +248,27 @@ type ComContractAlterStuffPriceItemQueryResult struct {
 
 // ComContractAlterStuffPriceItems 变更管理列表
 type ComContractAlterStuffPriceItems []*ComContractAlterStuffPriceItem
+
+// ComContractAlterDesignAffirmInfo 设计变更确认信息
+type ComContractAlterDesignAffirmInfo struct {
+	AffirmAmount float64                  `json:"affirm_amount" swaggo:"false, 结算金额"` // 结算金额
+	AffirmDate   string                   `json:"affirm_date" swaggo:"false, 结算日期"`   // 结算日期
+	AffirmRemark string                   `json:"affirm_remark" swaggo:"false, 结算备注"` // 结算备注
+	Attas        []*ComContractAttachment `json:"attas" swaggo:"false, 附件列表"`         // 附件列表
+}
+
+// ComContractAlterSignAffirmInfo 签证变更确认信息
+type ComContractAlterSignAffirmInfo struct {
+	AffirmWorkingCompany string                   `json:"affirm_working_company" swaggo:"false, 施工单位"` //确认信息-施工单位
+	AffirmWorkNum        string                   `json:"affirm_work_num" swaggo:"false, 工程量"`         //确认信息-工程量
+	AffirmAmount         float64                  `json:"affirm_amount" swaggo:"false, 结算金额"`          // 结算金额
+	AffirmDate           string                   `json:"affirm_date" swaggo:"false, 结算日期"`            // 结算日期
+	AffirmRemark         string                   `json:"affirm_remark" swaggo:"false, 结算备注"`          // 结算备注
+	Attas                []*ComContractAttachment `json:"attas" swaggo:"false, 附件列表"`                  // 附件列表
+}
+
+// ComContractAttachmentInput 附件输入对象
+type ComContractAttachmentInput struct {
+	URL  string `json:"url" swaggo:"false, 附件url"`
+	Name string `json:"name" swaggo:"false, 附件url"`
+}

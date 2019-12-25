@@ -499,6 +499,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 					designGroup.PUT(":id/commit", cComContractAlter.CommitDesign)
 					designGroup.PUT(":id/passcheck", cComContractAlter.PassCheckDesign)
 					designGroup.PUT(":id/reback", cComContractAlter.RebackDesign)
+					designGroup.PUT(":id/affirm", cComContractAlter.AffirmDesign)
 				}
 				//通过项目取签证变更
 				gComContractAlter.GET("signsbyproject/:id", cComContractAlter.QuerySignByProjectID)
@@ -511,6 +512,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 					signGroup.PUT(":id/commit", cComContractAlter.CommitSign)
 					signGroup.PUT(":id/passcheck", cComContractAlter.PassCheckSign)
 					signGroup.PUT(":id/reback", cComContractAlter.RebackSign)
+					signGroup.PUT(":id/affirm", cComContractAlter.AffirmSign)
 				}
 				//通过项目取材料批价
 				gComContractAlter.GET("stuffpricesbyproject/:id", cComContractAlter.QueryStuffPriceByProjectID)
