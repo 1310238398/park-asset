@@ -20,56 +20,80 @@ import {
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import styles from './ContractSigning.less';
+import DicShow from '@/components/DictionaryNew/DicShow';
 const FormItem = Form.Item;
+// 取得字典值对应的值
+function arrCon(arrL, arr) {
+  let arrName = '';
+  arrL.forEach(el => {
+    if (arr && arr.length > 0) {
+      for (let i = 0; i < arr.length; i++) {
+        if (el.value === arr[i]) {
+          arrName += el.label;
+          arrName += '，';
+        }
+      }
+    }
+  });
+  return arrName.substring(0, arrName.length - 1);
+}
+
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
+  visaChange: state.visaChange,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
 class VisaChange extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: props.data ? props.data : [],
+    };
+  }
+  static getDerivedStateFromProps(nextProps, state) {
+    if ('data' in nextProps) {
+      return {
+        ...state,
+        dataSource: nextProps.data,
+      };
+    }
+    return state;
+  }
 
   componentDidMount() {
-    const {
-      contractSiging: { formID },
-    } = this.props;
-
-    // this.dispatch({
-    //   type: 'contractSiging/fetch',
-    //   search: {},
-    //   pagination: {},
-    //   pro_id: formID,
-    // });
+    this.props.dispatch({
+      type: 'visaChange/fetchChangeReason',
+    });
   }
 
   render() {
+    const { dataSource } = this.state;
     const {
-      loading,
-      form: { getFieldDecorator },
-      contractSiging: {
-        formTypeSiging,
-        dataSiging: { list, pagination },
-      },
+      visaChange: { visaChangeList },
     } = this.props;
     const columns = [
       {
         title: '签证编号',
-        dataIndex: 'index',
+        dataIndex: 'sn',
         width: 100,
       },
       {
         title: '签证原因',
-        dataIndex: 'name',
+        dataIndex: 'reason',
         width: 150,
+        render: (text, record) => {
+          return <div>{arrCon(visaChangeList, record.reason)}</div>;
+        },
       },
       {
         title: '签证内容',
-        dataIndex: 'address',
+        dataIndex: 'content',
         width: 150,
       },
       {
         title: '签证报价',
-        dataIndex: 'sex',
+        dataIndex: 'estimate',
         width: 100,
       },
 
@@ -82,65 +106,25 @@ class VisaChange extends PureComponent {
         title: '审定金额',
         dataIndex: 'age',
         width: 100,
-      }, {
+      },
+      {
         title: '发起日期',
-        dataIndex: 'date',
+        dataIndex: 'launch_date',
         width: 140,
       },
       {
         title: '发起人',
-        dataIndex: 'creator',
+        dataIndex: 'launch_person',
         width: 100,
       },
       {
         title: '状态',
         dataIndex: 'status',
         width: 150,
-      }
-    ];
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      showTotal: total => <span>共{total}条</span>,
-      ...pagination,
-    };
-
-    const data = [
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b542',
-        index: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-        sex: 'nan',
-        date:'2019-12-12',
-        creator:'sss',
-        status:'2'
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b541',
-        index: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-        sex: 'nan',
-        date:'2019-12-12',
-        creator:'sss',
-        status:'2'
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b54e',
-        index: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-        sex: 'nan',
-        date:'2019-12-12',
-        creator:'sss',
-        status:'1'
+        render: val => {
+          let value = val.toString();
+          return <DicShow pcode="contract$#ChangeStatus" code={[value]} />;
+        },
       },
     ];
 
@@ -150,9 +134,10 @@ class VisaChange extends PureComponent {
           <div className={styles.tableList}>
             <div>
               <Table
-                dataSource={data}
+                dataSource={dataSource.list}
                 columns={columns}
                 pagination={false}
+                size="small"
               ></Table>
             </div>
           </div>

@@ -25,10 +25,27 @@ import MaterialPricingDetail from './MaterialPricingDetail';
 import MaterialPricingShow from './MaterialPricingShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import DicShow from '@/components/DictionaryNew/DicShow';
+import moment from 'moment';
 const FormItem = Form.Item;
+
+// 计算合计值
+function sum(type, arr) {
+  var s = 0;
+  arr.forEach(function(val, idx, arr) {
+    switch (type) {
+      case 'quote_c':
+        s += val.quote_c;
+        break;
+      case 'quote_w':
+        s += val.quote_w;
+        break;
+    }
+  }, 0);
+  return s;
+}
+
 @connect(state => ({
   materialPricing: state.materialPricing,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.materialPricing,
 }))
 @Form.create()
@@ -40,14 +57,16 @@ class MaterialPricing extends PureComponent {
 
   componentDidMount() {
     const {
-      materialPricing: { formID },
+      materialPricing: { proID },
     } = this.props;
 
     this.dispatch({
-      type: 'materialPricing/fetch',
-      search: {},
-      pagination: {},
-      pro_id: formID,
+      type: 'materialPricing/fetchMaterialPricing',
+      payload: {
+        search: {},
+        pagination: {},
+        proID: proID,
+      },
     });
   }
 
@@ -60,120 +79,78 @@ class MaterialPricing extends PureComponent {
     if (e) {
       e.preventDefault();
     }
-    console.log('handleSearchFormSubmit');
 
     const { form } = this.props;
+
     form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return;
       }
       const {
-        materialPricing: { formID },
+        materialPricing: { proID },
       } = this.props;
       const formData = { ...values };
       console.log('form数据  ' + JSON.stringify(formData));
 
       this.dispatch({
-        type: 'materialPricing/fetch',
-        search: formData,
-        pagination: {},
-        pro_id: formID,
+        type: 'materialPricing/fetchMaterialPricing',
+        payload: {
+          search: formData,
+          pagination: {},
+          proID: proID,
+        },
       });
       //this.clearSelectRows();
     });
   };
 
-  isEditing = record => record.record_id === this.state.editingKey;
-
-  save(form, key) {
-    // key是项目业态id
-    const {
-      materialPricing: {
-        data: { list, pagination },
-      },
-    } = this.props;
-    console.log('要保存数据的key ' + key);
-
-    form.validateFields(async (error, row) => {
-      if (error) {
-        return;
-      }
-      const newData = list;
-
-      const index = newData.findIndex(item => key === item.record_id);
-      if (index > -1) {
-        const item = newData[index];
-        row.record_id = key;
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-
-        let response;
-
-        response = await updatematerialPricing(row);
-        if (response.record_id && response.record_id !== '') {
-          message.success('更新成功');
-          this.setState({ editingKey: '' });
-          this.dispatch({
-            type: 'materialPricing/saveData',
-            payload: {
-              list: [...newData],
-              pagination: pagination,
-            },
-          });
-        }
-      }
-    });
-  }
-
-  deletePlan(key) {
-    this.dispatch({
-      type: 'materialPricing/del',
-      payload: key,
-    });
-  }
-  edit(key) {
-    this.setState({ editingKey: key });
-  }
-
-  cancel = () => {
-    this.setState({ editingKey: '' });
-  };
-
   // 新增合同
   handleAddContractClick = () => {
-    this.dispatch({
-      type: 'materialPricing/loadMaterialPricingForm',
-      payload: {
-        type: 'A',
-      },
-    });
+    const { proID } = this.props;
+    if (!proID) {
+      message.warning('请先选择当前项目，进行相应的数据操作');
+    } else {
+      this.dispatch({
+        type: 'materialPricing/loadMaterialPricingForm',
+        payload: {
+          type: 'A',
+          proID: proID,
+        },
+      });
+    }
   };
   // 编辑合同界面
   handleEditClick = item => {
-    this.dispatch({
-      type: 'materialPricing/loadMaterialPricingForm',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-      },
-    });
+    const proID = item.project_id;
+    if (!proID) {
+      message.warning('请先选择当前项目，进行相应的数据操作');
+    } else {
+      this.dispatch({
+        type: 'materialPricing/loadMaterialPricingForm',
+        payload: {
+          type: 'E',
+          id: item.record_id,
+          proID: proID,
+        },
+      });
+    }
   };
 
   // 重置查询表单
   handleResetFormClick = () => {
     const {
       form,
-      materialPricing: { formID },
+      materialPricing: { proID },
     } = this.props;
     form.resetFields();
 
     this.dispatch({
-      type: 'materialPricing/fetch',
-      search: {},
-      pagination: {},
-      pro_id: formID,
+      type: 'materialPricing/fetchMaterialPricing',
+      payload: {
+        search: {},
+        pagination: {},
+        proID: proID,
+      },
     });
   };
 
@@ -187,14 +164,17 @@ class MaterialPricing extends PureComponent {
 
   handleTableChange = pagination => {
     const {
-      materialPricing: { formID },
+      materialPricing: { proID },
     } = this.props;
     this.dispatch({
       type: 'materialPricing/fetch',
-      pagination: {
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        project_id: formID,
+      payload: {
+        pagination: {
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+        },
+        search: {},
+        proID: proID,
       },
     });
     this.clearSelectRows();
@@ -218,16 +198,23 @@ class MaterialPricing extends PureComponent {
   // 保存提交合同
   handleDataFormSubmit = data => {
     this.dispatch({
-      type: 'materialPricing/submit',
+      type: 'materialPricing/submitMaterialPricing',
       payload: data,
     });
     this.clearSelectRows();
   };
- 
+
+  // 保存材料
+  handleModalChange = data => {
+    console.log(data);
+    // this.props.dispatch({
+    //   type: 'productModule/saveFormDataPro',
+    //   payload: data,
+    // });
+  };
 
   // 查看单个合同信息
   handleSeeClick = item => {
-    console.log(item);
     this.dispatch({
       type: 'materialPricing/loadMaterialPricingForm',
       payload: {
@@ -236,18 +223,31 @@ class MaterialPricing extends PureComponent {
       },
     });
   };
+  // 提交审核
+  handleCommitClick = item => {
+    this.dispatch({
+      type: 'materialPricing/commitMaterialPricingForm',
+      payload: {
+        id: item.record_id,
+      },
+    });
+    this.clearSelectRows();
+  };
 
   // 渲染新增页面还是编辑页面还是查看页面
   renderDataForm() {
     const {
-      materialPricing: { formTypeMaterialPricing },
+      materialPricing: { formTypeMaterialPricing, formDataMaterialPricing },
     } = this.props;
-
+    console.log(formDataMaterialPricing);
     if (formTypeMaterialPricing !== 'S') {
       return (
         <MaterialPricingDetail
+          data={formDataMaterialPricing}
+          formTypeMaterialPricing={formTypeMaterialPricing}
           onCancel={this.handleDataFormCancel}
           onSubmit={this.handleDataFormSubmit}
+          onChange={this.handleModalChange}
         />
       );
     } else {
@@ -255,7 +255,6 @@ class MaterialPricing extends PureComponent {
     }
   }
 
- 
   // 删除合同
   handleDelClick = item => {
     Modal.confirm({
@@ -303,7 +302,7 @@ class MaterialPricing extends PureComponent {
         <Row gutter={16}>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="施工单位">
-              {getFieldDecorator('name')(<Input placeholder="请输入施工单位" />)}
+              {getFieldDecorator('working_company')(<Input placeholder="请输入施工单位" />)}
             </Form.Item>
           </Col>
           <Col {...col}>
@@ -312,9 +311,9 @@ class MaterialPricing extends PureComponent {
                 <Button type="primary" htmlType="submit">
                   搜索
                 </Button>
-                {/* <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
                   重置
-                </Button> */}
+                </Button>
               </span>
             </div>
           </Col>
@@ -335,42 +334,55 @@ class MaterialPricing extends PureComponent {
     const columns = [
       {
         title: '材料批价主题名称',
-        width:200,
-        dataIndex: 'mc',
+        width: 200,
+        dataIndex: 'name',
       },
       {
         title: '材料批价申请编号',
-        width:150,
-        dataIndex: 'bh',
-      },
-      {
-        title: '合同编号',
-        width:150,
+        width: 150,
         dataIndex: 'sn',
       },
       {
+        title: '合同编号',
+        width: 150,
+        dataIndex: 'comcontract_sn',
+      },
+      {
         title: '合同名称',
-        dataIndex: 'name',
+        dataIndex: 'comcontract_name',
         width: 200,
       },
       {
-        title: '施工单位报价合计',
-        dataIndex: 'property',
+        title: '施工单位报价',
+        dataIndex: 'quote_w',
         width: 150,
+        render: (text, record) => {
+          return <div>{sum('quote_w', record.quotes)}</div>;
+        },
       },
       {
         title: '建设单位批价',
-        dataIndex: 'sex',
+        dataIndex: 'quote_c',
         width: 150,
+        render: (text, record) => {
+          return <div>{sum('quote_c', record.quotes)}</div>;
+        },
       },
       {
         title: '发起日期',
-        dataIndex: 'age',
-        width: 120,
+        dataIndex: 'launch_date',
+        width: 140,
+        render: (text, record) => {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              {!record.launch_date ? '' : moment(record.launch_date).format('YYYY-MM-DD')}
+            </div>
+          );
+        },
       },
       {
         title: '发起人',
-        dataIndex: 'yifang',
+        dataIndex: 'launch_person',
         width: 150,
       },
       {
@@ -378,7 +390,8 @@ class MaterialPricing extends PureComponent {
         dataIndex: 'status',
         width: 100,
         render: val => {
-          return <DicShow pcode="contract$#ContractStatus" code={[val]} />;
+          let value = val.toString();
+          return <DicShow pcode="contract$#ChangeStatus" code={[value]} />;
         },
       },
     ];
@@ -389,38 +402,6 @@ class MaterialPricing extends PureComponent {
       ...pagination,
     };
 
-    const data = [
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b542',
-        status: 0,
-        index: '合同名称11',
-        name: 'John Brown',
-        age: '2019-01-12',
-        address: '4',
-        tags: ['nice', 'developer'],
-        sex: 100.09,
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b541',
-        status: 1,
-        index: '合同名称2',
-        name: 'Jim Green',
-        age: '2019-01-12',
-        address: '2',
-        tags: ['loser'],
-        sex: 100,
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b54e',
-        status: 2,
-        index: '合同名称3',
-        name: 'Joe Black',
-        age: '2019-01-12',
-        address: '1',
-        tags: ['cool', 'teacher'],
-        sex: 200,
-      },
-    ];
     return (
       <div>
         <Card bordered={false}>
@@ -465,7 +446,7 @@ class MaterialPricing extends PureComponent {
                   <PButton
                     key="commit"
                     code="commit"
-                    onClick={() => this.handleEditClick(selectedRows[0])}
+                    onClick={() => this.handleCommitClick(selectedRows[0])}
                   >
                     提交审核
                   </PButton>,
@@ -478,11 +459,12 @@ class MaterialPricing extends PureComponent {
                   onChange: this.handleTableSelectRow,
                 }}
                 rowKey={record => record.record_id}
-                dataSource={data}
+                dataSource={list}
                 columns={columns}
                 pagination={paginationProps}
-                scroll={{ x: 1300}}
+                scroll={{ x: 1300 }}
                 onChange={this.handleTableChange}
+                size="small"
               ></Table>
             </div>
           </div>

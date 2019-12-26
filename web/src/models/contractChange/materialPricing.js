@@ -1,6 +1,9 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as contractMaterialPricingService from '@/services/contractMaterialPricing';
+import * as contractSigingService from '@/services/contractSiging';
+import * as contractDesignChangeService from '@/services/contractDesignChange';
+import * as contractVisaChangeService from '@/services/contractVisaChange';
 
 export default {
   namespace: 'materialPricing',
@@ -12,6 +15,7 @@ export default {
       list: [],
       pagination: {},
     },
+    treeOriginConData: [],
     proData: {},
 
     proID: '', // 当前选中的项目ID
@@ -26,7 +30,7 @@ export default {
     formDataMaterialPricing: {},
     formTitleMaterialPricing: '',
     formIDMaterialPricing: '',
-    // 合约规划是否引用完余额是否可见
+    // 是否还有并列合同余额是否可见
     formVisibleFinishquoting: false,
     FinishquotingData: {},
     // 合同结算页面是否可见
@@ -41,30 +45,22 @@ export default {
     // 签证确认界面弹出框
     formVisibleVisaSure: false,
     materialPricingList: [],
+    signTreeData: [],
+    designTreeData: [],
   },
   effects: {
-    // 查询树状结构
-    *loadTree(_, { put, select }) {
-      yield yield put({ type: 'fetchTree' });
-      const treeData = yield select(state => state.materialPricing.treeData);
-      const expandedKeys = [];
-      if (treeData.length > 0) {
-        expandedKeys.push(treeData[0].record_id);
-      }
-      yield put({
-        type: 'saveExpandedKeys',
-        payload: expandedKeys,
-      });
-    },
 
-    *fetchTree({ payload }, { call, put }) {
+     // 甲乙单位树状结构
+     *fetchTree({ payload }, { call, put }) {
       let params = {
-        q: 'tree',
+        q: 'page',
+        current: 1,
+        pageSize: 50,
       };
       if (payload) {
         params = { ...params, ...payload };
       }
-      const response = yield call(contractMaterialPricingService.query, params);
+      const response = yield call(contractSigingService.query, params);
       const list = response.list || [];
       yield put({
         type: 'saveTreeData',
@@ -96,109 +92,176 @@ export default {
       });
     },
 
-    // 查询厂房列表
-    *fetchMaterialPricing({ search, pagination }, { call, put, select }) {
+    // 原合同名列表
+    *fetchOriginConTree({ payload }, { call, put }) {
       let params = {
         q: 'page',
+        current: 1,
+        pageSize: 50,
       };
-      if (search) {
-        params = { ...params, ...search };
-        yield put({
-          type: 'saveSearchMaterialPricing',
-          payload: search,
-        });
-      } else {
-        const s = yield select(state => state.materialPricing.searchMaterialPricing);
-        if (s) {
-          params = { ...params, ...s };
-        }
+      if (payload) {
+        params = { ...params, ...payload };
       }
-
-      if (pagination) {
-        params = { ...params, ...pagination };
-        yield put({
-          type: 'savePaginationMaterialPricing',
-          payload: pagination,
-        });
-      } else {
-        const p = yield select(state => state.materialPricing.paginationMaterialPricing);
-        if (p) {
-          params = { ...params, ...p };
-        }
-      }
-      const response = yield call(contractMaterialPricingService.queryMaterialPricingPage, params);
-      yield [
-        put({
-          type: 'saveMaterialPricingList',
-          payload: response,
-        }),
-      ];
-    },
-
-    // 查询一览列表
-    *fetchContractList({ search, pagination }, { call, put, select }) {
-      let params = {
-        q: 'page',
-      };
-      if (search) {
-        params = { ...params, ...search };
-        yield put({
-          type: 'saveSearchMaterialPricing',
-          payload: search,
-        });
-      } else {
-        const s = yield select(state => state.materialPricing.searchMaterialPricing);
-        if (s) {
-          params = { ...params, ...s };
-        }
-      }
-
-      if (pagination) {
-        params = { ...params, ...pagination };
-        yield put({
-          type: 'savePaginationMaterialPricing',
-          payload: pagination,
-        });
-      } else {
-        const p = yield select(state => state.materialPricing.paginationMaterialPricing);
-        if (p) {
-          params = { ...params, ...p };
-        }
-      }
-      const response = yield call(contractMaterialPricingService.queryMaterialPricingPage, params);
-      yield [
-        put({
-          type: 'saveMaterialPricingList',
-          payload: response,
-        }),
-      ];
-    },
-    // 对余额处理方式进行保存
-    *saveFinishquotingData({ payload }, { put }) {
-      // yield put({
-      //   type: 'saveFormFinishquotingDataMaterialPricing',
-      //   payload: payload,
-      // });
+      const response = yield call(contractSigingService.querySigingPage, params);
+      console.log(response);
+      const list = response.list || [];
       yield put({
-        type: 'contractMaterialPricing/changeFormVisibleFinishquoting',
-        payload: payload.visible,
+        type: 'saveOriTreeData',
+        payload: list,
       });
     },
+    // 提交审核合同
+    *commitMaterialPricingForm({ payload }, { call, put, select }) {
+      const proID = yield select(state => state.materialPricing.proID);
+      console.log(proID)
+      const response = yield call(contractMaterialPricingService.commitMaterialPricing, payload);
+      if (response.status === 'OK') {
+        message.success('提交审核成功');
+        yield put({
+          type: 'fetchMaterialPricing',
+          payload: {
+            search: {},
+            pagination: {},
+            proID: proID,
+          },
+        });
+      }
+    },
+    // 设计变更名称
+    *fetchDesignConTree({ payload }, { call, put }) {
+      let params;
+      let search = payload.search;
+      let pagination = payload.pagination;
+      let proID = payload.proID;
+      if (search) {
+        params = { ...params, ...search };
+      }
+      if (pagination) {
+        params = { ...params, ...pagination };
+      }
+      if (payload) {
+        params = { ...params, ...payload };
+      }
+      const response = yield call(contractDesignChangeService.queryDesignChangePage, params, proID);
+      const list = response.list || [];
+      yield put({
+        type: 'saveDesignTreeData',
+        payload: list,
+      });
+    },
+    // 签证变更名称
+    *fetchSignConTree({ payload }, { call, put }) {
+      let params;
+      let search = payload.search;
+      let pagination = payload.pagination;
+      let proID = payload.proID;
+      if (search) {
+        params = { ...params, ...search };
+      }
+      if (pagination) {
+        params = { ...params, ...pagination };
+      }
+      if (payload) {
+        params = { ...params, ...payload };
+      }
+      const response = yield call(contractVisaChangeService.queryVisaChangePage, params, proID);
+      const list = response.list || [];
+      yield put({
+        type: 'saveSignTreeData',
+        payload: list,
+      });
+    },
+    // 查询材料批价列表
+    *fetchMaterialPricing({ payload }, { call, put, select }) {
+      console.log(payload);
+      let params;
+      let search = payload.search;
+      let pagination = payload.pagination;
+      let proID = payload.proID;
+      if (search) {
+        params = { ...params, ...search };
+        yield put({
+          type: 'saveSearchMaterialPricing',
+          payload: search,
+        });
+      } else {
+        const s = yield select(state => state.materialPricing.searchMaterialPricing);
+        if (s) {
+          params = { ...params, ...s };
+        }
+      }
+
+      if (pagination) {
+        params = { ...params, ...pagination };
+        yield put({
+          type: 'savePaginationMaterialPricing',
+          payload: pagination,
+        });
+      } else {
+        const p = yield select(state => state.materialPricing.paginationMaterialPricing);
+        if (p) {
+          params = { ...params, ...p };
+        }
+      }
+      const response = yield call(
+        contractMaterialPricingService.queryMaterialPricingPage,
+        params,
+        proID
+      );
+      yield [
+        put({
+          type: 'saveMaterialPricingList',
+          payload: response,
+        }),
+      ];
+    },
+
     // 查询厂房单条数据
-    *fetchFormMaterialPricing({ payload }, { call, put }) {
+    *fetchFormMaterialPricing({ payload }, { call, put, select }) {
       const response = yield call(contractMaterialPricingService.getMaterialPricingOne, payload);
+      // 变更原因
+      if (response.reason) {
+        const arrReason = response.reason.split(',');
+        response.reason = arrReason;
+      }
       yield put({
         type: 'saveFormDataMaterialPricing',
         payload: response,
       });
     },
 
+    // 查看详情界面
     *loadMaterialPricingForm({ payload }, { put }) {
       yield put({
         type: 'changeFormVisibleMaterialPricing',
         payload: true,
       });
-
+      if (payload.proID) {
+        // 保存proId
+        yield put({
+          type: 'saveProjectID',
+          payload: payload.proID,
+        });
+        yield put({
+          type: 'fetchDesignConTree',
+          payload: {
+            search: {},
+            pagination: {},
+            proID: payload.proID,
+          },
+        });
+        yield put({
+          type: 'fetchSignConTree',
+          payload: {
+            search: {},
+            pagination: {},
+            proID: payload.proID,
+          },
+        });
+      }
+      yield put({
+        type: 'fetchOriginConTree',
+      });
       yield [
         put({
           type: 'saveFormTypeMaterialPricing',
@@ -209,11 +272,15 @@ export default {
           payload: '新增材料批价',
         }),
         put({
-          type: 'saveFormID',
+          type: 'saveFormIDMaterialPricing',
           payload: '',
         }),
         put({
-          type: 'saveformDataMaterialPricing',
+          type: 'saveFormDataMaterialPricing',
+          payload: {},
+        }),
+        put({
+          type: 'fetchChangeReason',
           payload: {},
         }),
       ];
@@ -225,11 +292,11 @@ export default {
             payload: '编辑材料批价',
           }),
           put({
-            type: 'saveFormID',
+            type: 'saveFormIDMaterialPricing',
             payload: payload.id,
           }),
           put({
-            type: 'fetchForm',
+            type: 'fetchFormMaterialPricing',
             payload: { record_id: payload.id },
           }),
         ];
@@ -241,11 +308,11 @@ export default {
             payload: '查看材料批价详情',
           }),
           put({
-            type: 'saveFormID',
+            type: 'saveFormIDMaterialPricing',
             payload: payload.id,
           }),
           put({
-            type: 'fetchForm',
+            type: 'fetchFormMaterialPricing',
             payload: { record_id: payload.id },
           }),
         ];
@@ -258,7 +325,9 @@ export default {
       yield put({ type: 'saveProData', payload: response });
     },
 
+    // 保存
     *submitMaterialPricing({ payload }, { call, put, select }) {
+      const proID = yield select(state => state.materialPricing.proID);
       yield put({
         type: 'changeSubmitting',
         payload: true,
@@ -268,7 +337,6 @@ export default {
       const formTypeMaterialPricing = yield select(
         state => state.materialPricing.formTypeMaterialPricing
       );
-      const proid = payload.project_id;
       let response;
       if (formTypeMaterialPricing === 'E') {
         params.record_id = yield select(state => state.materialPricing.formIDMaterialPricing);
@@ -288,29 +356,35 @@ export default {
           type: 'changeFormVisibleMaterialPricing',
           payload: false,
         });
+        console.log(proID);
         // TODO 查询门牌列表
         yield put({
           type: 'fetchMaterialPricing',
-          search: { project_id: proid },
+          payload: {
+            search: {},
+            pagination: {},
+            proID: proID,
+          },
         });
       }
     },
 
     // 删除厂房
-    *delMaterialPricing({ payload }, { call, put }) {
+    *delMaterialPricing({ payload }, { call, put, select }) {
+      const proID = yield select(state => state.materialPricing.proID);
+      console.log(payload);
+      console.log(proID);
       const response = yield call(contractMaterialPricingService.delMaterialPricing, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
-        yield put({ type: 'fetchMaterialPricing' });
-      }
-    },
-
-    // 合同生效
-    *EntryContract({ payload }, { call, put }) {
-      const response = yield call(contractMaterialPricingService.delMaterialPricing, payload);
-      if (response.status === 'OK') {
-        message.success('生效成功');
-        yield put({ type: 'fetchContractList' });
+        yield put({
+          type: 'fetchMaterialPricing',
+          payload: {
+            search: {},
+            pagination: {},
+            proID: proID,
+          },
+        });
       }
     },
   },
@@ -380,9 +454,21 @@ export default {
     changeFormVisibleVisaSure(state, { payload }) {
       return { ...state, formVisibleVisaSure: payload };
     },
-    // 项目阶段
+    //批价原因
     saveReasonList(state, { payload }) {
       return { ...state, materialPricingList: payload };
+    },
+    //保存原合同
+    saveOriTreeData(state, { payload }) {
+      return { ...state, treeOriginConData: payload };
+    },
+    // 保存设计变更
+    saveDesignTreeData(state, { payload }) {
+      return { ...state, designTreeData: payload };
+    },
+    // 保存签证变更
+    saveSignTreeData(state, { payload }) {
+      return { ...state, signTreeData: payload };
     },
   },
 };

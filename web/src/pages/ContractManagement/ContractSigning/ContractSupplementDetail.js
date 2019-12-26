@@ -15,34 +15,42 @@ import {
   TreeSelect,
 } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import ContractPlanning from './ContractPlanning';
-import PicturesWall from '@/components/PicturesWall/PicturesWall';
+import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import FinishquotingModel from './FinishquotingModel';
 import ContractPlanningSelect from './ContractPlanningSelect';
-@connect(({ contractSupplement }) => ({
-  contractSupplement,
+
+import { getSigingOne } from '@/services/contractSiging';
+
+@connect(({ contractSiging }) => ({
+  contractSiging,
 }))
 @Form.create()
 class ContractSupplementDetail extends PureComponent {
   constructor(props) {
     super(props);
-    this.custom = React.createRef();
-    this.agreement = React.createRef();
     this.state = {
-      data: props.formData ? props.formData : {},
+      data: props.value,
+      estimated_amount: null,
+      estimated_change: null,
+      subject_subitem: undefined,
+      subject: undefined,
+      value: undefined,
       plan: {},
+      // 甲方单位
       jCharge: [],
+      options: [],
+      fileList: [],
+      comData: [],
       // secondCity: cityData[provinceData[0]][0],
     };
   }
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'contractSupplement/loadTree',
+      type: 'contractSiging/fetchTree',
     });
     this.props.dispatch({
-      type: 'contractSupplement/loadOriginConTree',
+      type: 'contractSiging/fetchOriginConTree',
     });
   }
 
@@ -52,71 +60,35 @@ class ContractSupplementDetail extends PureComponent {
     }
     return state;
   }
-  // 点击ok
-  handleDataFormSubmit = addlist => {};
 
-  // 选择余额是否弹框
-  rendeSelectModelForm() {
-    const {
-      contractSupplement: { formVisibleFinishquoting },
-    } = this.props;
-    return (
-      <FinishquotingModel
-        visible={formVisibleFinishquoting}
-        onCancel={this.handleModelFormCancel}
-        onSubmit={this.handleModelFormSubmit}
-      />
-    );
-  }
-
-  // 点击ok
-  handleModelFormSubmit = addlist => {
-    console.log(addlist);
-    // 关闭窗口，调用后台数据
-    this.props.dispatch({
-      type: 'contractSupplement/saveFinishquotingData',
-      payload: {
-        visible: false,
-        data: addlist,
-      },
-    });
-  };
-  // 合约规划是否引用完点击取消
-  handleModelFormCancel = () => {
-    this.props.dispatch({
-      type: 'contractSupplement/changeFormVisibleFinishquoting',
-      payload: false,
-    });
-  };
-
-  // 合约规划是否引用完选择发生变化
-  finishquotingSelect = value => {
-    if (value === '1') {
-      this.props.dispatch({
-        type: 'contractSupplement/changeFormVisibleFinishquoting',
-        payload: true,
-      });
-    }
-  };
-
+  // 点击确定
   onOKClick = () => {
-    const {
-      form,
-      contractSupplement: { proData },
-      onSubmit,
-    } = this.props;
+    const { form, proID, onSubmit, formTypeSupplement } = this.props;
+    const { subject, subject_subitem, comData } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
-        formData.project_id = proData.record_id;
-        formData.parent_id = '';
-        if (formData && formData.building_area) {
-          formData.building_area = Math.round(Number(formData.building_area) * 100);
+        formData.project_id = formData.project_id ? formData.project_id : proID;
+        formData.parent_comcontract_id = comData.record_id;
+        formData.parent_comcontract_name = comData.name;
+        formData.subject = subject;
+        formData.subject_subitem = subject_subitem;
+        // 合同附件修改上传格式
+        const urlArr = [];
+        if (formData.attas) {
+          formData.attas.forEach(ele => {
+            if (formTypeSupplement === 'E') {
+              urlArr.push({
+                url: ele.URL,
+              });
+            } else {
+              urlArr.push({
+                url: ele,
+              });
+            }
+          });
         }
-        if (formData && formData.rent_area) {
-          formData.rent_area = Math.round(Number(formData.rent_area) * 100);
-        }
-
+        formData.attas = urlArr;
         onSubmit(formData);
       }
     });
@@ -127,9 +99,30 @@ class ContractSupplementDetail extends PureComponent {
     dispatch(action);
   };
 
+  // 合约规划选择
+  handleFormChange = (fields, item) => {
+    const {
+      contractSiging: { formDataSupplement },
+    } = this.props;
+    let cost_name_path = [];
+    if (item.cost_name_path) {
+      cost_name_path = item.cost_name_path.split('/');
+      if (cost_name_path && cost_name_path.length > 0) {
+        this.setState({ subject: cost_name_path[cost_name_path.length - 2] });
+        this.setState({ subject_subitem: cost_name_path[cost_name_path.length - 1] });
+      }
+    }
+    this.setState({ estimated_amount: item.planning_price });
+    this.setState({ estimated_change: item.planning_change });
+    this.setState({
+      plan: {
+        cost_id: item.cost_id,
+        name: fields,
+      },
+    });
+  };
   // 单位选择的数据
   toTreeSelect = data => {
-    console.log(data);
     if (!data) {
       return [];
     }
@@ -146,9 +139,8 @@ class ContractSupplementDetail extends PureComponent {
     return newData;
   };
 
-  // 单位选择的数据
+  // 原合同选择的数据
   toOriginContractSelect = data => {
-    console.log(data);
     if (!data) {
       return [];
     }
@@ -156,34 +148,43 @@ class ContractSupplementDetail extends PureComponent {
     for (let i = 0; i < data.length; i += 1) {
       const item = { ...data[i], title: data[i].name, value: data[i].record_id };
       newData.push(item);
-      if (item.in_charge_list && item.in_charge_list.length > 0) {
-        this.setState({
-          jCharge: item.in_charge_list,
-        });
-      }
     }
     return newData;
+  };
+  // 选中之后的变化
+  toOriginSelect = item => {
+    getSigingOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ comData: data });
+    });
   };
 
   render() {
-    const RadioGroup = Radio.Group;
-    const {
-      contractSupplement: {
+    let {
+      contractSiging: {
         formVisibleSupplement,
         formTitleSupplement,
         formDataSupplement,
         submitting,
         formTypeSupplement,
         proData,
-        proID,
         treeData,
-        treeOriginConData
+        treeOriginConData,
       },
+      proID,
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
-    const { plan, jCharge } = this.state;
-    console.log(this.props);
+    const {
+      plan,
+      jCharge,
+      estimated_amount,
+      estimated_change,
+      subject,
+      subject_subitem,
+      formDatas,
+    } = this.state;
     const { TabPane } = Tabs;
     const { Option } = Select;
     const formItemLayout = {
@@ -227,7 +228,15 @@ class ContractSupplementDetail extends PureComponent {
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同编号">
-                {getFieldDecorator('sn')(<Input placeholder="请输入合同编号" />)}
+                {getFieldDecorator('sn', {
+                  initialValue: formDataSupplement.sn,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入合同编号',
+                    },
+                  ],
+                })(<Input placeholder="请输入合同编号" />)}
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -239,23 +248,25 @@ class ContractSupplementDetail extends PureComponent {
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="原合同名称">
-                {getFieldDecorator('parent_comcontract_name', {
-                  initialValue: formDataSupplement.parent_comcontract_name,
+                {getFieldDecorator('parent_comcontract_id', {
+                  initialValue: formDataSupplement.parent_comcontract_id,
                   rules: [
                     {
                       required: true,
                       message: '请输入原合同名称',
                     },
                   ],
-                })(  
-                <TreeSelect
-                  showSearch
-                  treeNodeFilterProp="title"
-                  style={{ width: '100%' }}
-                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                  treeData={this.toOriginContractSelect(treeOriginConData)}
-                  placeholder="请选择"
-                />)}
+                })(
+                  <TreeSelect
+                    showSearch
+                    treeNodeFilterProp="title"
+                    style={{ width: '100%' }}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    treeData={this.toOriginContractSelect(treeOriginConData)}
+                    onChange={this.toOriginSelect}
+                    placeholder="请选择"
+                  />
+                )}
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -294,12 +305,12 @@ class ContractSupplementDetail extends PureComponent {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item {...formItemLayout} label="合同规划">
+              <Form.Item {...formItemLayout} label="合约规划">
                 {getFieldDecorator('contract_planning_id', {
                   initialValue: formDataSupplement.contract_planning_id,
                   rules: [
                     {
-                      required: false,
+                      required: true,
                       message: '请选择合约规划',
                     },
                   ],
@@ -316,42 +327,26 @@ class ContractSupplementDetail extends PureComponent {
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="所属科目">
-                {getFieldDecorator('subject', {
-                  initialValue: formDataSupplement.subject,
-                  rules: [
-                    {
-                      required: true,
-                      message: '请选择所属科目',
-                    },
-                  ],
-                })(<Input disabled />)}
+                {subject}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="所属科目分项">
-                {getFieldDecorator('subject_subitem', {
-                  initialValue: formDataSupplement.subject_subitem,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请选择所属科目',
-                    },
-                  ],
-                })(<Input disabled />)}
+                {subject_subitem}
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同预估金额">
-                {getFieldDecorator('photo')(<Input disabled />)}
+                {estimated_amount}
               </Form.Item>
             </Col>
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item {...formItemLayout} label="预估变更金额">
                 {getFieldDecorator('photo')(<Input disabled />)}
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col span={12}>
@@ -368,11 +363,11 @@ class ContractSupplementDetail extends PureComponent {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item {...formItemLayout3} label="合约规划是否引用完">
+              <Form.Item {...formItemLayout3} label="是否还有并列合同">
                 {getFieldDecorator('finishquoting', {
                   initialValue: formDataSupplement.finishquoting
                     ? formDataSupplement.finishquoting
-                    : '0',
+                    : 1,
                   rules: [
                     {
                       required: true,
@@ -380,9 +375,9 @@ class ContractSupplementDetail extends PureComponent {
                     },
                   ],
                 })(
-                  <Select placeholder="请选择" onSelect={this.finishquotingSelect}>
-                    <Option value="1">是</Option>
-                    <Option value="0">否</Option>
+                  <Select placeholder="请选择">
+                    <Option value={1}>是</Option>
+                    <Option value={0}>否</Option>
                   </Select>
                 )}
               </Form.Item>
@@ -412,7 +407,7 @@ class ContractSupplementDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="是否结算">
                 {getFieldDecorator('settlement', {
-                  initialValue: formDataSupplement.settlement ? formDataSupplement.settlement : '0',
+                  initialValue: formDataSupplement.settlement ? formDataSupplement.settlement : 0,
                   rules: [
                     {
                       required: false,
@@ -421,8 +416,8 @@ class ContractSupplementDetail extends PureComponent {
                   ],
                 })(
                   <Select placeholder="请选择">
-                    <Option value="1">是</Option>
-                    <Option value="0">否</Option>
+                    <Option value={1}>是</Option>
+                    <Option value={0}>否</Option>
                   </Select>
                 )}
               </Form.Item>
@@ -465,6 +460,7 @@ class ContractSupplementDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="甲方单位">
                 {getFieldDecorator('jiafang', {
+                   initialValue: formDataSupplement.jiafang,
                   rules: [
                     {
                       required: true,
@@ -700,7 +696,7 @@ class ContractSupplementDetail extends PureComponent {
             </Col>
           </Row>
         </Form>
-        {this.rendeSelectModelForm()}
+        {/* {this.rendeSelectModelForm()} */}
       </Modal>
     );
   }

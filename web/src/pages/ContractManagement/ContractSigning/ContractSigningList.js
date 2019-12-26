@@ -4,6 +4,7 @@ import { Card, Form, Tabs, TreeSelect } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import ContractSigningView from './ContractSigningView';
 import DraftContract from './DraftContract';
+import Search from 'antd/lib/input/Search';
 @connect(state => ({
   contractSiging: state.contractSiging,
   loading: state.loading.models.contractSiging,
@@ -11,10 +12,34 @@ import DraftContract from './DraftContract';
 @Form.create()
 class ContractSigningList extends PureComponent {
   state = {
-    proID: '',
+    pro_ID: '',
+    activeKey: '1',
   };
   // tab 切换
-  tabChange = () => {
+  tabChange = activeKey => {
+    const { pro_ID } = this.state;
+    this.setState({ activeKey });
+    if (activeKey === '1') {
+      //合同草稿
+      this.props.dispatch({
+        type: 'contractSiging/fetchSiging',
+        payload: {
+          proID: pro_ID,
+          search: {},
+          pagination: {},
+        },
+      });
+    } else if (activeKey === '2') {
+      //合同一栏
+      this.props.dispatch({
+        type: 'contractSiging/fetchContractList',
+        payload: {
+          proID: pro_ID,
+          search: {},
+          pagination: {},
+        },
+      });
+    }
     this.props.dispatch({
       type: 'contractSiging/changeFormVisibleSettlement',
       payload: false,
@@ -27,8 +52,6 @@ class ContractSigningList extends PureComponent {
       type: 'contractSiging/changeFormVisibleSiging',
       payload: false,
     });
-
-    console.log(this.props);
   };
 
   componentDidMount() {
@@ -36,24 +59,41 @@ class ContractSigningList extends PureComponent {
       type: 'contractSiging/queryProTree',
       payload: {},
     });
+  
   }
 
-    handleChange = (value, label) => {
-      console.log(value)
-      this.setState({
-        proID:value
-      })
-     // 刷新路由
-    //  this.dispatch({
-    //    type: 'contractSiging/replaceDetail',
-    //    payload: {
-    //      record_id: value,
-    //      operType: formTypeSiging
-    //    },
-
-    //  });
-    //  location.reload();
-   }
+  // 当前项目选择
+  handleChange = (value, label) => {
+    const { activeKey } = this.state;
+    this.setState({
+      pro_ID: value,
+    });
+    this.props.dispatch({
+      type: 'contractSiging/saveProjectID',
+      payload: value,
+    });
+    if (activeKey === '1') {
+      //合同草稿
+      this.props.dispatch({
+        type: 'contractSiging/fetchSiging',
+        payload: {
+          proID: value,
+          search: {},
+          pagination: {},
+        },
+      });
+    } else if (activeKey === '2') {
+      //合同一栏
+      this.props.dispatch({
+        type: 'contractSiging/fetchContractList',
+        payload: {
+          proID: value,
+          search: {},
+          pagination: {},
+        },
+      });
+    }
+  };
 
   formateTree(list) {
     // 组织机构的颜色为浅色
@@ -70,10 +110,9 @@ class ContractSigningList extends PureComponent {
   render() {
     const { TabPane } = Tabs;
     const {
-      contractSiging: { projectTreeData },
+      contractSiging: { projectTreeData,proID },
     } = this.props;
-    const{proID} = this.state;
-    console.log(this.state)
+    const { pro_ID } = this.state;
     this.formateTree(projectTreeData);
     const breadcrumbList = [
       { title: '合同管理' },
@@ -85,6 +124,7 @@ class ContractSigningList extends PureComponent {
           <div>
             <span>当前项目：</span>
             <TreeSelect
+             value={proID}
               treeData={projectTreeData}
               style={{ width: 200 }}
               onChange={this.handleChange}
