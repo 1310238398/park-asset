@@ -113,8 +113,10 @@ type ComContractAlterSign struct {
 	LaunchDept           string  `gorm:"column:launch_dept"`                  // 发起部门
 	LaunchPerson         string  `gorm:"column:launch_person"`                // 发起人
 	LaunchDate           string  `gorm:"column:launch_date"`                  // 发起日期
-	WorkingCompany       string  `gorm:"column:working_company"`              // 施工单位
-	SupervisionCompany   string  `gorm:"column:supervision_company"`          // 监理单位
+	WorkingCompany       string  `gorm:"column:working_company"`              // 施工单位ID
+	WorkingName          string  `gorm:"column:working_name"`                 // 施工单位名称
+	SupervisionCompany   string  `gorm:"column:supervision_company"`          // 监理单位ID
+	SupervisionName      string  `gorm:"column:supervision_name"`             // 监理单位名称
 	AlterSignType        string  `gorm:"column:alter_sign_type"`              // 签证类型: 技术签证、经济签证、工期签证、其他签证
 	SubsectionName       string  `gorm:"column:subsection_name"`              // 分布工程名称
 	Reason               string  `gorm:"column:reason"`                       // 签证原因
@@ -134,7 +136,8 @@ type ComContractAlterSign struct {
 	Status   uint8  `gorm:"column:status"`    // 状态： 0 保存 1提交审核 2审核通过
 	SignDate string `gorm:"column:sign_date"` // 签证日期
 
-	AffirmWorkingCompany string  `gorm:"affirm_working_company"` //确认信息-施工单位
+	AffirmWorkingCompany string  `gorm:"affirm_working_company"` //确认信息-施工单位ID
+	AffirmWorkingName    string  `gorm:"affirm_working_name"`    //确认信息-施工单位名称
 	AffirmWorkNum        string  `gorm:"affirm_work_num"`        //确认信息-工程量
 	AffirmAmount         float64 `gorm:"affirm_amount"`          // 结算金额
 	AffirmDate           string  `gorm:"affirm_date"`            // 结算日期
@@ -162,7 +165,8 @@ type ComContractAlterStuffPrice struct {
 	LaunchDept      string  `gorm:"column:launch_dept"`                   // 发起部门
 	LaunchPerson    string  `gorm:"column:launch_person"`                 // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                   // 发起日期
-	WorkingCompany  string  `gorm:"column:working_company"`               // 施工单位
+	WorkingCompany  string  `gorm:"column:working_company"`               // 施工单位ID
+	WorkingName     string  `gorm:"column:working_name"`                  // 施工单位名称
 	Reason          string  `gorm:"column:reason"`                        // 签证原因
 	ReasonOther     string  `gorm:"column:reason_other"`                  // 变更其他原因
 	Content         string  `gorm:"column:content"`                       // 变更内容
@@ -348,7 +352,9 @@ func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContract
 		LaunchPerson:         a.LaunchPerson,
 		LaunchDate:           a.LaunchDate,
 		WorkingCompany:       a.WorkingCompany,
+		WorkingName:          a.WorkingName,
 		SupervisionCompany:   a.SupervisionCompany,
+		SupervisionName:      a.SupervisionName,
 		AlterSignType:        a.AlterSignType,
 		SubsectionName:       a.SubsectionName,
 		Reason:               a.Reason,
@@ -369,6 +375,7 @@ func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContract
 		AffirmDate:           a.AffirmDate,
 		AffirmRemark:         a.AffirmRemark,
 		AffirmWorkingCompany: a.AffirmWorkingCompany,
+		AffirmWorkingName:    a.AffirmWorkingName,
 		AffirmWorkNum:        a.AffirmWorkNum,
 	}
 	return item
@@ -392,7 +399,9 @@ func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSi
 		LaunchPerson:         a.LaunchPerson,
 		LaunchDate:           a.LaunchDate,
 		WorkingCompany:       a.WorkingCompany,
+		WorkingName:          a.WorkingName,
 		SupervisionCompany:   a.SupervisionCompany,
+		SupervisionName:      a.SupervisionName,
 		AlterSignType:        a.AlterSignType,
 		SubsectionName:       a.SubsectionName,
 		Reason:               a.Reason,
@@ -413,6 +422,7 @@ func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSi
 		AffirmDate:           a.AffirmDate,
 		AffirmRemark:         a.AffirmRemark,
 		AffirmWorkingCompany: a.AffirmWorkingCompany,
+		AffirmWorkingName:    a.AffirmWorkingName,
 		AffirmWorkNum:        a.AffirmWorkNum,
 	}
 	return item
@@ -455,6 +465,7 @@ func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema
 		LaunchPerson:    a.LaunchPerson,
 		LaunchDate:      a.LaunchDate,
 		WorkingCompany:  a.WorkingCompany,
+		WorkingName:     a.WorkingName,
 		ProjectName:     a.ProjectName,
 		Reason:          a.Reason,
 		ReasonOther:     a.ReasonOther,
@@ -487,6 +498,7 @@ func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComCon
 		LaunchPerson:    a.LaunchPerson,
 		LaunchDate:      a.LaunchDate,
 		WorkingCompany:  a.WorkingCompany,
+		WorkingName:     a.WorkingName,
 		ProjectName:     a.ProjectName,
 		Reason:          a.Reason,
 		ReasonOther:     a.ReasonOther,

@@ -111,8 +111,10 @@ type ComContractAlterSign struct {
 	LaunchDept           string    `json:"launch_dept" swaggo:"false, 发起部门"`                          // 发起部门
 	LaunchPerson         string    `json:"launch_person" swaggo:"false, 发起人"`                         // 发起人
 	LaunchDate           string    `json:"launch_date" swaggo:"false, 发起日期"`                          // 发起日期
-	WorkingCompany       string    `json:"working_company" swaggo:"false, 施工单位"`                      // 施工单位
-	SupervisionCompany   string    `json:"supervision_company" swaggo:"false, 监理单位"`                  // 监理单位
+	WorkingCompany       string    `json:"working_company" swaggo:"false, 施工单位ID"`                    // 施工单位ID
+	WorkingName          string    `json:"working_name" swaggo:"false, 施工单位名称"`                       // 施工单位名称
+	SupervisionCompany   string    `json:"supervision_company" swaggo:"false, 监理单位ID"`                // 监理单位ID
+	SupervisionName      string    `json:"supervision_name" swaggo:"false, 监理单位名称"`                   // 监理单位名称
 	AlterSignType        string    `json:"alter_sign_type" swaggo:"false, 签证类型: 技术签证、经济签证、工期签证、其他签证"` // 签证类型: 技术签证、经济签证、工期签证、其他签证
 	SubsectionName       string    `json:"subsection_name" swaggo:"false, 分布工程名称"`                    // 分布工程名称
 	Reason               string    `json:"reason" swaggo:"false, 签证原因"`                               // 签证原因
@@ -133,11 +135,12 @@ type ComContractAlterSign struct {
 	SignDate string                   `json:"sign_date" swaggo:"false, 签证日期"`                           // 签证日期
 	Attas    []*ComContractAttachment `json:"attas" swago:"false, 附件列表"`                                // 附件列表
 
-	AffirmWorkingCompany string  `json:"affiirm_working_company" swaggo:"false, 施工单位"` //确认信息-施工单位
-	AffirmWorkNum        string  `json:"affiirm_work_num" swaggo:"false, 工程量"`         //确认信息-工程量
-	AffirmAmount         float64 `json:"affirm_amount" swaggo:"false, 结算金额"`           // 结算金额
-	AffirmDate           string  `json:"affirm_date" swaggo:"false, 结算日期"`             // 结算日期
-	AffirmRemark         string  `json:"affirm_remark" swaggo:"false, 结算备注"`           // 结算备注
+	AffirmWorkingCompany string  `json:"affiirm_working_company" swaggo:"false, 施工单位ID"` //确认信息-施工单位ID
+	AffirmWorkingName    string  `json:"affiirm_working_name" swaggo:"false, 施工单位名称"`    //确认信息-施工单位名称
+	AffirmWorkNum        string  `json:"affiirm_work_num" swaggo:"false, 工程量"`           //确认信息-工程量
+	AffirmAmount         float64 `json:"affirm_amount" swaggo:"false, 结算金额"`             // 结算金额
+	AffirmDate           string  `json:"affirm_date" swaggo:"false, 结算日期"`               // 结算日期
+	AffirmRemark         string  `json:"affirm_remark" swaggo:"false, 结算备注"`             // 结算备注
 }
 
 // ComContractAlterSignQueryParam 查询条件
@@ -182,7 +185,8 @@ type ComContractAlterStuffPrice struct {
 	LaunchDept      string                          `json:"launch_dept" swaggo:"false, 发起部门"`            // 发起部门
 	LaunchPerson    string                          `json:"launch_person" swaggo:"false, 发起人"`           // 发起人
 	LaunchDate      string                          `json:"launch_date" swaggo:"false, 发起日期"`            // 发起日期
-	WorkingCompany  string                          `json:"working_company" swaggo:"false, 施工单位"`        // 施工单位
+	WorkingCompany  string                          `json:"working_company" swaggo:"false, 施工单位ID"`      // 施工单位ID
+	WorkingName     string                          `json:"working_name" swaggo:"false, 施工单位名称"`         // 施工单位名称
 	Reason          string                          `json:"reason" swaggo:"false, 签证原因"`                 // 签证原因
 	ReasonOther     string                          `json:"reason_other" swaggo:"false, 变更其他原因"`         // 变更其他原因
 	Content         string                          `json:"content" swaggo:"false, 变更内容"`                // 变更内容
@@ -259,12 +263,13 @@ type ComContractAlterDesignAffirmInfo struct {
 
 // ComContractAlterSignAffirmInfo 签证变更确认信息
 type ComContractAlterSignAffirmInfo struct {
-	AffirmWorkingCompany string                   `json:"affirm_working_company" swaggo:"false, 施工单位"` //确认信息-施工单位
-	AffirmWorkNum        string                   `json:"affirm_work_num" swaggo:"false, 工程量"`         //确认信息-工程量
-	AffirmAmount         float64                  `json:"affirm_amount" swaggo:"false, 结算金额"`          // 结算金额
-	AffirmDate           string                   `json:"affirm_date" swaggo:"false, 结算日期"`            // 结算日期
-	AffirmRemark         string                   `json:"affirm_remark" swaggo:"false, 结算备注"`          // 结算备注
-	Attas                []*ComContractAttachment `json:"attas" swaggo:"false, 附件列表"`                  // 附件列表
+	AffirmWorkingCompany string                   `json:"affirm_working_company" swaggo:"false, 施工单位ID"` //确认信息-施工单位ID
+	AffirmWorkingName    string                   `json:"affirm_working_name" swaggo:"false, 施工单位名称"`    //确认信息-施工单位名称
+	AffirmWorkNum        string                   `json:"affirm_work_num" swaggo:"false, 工程量"`           //确认信息-工程量
+	AffirmAmount         float64                  `json:"affirm_amount" swaggo:"false, 结算金额"`            // 结算金额
+	AffirmDate           string                   `json:"affirm_date" swaggo:"false, 结算日期"`              // 结算日期
+	AffirmRemark         string                   `json:"affirm_remark" swaggo:"false, 结算备注"`            // 结算备注
+	Attas                []*ComContractAttachment `json:"attas" swaggo:"false, 附件列表"`                    // 附件列表
 }
 
 // ComContractAttachmentInput 附件输入对象
