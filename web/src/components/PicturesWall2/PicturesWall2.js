@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Icon, Modal, Button } from 'antd';
+import store from '@/utils/store';
 import styles from './PicturesWall2.less';
 
 const defaction = '/api/v1/files';
@@ -136,25 +137,25 @@ export default class PicturesWall2 extends React.Component {
 
   triggerChange = ({ fileList }) => {
     // Should provide an event to pass value to Form.
-    
+
     const { onChange } = this.props;
     if (onChange) {
       const tmp = fileList.filter(item => {
         return {}.hasOwnProperty.call(item, 'url');
       });
-     
+
       const out = tmp.map(item => {
         if ({}.hasOwnProperty.call(item, 'url')) {
-            let out_item = {};
-            out_item.path = item.url;
-            out_item.size = item.size;
-            out_item.name = item.name;
+          let out_item = {};
+          out_item.path = item.url;
+          out_item.size = item.size;
+          out_item.name = item.name;
           return out_item;
         } else {
           return '';
         }
       });
-      
+
       if (this.isChg(out)) {
         this.validFilelist = [...out];
         onChange(out);
@@ -185,7 +186,6 @@ export default class PicturesWall2 extends React.Component {
 
   handleChange = info => {
     let { fileList } = info;
-
 
     // 1. Limit the number of uploaded files
     // Only to show two recent uploaded files, and old ones will be replaced by the new
@@ -231,6 +231,7 @@ export default class PicturesWall2 extends React.Component {
     const { previewVisible, previewImage, action, name } = this.state;
     const { listType, bucket, accept, rich, showUploadList, disabled } = this.props;
     const { fileList } = this;
+    const tokenInfo = store.getAccessToken();
     const uprop = {
       action,
       showUploadList,
@@ -239,6 +240,9 @@ export default class PicturesWall2 extends React.Component {
       data: { bucket },
       name,
       disabled,
+      headers: {
+        Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
+      },
     };
     if (accept) {
       uprop.accept = accept;
