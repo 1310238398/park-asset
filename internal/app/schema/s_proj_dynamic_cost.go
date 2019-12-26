@@ -6,16 +6,17 @@ import (
 
 // ProjDynamicCost 项目动态成本
 type ProjDynamicCost struct {
-	CostName   string  `json:"cost_name" swaggo:"false,成本项名称"`      //成本项名称
-	ProjCostID string  `json:"proj_cost_id" swaggo:"false,项目成本项ID"` //项目成本项ID
-	TargetCost float64 `json:"target_cost" swaggo:"false,目标成本"`     // 目标成本
-	Settled    float64 `json:"settled" swaggo:"false,结算成本"`         //结算成本
-	Unsettled  float64 `json:"unsettled" swaggo:"false,待结算成本"`      //待结算成本
-	OnApproval float64 `json:"on_approval" swaggo:"false,在途成本"`     // 在途成本
-	All        float64 `json:"all" swaggo:"false,最终成本"`             // 最终成本
-	Transfer   float64 `json:"transfer" swaggo:"false,调动金额"`        // 调动金额
-	Balance    float64 `json:"balance" swaggo:"false,余额"`           // 余额
-	Freeze     float64 `json:"freeze" swaggo:"false,冻结金额"`          // 冻结金额
+	CostName       string  `json:"cost_name" swaggo:"false,成本项名称"`         //成本项名称
+	ProjCostID     string  `json:"proj_cost_id" swaggo:"false,项目成本项ID"`    //项目成本项ID
+	TargetCost     float64 `json:"target_cost" swaggo:"false,目标成本"`        // 目标成本
+	Settled        float64 `json:"settled" swaggo:"false,结算成本"`            //结算成本
+	Unsettled      float64 `json:"unsettled" swaggo:"false,待结算成本"`         //待结算成本
+	OnApproval     float64 `json:"on_approval" swaggo:"false,在途成本"`        // 在途成本
+	LeftPlanAmount float64 `json:"left_plan_amount" swaggo:"false,剩余规划金额"` //剩余规划金额
+	All            float64 `json:"all" swaggo:"false,最终成本"`                // 最终成本
+	Transfer       float64 `json:"transfer" swaggo:"false,调动金额"`           // 调动金额
+	Balance        float64 `json:"balance" swaggo:"false,余额"`              // 余额
+	Freeze         float64 `json:"freeze" swaggo:"false,冻结金额"`             // 冻结金额
 }
 
 // ProjDynamicCostTree 项目动态成本科目树结构
