@@ -27,129 +27,57 @@ import ContractSigningShow from './ContractSigningShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import moment from 'moment';
-const FormItem = Form.Item;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
 class DraftContract extends PureComponent {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       selectedRowKeys: [],
       selectedRows: [],
     };
   }
 
-  componentDidMount() {
-    const {
-      contractSiging: { formID, proID },
-    } = this.props;
-    console.log(this.props);
-    this.dispatch({
-      type: 'contractSiging/fetchSiging',
-      search: {},
-      pagination: {},
-      pro_id: formID,
-    });
-  }
 
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
   };
 
+  // 查询
   handleSearchFormSubmit = e => {
     if (e) {
       e.preventDefault();
     }
-    console.log('handleSearchFormSubmit');
 
     const { form } = this.props;
+    
     form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return;
       }
       const {
-        contractSiging: { formID },
+        contractSiging: { proID },
       } = this.props;
       const formData = { ...values };
-      console.log('form数据  ' + JSON.stringify(formData));
 
       this.dispatch({
         type: 'contractSiging/fetchSiging',
-        search: formData,
+        payload:{
+          search: formData,
         pagination: {},
-        pro_id: formID,
-      });
-      //this.clearSelectRows();
-    });
-  };
-
-  isEditing = record => record.record_id === this.state.editingKey;
-
-  save(form, key) {
-    // key是项目业态id
-    const {
-      contractSiging: {
-        data: { list, pagination },
-      },
-    } = this.props;
-    console.log('要保存数据的key ' + key);
-
-    form.validateFields(async (error, row) => {
-      if (error) {
-        return;
-      }
-      const newData = list;
-
-      const index = newData.findIndex(item => key === item.record_id);
-      if (index > -1) {
-        const item = newData[index];
-        row.record_id = key;
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-
-        let response;
-
-        response = await updatecontractSiging(row);
-        if (response.record_id && response.record_id !== '') {
-          message.success('更新成功');
-          this.setState({ editingKey: '' });
-          this.dispatch({
-            type: 'contractSiging/saveData',
-            payload: {
-              list: [...newData],
-              pagination: pagination,
-            },
-          });
+        proID:proID
         }
-      }
+      });
+      this.clearSelectRows();
     });
-  }
-
-  deletePlan(key) {
-    this.dispatch({
-      type: 'contractSiging/del',
-      payload: key,
-    });
-  }
-  edit(key) {
-    this.setState({ editingKey: key });
-  }
-
-  cancel = () => {
-    this.setState({ editingKey: '' });
   };
 
   // 新增合同
   handleAddContractClick = () => {
-    console.log(this.props);
     const { proID } = this.props;
     if (!proID) {
       message.warning('请先选择当前项目，进行相应的数据操作');
@@ -158,27 +86,37 @@ class DraftContract extends PureComponent {
         type: 'contractSiging/loadSigingForm',
         payload: {
           type: 'A',
-          proID:proID
+          proID: proID,
         },
       });
     }
   };
   // 编辑合同界面
   handleEditClick = item => {
-    const  proID  = item.project_id;
-    if(!proID){
-
-    }else{
-      this.dispatch({
-        type: 'contractSiging/loadSigingForm',
-        payload: {
-          type: 'E',
-          id: item.record_id,
-          proID: proID
-        },
-      });
+    const proID = item.project_id;
+    if (!proID) {
+      message.warning('请先选择当前项目，进行相应的数据操作');
+    } else {
+      if (!item.parent_comcontract_name) {
+        this.dispatch({
+          type: 'contractSiging/loadSigingForm',
+          payload: {
+            type: 'E',
+            id: item.record_id,
+            proID: proID,
+          },
+        });
+      } else {
+        this.dispatch({
+          type: 'contractSiging/loadSupplementForm',
+          payload: {
+            type: 'E',
+            id: item.record_id,
+            proID: proID,
+          },
+        });
+      }
     }
-   
   };
 
   // 合同提交审核界面
@@ -198,9 +136,10 @@ class DraftContract extends PureComponent {
       message.warning('请先选择当前项目，进行相应的数据操作');
     } else {
       this.dispatch({
-        type: 'contractSupplement/loadSupplementForm',
+        type: 'contractSiging/loadSupplementForm',
         payload: {
           type: 'A',
+          proID: proID,
         },
       });
     }
@@ -208,26 +147,34 @@ class DraftContract extends PureComponent {
 
   // 编辑补充合同
   handleEditSupplementClick = item => {
-    this.dispatch({
-      type: 'contractSupplement/loadSupplementForm',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-      },
-    });
+    const proID = item.project_id;
+    if (!proID) {
+    } else {
+      this.dispatch({
+        type: 'contractSiging/loadSupplementForm',
+        payload: {
+          type: 'E',
+          id: item.record_id,
+          proID: proID,
+        },
+      });
+    }
   };
+  // 重置
   handleResetFormClick = () => {
     const {
       form,
-      contractSiging: { formID },
+      contractSiging: { proID },
     } = this.props;
     form.resetFields();
 
     this.dispatch({
       type: 'contractSiging/fetchSiging',
+     payload:{
       search: {},
       pagination: {},
-      pro_id: formID,
+      proID: proID,
+     }
     });
   };
 
@@ -239,17 +186,21 @@ class DraftContract extends PureComponent {
     });
   };
 
+  // tab变化
   handleTableChange = pagination => {
     const {
-      contractSiging: { formID },
+      contractSiging: { proID },
     } = this.props;
     this.dispatch({
       type: 'contractSiging/fetchSiging',
-      pagination: {
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        project_id: formID,
-      },
+      payload:{
+        pagination: {
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+        },
+        search:{},
+        proID:proID
+      }
     });
     this.clearSelectRows();
   };
@@ -271,29 +222,32 @@ class DraftContract extends PureComponent {
   };
   // 保存提交合同
   handleDataFormSubmit = data => {
-    console.log(data)
     this.dispatch({
       type: 'contractSiging/submitSiging',
-      payload: data,
+      payload: {
+        data,
+        type: 'siging',
+      },
     });
     this.clearSelectRows();
   };
   // 取消关闭b补充合同页面
   handleSuppleDataFormCancel = () => {
     this.dispatch({
-      type: 'contractSupplement/changeFormVisibleSupplement',
+      type: 'contractSiging/changeFormVisibleSupplement',
       payload: false,
     });
   };
 
   // 查看单个合同信息
   handleSeeClick = item => {
-    console.log(item);
+    const proID = item.project_id;
     this.dispatch({
       type: 'contractSiging/loadSigingForm',
       payload: {
         type: 'S',
         id: item.record_id,
+        proID: proID,
       },
     });
   };
@@ -301,10 +255,8 @@ class DraftContract extends PureComponent {
   // 渲染新增页面还是编辑页面还是查看页面
   renderDataForm() {
     const {
-      contractSiging: { formTypeSiging , proID },
+      contractSiging: { formTypeSiging, proID },
     } = this.props;
-    console.log(this.props)
-    console.log(proID)
     if (formTypeSiging !== 'S') {
       return (
         <ContractSigningDetail
@@ -315,19 +267,32 @@ class DraftContract extends PureComponent {
         />
       );
     } else {
-      return <ContractSigningShow onCancel={this.handleDataFormCancel} />;
+      return <ContractSigningShow proID={proID} onCancel={this.handleDataFormCancel} />;
     }
   }
+
+  // 保存新增补充合同
+  handleSuppleDataFormSubmit = data => {
+    this.dispatch({
+      type: 'contractSiging/submitSiging',
+      payload: {
+        data,
+        type: 'supple',
+      },
+    });
+    this.clearSelectRows();
+  };
 
   // 渲染补充合同的新增还是编辑还是查看
   renderSupplementDataForm() {
     const {
-      contractSupplement: { formTypeSupplement },
+      contractSiging: { formTypeSupplement, proID },
     } = this.props;
-
     if (formTypeSupplement !== 'S') {
       return (
         <ContractSupplementDetail
+          proID={proID}
+          formTypeSupplement={formTypeSupplement}
           onCancel={this.handleSuppleDataFormCancel}
           onSubmit={this.handleSuppleDataFormSubmit}
         />
@@ -336,10 +301,11 @@ class DraftContract extends PureComponent {
       // return <contractSigingShow onCancel={this.handleDataFormCancel} />;
     }
   }
+
   // 删除合同
   handleDelClick = item => {
     Modal.confirm({
-      title: `确定删除【项目数据：${item.name}】？`,
+      title: `确定删除【合同数据：${item.name}】？`,
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
@@ -357,7 +323,6 @@ class DraftContract extends PureComponent {
 
   // 乙方单位模糊查询
   toTreeSelect = data => {
-    console.log(data);
     if (!data) {
       return [];
     }
@@ -416,7 +381,7 @@ class DraftContract extends PureComponent {
           </Col>
           <Col {...col}>
             <Form.Item {...formItemLayout} label="合同类别">
-              {getFieldDecorator('cate')(
+              {getFieldDecorator('category')(
                 <DicSelect
                   vmode="string"
                   pcode="contract$#contractType"
@@ -432,7 +397,7 @@ class DraftContract extends PureComponent {
                 <Button type="primary" htmlType="submit">
                   搜索
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
                   重置
                 </Button>
               </span>
@@ -458,7 +423,8 @@ class DraftContract extends PureComponent {
         dataIndex: 'status',
         width: 100,
         render: val => {
-          return <DicShow pcode="contract$#ContractStatus" code={[val]} />;
+          let value =val.toString();
+          return <DicShow pcode="contract$#ContractStatus" code={[value]} />;
         },
       },
       // {
@@ -472,13 +438,14 @@ class DraftContract extends PureComponent {
       {
         title: '合同类别',
         dataIndex: 'property',
+        width: 150,
         render: val => {
           return <DicShow pcode="contract$#contractType" code={[val]} />;
         },
       },
       {
         title: '乙方单位',
-        dataIndex: 'yifang',
+        dataIndex: 'yifang_name',
       },
       {
         title: '签订日期',
@@ -487,8 +454,7 @@ class DraftContract extends PureComponent {
         render: (text, record) => {
           return (
             <div style={{ textAlign: 'center' }}>
-              { record.created_at === null ? "":
-              moment(record.created_at).format('YYYY-MM-DD')}
+              {record.created_at === null ? '' : moment(record.created_at).format('YYYY-MM-DD')}
             </div>
           );
         },
@@ -568,6 +534,7 @@ class DraftContract extends PureComponent {
                 columns={columns}
                 pagination={paginationProps}
                 onChange={this.handleTableChange}
+                size="small"
               ></Table>
             </div>
           </div>

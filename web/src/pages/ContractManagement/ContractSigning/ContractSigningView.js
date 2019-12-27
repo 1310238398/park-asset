@@ -16,22 +16,29 @@ import {
   Divider,
   Button,
   InputNumber,
+  Tabs
 } from 'antd';
+import moment from 'moment';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import styles from './ContractSigning.less';
 import ContractSigningDetail from './ContractSigningDetail';
 import ContractSupplementDetail from './ContractSupplementDetail';
 import ContractSigningShow from './ContractSigningShow';
-import ContractSigningTable from './ContractSigningTable';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import ContractSettlementDetail from './ContractSettlementDetail';
 import ContractTakeEffectDetail from './ContractTakeEffectDetail';
-const FormItem = Form.Item;
+import PaymentInformation from './PaymentInformation';
+import FinancialInformation from './FinancialInformation';
+import ContractSettlement from './ContractSettlement';
+import DesignChange from './DesignChange';
+import VisaChange from './VisaChange';
+import MaterialPricing from './MaterialPricing';
+import OtherInformation from './OtherInformation';
+const { TabPane } = Tabs;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
@@ -39,31 +46,21 @@ class ContractSigningView extends PureComponent {
   state = {
     selectedRowKeys: [],
     selectedRows: [],
+    selectData: [],
   };
 
-  componentDidMount() {
-    const {
-      contractSiging: { formID },
-    } = this.props;
-
-    this.dispatch({
-      type: 'contractSiging/fetchContractList',
-      search: {},
-      pagination: {},
-      pro_id: formID,
-    });
-  }
+  componentDidMount() {}
 
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
   };
 
+  // 查寻条件
   handleSearchFormSubmit = e => {
     if (e) {
       e.preventDefault();
     }
-    console.log('handleSearchFormSubmit');
 
     const { form } = this.props;
     form.validateFields({ force: true }, (err, values) => {
@@ -71,131 +68,37 @@ class ContractSigningView extends PureComponent {
         return;
       }
       const {
-        contractSiging: { formID },
+        contractSiging: { proID },
       } = this.props;
       const formData = { ...values };
-      console.log('form数据  ' + JSON.stringify(formData));
 
       this.dispatch({
-        type: 'contractSiging/fetch',
-        search: formData,
-        pagination: {},
-        pro_id: formID,
+        type: 'contractSiging/fetchContractList',
+        payload: {
+          search: formData,
+          pagination: {},
+          proID: proID,
+        },
       });
       //this.clearSelectRows();
     });
   };
 
-  isEditing = record => record.record_id === this.state.editingKey;
-
-  save(form, key) {
-    // key是项目业态id
-    const {
-      contractSiging: {
-        dataConSiging: { list, pagination },
-      },
-    } = this.props;
-    console.log('要保存数据的key ' + key);
-
-    form.validateFields(async (error, row) => {
-      if (error) {
-        return;
-      }
-      const newData = list;
-
-      const index = newData.findIndex(item => key === item.record_id);
-      if (index > -1) {
-        const item = newData[index];
-        row.record_id = key;
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-
-        let response;
-
-        response = await updatecontractSiging(row);
-        if (response.record_id && response.record_id !== '') {
-          message.success('更新成功');
-          this.setState({ editingKey: '' });
-          this.dispatch({
-            type: 'contractSiging/saveData',
-            payload: {
-              list: [...newData],
-              pagination: pagination,
-            },
-          });
-        }
-      }
-    });
-  }
-
-  deletePlan(key) {
-    this.dispatch({
-      type: 'contractSiging/del',
-      payload: key,
-    });
-  }
-  edit(key) {
-    this.setState({ editingKey: key });
-  }
-
-  cancel = () => {
-    this.setState({ editingKey: '' });
-  };
-
-  // 新增合同
-  handleAddContractClick = () => {
-    this.dispatch({
-      type: 'contractSiging/loadSigingForm',
-      payload: {
-        type: 'A',
-      },
-    });
-  };
-  // 编辑合同界面
-  handleEditClick = item => {
-    this.dispatch({
-      type: 'contractSiging/loadSigingForm',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-      },
-    });
-  };
-
-  // 新增补充合同
-  handleAddSupplementClick = () => {
-    this.dispatch({
-      type: 'contractSupplement/loadSupplementForm',
-      payload: {
-        type: 'A',
-      },
-    });
-  };
-
-  // 编辑补充合同
-  handleEditSupplementClick = item => {
-    this.dispatch({
-      type: 'contractSupplement/loadSupplementForm',
-      payload: {
-        type: 'E',
-        id: item.record_id,
-      },
-    });
-  };
+  // 重置
   handleResetFormClick = () => {
     const {
       form,
-      contractSiging: { formID },
+      contractSiging: { proID },
     } = this.props;
     form.resetFields();
 
     this.dispatch({
-      type: 'contractSiging/fetch',
-      search: {},
-      pagination: {},
-      pro_id: formID,
+      type: 'contractSiging/fetchContractList',
+      payload: {
+        search: {},
+        pagination: {},
+        proID: proID,
+      },
     });
   };
 
@@ -205,18 +108,34 @@ class ContractSigningView extends PureComponent {
       selectedRowKeys: keys,
       selectedRows: rows,
     });
+    this.dispatch({
+      type: 'contractSiging/fetchDesiginOneSiging',
+      payload: keys[keys.length - 1],
+    });
+    this.dispatch({
+      type: 'contractSiging/fetchVisaOneSiging',
+      payload: keys[keys.length - 1],
+    });
+    this.dispatch({
+      type: 'contractSiging/fetchMaterialOneSiging',
+      payload: keys[keys.length - 1],
+    });
   };
 
+  // tab change
   handleTableChange = pagination => {
     const {
-      contractSiging: { formID },
+      contractSiging: { proID },
     } = this.props;
     this.dispatch({
-      type: 'contractSiging/fetch',
-      pagination: {
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        project_id: formID,
+      type: 'contractSiging/fetchSiging',
+      payload: {
+        pagination: {
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+        },
+        search: {},
+        proID: proID,
       },
     });
     this.clearSelectRows();
@@ -232,10 +151,13 @@ class ContractSigningView extends PureComponent {
 
   // 合同生效
   handleTakeffectClick = item => {
-    console.log(item);
     this.dispatch({
       type: 'contractSiging/changeFormVisibleTakeEffect',
       payload: true,
+    });
+    this.dispatch({
+      type: 'contractSiging/saveLoadTakeEffect',
+      payload: item,
     });
   };
   // 合同生效
@@ -249,39 +171,68 @@ class ContractSigningView extends PureComponent {
   // 渲染合同生效页面
   renderTakeffectForm() {
     const {
-      contractSiging: { formVisibleTakeEffect },
+      contractSiging: { formVisibleTakeEffect, loadTakeEffectData },
     } = this.props;
-    console.log(this.props);
     return (
       <ContractTakeEffectDetail
+        data={loadTakeEffectData}
         visible={formVisibleTakeEffect}
         onCancel={this.handleFormVisibleTakeEffectFormCancel}
         onSubmit={this.handleFormVisibleTakeEffectFormSubmit}
       />
     );
   }
+  // 合同生效
+  handleFormVisibleTakeEffectFormSubmit = data => {
+    this.dispatch({
+      type: 'contractSiging/EntryContract',
+      payload: {
+        record_id: data.record_id,
+        data,
+      },
+    });
+    this.clearSelectRows();
+  };
 
   // 合同结算
-  handleSettlementtClick = () => {
+  handleSettlementtClick = item => {
     this.dispatch({
       type: 'contractSiging/changeFormVisibleSettlement',
       payload: true,
+    });
+    this.dispatch({
+      type: 'contractSiging/saveLoadTakeEffect',
+      payload: item,
     });
   };
 
   // 渲染合同结算页面
   renderSettlementForm() {
     const {
-      contractSiging: { formVisibleSettlement },
+      contractSiging: { formVisibleSettlement, loadTakeEffectData, dataSupplement },
     } = this.props;
     return (
       <ContractSettlementDetail
+        dataSupplement={dataSupplement}
         visible={formVisibleSettlement}
         onCancel={this.handleSettlementFormCancel}
         onSubmit={this.handleSettlementFormSubmit}
       />
     );
   }
+  // 合同结算
+  handleSettlementFormSubmit = data => {
+    const {
+      contractSiging: { loadTakeEffectData },
+    } = this.props;
+    this.dispatch({
+      type: 'contractSiging/settlementSave',
+      payload: {
+        data,
+        record_id: loadTakeEffectData.record_id,
+      },
+    });
+  };
 
   // 取消关闭合同结算页面
   handleSettlementFormCancel = () => {
@@ -316,7 +267,6 @@ class ContractSigningView extends PureComponent {
 
   // 查看单个合同信息
   handleSeeClick = item => {
-    console.log(item);
     this.dispatch({
       type: 'contractSiging/loadSigingForm',
       payload: {
@@ -333,34 +283,11 @@ class ContractSigningView extends PureComponent {
     } = this.props;
 
     if (formTypeSiging !== 'S') {
-      return (
-        <ContractSigningDetail
-          onCancel={this.handleDataFormCancel}
-          onSubmit={this.handleDataFormSubmit}
-        />
-      );
     } else {
       return <ContractSigningShow onCancel={this.handleDataFormCancel} />;
     }
   }
 
-  // 渲染补充合同的新增还是编辑还是查看
-  renderSupplementDataForm() {
-    const {
-      contractSupplement: { formTypeSupplement },
-    } = this.props;
-
-    if (formTypeSupplement !== 'S') {
-      return (
-        <ContractSupplementDetail
-          onCancel={this.handleSuppleDataFormCancel}
-          onSubmit={this.handleSuppleDataFormSubmit}
-        />
-      );
-    } else {
-      // return <contractSigingShow onCancel={this.handleDataFormCancel} />;
-    }
-  }
   // 删除合同
   handleDelClick = item => {
     Modal.confirm({
@@ -434,7 +361,7 @@ class ContractSigningView extends PureComponent {
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
                   重置
                 </Button>
               </span>
@@ -450,10 +377,13 @@ class ContractSigningView extends PureComponent {
       form: { getFieldDecorator },
       contractSiging: {
         formTypeSiging,
-        dataSiging: { list, pagination },
+        dataConSiging: { list, pagination },
+        desiginData,
       },
     } = this.props;
+ let design = Object.keys(desiginData).length;
     const { selectedRowKeys, selectedRows } = this.state;
+
     const columns = [
       {
         title: '合同状态',
@@ -461,7 +391,8 @@ class ContractSigningView extends PureComponent {
         width: 140,
         fixed: 'left',
         render: val => {
-          return <DicShow pcode="contract$#ContractStatus" code={[val]} />;
+          let value = val.toString();
+          return <DicShow pcode="contract$#ContractStatus" code={[value]} />;
         },
       },
       {
@@ -484,29 +415,44 @@ class ContractSigningView extends PureComponent {
       },
       {
         title: '合同额（不含甲供）',
-        dataIndex: 'sex',
+        dataIndex: '',
         width: 200,
+        render: (text, record) => {
+          const amount = record.amount;
+          const jia_stuffs_amount = record.jia_stuffs_amount;
+          return <div>{amount - jia_stuffs_amount}</div>;
+        },
       },
 
       {
         title: '乙方单位',
-        dataIndex: 'tags',
+        dataIndex: 'jiafang_name',
         width: 200,
       },
       {
         title: '签订日期',
-        dataIndex: 'date',
-        width: 140,
+        dataIndex: 'created_at',
+        width: 120,
+        render: (text, record) => {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              {record.created_at === null ? '' : moment(record.created_at).format('YYYY-MM-DD')}
+            </div>
+          );
+        },
       },
       {
         title: '结算金额（不含甲供）',
-        dataIndex: 'age1',
+        dataIndex: 'settlement_amount',
         width: 200,
       },
       {
         title: '累计付款',
-        dataIndex: 'age2',
+        dataIndex: '',
         width: 150,
+        render: (text, record) => {
+          return <div>{record.settlement_amount}</div>;
+        },
       },
     ];
     const paginationProps = {
@@ -515,48 +461,6 @@ class ContractSigningView extends PureComponent {
       showTotal: total => <span>共{total}条</span>,
       ...pagination,
     };
-
-    const data = [
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b542',
-        status: 3,
-        index: '合同名称11',
-        name: 'John Brown',
-        age: '2019-01-12',
-        address: '3',
-        tags: ['nice', 'developer'],
-        sex: 100.09,
-        date: '2019-10-12',
-        age1: 233,
-        age2: 3333,
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b541',
-        status: 3,
-        index: '合同名称2',
-        name: 'Jim Green',
-        age: '2019-01-12',
-        address: '2',
-        tags: ['loser'],
-        sex: 100,
-        date: '2019-10-12',
-        age1: 233,
-        age2: 444,
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b54e',
-        status: 5,
-        index: '合同名称3',
-        name: 'Joe Black',
-        age: '2019-01-12',
-        address: '1',
-        tags: ['cool', 'teacher'],
-        sex: 200,
-        date: '2019-10-12',
-        age1: 23333,
-        age2: 3333,
-      },
-    ];
 
     return (
       <div>
@@ -575,6 +479,7 @@ class ContractSigningView extends PureComponent {
                 </PButton>,
               ]}
               {selectedRows.length === 1 &&
+                selectedRows[0].settlement === 1 &&
                 selectedRows[0].status === 5 && [
                   <PButton
                     key="settlement"
@@ -595,14 +500,6 @@ class ContractSigningView extends PureComponent {
                   >
                     生效
                   </PButton>,
-                  // <PButton
-                  //   key="change"
-                  //   code="change"
-                  //   type="primary"
-                  //   onClick={() => this.handleChangeClick(selectedRows[0])}
-                  // >
-                  //   变更
-                  // </PButton>,
                 ]}
             </div>
             <div>
@@ -613,20 +510,47 @@ class ContractSigningView extends PureComponent {
                 }}
                 scroll={{ x: 1300, y: 300 }}
                 rowKey={record => record.record_id}
-                dataSource={data}
+                dataSource={list}
                 columns={columns}
                 className={styles.planingtable}
                 pagination={paginationProps}
                 onChange={this.handleTableChange}
+                size="small"
               ></Table>
             </div>
           </div>
           {this.renderDataForm()}
-          {this.renderSupplementDataForm()}
           {this.renderSettlementForm()}
           {this.renderTakeffectForm()}
         </Card>
-        <ContractSigningTable></ContractSigningTable>
+        <Card>
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="审批流程" key="1">
+                  待定
+              </TabPane>
+            <TabPane tab="付款信息" key="2">
+                <PaymentInformation />
+            </TabPane>
+            <TabPane tab="财务信息" key="3">
+              <FinancialInformation />
+            </TabPane>
+            <TabPane tab="签证变更" key="4">
+              <VisaChange  data={design>0?desiginData[0].visaData:[]}/>
+            </TabPane>
+            <TabPane tab="设计变更" key="5">
+             <DesignChange  data={design>0?desiginData[0].designData:[]}/>
+            </TabPane>
+            <TabPane tab="材料批价" key="6">
+              <MaterialPricing  data={design>0?desiginData[0].materialData:[]}/>
+            </TabPane>
+            <TabPane tab="合同结算" key="7">
+             <ContractSettlement /> 
+            </TabPane>
+            {/* <TabPane tab="其他信息" key="8">
+              <OtherInformation></OtherInformation>
+            </TabPane> */}
+          </Tabs>
+        </Card>
       </div>
     );
   }

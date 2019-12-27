@@ -129,6 +129,7 @@ class fileListTab extends PureComponent {
                 dataSource={data}
                 columns={columns}
                 pagination={false}
+                size="small"
               ></Table>
             </div>
           </div>

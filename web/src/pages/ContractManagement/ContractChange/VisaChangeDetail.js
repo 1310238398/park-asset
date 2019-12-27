@@ -17,12 +17,12 @@ import {
   DatePicker,
 } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-// import ContractPlanning from './ContractPlanning';
-import PicturesWall from '@/components/PicturesWall/PicturesWall';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import ProSelect from '@/components/ProSelectID/ProSelect';
+import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import * as styles from './ContractChange.less';
-// import FinishquotingModel from './FinishquotingModel';
+import { getSigingOne } from '@/services/contractSiging';
+import { getCompanyOne } from '@/services/contractVisaChange';
+import { getDesignChangeOne } from '@/services/contractDesignChange';
 
 @connect(({ visaChange }) => ({
   visaChange,
@@ -31,71 +31,80 @@ import * as styles from './ContractChange.less';
 class VisaChangeDetail extends PureComponent {
   constructor(props) {
     super(props);
-    this.custom = React.createRef();
-    this.agreement = React.createRef();
     this.state = {
       value: undefined,
       arrList: [],
+      formDatas: [],
+      designData: [],
+      sgData: [],
+      jlData: [],
     };
   }
-  
+
+  // 数组排序
+  compare(property) {
+    return function(a, b) {
+      var value1 = a[property];
+      var value2 = b[property];
+      return value1 - value2;
+    };
+  }
+
   componentDidMount() {
     this.props.dispatch({
-      type: 'visaChange/fetchChangeReason',
-    });
-    this.props.dispatch({
-      type: 'visaChange/fetchChangeProject',
+      type: 'visaChange/fetchTree',
     });
   }
-  // 数组排序
-compare(property) {
-  return function (a, b) {
-    var value1 = a[property];
-    var value2 = b[property];
-    return value1 - value2;
-  }
-};
-  // 甲方单位模糊匹配
-  handleChangePro = e => {
-    console.log(e);
-    this.setState({ project_id: e });
-    this.dispatch({
-      type: 'visaChange/saveProjectID',
-      payload: e,
-    });
-  };
 
+  // 点击确认
   onOKClick = () => {
     const {
       form,
-      visaChange: { proData },
+      visaChange: { proID },
       onSubmit,
+
+      formTypeVisaChange,
     } = this.props;
+    const { formDatas, designData, sgData, jlData } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
-        formData.project_id = proData.record_id;
-        formData.parent_id = '';
-        if (formData && formData.building_area) {
-          formData.building_area = Math.round(Number(formData.building_area) * 100);
+        formData.project_id = proID;
+        if (formData.reason) {
+          formData.reason = formData.reason.join(',');
         }
-        if (formData && formData.rent_area) {
-          formData.rent_area = Math.round(Number(formData.rent_area) * 100);
+        if (formData.project_stage) {
+          formData.project_stage = formData.project_stage.join(',');
+        }
+        if (formData.xianchangchengben) {
+          formData.xianchangchengben = parseInt(formData.xianchangchengben, 10);
         }
 
+        formData.comcontract_name = formDatas.name;
+        formData.comcontract_sn = formDatas.sn;
+        formData.alter_design_name = designData.name;
+        formData.alter_design_sn = designData.sn;
+        formData.working_name = sgData.name;
+        formData.supervision_name = jlData.name;
+        // 合同附件修改上传格式
+        const urlArr = [];
+        if (formData.attas) {
+          formData.attas.forEach(ele => {
+            if (formTypeVisaChange === 'E') {
+              urlArr.push({
+                url: ele.URL ? ele.URL : ele,
+              });
+            } else {
+              urlArr.push({
+                url: ele,
+              });
+            }
+          });
+        }
+        formData.attas = urlArr;
         onSubmit(formData);
       }
     });
-  };
-
-  // 合约规划是否引用完选择发生变化
-  finishquotingSelect = value => {
-    if (value === '1') {
-      this.props.dispatch({
-        type: 'visaChange/changeFormVisibleFinishquoting',
-        payload: true,
-      });
-    }
   };
 
   dispatch = action => {
@@ -103,8 +112,47 @@ compare(property) {
     dispatch(action);
   };
 
-  // 乙方单位选择的书库
-
+  // 原合同选择的数据
+  toOriginContractSelect = data => {
+    if (!data) {
+      return [];
+    }
+    const newData = [];
+    for (let i = 0; i < data.length; i += 1) {
+      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
+      newData.push(item);
+    }
+    return newData;
+  };
+  // 选中之后的变化
+  toOriginSelect = item => {
+    getSigingOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ formDatas: data });
+    });
+  };
+  //设计变更选择的数据
+  toDesignContractSelect = data => {
+    if (!data) {
+      return [];
+    }
+    const newData = [];
+    for (let i = 0; i < data.length; i += 1) {
+      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
+      newData.push(item);
+    }
+    return newData;
+  };
+  // 选中之后的变化
+  toDesignSelect = item => {
+    getDesignChangeOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ designData: data });
+    });
+  };
+  // 施工单位选择的数据
   toTreeSelect = data => {
     if (!data) {
       return [];
@@ -112,12 +160,25 @@ compare(property) {
     const newData = [];
     for (let i = 0; i < data.length; i += 1) {
       const item = { ...data[i], title: data[i].name, value: data[i].record_id };
-      if (item.children && item.children.length > 0) {
-        item.children = this.toTreeSelect(item.children);
-      }
       newData.push(item);
     }
     return newData;
+  };
+  // 施工单位选中之后的变化
+  toSTreeSelect = item => {
+    getCompanyOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ sgData: data });
+    });
+  };
+  // 监理单位选中之后的变化
+  toJTreeSelect = item => {
+    getCompanyOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ jlData: data });
+    });
   };
 
   render() {
@@ -132,10 +193,13 @@ compare(property) {
         treeData,
         visaChangeList,
         porjectList,
+        treeOriginConData,
+        designTreeData,
       },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
     } = this.props;
+    const { formDatas, designData } = this.state;
     const { TabPane } = Tabs;
     const { Option } = Select;
     const formItemLayout = {
@@ -165,7 +229,7 @@ compare(property) {
     return (
       <Modal
         title={formTitleVisaChange}
-        width={1200}
+        width={1400}
         visible={formVisibleVisaChange}
         maskClosable={false}
         confirmLoading={submitting}
@@ -180,8 +244,8 @@ compare(property) {
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证编号">
-                  {getFieldDecorator('name', {
-                    initialValue: formDataVisaChange.name,
+                  {getFieldDecorator('sn', {
+                    initialValue: formDataVisaChange.sn,
                     rules: [
                       {
                         required: false,
@@ -193,55 +257,101 @@ compare(property) {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="申请变更主题名称">
-                  {getFieldDecorator('sn')(<Input placeholder="请输入申请变更主题名称" />)}
+                  {getFieldDecorator('name', {
+                    initialValue: formDataVisaChange.name,
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入申请变更主题名称',
+                      },
+                    ],
+                  })(<Input placeholder="请输入申请变更主题名称" />)}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同名称">
-                  {getFieldDecorator('name', {
-                    initialValue: formDataVisaChange.name,
+                  {getFieldDecorator('comcontract_id', {
+                    initialValue: formDataVisaChange.comcontract_id,
                     rules: [
                       {
-                        required: false,
-                        message: '请输入合同名称',
+                        required: true,
+                        message: '请选择',
                       },
                     ],
-                  })(<Input placeholder="请输入合同名称" />)}
+                  })(
+                    <TreeSelect
+                      showSearch
+                      treeNodeFilterProp="title"
+                      style={{ width: '100%' }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      treeData={this.toOriginContractSelect(treeOriginConData)}
+                      onChange={this.toOriginSelect}
+                      placeholder="请选择"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {getFieldDecorator('sn')(<Input placeholder="请输入合同编号" />)}
+                  {formDatas.sn}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="施工单位">
-                  {getFieldDecorator('name', {
-                    initialValue: formDataVisaChange.name,
+                  {getFieldDecorator('working_company', {
+                    initialValue: formDataVisaChange.working_company,
                     rules: [
                       {
                         required: false,
-                        message: '请输入施工单位',
+                        message: '请选择施工单位',
                       },
                     ],
-                  })(<Input placeholder="请输入施工单位" />)}
+                  })(
+                    <TreeSelect
+                      showSearch
+                      treeNodeFilterProp="title"
+                      style={{ width: '100%' }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      treeData={this.toTreeSelect(treeData)}
+                      onChange={this.toSTreeSelect}
+                      placeholder="请选择"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="监理单位">
-                  {getFieldDecorator('sn')(<Input placeholder="请输入监理单位" />)}
+                  {getFieldDecorator('supervision_company', {
+                    initialValue: formDataVisaChange.supervision_company,
+                    rules: [
+                      {
+                        required: false,
+                        message: '请选择监理单位',
+                      },
+                    ],
+                  })(
+                    <TreeSelect
+                      showSearch
+                      treeNodeFilterProp="title"
+                      style={{ width: '100%' }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      treeData={this.toTreeSelect(treeData)}
+                      onChange={this.toJTreeSelect}
+                      placeholder="请选择"
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证类型">
-                  {getFieldDecorator('category', {
-                    initialValue: formDataVisaChange.category,
+                  {getFieldDecorator('alter_sign_type', {
+                    initialValue: formDataVisaChange.alter_sign_type,
                     rules: [
                       {
                         required: false,
@@ -251,7 +361,7 @@ compare(property) {
                   })(
                     <DicSelect
                       vmode="string"
-                      pcode="contract$#contractType"
+                      pcode="contract$#SignType"
                       placeholder="请选择"
                       selectProps={{ placeholder: '请选择' }}
                     />
@@ -260,8 +370,8 @@ compare(property) {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="分部工程名称">
-                  {getFieldDecorator('category', {
-                    initialValue: formDataVisaChange.category,
+                  {getFieldDecorator('subsection_name', {
+                    initialValue: formDataVisaChange.subsection_name,
                     rules: [
                       {
                         required: false,
@@ -275,52 +385,58 @@ compare(property) {
             <Row>
               <Col span={24} className={styles.textAreaStyle}>
                 <Form.Item {...formItemLayout2} label="签证原因">
-                  {getFieldDecorator('remark', {
-                    initialValue: formDataVisaChange.remark,
+                  {getFieldDecorator('reason', {
+                    initialValue: formDataVisaChange.reason,
                     rules: [
                       {
-                        required: false,
+                        required: true,
                         message: '请输入签证原因',
                       },
                     ],
-                  })( <Checkbox.Group style={{ width: '100%' }} options={visaChangeList.sort(this.compare('value'))}>
-                  </Checkbox.Group>)}
+                  })(
+                    <Checkbox.Group
+                      style={{ width: '100%' }}
+                      options={visaChangeList.sort(this.compare('value'))}
+                    ></Checkbox.Group>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更名称">
-                  {getFieldDecorator('category', {
-                    initialValue: formDataVisaChange.category,
+                  {getFieldDecorator('alter_design_id', {
+                    initialValue: formDataVisaChange.alter_design_id,
                     rules: [
                       {
                         required: false,
-                        message: '请输入设计变更名称',
+                        message: '请选择设计变更名称',
                       },
                     ],
-                  })(<Input placeholder="请输入设计变更名称" />)}
+                  })(
+                    <TreeSelect
+                      showSearch
+                      treeNodeFilterProp="title"
+                      style={{ width: '100%' }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      treeData={this.toDesignContractSelect(designTreeData)}
+                      onChange={this.toDesignSelect}
+                      placeholder="请选择"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {getFieldDecorator('category', {
-                    initialValue: formDataVisaChange.category,
-                    rules: [
-                      {
-                        required: false,
-                        message: '请输入设计变更编号',
-                      },
-                    ],
-                  })(<Input placeholder="请输入设计变更编号" />)}
+                  {designData.sn}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={24} className={styles.textAreaStyle}>
                 <Form.Item {...formItemLayout2} label="其他原因">
-                  {getFieldDecorator('remark', {
-                    initialValue: formDataVisaChange.remark,
+                  {getFieldDecorator('reason_other', {
+                    initialValue: formDataVisaChange.reason_other,
                     rules: [
                       {
                         required: false,
@@ -334,8 +450,8 @@ compare(property) {
             <Row>
               <Col span={24} className={styles.textAreaStyle}>
                 <Form.Item {...formItemLayout2} label="签证内容">
-                  {getFieldDecorator('remark', {
-                    initialValue: formDataVisaChange.remark,
+                  {getFieldDecorator('content', {
+                    initialValue: formDataVisaChange.content,
                     rules: [
                       {
                         required: false,
@@ -349,8 +465,8 @@ compare(property) {
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证报价">
-                  {getFieldDecorator('amount', {
-                    initialValue: formDataVisaChange.amount,
+                  {getFieldDecorator('estimate', {
+                    initialValue: formDataVisaChange.estimate,
                     rules: [
                       {
                         required: false,
@@ -362,8 +478,8 @@ compare(property) {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="施工负责人">
-                  {getFieldDecorator('amount', {
-                    initialValue: formDataVisaChange.amount,
+                  {getFieldDecorator('working_company_charge', {
+                    initialValue: formDataVisaChange.working_company_charge,
                     rules: [
                       {
                         required: false,
@@ -377,8 +493,8 @@ compare(property) {
             <Row>
               <Col span={24} className={styles.textAreaStyle}>
                 <Form.Item {...formItemLayout2} label="项目阶段">
-                  {getFieldDecorator('property', {
-                    initialValue: formDataVisaChange.property,
+                  {getFieldDecorator('project_stage', {
+                    initialValue: formDataVisaChange.project_stage,
                     rules: [
                       {
                         required: false,
@@ -386,8 +502,10 @@ compare(property) {
                       },
                     ],
                   })(
-                    <Checkbox.Group style={{ width: '100%' }} options={porjectList.sort(this.compare('value'))}>
-                    </Checkbox.Group>
+                    <Checkbox.Group
+                      style={{ width: '100%' }}
+                      options={porjectList.sort(this.compare('value'))}
+                    ></Checkbox.Group>
                   )}
                 </Form.Item>
               </Col>
@@ -395,21 +513,28 @@ compare(property) {
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起部门">
-                  {getFieldDecorator('jiafang_sign', {
-                    initialValue: formDataVisaChange.jiafang_sign,
+                  {getFieldDecorator('launch_dept', {
+                    initialValue: formDataVisaChange.launch_dept,
                     rules: [
                       {
-                        required: false,
-                        message: '请输入发起人',
+                        required: true,
+                        message: '请选择发起部门',
                       },
                     ],
-                  })(<Input placeholder="请输入发起人" />)}
+                  })(
+                    <DicSelect
+                      vmode="string"
+                      pcode="contract$#InitiatingDepartment"
+                      placeholder="请选择"
+                      selectProps={{ placeholder: '请选择' }}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起人">
-                  {getFieldDecorator('jiafang_sign', {
-                    initialValue: formDataVisaChange.jiafang_sign,
+                  {getFieldDecorator('launch_person', {
+                    initialValue: formDataVisaChange.launch_person,
                     rules: [
                       {
                         required: false,
@@ -421,19 +546,19 @@ compare(property) {
               </Col>
             </Row>
             <Row>
-              <Col span={12}>
+              {/* <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起日期">
-                  {getFieldDecorator('jiafang_sign', {
-                    initialValue: formDataVisaChange.jiafang_sign,
+                  {getFieldDecorator('launch_date', {
+                    initialValue: formDataVisaChange.launch_date,
                     rules: [
                       {
                         required: false,
                         message: '请输入发起人',
                       },
                     ],
-                  })(<DatePicker style={{ width: '100%' }} />)}
+                  })(<DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />)}
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
           </Form>
         </Card>
@@ -453,8 +578,8 @@ compare(property) {
               </Col>
               <Col span={10}>
                 <Form.Item {...formItemLayout} label="是否涉及出图">
-                  {getFieldDecorator('virtual', {
-                    initialValue: formDataVisaChange.virtual ? formDataVisaChange.virtual : '1',
+                  {getFieldDecorator('shejitu', {
+                    initialValue: formDataVisaChange.shejitu ? formDataVisaChange.shejitu : 1,
                     rules: [
                       {
                         required: false,
@@ -463,8 +588,8 @@ compare(property) {
                     ],
                   })(
                     <Select placeholder="请选择">
-                      <Option value="1">是</Option>
-                      <Option value="0">否</Option>
+                      <Option value={1}>是</Option>
+                      <Option value={0}>否</Option>
                     </Select>
                   )}
                 </Form.Item>
@@ -479,22 +604,37 @@ compare(property) {
               </Col>
               <Col span={10}>
                 <Form.Item {...formItemLayout} label="成本增减">
-                  {getFieldDecorator('name', {
-                    initialValue: formDataVisaChange.name,
+                  {getFieldDecorator('xianchangchengben', {
+                    initialValue: formDataVisaChange.xianchangchengben
+                      ? formDataVisaChange.xianchangchengben
+                      : 1,
                     rules: [
                       {
                         required: false,
-                        message: '请输入合同名称',
+                        message: '请选择成本增减',
                       },
                     ],
-                  })(<Input placeholder="请输入合同名称" />)}
+                  })(
+                    <DicSelect
+                      vmode="int"
+                      pcode="contract$#IncreaseDecrease"
+                      placeholder="请选择"
+                      selectProps={{ placeholder: '请选择' }}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={10}>
                 <Form.Item {...formItemLayout} label="估算金额">
-                  {getFieldDecorator('sn')(
-                    <InputNumber style={{ width: '100%' }} placeholder="请输入估算金额" />
-                  )}
+                  {getFieldDecorator('xianchanggusuan', {
+                    initialValue: formDataVisaChange.xianchanggusuan,
+                    rules: [
+                      {
+                        required: false,
+                        message: '请输入估算金额',
+                      },
+                    ],
+                  })(<InputNumber style={{ width: '100%' }} placeholder="请输入估算金额" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -520,8 +660,8 @@ compare(property) {
             <Row>
               <Col span={24} className={styles.textAreaStyle}>
                 <Form.Item {...formItemLayout2} label="附件">
-                  {getFieldDecorator('memo', {
-                    initialValue: formDataVisaChange.memo,
+                  {getFieldDecorator('attas', {
+                    initialValue: formDataVisaChange.attas,
                     rules: [
                       {
                         required: false,

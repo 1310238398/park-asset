@@ -125,6 +125,7 @@ export default class MenuAction extends PureComponent {
 
   handleAdd = () => {
     const { dataSource } = this.state;
+    console.log(dataSource)
     const item = {
       key: newUUID(),
       code: '',
