@@ -118,7 +118,14 @@ export async function saveEditSettlement(params) {
 
 // 查询合同结算列表
 export async function querySettlementPage(params) {
+
   return request(`/v1/${comContRouter}/${params.record_id}/settlementlist?${stringify(params.params)}`);
+}
+
+//根据合同id 获取结算信息
+export async function querySettlementPageOne(params) {
+  
+  return request(`/v1/${comContRouter}/${params}/settlementlist`);
 }
 // 删除
 export async function delSettlement(params) {

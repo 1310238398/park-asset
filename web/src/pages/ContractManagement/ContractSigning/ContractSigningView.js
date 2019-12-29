@@ -16,7 +16,7 @@ import {
   Divider,
   Button,
   InputNumber,
-  Tabs
+  Tabs,
 } from 'antd';
 import moment from 'moment';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
@@ -36,6 +36,7 @@ import DesignChange from './DesignChange';
 import VisaChange from './VisaChange';
 import MaterialPricing from './MaterialPricing';
 import OtherInformation from './OtherInformation';
+import { func } from 'prop-types';
 const { TabPane } = Tabs;
 @connect(state => ({
   contractSiging: state.contractSiging,
@@ -110,14 +111,6 @@ class ContractSigningView extends PureComponent {
     });
     this.dispatch({
       type: 'contractSiging/fetchDesiginOneSiging',
-      payload: keys[keys.length - 1],
-    });
-    this.dispatch({
-      type: 'contractSiging/fetchVisaOneSiging',
-      payload: keys[keys.length - 1],
-    });
-    this.dispatch({
-      type: 'contractSiging/fetchMaterialOneSiging',
       payload: keys[keys.length - 1],
     });
   };
@@ -224,6 +217,7 @@ class ContractSigningView extends PureComponent {
   handleSettlementFormSubmit = data => {
     const {
       contractSiging: { loadTakeEffectData },
+
     } = this.props;
     this.dispatch({
       type: 'contractSiging/settlementSave',
@@ -381,7 +375,7 @@ class ContractSigningView extends PureComponent {
         desiginData,
       },
     } = this.props;
- let design = Object.keys(desiginData).length;
+    let design = Object.keys(desiginData).length;
     const { selectedRowKeys, selectedRows } = this.state;
 
     const columns = [
@@ -526,25 +520,25 @@ class ContractSigningView extends PureComponent {
         <Card>
           <Tabs defaultActiveKey="1">
             <TabPane tab="审批流程" key="1">
-                  待定
-              </TabPane>
+              待定
+            </TabPane>
             <TabPane tab="付款信息" key="2">
-                <PaymentInformation />
+              <PaymentInformation />
             </TabPane>
             <TabPane tab="财务信息" key="3">
               <FinancialInformation />
             </TabPane>
             <TabPane tab="签证变更" key="4">
-              <VisaChange  data={design>0?desiginData[0].visaData:[]}/>
+              <VisaChange data={design > 0 ? desiginData[0].visaData : []} />
             </TabPane>
             <TabPane tab="设计变更" key="5">
-             <DesignChange  data={design>0?desiginData[0].designData:[]}/>
+              <DesignChange data={design > 0 ? desiginData[0].designData : []} />
             </TabPane>
             <TabPane tab="材料批价" key="6">
-              <MaterialPricing  data={design>0?desiginData[0].materialData:[]}/>
+              <MaterialPricing data={design > 0 ? desiginData[0].materialData : []} />
             </TabPane>
             <TabPane tab="合同结算" key="7">
-             <ContractSettlement /> 
+              <ContractSettlement data={design>0?desiginData[0].settlementData:[]}/>
             </TabPane>
             {/* <TabPane tab="其他信息" key="8">
               <OtherInformation></OtherInformation>

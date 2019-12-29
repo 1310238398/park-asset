@@ -15,11 +15,11 @@ import moment from 'moment';
 class ContractSettlementDetail extends PureComponent {
   constructor(props) {
     super(props);
+    this.custom = React.createRef();
     this.state = {
       datas: {},
     };
   }
-
 
 
   // 点击确定
@@ -29,7 +29,7 @@ class ContractSettlementDetail extends PureComponent {
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
-        if (datas.record_id) {
+        if (datas.record_id) {  
           formData.record_id = datas.record_id;
         }
         formData.report_date = formData.report_date
@@ -52,8 +52,9 @@ class ContractSettlementDetail extends PureComponent {
       contractSiging: { formDataSettlement },
       form,
     } = this.props;
-    const {datas} = this.state;
+    const { datas } = this.state;
     if (!data) {
+      this.props.form.resetFields();
       const arr = [];
       const any = [];
       let len;
@@ -67,9 +68,8 @@ class ContractSettlementDetail extends PureComponent {
       }
       this.setState({ datas: any[0] });
     } else {
-      this.setState({ datas:data });
+      this.setState({ datas: data });
     }
-    
   };
 
   render() {
@@ -80,12 +80,8 @@ class ContractSettlementDetail extends PureComponent {
       dataSupplement,
     } = this.props;
     const { datas } = this.state;
-    if(datas.record_id){
-      formDataSettlement = datas;
-    }else{
-      formDataSettlement = datas;
-    }
-   
+    formDataSettlement = datas;
+
     const formItemLayout = {
       labelCol: {
         span: 6,
@@ -451,7 +447,11 @@ class ContractSettlementDetail extends PureComponent {
           </Form>
         </Card>
         <Card style={{ marginTop: 10 }}>
-          <ContractSupplementAdd formID={loadTakeEffectData.record_id} callback={this.callback} />
+          <ContractSupplementAdd
+            ref={this.custom}
+            formID={loadTakeEffectData.record_id}
+            callback={this.callback}
+          />
         </Card>
       </Modal>
     );

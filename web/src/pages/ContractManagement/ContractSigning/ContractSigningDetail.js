@@ -80,7 +80,7 @@ class ContractSigningDetail extends PureComponent {
             }
           });
         }
-        formData.attas = urlArr;
+        formData.attas = [];
         onSubmit(formData);
       }
     });
@@ -285,7 +285,6 @@ class ContractSigningDetail extends PureComponent {
                   <ContractPlanningSelect
                     proID={proID}
                      data={plan}
-                     dataPro={hyData}
                     onChange={this.handleFormChange}
                   />
                 )}

@@ -29,32 +29,26 @@ const FormItem = Form.Item;
 class ContractSettlement extends PureComponent {
   constructor(props) {
     super(props);
+   this.state={
+     dataSource : props.data ? props.data :[]
+   }
   }
-  componentDidMount() {
-    const {
-      formID
-    } = this.props;
-    // this.dispatch({
-    //   type: 'contractSiging/fetch',
-    //   search: {},
-    //   pagination: {},
-    //   pro_id: formID,
-    // });
+  static getDerivedStateFromProps(nextProps, state) {
+    if ('data' in nextProps) {
+      return {
+        ...state,
+        dataSource: nextProps.data,
+      };
+    }
+    return state;
   }
 
   render() {
-    const {
-      loading,
-      form: { getFieldDecorator },
-      contractSiging: {
-        formTypeSiging,
-        dataSiging: { list, pagination },
-      },
-    } = this.props;
+    const { dataSource } = this.state;
     const columns = [
       {
         title: '结算编号',
-        dataIndex: 'name',
+        dataIndex: 'report_no',
         width: 100,
       },
       {
@@ -85,57 +79,16 @@ class ContractSettlement extends PureComponent {
       },
       {
         title: '发起日期',
-        dataIndex: 'date',
+        dataIndex: 'report_date',
         width: 150,
       },
       {
         title: '发起人',
-        dataIndex: 'creator',
+        dataIndex: 'zaojiazixun_jingban',
         width: 150,
       },
     ];
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      showTotal: total => <span>共{total}条</span>,
-      ...pagination,
-    };
-
-    const data = [
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b542',
-        index: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-        sex: 'nan',
-        creator:'王五',
-        date:'2019-02-10'
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b541',
-        index: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-        sex: 'nan',
-        creator:'王五',
-        date:'2019-02-10'
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b54e',
-        index: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-        sex: 'nan',
-        creator:'王五',
-        date:'2019-02-10'
-      },
-    ];
+   
 
     return (
       <div>
@@ -143,7 +96,7 @@ class ContractSettlement extends PureComponent {
           <div className={styles.tableList}>
             <div>
               <Table
-                dataSource={data}
+                dataSource={dataSource.list}
                 columns={columns}
                 pagination={false}
                 size="small"

@@ -73,6 +73,8 @@ export default {
     desiginData: {},
     //合约规划数组
     hyArr: [],
+    selectPlanName: '',
+    hyList: [],
   },
   effects: {
     // 甲乙单位树状结构
@@ -197,6 +199,7 @@ export default {
     // 查询单条合同信息的操作
     *fetchFormSiging({ payload }, { call, put }) {
       const response = yield call(contractSigingService.getSigingOne, payload);
+      console.log(response);
       // 对附件进行处理
       if (response.attas && response.attas.length > 0) {
         const attas = [];
@@ -237,10 +240,17 @@ export default {
         const list = result.list || [];
         console.log('第181行');
         console.log(list);
-        // yield put({
-        //   type: 'savePlanName',
-        //   payload: list[0].cost_name_path + '/' + list[0].name,
-        // });
+        if (list.length > 0) {
+          yield put({
+            type: 'savePlanName',
+            payload: list[0].cost_name_path + '/' + list[0].name,
+          });
+        } else {
+          yield put({
+            type: 'savePlanName',
+            payload: '',
+          });
+        }
       }
 
       yield put({
@@ -248,16 +258,72 @@ export default {
         payload: response,
       });
     },
+    // 获取合同的信息
+    *fetchDesiginOne({ payload }, { call, put }) {
+      console.log(payload);
+      if (payload.project_id) {
+        let proID = payload.project_id;
+        let para = {
+          q: 'contract',
+          project_id: proID,
+        };
+        const pdata = yield call(contractSigingService.contractPlanList, para);
+        console.log('第170行');
+        console.log(pdata);
+        if (payload.contract_planning_id) {
+          const plann = payload.contract_planning_id.split('/');
+          console.log(plann);
+          let params = {
+            q: 'list',
+            project_id: proID,
+            cost_id: plann[plann.length - 1],
+          };
+          const result = yield call(contractSigingService.contractCList, params);
+          console.log(result);
+          const list = result.list || [];
+          console.log(list)
+          if (list.length > 0) {
+            yield put({
+              type: 'savePlanName',
+              payload: list[0].cost_name_path + '/' + list[0].name,
+            });
+            yield put({
+              type: 'saveSelectPlanName',
+              payload: list[0].cost_name_path,
+            });
+            yield put({
+              type: 'saveSelectHy',
+              payload: list[0],
+            });
+          } else {
+            yield put({
+              type: 'savePlanName',
+              payload: '',
+            });
+            yield put({
+              type: 'saveSelectPlanName',
+              payload: '',
+            });
+            yield put({
+              type: 'saveSelectHy',
+              payload: {},
+            });
+          }
+        }
+      }
+    },
     // 通过合同id查询设计变更
     *fetchDesiginOneSiging({ payload }, { call, put }) {
       const response0 = yield call(contractSigingService.getDesignOne, payload);
       const response1 = yield call(contractSigingService.getVisaOne, payload);
       const response2 = yield call(contractSigingService.getMaterialOne, payload);
+      const response3 = yield call(contractSigingService.querySettlementPageOne, payload);
       const response = [];
       response.push({
         designData: response0,
         visaData: response1,
         materialData: response2,
+        settlementData: response3,
       });
       yield put({
         type: 'saveDesignDataSiging',
@@ -274,24 +340,23 @@ export default {
 
       if (payload.proID) {
         // 保存proId
-        yield put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        });
+        yield [
+          put({
+            type: 'saveProjectID',
+            payload: payload.proID,
+          }),
+          // put({
+          //   type: 'fetchOptionsTree',
+          //   payload: payload.proID,
+          // }),
+        ];
       }
       yield [
         put({
           type: 'saveFormTypeSiging',
           payload: payload.type,
         }),
-        put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        }),
-        put({
-          type: 'fetchOptionsTree',
-          payload: payload.proID,
-        }),
+
         put({
           type: 'saveFormTitleSiging',
           payload: '新增合同',
@@ -348,10 +413,16 @@ export default {
       });
       if (payload.proID) {
         // 保存proId
-        yield put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        });
+        yield [
+          put({
+            type: 'saveProjectID',
+            payload: payload.proID,
+          }),
+          // put({
+          //   type: 'fetchOptionsTree',
+          //   payload: payload.proID,
+          // }),
+        ];
       }
       yield [
         put({
@@ -366,14 +437,7 @@ export default {
           type: 'saveFormIDSupplement',
           payload: '',
         }),
-        put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        }),
-        put({
-          type: 'fetchOptionsTree',
-          payload: payload.proID,
-        }),
+
         put({
           type: 'fetchOriginConTree',
         }),
@@ -420,6 +484,18 @@ export default {
     // 查询单个补充合同的详情
     *fetchFormSupplement({ payload }, { call, put }) {
       const response = yield call(contractSigingService.getSigingOne, payload);
+      console.log(response)
+      if(response.contract_planning_id){
+        yield  put({
+          type: 'savePlanName',
+          payload: response.contract_planning_id,
+        })
+        yield  put({
+          type: 'fetchDesiginOne',
+          payload: response,
+        })
+        
+      };
       yield put({
         type: 'saveFormDataSupplement',
         payload: response,
@@ -758,6 +834,12 @@ export default {
     //保存选择的合约规划的名字
     savePlanName(state, { payload }) {
       return { ...state, planName: payload };
+    },
+    saveSelectPlanName(state, { payload }) {
+      return { ...state, selectPlanName: payload };
+    },
+    saveSelectHy(state, { payload }) {
+      return { ...state, hyList: payload };
     },
     // 保存合同信息
     saveLoadTakeEffect(state, { payload }) {

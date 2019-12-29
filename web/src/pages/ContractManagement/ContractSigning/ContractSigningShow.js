@@ -10,18 +10,6 @@ import DicShow from '@/components/DictionaryNew/DicShow';
 }))
 @Form.create()
 class ContractSigningShow extends PureComponent {
-  // 原合同选择的数据
-  toOriginContractSelect = data => {
-    if (!data) {
-      return [];
-    }
-    const newData = [];
-    for (let i = 0; i < data.length; i += 1) {
-      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
-      newData.push(item);
-    }
-    return newData;
-  };
 
   renderFirstView = () => {
     const {
@@ -48,8 +36,11 @@ class ContractSigningShow extends PureComponent {
             </Description>
           </DescriptionList>
           <DescriptionList title="" size="large" col={1} style={{ marginBottom: 20 }}>
-            <Description term="选择合约规划"> {planName}</Description>
-          </DescriptionList>
+          {formDataSiging.parent_comcontract_name ? (
+             <Description term="选择合约规划"> {formDataSiging.contract_planning_id}</Description>
+            ) : <Description term="选择合约规划"> {planName}</Description>}
+          
+          </DescriptionList> 
           <DescriptionList title="" size="large" col={2} style={{ marginBottom: 20 }}>
             <Description term="所属科目"> {formDataSiging.subject}</Description>
             <Description term="所属科目分项"> {formDataSiging.subject_subitem}</Description>
