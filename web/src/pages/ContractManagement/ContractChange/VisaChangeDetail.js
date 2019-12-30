@@ -321,7 +321,7 @@ class VisaChangeDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {formDatas.sn}
+                  {formDatas.sn?formDatas.sn: formDataVisaChange.comcontract_sn}
                 </Form.Item>
               </Col>
             </Row>
@@ -455,7 +455,7 @@ class VisaChangeDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {designData.sn}
+                  {designData.sn?designData.sn: formDataVisaChange.alter_design_sn}
                 </Form.Item>
               </Col>
             </Row>

@@ -331,7 +331,7 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {formDatas.sn}
+                  {formDatas.sn?formDatas.sn:formDataMaterialPricing.comcontract_sn}
                 </Form.Item>
               </Col>
             </Row>
@@ -420,7 +420,7 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {designData.sn}
+                  {designData.sn?designData.sn:formDataMaterialPricing.alter_design_sn}
                 </Form.Item>
               </Col>
             </Row>
@@ -450,7 +450,7 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证变更编号">
-                  {signData.sn}
+                  {signData.sn?signData.sn:formDataMaterialPricing.alter_sign_sn}
                 </Form.Item>
               </Col>
             </Row>

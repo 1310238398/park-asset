@@ -120,7 +120,7 @@ class DesignChangeDetail extends PureComponent {
   reasonChange = checkedValue => {
     if (checkedValue.indexOf('13') > -1) {
       this.setState({ checkReason: true });
-    }else{
+    } else {
       this.setState({ checkReason: false });
     }
   };
@@ -142,7 +142,6 @@ class DesignChangeDetail extends PureComponent {
       onCancel,
     } = this.props;
     const { formDatas } = this.state;
-    console.log(formDatas);
     const { TabPane } = Tabs;
     const { Option } = Select;
     const formItemLayout = {
@@ -238,7 +237,7 @@ class DesignChangeDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同编号">
                 {/* <Input defaultValue={formDatas.sn} placeholder="请输入合同编号" /> */}
-                {formDatas.sn}
+                {formDatas.sn ? formDatas.sn : formDataDesignChange.comcontract_sn}
               </Form.Item>
             </Col>
           </Row>

@@ -82,7 +82,7 @@ export class ContractPlanningSelect extends PureComponent {
         const item = {
           ...list[i],
           label: list[i].name,
-          value: list[i].cost_id,
+          value: list[i].record_id,
         };
         childrenList.push(item);
       }
@@ -100,7 +100,7 @@ export class ContractPlanningSelect extends PureComponent {
       targetOption.loading = false;
       const tarChildren = [];
       for (let j = 0; j < children.length; j += 1) {
-        const item = { ...children[j], label: `${children[j].name}`, value: children[j].cost_id };
+        const item = { ...children[j], label: `${children[j].name}`, value: children[j].record_id };
         tarChildren.push(item);
       }
       targetOption.children = tarChildren;
