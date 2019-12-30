@@ -38,6 +38,9 @@ class VisaChangeDetail extends PureComponent {
       designData: [],
       sgData: [],
       jlData: [],
+      designCheck: false,
+      reasonCheck: false,
+      stateCheck:false
     };
   }
 
@@ -55,6 +58,21 @@ class VisaChangeDetail extends PureComponent {
       type: 'visaChange/fetchTree',
     });
   }
+
+  // 变更原因变化
+  reasonChange = checkedValue => {
+    if (checkedValue.indexOf('1') > -1) {
+      this.setState({ designCheck: true });
+    } else {
+      this.setState({ designCheck: false });
+    }
+
+    if (checkedValue.indexOf('5') > -1) {
+      this.setState({ reasonCheck: true });
+    } else {
+      this.setState({ reasonCheck: false });
+    }
+  };
 
   // 点击确认
   onOKClick = () => {
@@ -180,6 +198,14 @@ class VisaChangeDetail extends PureComponent {
       this.setState({ jlData: data });
     });
   };
+  // 选择项目阶段变化
+  projectStageChange = value =>{
+    if(value.indexOf('8')>-1){
+      this.setState({stateCheck:true});
+    }else{
+      this.setState({stateCheck:false});
+    }
+  }
 
   render() {
     const {
@@ -397,6 +423,7 @@ class VisaChangeDetail extends PureComponent {
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       options={visaChangeList.sort(this.compare('value'))}
+                      onChange={this.reasonChange}
                     ></Checkbox.Group>
                   )}
                 </Form.Item>
@@ -409,7 +436,7 @@ class VisaChangeDetail extends PureComponent {
                     initialValue: formDataVisaChange.alter_design_id,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.designCheck,
                         message: '请选择设计变更名称',
                       },
                     ],
@@ -439,7 +466,7 @@ class VisaChangeDetail extends PureComponent {
                     initialValue: formDataVisaChange.reason_other,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.reasonCheck,
                         message: '请输入其他原因',
                       },
                     ],
@@ -505,11 +532,29 @@ class VisaChangeDetail extends PureComponent {
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       options={porjectList.sort(this.compare('value'))}
+                      onChange={this.projectStageChange}
                     ></Checkbox.Group>
                   )}
                 </Form.Item>
               </Col>
             </Row>
+            {/* <Row>
+              <Col span={24} className={styles.textAreaStyle}>
+                <Form.Item {...formItemLayout2} label="项目阶段其他原因">
+                  {getFieldDecorator('project_stage_other', {
+                    initialValue: formDataVisaChange.project_stage_other,
+                    rules: [
+                      {
+                        required: this.state.stateCheck,
+                        message: '请选择',
+                      },
+                    ],
+                  })(
+                   <Input />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row> */}
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起部门">

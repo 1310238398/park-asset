@@ -39,6 +39,9 @@ class ContractSigningDetail extends PureComponent {
       jCharge: [],
       options: [],
       hyData: [],
+      jfCheck: false,
+      yfCheck: false,
+      bfCheck: false,
     };
   }
 
@@ -163,6 +166,24 @@ class ContractSigningDetail extends PureComponent {
     return newData;
   };
 
+  // 合同性质发生变化
+  propertyChange = value => {
+    // 如果是三方合同，都选
+    if (value === '2') {
+      this.setState({ jfCheck: true });
+      this.setState({ yfCheck: true });
+      this.setState({ bfCheck: true });
+    } else if (value === '1') {
+      this.setState({ jfCheck: true });
+      this.setState({ yfCheck: true });
+      this.setState({ bfCheck: false });
+    } else {
+      this.setState({ jfCheck: false });
+      this.setState({ yfCheck: false });
+      this.setState({ bfCheck: false });
+    }
+  };
+
   render() {
     const {
       contractSiging: {
@@ -284,7 +305,7 @@ class ContractSigningDetail extends PureComponent {
                 })(
                   <ContractPlanningSelect
                     proID={proID}
-                     data={plan}
+                    data={plan}
                     onChange={this.handleFormChange}
                   />
                 )}
@@ -363,6 +384,7 @@ class ContractSigningDetail extends PureComponent {
                     pcode="contract$#contractNature"
                     placeholder="请选择"
                     selectProps={{ placeholder: '请选择' }}
+                    onChange={this.propertyChange}
                   />
                 )}
               </Form.Item>
@@ -427,7 +449,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.jiafang,
                   rules: [
                     {
-                      required: true,
+                      required: this.state.jfCheck,
                       message: '请选择甲方单位',
                     },
                   ],
@@ -449,7 +471,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.jiafang_sign,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.jfCheck,
                       message: '请选择负责人',
                     },
                   ],
@@ -470,7 +492,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.yifang,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.yfCheck,
                       message: '请选择乙方单位',
                     },
                   ],
@@ -492,7 +514,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.yifang_sign,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.yfCheck,
                       message: '请输入负责人',
                     },
                   ],
@@ -513,7 +535,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.bingfang,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.bfCheck,
                       message: '请输入丙方单位',
                     },
                   ],
@@ -535,7 +557,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.bingfang_sign,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.bfCheck,
                       message: '请输入负责人',
                     },
                   ],

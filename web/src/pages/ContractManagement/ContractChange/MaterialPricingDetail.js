@@ -23,7 +23,7 @@ import UploadFile from '@/components/UploadFile/UploadFile';
 import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import { getSigingOne } from '@/services/contractSiging';
 import { getDesignChangeOne } from '@/services/contractDesignChange';
-import { getVisaChangeOne,getCompanyOne } from '@/services/contractVisaChange';
+import { getVisaChangeOne, getCompanyOne } from '@/services/contractVisaChange';
 @connect(({ materialPricing }) => ({
   materialPricing,
 }))
@@ -39,7 +39,10 @@ class MaterialPricingDetail extends PureComponent {
       com_name: '',
       designData: [],
       signData: [],
-      sgData:[]
+      sgData: [],
+      designCheck: false,
+      visaCheck: false,
+      reasonCheck: false,
     };
   }
   // 数组排序
@@ -63,7 +66,7 @@ class MaterialPricingDetail extends PureComponent {
       formTypeMaterialPricing,
       onSubmit,
     } = this.props;
-    const { formDatas, designData, signData,sgData } = this.state;
+    const { formDatas, designData, signData, sgData } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
@@ -108,8 +111,25 @@ class MaterialPricingDetail extends PureComponent {
       });
     }
   };
-  onChange = data => {
-    // console.log(data)
+
+  // 变更原因变化
+  reasonChange = checkedValue => {
+    if (checkedValue.indexOf('1') > -1) {
+      this.setState({ designCheck: true });
+    } else {
+      this.setState({ designCheck: false });
+    }
+    if (checkedValue.indexOf('2') > -1) {
+      this.setState({ visaCheck: true });
+    } else {
+      this.setState({ visaCheck: false });
+    }
+
+    if (checkedValue.indexOf('5') > -1) {
+      this.setState({ reasonCheck: true });
+    } else {
+      this.setState({ reasonCheck: false });
+    }
   };
   // 原合同选择的数据
   toOriginContractSelect = data => {
@@ -171,26 +191,26 @@ class MaterialPricingDetail extends PureComponent {
       this.setState({ signData: data });
     });
   };
-    // 施工单位选择的数据
-    toTreeSelect = data => {
-      if (!data) {
-        return [];
-      }
-      const newData = [];
-      for (let i = 0; i < data.length; i += 1) {
-        const item = { ...data[i], title: data[i].name, value: data[i].record_id };
-        newData.push(item);
-      }
-      return newData;
-    };
-    // 选中之后的变化
-    toSTreeSelect = item => {
-      getCompanyOne({
-        record_id: item,
-      }).then(data => {
-        this.setState({ sgData: data });
-      });
-    };
+  // 施工单位选择的数据
+  toTreeSelect = data => {
+    if (!data) {
+      return [];
+    }
+    const newData = [];
+    for (let i = 0; i < data.length; i += 1) {
+      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
+      newData.push(item);
+    }
+    return newData;
+  };
+  // 选中之后的变化
+  toSTreeSelect = item => {
+    getCompanyOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ sgData: data });
+    });
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -251,7 +271,6 @@ class MaterialPricingDetail extends PureComponent {
         confirmLoading={submitting}
         destroyOnClose
         onOk={this.onOKClick}
-        onChange={this.onChange}
         onCancel={onCancel}
         style={{ top: 20 }}
         bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', overflowY: 'auto' }}
@@ -327,15 +346,17 @@ class MaterialPricingDetail extends PureComponent {
                         message: '请选择施工单位',
                       },
                     ],
-                  })( <TreeSelect
-                    showSearch
-                    treeNodeFilterProp="title"
-                    style={{ width: '100%' }}
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    treeData={this.toTreeSelect(treeData)}
-                    onChange={this.toSTreeSelect}
-                    placeholder="请选择"
-                  />)}
+                  })(
+                    <TreeSelect
+                      showSearch
+                      treeNodeFilterProp="title"
+                      style={{ width: '100%' }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      treeData={this.toTreeSelect(treeData)}
+                      onChange={this.toSTreeSelect}
+                      placeholder="请选择"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -367,23 +388,9 @@ class MaterialPricingDetail extends PureComponent {
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       options={materialPricingList.sort(this.compare('value'))}
+                      onChange={this.reasonChange}
                     ></Checkbox.Group>
                   )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24} className={styles.textAreaStyle}>
-                <Form.Item {...formItemLayout2} label="其他原因">
-                  {getFieldDecorator('reason_other', {
-                    initialValue: formDataMaterialPricing.reason_other,
-                    rules: [
-                      {
-                        required: false,
-                        message: '请输入其他原因',
-                      },
-                    ],
-                  })(<Input.TextArea rows={2} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -394,7 +401,7 @@ class MaterialPricingDetail extends PureComponent {
                     initialValue: formDataMaterialPricing.alter_design_id,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.designCheck,
                         message: '请选择设计变更名称',
                       },
                     ],
@@ -424,7 +431,7 @@ class MaterialPricingDetail extends PureComponent {
                     initialValue: formDataMaterialPricing.alter_sign_id,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.visaCheck,
                         message: '请选择签证变更名称',
                       },
                     ],
@@ -444,6 +451,21 @@ class MaterialPricingDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证变更编号">
                   {signData.sn}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} className={styles.textAreaStyle}>
+                <Form.Item {...formItemLayout2} label="其他原因">
+                  {getFieldDecorator('reason_other', {
+                    initialValue: formDataMaterialPricing.reason_other,
+                    rules: [
+                      {
+                        required: this.state.reasonCheck,
+                        message: '请输入其他原因',
+                      },
+                    ],
+                  })(<Input.TextArea rows={2} />)}
                 </Form.Item>
               </Col>
             </Row>

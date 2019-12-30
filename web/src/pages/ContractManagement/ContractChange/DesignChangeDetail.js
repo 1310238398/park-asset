@@ -32,20 +32,19 @@ class DesignChangeDetail extends PureComponent {
       value: undefined,
       reasonArr: [],
       formDatas: [],
+      checkReason: false,
     };
   }
 
- 
   // 点击确认
   onOKClick = () => {
     const {
       form,
       designChange: { proID },
       onSubmit,
-      formTypeDesignChange
+      formTypeDesignChange,
     } = this.props;
-    console.log(this.state)
-    const {formDatas} = this.state;
+    const { formDatas } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
@@ -53,31 +52,30 @@ class DesignChangeDetail extends PureComponent {
         if (formData.reason) {
           formData.reason = formData.reason.join(',');
         }
-        if(formData.launch_date){
-
+        if (formData.launch_date) {
         }
         formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn  = formDatas.sn;
-        
+        formData.comcontract_sn = formDatas.sn;
+
         // if(formData.cost_change){
         //   formData.cost_change =parseInt(formData.cost_change, 10)
         // }
-          // 合同附件修改上传格式
-          const urlArr = [];
-          if (formData.attas) {
-            formData.attas.forEach(ele => {
-              if (formTypeDesignChange === 'E') {
-                urlArr.push({
-                  url: ele.URL?ele.URL:ele,
-                });
-              } else {
-                urlArr.push({
-                  url: ele,
-                });
-              }
-            });
-          }
-          formData.attas = urlArr;
+        // 合同附件修改上传格式
+        const urlArr = [];
+        if (formData.attas) {
+          formData.attas.forEach(ele => {
+            if (formTypeDesignChange === 'E') {
+              urlArr.push({
+                url: ele.URL ? ele.URL : ele,
+              });
+            } else {
+              urlArr.push({
+                url: ele,
+              });
+            }
+          });
+        }
+        formData.attas = urlArr;
         onSubmit(formData);
       }
     });
@@ -117,6 +115,16 @@ class DesignChangeDetail extends PureComponent {
       return value1 - value2;
     };
   }
+
+  // 变更原因变化
+  reasonChange = checkedValue => {
+    if (checkedValue.indexOf('13') > -1) {
+      this.setState({ checkReason: true });
+    }else{
+      this.setState({ checkReason: false });
+    }
+  };
+
   render() {
     const {
       designChange: {
@@ -134,7 +142,7 @@ class DesignChangeDetail extends PureComponent {
       onCancel,
     } = this.props;
     const { formDatas } = this.state;
-    console.log(formDatas)
+    console.log(formDatas);
     const { TabPane } = Tabs;
     const { Option } = Select;
     const formItemLayout = {
@@ -210,7 +218,7 @@ class DesignChangeDetail extends PureComponent {
                   initialValue: formDataDesignChange.comcontract_id,
                   rules: [
                     {
-                      required:true,
+                      required: true,
                       message: '请输入合同名称',
                     },
                   ],
@@ -229,8 +237,8 @@ class DesignChangeDetail extends PureComponent {
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同编号">
-               {/* <Input defaultValue={formDatas.sn} placeholder="请输入合同编号" /> */}
-               {formDatas.sn}
+                {/* <Input defaultValue={formDatas.sn} placeholder="请输入合同编号" /> */}
+                {formDatas.sn}
               </Form.Item>
             </Col>
           </Row>
@@ -299,6 +307,7 @@ class DesignChangeDetail extends PureComponent {
                   <Checkbox.Group
                     style={{ width: '100%' }}
                     options={changeList.sort(this.compare('value'))}
+                    onChange={this.reasonChange}
                   ></Checkbox.Group>
                 )}
               </Form.Item>
@@ -311,7 +320,7 @@ class DesignChangeDetail extends PureComponent {
                   initialValue: formDataDesignChange.reason_other,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.checkReason,
                       message: '请输入其他原因',
                     },
                   ],
