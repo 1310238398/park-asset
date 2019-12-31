@@ -23,17 +23,17 @@ import styles from './ContractSigning.less';
 const FormItem = Form.Item;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
 class ContractSettlement extends PureComponent {
-
+  constructor(props) {
+    super(props);
+  }
   componentDidMount() {
     const {
-      contractSiging: { formID },
+      formID
     } = this.props;
-
     // this.dispatch({
     //   type: 'contractSiging/fetch',
     //   search: {},
@@ -146,6 +146,7 @@ class ContractSettlement extends PureComponent {
                 dataSource={data}
                 columns={columns}
                 pagination={false}
+                size="small"
               ></Table>
             </div>
           </div>

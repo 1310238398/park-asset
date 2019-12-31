@@ -16,11 +16,9 @@ import {
   Cascader,
 } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import ContractPlanning from './ContractPlanning';
-import PicturesWall from '@/components/PicturesWall/PicturesWall';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import ProSelect from '@/components/ProSelectID/ProSelect';
-import FinishquotingModel from './FinishquotingModel';
+import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
+
 import ContractPlanningSelect from './ContractPlanningSelect';
 
 @connect(({ contractSiging }) => ({
@@ -37,18 +35,19 @@ class ContractSigningDetail extends PureComponent {
       subject: undefined,
       value: undefined,
       plan: {},
+      // 甲方单位
       jCharge: [],
       options: [],
-      fileList: [],
-      // secondCity: cityData[provinceData[0]][0],
+      hyData: [],
     };
   }
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'contractSiging/loadTree',
+      type: 'contractSiging/fetchTree',
     });
   }
+
   // 选择合约规划弹框
   onSelectClick = () => {
     this.props.dispatch({
@@ -57,52 +56,9 @@ class ContractSigningDetail extends PureComponent {
     });
   };
 
-  // 甲方单位模糊匹配
-  handleChangePro = e => {
-    this.setState({ project_id: e });
-    this.dispatch({
-      type: 'contractSiging/saveProjectID',
-      payload: e,
-    });
-  };
-
-  // // 选择余额处理方式
-  rendeSelectModelForm() {
-    const {
-      contractSiging: { formVisibleFinishquoting },
-    } = this.props;
-    return (
-      <FinishquotingModel
-        visible={formVisibleFinishquoting}
-        onCancel={this.handleModelFormCancel}
-        onSubmit={this.handleModelFormSubmit}
-      />
-    );
-  }
-
-  // 点击ok
-  handleModelFormSubmit = addlist => {
-    // 关闭窗口，调用后台数据
-    this.props.dispatch({
-      type: 'contractSiging/saveFinishquotingData',
-      payload: {
-        visible: false,
-        data: addlist,
-      },
-    });
-  };
-
-  // 合约规划是否引用完点击取消
-  handleModelFormCancel = () => {
-    this.props.dispatch({
-      type: 'contractSiging/changeFormVisibleFinishquoting',
-      payload: false,
-    });
-  };
-
   onOKClick = () => {
     const { form, proID, onSubmit, formTypeSiging } = this.props;
-    const {subject,subject_subitem} = this.state;
+    const { subject, subject_subitem } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
@@ -115,7 +71,7 @@ class ContractSigningDetail extends PureComponent {
           formData.attas.forEach(ele => {
             if (formTypeSiging === 'E') {
               urlArr.push({
-                url: ele.URL,
+                url: ele.URL ? ele.URL : ele,
               });
             } else {
               urlArr.push({
@@ -129,32 +85,51 @@ class ContractSigningDetail extends PureComponent {
       }
     });
   };
-
-  // 合约规划是否引用完选择发生变化
-  contract_planning_doneSelect = value => {
-    if (value === 1) {
-      this.props.dispatch({
-        type: 'contractSiging/changeFormVisibleFinishquoting',
-        payload: true,
-      });
-    }
-  };
-
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
   };
 
+  // 对数组进行处理
+  ruleValidate = (value1, value2) => {
+    let flag = true;
+    var arr = [];
+    function judgeChildren(value1, value2) {
+      value1.forEach(e => {
+        if (e.cost_id === value2.cost_id) {
+          return (e.children = value2);
+        }
+        if (!flag) {
+          return;
+        }
+        if (!value2.record_id) {
+          flag = false;
+          return;
+        } else if (e.children && e.children.length) {
+          judgeChildren(e.children, value2);
+        }
+      });
+    }
+    judgeChildren(value1, value2);
+    return value1;
+  };
+
   // 合约规划选择
   handleFormChange = (fields, item) => {
     const {
-      contractSiging: { formDataSiging },
+      contractSiging: { formDataSiging, dataOptions },
     } = this.props;
+    const hyDa = this.ruleValidate(dataOptions, item);
+    for (let i = 0; i < dataOptions.length; i++) {}
     let cost_name_path = [];
+    this.dispatch({
+      type: 'contractSiging/savePlanName',
+      payload: item.cost_name_path,
+    });
     if (item.cost_name_path) {
       cost_name_path = item.cost_name_path.split('/');
       if (cost_name_path && cost_name_path.length > 0) {
-        this.setState({ subject: cost_name_path[0] });
+        this.setState({ subject: cost_name_path[cost_name_path.length - 2] });
         this.setState({ subject_subitem: cost_name_path[cost_name_path.length - 1] });
       }
     }
@@ -165,6 +140,9 @@ class ContractSigningDetail extends PureComponent {
         cost_id: item.cost_id,
         name: fields,
       },
+    });
+    this.setState({
+      hyData: hyDa,
     });
   };
   // 单位选择的数据
@@ -207,6 +185,7 @@ class ContractSigningDetail extends PureComponent {
       estimated_amount,
       estimated_change,
       subject,
+      hyData,
       subject_subitem,
     } = this.state;
     const { TabPane } = Tabs;
@@ -238,7 +217,7 @@ class ContractSigningDetail extends PureComponent {
     return (
       <Modal
         title={formTitleSiging}
-        width={850}
+        width={950}
         visible={formVisibleSiging}
         maskClosable={false}
         confirmLoading={submitting}
@@ -255,6 +234,8 @@ class ContractSigningDetail extends PureComponent {
                 {getFieldDecorator('sn')(<Input placeholder="请输入合同编号" />)}
               </Form.Item>
             </Col>
+          </Row>
+          <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同名称">
                 {getFieldDecorator('name', {
@@ -268,8 +249,6 @@ class ContractSigningDetail extends PureComponent {
                 })(<Input placeholder="请输入合同名称" />)}
               </Form.Item>
             </Col>
-          </Row>
-          <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同类别">
                 {getFieldDecorator('category', {
@@ -290,29 +269,25 @@ class ContractSigningDetail extends PureComponent {
                 )}
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="合同规划">
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item {...formItemLayout2} label="合约规划">
                 {getFieldDecorator('contract_planning_id', {
                   initialValue: formDataSiging.contract_planning_id,
                   rules: [
                     {
-                      required: false,
+                      required: true,
                       message: '请选择合约规划',
                     },
                   ],
                 })(
                   <ContractPlanningSelect
                     proID={proID}
-                    data={plan}
+                     data={plan}
+                     dataPro={hyData}
                     onChange={this.handleFormChange}
                   />
-                  // <Cascader
-                  //   options={this.toPlanningSelect(dataOptions)}
-                  //   loadData={this.loadData}
-                  //   onChange={this.handleFormChange}
-                  //   placeholder="请选择"
-                  //   changeOnSelect
-                  // />
                 )}
               </Form.Item>
             </Col>
@@ -321,43 +296,18 @@ class ContractSigningDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="所属科目">
                 {subject}
-                {/* {getFieldDecorator('subject', {
-                  initialValue: formDataSiging.subject,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请选择所属科目',
-                    },
-                  ],
-                })(<Input disabled />)} */}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="所属科目分项">
                 {subject_subitem}
-                {/* {getFieldDecorator('subject_subitem', {
-                  initialValue: formDataSiging.subject_subitem,
-                  rules: [
-                    {
-                      required: false,
-                      message: '请选择所属科目',
-                    },
-                  ],
-                })(<Input disabled />)} */}
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同预估金额">
-                {/* <Input defaultValue={estimated_amount}  disabled/> */}
-                {estimated_amount}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} label="预估变更金额">
-                {estimated_change}
-                {/* <Input defaultValue={estimated_change}  disabled/> */}
+                {estimated_amount}元
               </Form.Item>
             </Col>
           </Row>
@@ -372,15 +322,16 @@ class ContractSigningDetail extends PureComponent {
                       message: '请输入合同金额',
                     },
                   ],
-                })(<InputNumber style={{ width: '100%' }} placeholder="请输入合同金额" />)}
+                })(<InputNumber style={{ width: '95%' }} placeholder="请输入合同金额" />)}
+                元
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item {...formItemLayout3} label="合约规划是否引用完">
+              <Form.Item {...formItemLayout3} label="是否还有并列合同">
                 {getFieldDecorator('contract_planning_done', {
                   initialValue: formDataSiging.contract_planning_done
                     ? formDataSiging.contract_planning_done
-                    : 0,
+                    : 1,
                   rules: [
                     {
                       required: true,
@@ -388,7 +339,7 @@ class ContractSigningDetail extends PureComponent {
                     },
                   ],
                 })(
-                  <Select placeholder="请选择" onSelect={this.contract_planning_doneSelect}>
+                  <Select placeholder="请选择">
                     <Option value={1}>是</Option>
                     <Option value={0}>否</Option>
                   </Select>
@@ -465,7 +416,8 @@ class ContractSigningDetail extends PureComponent {
                       message: '请输入有效签约金额',
                     },
                   ],
-                })(<InputNumber style={{ width: '100%' }} placeholder="请输入有效签约金额" />)}
+                })(<InputNumber style={{ width: '95%' }} placeholder="请输入有效签约金额" />)}
+                元
               </Form.Item>
             </Col>
           </Row>
@@ -473,6 +425,7 @@ class ContractSigningDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="甲方单位">
                 {getFieldDecorator('jiafang', {
+                  initialValue: formDataSiging.jiafang,
                   rules: [
                     {
                       required: true,
@@ -518,7 +471,7 @@ class ContractSigningDetail extends PureComponent {
                   initialValue: formDataSiging.yifang,
                   rules: [
                     {
-                      required: true,
+                      required: false,
                       message: '请选择乙方单位',
                     },
                   ],
@@ -608,7 +561,8 @@ class ContractSigningDetail extends PureComponent {
                       message: '请输入不计成本金额',
                     },
                   ],
-                })(<InputNumber style={{ width: '100%' }} placeholder="请输入不计成本金额" />)}
+                })(<InputNumber style={{ width: '95%' }} placeholder="请输入不计成本金额" />)}
+                元
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -621,7 +575,8 @@ class ContractSigningDetail extends PureComponent {
                       message: '请输入甲供材料金额',
                     },
                   ],
-                })(<InputNumber style={{ width: '100%' }} placeholder="请输入甲供材料金额" />)}
+                })(<InputNumber style={{ width: '95%' }} placeholder="请输入甲供材料金额" />)}
+                元
               </Form.Item>
             </Col>
           </Row>
@@ -703,13 +658,13 @@ class ContractSigningDetail extends PureComponent {
                       message: '请选择',
                     },
                   ],
-                })(<UploadFile bucket="contract" fileList={this.state.fileList} />)}
+                })(<UploadFile bucket="contract" />)}
               </Form.Item>
             </Col>
           </Row>
         </Form>
         {/* {this.renderDataForm()} */}
-        {this.rendeSelectModelForm()}
+        {/* {this.rendeSelectModelForm()} */}
       </Modal>
     );
   }

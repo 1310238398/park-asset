@@ -23,7 +23,6 @@ import styles from './ContractSigning.less';
 const FormItem = Form.Item;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
@@ -183,6 +182,7 @@ class FinancialInformation extends PureComponent {
                 columns={columns}
                 pagination={false}
                 scroll={{ x: 1200 }} 
+                size="small"
               ></Table>
             </div>
           </div>

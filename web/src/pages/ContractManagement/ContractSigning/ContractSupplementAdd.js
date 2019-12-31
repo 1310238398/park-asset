@@ -23,56 +23,83 @@ import styles from './ContractSigning.less';
 const FormItem = Form.Item;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
 class ContractSupplementAdd extends PureComponent {
-  state = {
-    selectedRowKeys: [],
-    selectedRows: [],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedRowKeys: [],
+      selectedRows: [],
+      selectData:[]
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if ('form' in nextProps) {
+      return { ...state, form: nextProps.form };
+    }
+    return state;
+  }
+
   componentDidMount() {
-    const {
-      contractSiging: { formID },
-    } = this.props;
+    const { formID } = this.props;
     this.props.dispatch({
-      type: 'contractSiging/fetch',
+      type: 'contractSiging/fetchSettlemet',
       search: {},
       pagination: {},
-      pro_id: formID,
+      record_id: formID,
     });
   }
-   // 选择checkbox 事件
-   handleTableSelectRow = (keys, rows) => {
+  // 选择checkbox 事件
+  handleTableSelectRow = (keys, rows) => {
     this.setState({
       selectedRowKeys: keys,
       selectedRows: rows,
     });
   };
-   // 取消选中的复选框
-    clearSelectRows = () => {
-      const { selectedRowKeys } = this.state;
-      if (selectedRowKeys.length === 0) {
-        return;
-      }
-      this.setState({ selectedRowKeys: [], selectedRows: [] });
-    };
-    // 新增结算信息
-    handleAddClick = () =>{
-      console.log("新增")
+  // 取消选中的复选框
+  clearSelectRows = () => {
+    const { selectedRowKeys } = this.state;
+    if (selectedRowKeys.length === 0) {
+      return;
     }
-    // 编辑结算信息
-    handleEditClick = item =>{
-      console.log("编辑")
-      console.log(item)
-    }
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
+  };
+  // 新增结算信息
+  handleAddClick = () => {
+    const { callback } = this.props;
+    callback();
+    this.clearSelectRows();
+  };
 
-    // 删除结算信息
-    handleDelClick = item =>{
-      console.log("删除")
-      console.log(item)
-    }
+  // 编辑结算信息
+  handleEditClick = item => {
+    const { callback } = this.props;
+    callback(item);
+    // this.clearSelectRows();
+  };
+
+  // 删除结算信息
+  handleDelClick = item => {
+    Modal.confirm({
+      title: `确定删除【结算数据：${item.report_name}】？`,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: this.handleDelOKClick.bind(this, item),
+    });
+  };
+  // 删除结算信息
+  handleDelOKClick(item) {
+    this.props.dispatch({
+      type: 'contractSiging/delSettlement',
+      payload: { record_id: item.record_id,comcontract_id:item.comcontract_id },
+    });
+    this.clearSelectRows();
+  }
 
   render() {
     const { selectedRowKeys, selectedRows } = this.state;
@@ -81,59 +108,59 @@ class ContractSupplementAdd extends PureComponent {
       form: { getFieldDecorator },
       contractSiging: {
         formTypeSiging,
-        dataSiging: { list, pagination },
+        dataSupplement: { list, pagination },
       },
     } = this.props;
     const columns = [
       {
         title: '报告编号',
-        dataIndex: 'index',
+        dataIndex: 'report_no',
         width: 100,
       },
       {
         title: '报告名称',
-        dataIndex: 'date',
+        dataIndex: 'report_name',
         width: 150,
       },
       {
         title: '送审值',
-        dataIndex: 'address',
+        dataIndex: 'songshen',
         width: 150,
       },
       {
         title: '其中甲供金额',
-        dataIndex: 'sex',
+        dataIndex: 'songshen_jiagongg',
         width: 150,
       },
 
       {
         title: '审定值',
-        dataIndex: 'tags',
+        dataIndex: 'shending',
         width: 150,
       },
       {
         title: '其中甲供金额',
-        dataIndex: 'age',
+        dataIndex: 'shending_jiagong',
         width: 150,
       },
       {
         title: '审减率',
-        dataIndex: 'ye',
+        dataIndex: '',
         width: 150,
       },
       {
         title: '报告日期',
-        dataIndex: 'rq',
+        dataIndex: 'report_date',
         width: 150,
       },
       {
         title: '咨询造价单位',
-        dataIndex: 'dw',
+        dataIndex: 'zaojiazixun',
         width: 150,
       },
       {
         title: '经办人',
-        dataIndex: 'jbr',
+        dataIndex: 'zaojiazixun_jingban',
         width: 150,
       },
     ];
@@ -143,62 +170,11 @@ class ContractSupplementAdd extends PureComponent {
       showTotal: total => <span>共{total}条</span>,
       ...pagination,
     };
-
-    const data = [
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b542',
-        index: '1',
-        date: '2019-10-22',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-        sex: 'nan',
-        ye: 233,
-        rq: '2019-10-10',
-        dw: 'sss',
-        jbr: 'ddd',
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b541',
-        index: '2',
-        date: '2019-10-22',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-        sex: 'nan',
-        ye: 555,
-        rq: '2019-10-10',
-        dw: 'sss',
-        jbr: 'ddd',
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b54e',
-        index: '3',
-        date: '2019-10-22',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-        sex: 'nan',
-        ye: 333,
-        rq: '2019-10-10',
-        dw: 'sss',
-        jbr: 'ddd',
-      },
-    ];
-
     return (
       <div className={styles.addSuplementList}>
         <Card bordered={false}>
           <div className={styles.addSuplementBtn}>
-            <PButton
-              code="add"
-              icon="plus"
-              type="primary"
-              onClick={() => this.handleAddClick()}
-            >
+            <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
               新增
             </PButton>
             {selectedRows.length === 1 && [
@@ -228,9 +204,8 @@ class ContractSupplementAdd extends PureComponent {
                   selectedRowKeys,
                   onChange: this.handleTableSelectRow,
                 }}
-                dataSource={data}
+                dataSource={list}
                 columns={columns}
-                pagination={false}
                 scroll={{ x: 1000 }}
               ></Table>
             </div>

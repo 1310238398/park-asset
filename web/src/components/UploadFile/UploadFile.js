@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Icon, Modal, Button, Table, Popconfirm, Divider } from 'antd';
 import styles from './UploadFile.less';
+import store from '@/utils/store';
 
 const defaction = '/api/v1/files';
 
@@ -63,7 +64,7 @@ export default class UploadFile extends React.Component {
       previewImage: '',
       num: fnum,
       name: name || 'data',
-      fileList:[]
+      // fileList:[]
     };
   }
 
@@ -129,8 +130,8 @@ export default class UploadFile extends React.Component {
         for (const item of nodone) {
           done.push(item);
         }
-        // this.fileList = done;
-        this.setState({ fileList:done });
+        this.fileList = done;
+        // this.setState({ fileList:done });
       }
     }
     return true;
@@ -202,8 +203,8 @@ export default class UploadFile extends React.Component {
       }
       return true;
     });
-    // this.fileList = fileList;
-     this.setState({fileList});
+     this.fileList = fileList;
+    //  this.setState({fileList});
     this.forceUpdate();
     this.triggerChange({ fileList });
     if(info.file.status==="uploading"){
@@ -238,8 +239,10 @@ export default class UploadFile extends React.Component {
 
 
   render() {
-    const { previewVisible, previewImage, action, name,fileList } = this.state;
-    const { listType, accept,bucket, rich, showUploadList, disabled } = this.props;
+    const { previewVisible, previewImage, action, name } = this.state;
+    const { listType, accept,bucket, rich, showUploadList, disabled} = this.props;
+    const tokenInfo = store.getAccessToken();
+    const { fileList } = this;
     const columns = [
       {
         title: '文件名',
@@ -269,9 +272,22 @@ export default class UploadFile extends React.Component {
       data: { bucket },
       name,
       disabled,
+      headers: {
+        Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
+      },
     };
     if (accept) {
       uprop.accept = accept;
+    }
+    if(fileList){
+      fileList.forEach(file => {
+        if(!file.thumbUrl){
+        }else{
+          file.url =file.thumbUrl.url;
+          file.name =file.thumbUrl.name;
+          file.thumbUrl=file.thumbUrl.thumbUrl;
+        }
+      });
     }
     return (
       <div className="clearfix">

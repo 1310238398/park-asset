@@ -23,7 +23,6 @@ import styles from './ContractSigning.less';
 const FormItem = Form.Item;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()

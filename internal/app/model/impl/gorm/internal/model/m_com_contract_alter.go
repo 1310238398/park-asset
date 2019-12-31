@@ -516,6 +516,7 @@ func (a *ComContractAlter) AffirmSign(ctx context.Context, recordID string, info
 		"affirm_amount":          info.AffirmAmount,
 		"affirm_remark":          info.AffirmRemark,
 		"affirm_working_company": info.AffirmWorkingCompany,
+		"affirm_working_name":    info.AffirmWorkingName,
 		"affirm_work_num":        info.AffirmWorkNum,
 		"status":                 3,
 		"affirm_date":            info.AffirmDate}
