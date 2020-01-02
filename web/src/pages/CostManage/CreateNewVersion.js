@@ -183,8 +183,6 @@ class CreateNewVersion extends PureComponent {
       });
     }
    
-    
-   
     // 编辑新版本的名字
   }
 
@@ -196,6 +194,7 @@ class CreateNewVersion extends PureComponent {
     this.setState({ editingKey: '' });
   };
   save(form, key) {
+    console.log("savehhhhhh");
     const { currentVersion: { compareTree }} = this.props;
 
     form.validateFields((error, row) => {
@@ -214,41 +213,45 @@ class CreateNewVersion extends PureComponent {
       let newData1 = [...newData];
 
       for (let i = 0; i < keys.length; i++) {
+        
         let keychild = '';
         keychild = keys[i];
+      
         index = newData1.findIndex(item => keychild === item.record_id);
         if (index > -1 && (i === keys.length - 1 )) {
           const item = newData1[index];
           let item2 = {...newData1[index]};
           item2.memo = row.memo;
+          
           newData1.splice(index, 1, {
             ...item,
             ...item2,
           });
           this.setState({ editingKey: '' });
 
-          this.dispatch({
+          if (keys.length === 1) {
+            this.dispatch({
+              type: 'currentVersion/saveCompareTree',
+              payload: newData1,
+            });
+          }
+          else {
+             this.dispatch({
             type: 'currentVersion/saveCompareTree',
             payload: newData,
           });
-
+          }
         }
-        else if (  index > -1 &&
+        else if ( index > -1 &&
           newData1[index].children &&
           newData1[index].children.length > 0 &&
           i < keys.length - 1) 
         {
-          console.log('进入下一层');
+          
           newData1 = newData1[index].children;
-          console.log('newData1 ' + newData1.length);
+          
         }
-       
       }
-
-     
-
-
-     
     });
   }
   isEditing = record => record.record_id === this.state.editingKey;
@@ -286,7 +289,7 @@ class CreateNewVersion extends PureComponent {
       loading,
       currentVersion: { submitting, newFormVisible,  compareTree, saveTitle, compareVersionList},
       costAccount: { formType },
-    } = this.props;
+    } = this.props; 
     const { tableData } = this.state;
     const columns = [
       {
