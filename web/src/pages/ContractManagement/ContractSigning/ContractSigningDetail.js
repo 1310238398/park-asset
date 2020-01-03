@@ -38,7 +38,6 @@ class ContractSigningDetail extends PureComponent {
       // 甲方单位
       jCharge: [],
       options: [],
-      hyData: [],
       jfCheck: false,
       yfCheck: false,
       bfCheck: false,
@@ -66,16 +65,19 @@ class ContractSigningDetail extends PureComponent {
       if (!err) {
         let formData = { ...values };
         formData.project_id = formData.project_id ? formData.project_id : proID;
-        formData.subject = subject;
-        formData.subject_subitem = subject_subitem;
+        // formData.subject = subject;
+        // formData.subject_subitem = subject_subitem;
         // 合同附件修改上传格式
         const urlArr = [];
         if (formData.attas) {
           formData.attas.forEach(ele => {
             if (formTypeSiging === 'E') {
-              urlArr.push({
-                url: ele.URL ? ele.URL : ele,
-              });
+              if (ele.url) {
+              } else {
+                urlArr.push({
+                  url: ele.URL ? ele.URL : ele,
+                });
+              }
             } else {
               urlArr.push({
                 url: ele,
@@ -83,7 +85,7 @@ class ContractSigningDetail extends PureComponent {
             }
           });
         }
-        formData.attas = [];
+        formData.attas = urlArr;
         onSubmit(formData);
       }
     });
@@ -122,7 +124,6 @@ class ContractSigningDetail extends PureComponent {
     const {
       contractSiging: { formDataSiging, dataOptions },
     } = this.props;
-    const hyDa = this.ruleValidate(dataOptions, item);
     for (let i = 0; i < dataOptions.length; i++) {}
     let cost_name_path = [];
     this.dispatch({
@@ -132,20 +133,32 @@ class ContractSigningDetail extends PureComponent {
     if (item.cost_name_path) {
       cost_name_path = item.cost_name_path.split('/');
       if (cost_name_path && cost_name_path.length > 0) {
-        this.setState({ subject: cost_name_path[cost_name_path.length - 2] });
-        this.setState({ subject_subitem: cost_name_path[cost_name_path.length - 1] });
+        this.props.form.setFieldsValue({
+          subject: cost_name_path[cost_name_path.length - 2],
+        });
+        this.props.form.setFieldsValue({
+          subject_subitem: cost_name_path[cost_name_path.length - 1],
+        });
+        this.props.form.setFieldsValue({
+          planning_price: item.planning_price,
+        });
       }
+    } else {
+      this.props.form.setFieldsValue({
+        subject: '',
+      });
+      this.props.form.setFieldsValue({
+        subject_subitem: '',
+      });
+      this.props.form.setFieldsValue({
+        planning_price: '',
+      });
     }
-    this.setState({ estimated_amount: item.planning_price });
-    this.setState({ estimated_change: item.planning_change });
     this.setState({
       plan: {
         cost_id: item.cost_id,
         name: fields,
       },
-    });
-    this.setState({
-      hyData: hyDa,
     });
   };
   // 单位选择的数据
@@ -206,7 +219,6 @@ class ContractSigningDetail extends PureComponent {
       estimated_amount,
       estimated_change,
       subject,
-      hyData,
       subject_subitem,
     } = this.state;
     const { TabPane } = Tabs;
@@ -306,6 +318,7 @@ class ContractSigningDetail extends PureComponent {
                   <ContractPlanningSelect
                     proID={proID}
                     data={plan}
+                    dataOptions={dataOptions}
                     onChange={this.handleFormChange}
                   />
                 )}
@@ -315,19 +328,44 @@ class ContractSigningDetail extends PureComponent {
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="所属科目">
-                {subject}
+                {getFieldDecorator('subject', {
+                  initialValue: formDataSiging.subject,
+                  rules: [
+                    {
+                      required: true,
+                      message: '所属科目不能为空',
+                    },
+                  ],
+                })(<Input disabled />)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="所属科目分项">
-                {subject_subitem}
+                {getFieldDecorator('subject_subitem', {
+                  initialValue: formDataSiging.subject_subitem,
+                  rules: [
+                    {
+                      required: true,
+                      message: '所属科目分项不能为空',
+                    },
+                  ],
+                })(<Input disabled />)}
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同预估金额">
-                {estimated_amount}元
+                {getFieldDecorator('planning_price', {
+                  initialValue: formDataSiging.planning_price,
+                  rules: [
+                    {
+                      required: true,
+                      message: '合同预估金额不能为空',
+                    },
+                  ],
+                })(<Input style={{ width: '95%' }} disabled />)}
+                元
               </Form.Item>
             </Col>
           </Row>

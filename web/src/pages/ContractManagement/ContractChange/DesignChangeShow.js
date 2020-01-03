@@ -93,17 +93,17 @@ class DesignChangeShow extends PureComponent {
           </DescriptionList>
           <DescriptionList title="" size="large" col={1} style={{ marginBottom: 20 }}>
             <Description term="备注">{formDataDesignChange.remark}</Description>
-            <Description term="附件信息"> {attas && attas.length ? (
+            <Description term="附件信息">
+            {attas && attas.length ? (
                 <div>
-                  {attas.map(item => (
-                    <div>
-                      <a href={item.url} target="_blank">
-                        {item.name}
-                      </a>
-                    </div>
+                  {attas.map((item, index) => (
+                    <a href={item.url} target="_blank" key={index}>
+                      {item.name}
+                    </a>
                   ))}
                 </div>
-              ) : null}</Description>
+              ) : null}
+              </Description>
           </DescriptionList>
         </div>
       </div>

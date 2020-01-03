@@ -75,20 +75,23 @@ class MaterialPricingDetail extends PureComponent {
           formData.reason = formData.reason.join(',');
         }
         formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn = formDatas.sn;
+        // formData.comcontract_sn = formDatas.sn;
         formData.alter_design_name = designData.name;
-        formData.alter_design_sn = designData.sn;
+        // formData.alter_design_sn = designData.sn;
         formData.alter_sign_name = signData.name;
-        formData.alter_sign_sn = signData.sn;
+        // formData.alter_sign_sn = signData.sn;
         formData.working_name = sgData.name;
         // 合同附件修改上传格式
         const urlArr = [];
         if (formData.attas) {
           formData.attas.forEach(ele => {
             if (formTypeMaterialPricing === 'E') {
-              urlArr.push({
-                url: ele.URL ? ele.URL : ele,
-              });
+              if (ele.url) {
+              } else {
+                urlArr.push({
+                  url: ele.URL ? ele.URL : ele,
+                });
+              }
             } else {
               urlArr.push({
                 url: ele,
@@ -149,6 +152,15 @@ class MaterialPricingDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ formDatas: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          comcontract_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          comcontract_sn: '',
+        });
+      }
     });
   };
   //设计变更选择的数据
@@ -169,6 +181,15 @@ class MaterialPricingDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ designData: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          alter_design_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          alter_design_sn: '',
+        });
+      }
     });
   };
   //材料批价变更选择的数据
@@ -189,6 +210,15 @@ class MaterialPricingDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ signData: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          alter_sign_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          alter_sign_sn: '',
+        });
+      }
     });
   };
   // 施工单位选择的数据
@@ -331,7 +361,15 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {formDatas.sn?formDatas.sn:formDataMaterialPricing.comcontract_sn}
+                  {getFieldDecorator('comcontract_sn', {
+                    initialValue: formDataMaterialPricing.comcontract_sn,
+                    rules: [
+                      {
+                        required: true,
+                        message: '合同编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -420,7 +458,15 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {designData.sn?designData.sn:formDataMaterialPricing.alter_design_sn}
+                  {getFieldDecorator('alter_design_sn', {
+                    initialValue: formDataMaterialPricing.alter_design_sn,
+                    rules: [
+                      {
+                        required: this.state.designCheck,
+                        message: '设计变更编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -450,7 +496,15 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证变更编号">
-                  {signData.sn?signData.sn:formDataMaterialPricing.alter_sign_sn}
+                  {getFieldDecorator('alter_sign_sn', {
+                    initialValue: formDataMaterialPricing.alter_sign_sn,
+                    rules: [
+                      {
+                        required: this.state.visaCheck,
+                        message: '签证变更编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>

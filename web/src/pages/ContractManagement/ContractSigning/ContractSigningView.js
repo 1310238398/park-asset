@@ -242,30 +242,19 @@ class ContractSigningView extends PureComponent {
       type: 'contractSiging/changeFormVisibleSiging',
       payload: false,
     });
+    
   };
-  // 保存提交合同
-  handleDataFormSubmit = data => {
-    this.dispatch({
-      type: 'contractSiging/submit',
-      payload: data,
-    });
-    this.clearSelectRows();
-  };
-  // 取消关闭b补充合同页面
-  handleSuppleDataFormCancel = () => {
-    this.dispatch({
-      type: 'contractSupplement/changeFormVisibleSupplement',
-      payload: false,
-    });
-  };
+
 
   // 查看单个合同信息
   handleSeeClick = item => {
+    const proID = item.project_id;
     this.dispatch({
       type: 'contractSiging/loadSigingForm',
       payload: {
         type: 'S',
         id: item.record_id,
+        proID: proID,
       },
     });
   };
@@ -273,12 +262,12 @@ class ContractSigningView extends PureComponent {
   // 渲染新增页面还是编辑页面还是查看页面
   renderDataForm() {
     const {
-      contractSiging: { formTypeSiging },
+      contractSiging: { formTypeSiging,proID },
     } = this.props;
 
     if (formTypeSiging !== 'S') {
     } else {
-      return <ContractSigningShow onCancel={this.handleDataFormCancel} />;
+      return <ContractSigningShow  proID={proID}  onCancel={this.handleDataFormCancel} />;
     }
   }
 

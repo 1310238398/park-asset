@@ -40,7 +40,7 @@ class VisaChangeDetail extends PureComponent {
       jlData: [],
       designCheck: false,
       reasonCheck: false,
-      stateCheck:false
+      stateCheck: false,
     };
   }
 
@@ -98,10 +98,10 @@ class VisaChangeDetail extends PureComponent {
           formData.xianchangchengben = parseInt(formData.xianchangchengben, 10);
         }
 
-        formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn = formDatas.sn;
-        formData.alter_design_name = designData.name;
-        formData.alter_design_sn = designData.sn;
+         formData.comcontract_name = formDatas.name;
+        // formData.comcontract_sn = formDatas.sn;
+         formData.alter_design_name = designData.name;
+        // formData.alter_design_sn = designData.sn;
         formData.working_name = sgData.name;
         formData.supervision_name = jlData.name;
         // 合同附件修改上传格式
@@ -109,9 +109,12 @@ class VisaChangeDetail extends PureComponent {
         if (formData.attas) {
           formData.attas.forEach(ele => {
             if (formTypeVisaChange === 'E') {
-              urlArr.push({
-                url: ele.URL ? ele.URL : ele,
-              });
+              if (ele.url) {
+              } else {
+                urlArr.push({
+                  url: ele.URL ? ele.URL : ele,
+                });
+              }
             } else {
               urlArr.push({
                 url: ele,
@@ -147,7 +150,16 @@ class VisaChangeDetail extends PureComponent {
     getSigingOne({
       record_id: item,
     }).then(data => {
-      this.setState({ formDatas: data });
+      this.setState({formDatas:data});
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          comcontract_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          comcontract_sn: '',
+        });
+      }
     });
   };
   //设计变更选择的数据
@@ -167,7 +179,22 @@ class VisaChangeDetail extends PureComponent {
     getDesignChangeOne({
       record_id: item,
     }).then(data => {
-      this.setState({ designData: data });
+      this.setState({designData:data});
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          alter_design_sn: data.sn,
+        });
+        this.props.form.setFieldsValue({
+          alter_design_name: data.name,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          alter_design_sn: '',
+        });
+        this.props.form.setFieldsValue({
+          alter_design_name: '',
+        });
+      }
     });
   };
   // 施工单位选择的数据
@@ -188,6 +215,7 @@ class VisaChangeDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ sgData: data });
+      
     });
   };
   // 监理单位选中之后的变化
@@ -199,13 +227,13 @@ class VisaChangeDetail extends PureComponent {
     });
   };
   // 选择项目阶段变化
-  projectStageChange = value =>{
-    if(value.indexOf('8')>-1){
-      this.setState({stateCheck:true});
-    }else{
-      this.setState({stateCheck:false});
+  projectStageChange = value => {
+    if (value.indexOf('8') > -1) {
+      this.setState({ stateCheck: true });
+    } else {
+      this.setState({ stateCheck: false });
     }
-  }
+  };
 
   render() {
     const {
@@ -321,7 +349,15 @@ class VisaChangeDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {formDatas.sn?formDatas.sn: formDataVisaChange.comcontract_sn}
+                  {getFieldDecorator('comcontract_sn', {
+                    initialValue: formDataVisaChange.comcontract_sn,
+                    rules: [
+                      {
+                        required: true,
+                        message: '合同编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -455,7 +491,15 @@ class VisaChangeDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {designData.sn?designData.sn: formDataVisaChange.alter_design_sn}
+                  {getFieldDecorator('alter_design_sn', {
+                    initialValue: formDataVisaChange.alter_design_sn,
+                    rules: [
+                      {
+                        required: this.state.designCheck,
+                        message: '设计变更编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -591,19 +635,22 @@ class VisaChangeDetail extends PureComponent {
               </Col>
             </Row>
             <Row>
-              {/* <Col span={12}>
+              <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起日期">
                   {getFieldDecorator('launch_date', {
                     initialValue: formDataVisaChange.launch_date,
                     rules: [
                       {
                         required: false,
-                        message: '请输入发起人',
+                        message: '请输入发起日期',
                       },
                     ],
-                  })(<DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />)}
+                  })(
+                  // <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+                  <div></div>
+                  )}
                 </Form.Item>
-              </Col> */}
+              </Col>
             </Row>
           </Form>
         </Card>

@@ -44,18 +44,17 @@ class DesignChangeDetail extends PureComponent {
       onSubmit,
       formTypeDesignChange,
     } = this.props;
-    const { formDatas } = this.state;
+    const {formDatas} = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
         formData.project_id = proID;
+        formData.comcontract_name = formDatas.name;
         if (formData.reason) {
           formData.reason = formData.reason.join(',');
         }
         if (formData.launch_date) {
         }
-        formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn = formDatas.sn;
 
         // if(formData.cost_change){
         //   formData.cost_change =parseInt(formData.cost_change, 10)
@@ -65,9 +64,12 @@ class DesignChangeDetail extends PureComponent {
         if (formData.attas) {
           formData.attas.forEach(ele => {
             if (formTypeDesignChange === 'E') {
-              urlArr.push({
-                url: ele.URL ? ele.URL : ele,
-              });
+              if (ele.url) {
+              } else {
+                urlArr.push({
+                  url: ele.URL ? ele.URL : ele,
+                });
+              }
             } else {
               urlArr.push({
                 url: ele,
@@ -103,7 +105,16 @@ class DesignChangeDetail extends PureComponent {
     getSigingOne({
       record_id: item,
     }).then(data => {
-      this.setState({ formDatas: data });
+      this.setState({formDatas:data})
+       if(data.sn){
+        this.props.form.setFieldsValue({
+          comcontract_sn: data.sn,
+        });
+       }else{
+        this.props.form.setFieldsValue({
+          comcontract_sn:'',
+        });
+       }
     });
   };
 
@@ -236,8 +247,15 @@ class DesignChangeDetail extends PureComponent {
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同编号">
-                {/* <Input defaultValue={formDatas.sn} placeholder="请输入合同编号" /> */}
-                {formDatas.sn ? formDatas.sn : formDataDesignChange.comcontract_sn}
+                {getFieldDecorator('comcontract_sn', {
+                  initialValue: formDataDesignChange.comcontract_sn,
+                  rules: [
+                    {
+                      required: true,
+                      message: '合同编号不能为空',
+                    },
+                  ],
+                })(<Input disabled />)}
               </Form.Item>
             </Col>
           </Row>

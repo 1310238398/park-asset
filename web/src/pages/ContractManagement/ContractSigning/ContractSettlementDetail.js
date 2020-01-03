@@ -21,7 +21,6 @@ class ContractSettlementDetail extends PureComponent {
     };
   }
 
-
   // 点击确定
   onOKClick = () => {
     const { form, onSubmit } = this.props;
@@ -29,7 +28,7 @@ class ContractSettlementDetail extends PureComponent {
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
-        if (datas.record_id) {  
+        if (datas.record_id) {
           formData.record_id = datas.record_id;
         }
         formData.report_date = formData.report_date
@@ -43,6 +42,38 @@ class ContractSettlementDetail extends PureComponent {
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
+  };
+
+  // 送审值失去焦点
+  songshenFocus = event => {
+    const {
+      form: { getFieldValue },
+    } = this.props;
+    const value = event.target.value;
+    const shending = this.props.form.getFieldValue('shending');
+    const cha = shending - value;
+    this.props.form.setFieldsValue({
+      shenjian_jiagong: cha,
+    });
+    this.props.form.setFieldsValue({
+      shenjianlv: (cha * 100) / value,
+    });
+  };
+
+  // 审定值失去焦点
+  shendingFocus = event => {
+    const {
+      form: { getFieldValue },
+    } = this.props;
+    const value = event.target.value;
+    const songshen = this.props.form.getFieldValue('songshen');
+    const cha = value - songshen;
+    this.props.form.setFieldsValue({
+      shenjian_jiagong: cha,
+    });
+    this.props.form.setFieldsValue({
+      shenjianlv: (cha * 100) / songshen,
+    });
   };
 
   // 返回值
@@ -187,14 +218,20 @@ class ContractSettlementDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="送审值">
                   {getFieldDecorator('songshen', {
-                    initialValue: formDataSettlement.songshen,
+                    initialValue: formDataSettlement.songshen ? formDataSettlement.songshen : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入送审值',
                       },
                     ],
-                  })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
+                  })(
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      placeholder="请输入送审值"
+                      onBlur={this.songshenFocus}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -203,7 +240,7 @@ class ContractSettlementDetail extends PureComponent {
                     initialValue: formDataSettlement.songshen_jiagongg,
                     rules: [
                       {
-                        required: false,
+                        required: true,
                         message: '请输入甲供金额',
                       },
                     ],
@@ -215,14 +252,20 @@ class ContractSettlementDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="审定值">
                   {getFieldDecorator('shending', {
-                    initialValue: formDataSettlement.shending,
+                    initialValue: formDataSettlement.shending ? formDataSettlement.shending : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入审定值',
                       },
                     ],
-                  })(<InputNumber style={{ width: '100%' }} placeholder="请输入审定值" />)}
+                  })(
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      placeholder="请输入审定值"
+                      onBlur={this.shendingFocus}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -231,7 +274,7 @@ class ContractSettlementDetail extends PureComponent {
                     initialValue: formDataSettlement.shending_jiagong,
                     rules: [
                       {
-                        required: false,
+                        required: true,
                         message: '请输入甲供金额',
                       },
                     ],
@@ -243,27 +286,36 @@ class ContractSettlementDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="审减值">
                   {getFieldDecorator('shenjian_jiagong', {
-                    initialValue: formDataSettlement.shenjian_jiagong,
+                    initialValue: formDataSettlement.shenjian_jiagong
+                      ? formDataSettlement.shenjian_jiagong
+                      : 0,
                     rules: [
                       {
                         required: true,
                         message: '请输入审减值',
                       },
                     ],
-                  })(<InputNumber style={{ width: '100%' }} placeholder="请输入审减值" />)}
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="审减率">
                   {getFieldDecorator('shenjianlv', {
-                    initialValue: formDataSettlement.shenjianlv,
+                    initialValue: formDataSettlement.shenjianlv ? formDataSettlement.shenjianlv : 0,
                     rules: [
                       {
                         required: false,
                         message: '请输入审减率',
                       },
                     ],
-                  })(<InputNumber style={{ width: '100%' }} placeholder="请输入审减率" />)}
+                  })(
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      formatter={value => `${value}%`}
+                      parser={value => value.replace('%', '')}
+                      disabled
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -287,7 +339,7 @@ class ContractSettlementDetail extends PureComponent {
                     initialValue: formDataSettlement.yishen_jiagong,
                     rules: [
                       {
-                        required: false,
+                        required: true,
                         message: '请输入甲供金额',
                       },
                     ],
@@ -429,11 +481,11 @@ class ContractSettlementDetail extends PureComponent {
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Row>
+            <Row>
               <Col span={24}>
                 <Form.Item {...formItemLayout2} label="附件">
-                  {getFieldDecorator('memo', {
-                    initialValue: formDataSettlement.memo,
+                  {getFieldDecorator('attas', {
+                    initialValue: formDataSettlement.attas,
                     rules: [
                       {
                         required: false,
@@ -443,7 +495,7 @@ class ContractSettlementDetail extends PureComponent {
                   })(<UploadFile bucket="contract" />)}
                 </Form.Item>
               </Col>
-            </Row> */}
+            </Row>
           </Form>
         </Card>
         <Card style={{ marginTop: 10 }}>

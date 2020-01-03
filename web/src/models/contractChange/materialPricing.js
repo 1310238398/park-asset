@@ -49,9 +49,8 @@ export default {
     designTreeData: [],
   },
   effects: {
-
-     // 甲乙单位树状结构
-     *fetchTree({ payload }, { call, put }) {
+    // 甲乙单位树状结构
+    *fetchTree({ payload }, { call, put }) {
       let params = {
         q: 'page',
         current: 1,
@@ -93,17 +92,18 @@ export default {
     },
 
     // 原合同名列表
-    *fetchOriginConTree({ payload }, { call, put }) {
+    *fetchOriginConTree({ payload }, { call, put,select }) {
+      const proID = yield select(state => state.designChange.proID);
       let params = {
         q: 'page',
         current: 1,
+        state:2,
         pageSize: 50,
       };
       if (payload) {
         params = { ...params, ...payload };
       }
-      const response = yield call(contractSigingService.querySigingPage, params);
-      console.log(response);
+      const response = yield call(contractSigingService.querySigingPage, params,proID);
       const list = response.list || [];
       yield put({
         type: 'saveOriTreeData',
@@ -113,7 +113,6 @@ export default {
     // 提交审核合同
     *commitMaterialPricingForm({ payload }, { call, put, select }) {
       const proID = yield select(state => state.materialPricing.proID);
-      console.log(proID)
       const response = yield call(contractMaterialPricingService.commitMaterialPricing, payload);
       if (response.status === 'OK') {
         message.success('提交审核成功');
@@ -173,7 +172,6 @@ export default {
     },
     // 查询材料批价列表
     *fetchMaterialPricing({ payload }, { call, put, select }) {
-      console.log(payload);
       let params;
       let search = payload.search;
       let pagination = payload.pagination;
@@ -216,13 +214,33 @@ export default {
       ];
     },
 
-    // 查询厂房单条数据
+    // 查询材料批价单条数据
     *fetchFormMaterialPricing({ payload }, { call, put, select }) {
       const response = yield call(contractMaterialPricingService.getMaterialPricingOne, payload);
       // 变更原因
       if (response.reason) {
         const arrReason = response.reason.split(',');
         response.reason = arrReason;
+      }
+      // 对附件进行处理
+      if (response.attas && response.attas.length > 0) {
+        const attas = [];
+
+        response.attas.forEach(el => {
+          let name;
+          let sName = el.URL.split('/');
+          if (el.Name) {
+            name = el.Name;
+          } else {
+            name = sName[sName.length - 1];
+          }
+          attas.push({
+            name: name,
+            url: el.URL,
+            uid: el.BizID,
+          });
+        });
+        response.attas = attas;
       }
       yield put({
         type: 'saveFormDataMaterialPricing',
@@ -356,7 +374,6 @@ export default {
           type: 'changeFormVisibleMaterialPricing',
           payload: false,
         });
-        console.log(proID);
         // TODO 查询门牌列表
         yield put({
           type: 'fetchMaterialPricing',
@@ -369,11 +386,9 @@ export default {
       }
     },
 
-    // 删除厂房
+    // 删除材料批价
     *delMaterialPricing({ payload }, { call, put, select }) {
       const proID = yield select(state => state.materialPricing.proID);
-      console.log(payload);
-      console.log(proID);
       const response = yield call(contractMaterialPricingService.delMaterialPricing, payload);
       if (response.status === 'OK') {
         message.success('删除成功');
