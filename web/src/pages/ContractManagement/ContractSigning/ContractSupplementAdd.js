@@ -33,16 +33,10 @@ class ContractSupplementAdd extends PureComponent {
     this.state = {
       selectedRowKeys: [],
       selectedRows: [],
-      selectData:[]
+      selectData: [],
     };
   }
-
-  static getDerivedStateFromProps(nextProps, state) {
-    if ('form' in nextProps) {
-      return { ...state, form: nextProps.form };
-    }
-    return state;
-  }
+ 
 
   componentDidMount() {
     const { formID } = this.props;
@@ -96,7 +90,7 @@ class ContractSupplementAdd extends PureComponent {
   handleDelOKClick(item) {
     this.props.dispatch({
       type: 'contractSiging/delSettlement',
-      payload: { record_id: item.record_id,comcontract_id:item.comcontract_id },
+      payload: { record_id: item.record_id, comcontract_id: item.comcontract_id },
     });
     this.clearSelectRows();
   }

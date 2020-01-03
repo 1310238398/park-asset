@@ -10,13 +10,8 @@ const cRouter = 'proj-contract-plannings';
 const settRouter = 'settlement-records';
 
 // 查询合同草稿列表
-export async function querySigingPage(params,proID) {
-  if(proID){
-    return request(`/v1/${comContRouter}/${proID}/byproject?${stringify(params)}`);
-  }else{
-    return request(`/v1/${comContRouter}?${stringify(params)}`);
-  }
-  
+export async function querySigingPage(params, proID) {
+  return request(`/v1/${comContRouter}/${proID}/byproject?${stringify(params)}`);
 }
 
 // 查询单条合同数据
@@ -37,8 +32,6 @@ export async function getVisaOne(params) {
 export async function getMaterialOne(params) {
   return request(`/v1/${comContRouter}/${params}/alter/stuffpriceitem`);
 }
-
-
 
 // 查询项目ID和名字
 export async function selectProInfo(params) {
@@ -118,7 +111,14 @@ export async function saveEditSettlement(params) {
 
 // 查询合同结算列表
 export async function querySettlementPage(params) {
-  return request(`/v1/${comContRouter}/${params.record_id}/settlementlist?${stringify(params.params)}`);
+  return request(
+    `/v1/${comContRouter}/${params.record_id}/settlementlist?${stringify(params.params)}`
+  );
+}
+
+//根据合同id 获取结算信息
+export async function querySettlementPageOne(params) {
+  return request(`/v1/${comContRouter}/${params}/settlementlist`);
 }
 // 删除
 export async function delSettlement(params) {
@@ -130,4 +130,3 @@ export async function delSettlement(params) {
 export async function getSettlementOne(params) {
   return request(`/v1/${settRouter}/${params.record_id}`);
 }
-

@@ -19,8 +19,7 @@ import {
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import UploadFile from '@/components/UploadFile/UploadFile';
 import { getSigingOne } from '@/services/contractSiging';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
-
+import moment from 'moment';
 @connect(({ designChange }) => ({
   designChange,
 }))
@@ -32,52 +31,52 @@ class DesignChangeDetail extends PureComponent {
       value: undefined,
       reasonArr: [],
       formDatas: [],
+      checkReason: false,
     };
   }
 
- 
   // 点击确认
   onOKClick = () => {
     const {
       form,
       designChange: { proID },
       onSubmit,
-      formTypeDesignChange
+      formTypeDesignChange,
     } = this.props;
-    console.log(this.state)
     const {formDatas} = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
         formData.project_id = proID;
+        formData.comcontract_name = formDatas.name;
         if (formData.reason) {
           formData.reason = formData.reason.join(',');
         }
-        if(formData.launch_date){
-
+        if (formData.launch_date) {
         }
-        formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn  = formDatas.sn;
-        
+
         // if(formData.cost_change){
         //   formData.cost_change =parseInt(formData.cost_change, 10)
         // }
-          // 合同附件修改上传格式
-          const urlArr = [];
-          if (formData.attas) {
-            formData.attas.forEach(ele => {
-              if (formTypeDesignChange === 'E') {
-                urlArr.push({
-                  url: ele.URL?ele.URL:ele,
-                });
+        // 合同附件修改上传格式
+        const urlArr = [];
+        if (formData.attas) {
+          formData.attas.forEach(ele => {
+            if (formTypeDesignChange === 'E') {
+              if (ele.url) {
               } else {
                 urlArr.push({
-                  url: ele,
+                  url: ele.URL ? ele.URL : ele,
                 });
               }
-            });
-          }
-          formData.attas = urlArr;
+            } else {
+              urlArr.push({
+                url: ele,
+              });
+            }
+          });
+        }
+        formData.attas = urlArr;
         onSubmit(formData);
       }
     });
@@ -105,7 +104,16 @@ class DesignChangeDetail extends PureComponent {
     getSigingOne({
       record_id: item,
     }).then(data => {
-      this.setState({ formDatas: data });
+      this.setState({formDatas:data})
+       if(data.sn){
+        this.props.form.setFieldsValue({
+          comcontract_sn: data.sn,
+        });
+       }else{
+        this.props.form.setFieldsValue({
+          comcontract_sn:'',
+        });
+       }
     });
   };
 
@@ -117,6 +125,16 @@ class DesignChangeDetail extends PureComponent {
       return value1 - value2;
     };
   }
+
+  // 变更原因变化
+  reasonChange = checkedValue => {
+    if (checkedValue.indexOf('13') > -1) {
+      this.setState({ checkReason: true });
+    } else {
+      this.setState({ checkReason: false });
+    }
+  };
+
   render() {
     const {
       designChange: {
@@ -134,7 +152,6 @@ class DesignChangeDetail extends PureComponent {
       onCancel,
     } = this.props;
     const { formDatas } = this.state;
-    console.log(formDatas)
     const { TabPane } = Tabs;
     const { Option } = Select;
     const formItemLayout = {
@@ -210,7 +227,7 @@ class DesignChangeDetail extends PureComponent {
                   initialValue: formDataDesignChange.comcontract_id,
                   rules: [
                     {
-                      required:true,
+                      required: true,
                       message: '请输入合同名称',
                     },
                   ],
@@ -229,8 +246,15 @@ class DesignChangeDetail extends PureComponent {
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="合同编号">
-               {/* <Input defaultValue={formDatas.sn} placeholder="请输入合同编号" /> */}
-               {formDatas.sn}
+                {getFieldDecorator('comcontract_sn', {
+                  initialValue: formDataDesignChange.comcontract_sn,
+                  rules: [
+                    {
+                      required: true,
+                      message: '合同编号不能为空',
+                    },
+                  ],
+                })(<Input disabled />)}
               </Form.Item>
             </Col>
           </Row>
@@ -299,6 +323,7 @@ class DesignChangeDetail extends PureComponent {
                   <Checkbox.Group
                     style={{ width: '100%' }}
                     options={changeList.sort(this.compare('value'))}
+                    onChange={this.reasonChange}
                   ></Checkbox.Group>
                 )}
               </Form.Item>
@@ -311,7 +336,7 @@ class DesignChangeDetail extends PureComponent {
                   initialValue: formDataDesignChange.reason_other,
                   rules: [
                     {
-                      required: false,
+                      required: this.state.checkReason,
                       message: '请输入其他原因',
                     },
                   ],
@@ -458,15 +483,15 @@ class DesignChangeDetail extends PureComponent {
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="发起日期">
-                {/* {getFieldDecorator('launch_date', {
-                  initialValue: formDataDesignChange.launch_date,
+                {getFieldDecorator('launch_date', {
+                  initialValue: formDataDesignChange.launch_date? moment(formDataDesignChange.launch_date, 'YYYY-MM-DD'):'',
                   rules: [
                     {
                       required: false,
                       message: '请输入发起日期',
                     },
                   ],
-                })(<DatePicker  format="YYYY-MM-DD" style={{ width: '100%' }} />)} */}
+                })(<DatePicker  format="YYYY-MM-DD" style={{ width: '100%' }} />)}
               </Form.Item>
             </Col>
             <Col span={12}>

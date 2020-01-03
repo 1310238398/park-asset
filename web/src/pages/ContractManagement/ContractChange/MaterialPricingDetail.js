@@ -20,10 +20,10 @@ import * as styles from './ContractChange.less';
 import MaterialPricingAddTable from './MaterialPricingAddTable';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import { getSigingOne } from '@/services/contractSiging';
 import { getDesignChangeOne } from '@/services/contractDesignChange';
-import { getVisaChangeOne,getCompanyOne } from '@/services/contractVisaChange';
+import { getVisaChangeOne, getCompanyOne } from '@/services/contractVisaChange';
+import moment from 'moment';
 @connect(({ materialPricing }) => ({
   materialPricing,
 }))
@@ -39,7 +39,10 @@ class MaterialPricingDetail extends PureComponent {
       com_name: '',
       designData: [],
       signData: [],
-      sgData:[]
+      sgData: [],
+      designCheck: false,
+      visaCheck: false,
+      reasonCheck: false,
     };
   }
   // 数组排序
@@ -63,7 +66,7 @@ class MaterialPricingDetail extends PureComponent {
       formTypeMaterialPricing,
       onSubmit,
     } = this.props;
-    const { formDatas, designData, signData,sgData } = this.state;
+    const { formDatas, designData, signData, sgData } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         let formData = { ...values };
@@ -72,20 +75,23 @@ class MaterialPricingDetail extends PureComponent {
           formData.reason = formData.reason.join(',');
         }
         formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn = formDatas.sn;
+        // formData.comcontract_sn = formDatas.sn;
         formData.alter_design_name = designData.name;
-        formData.alter_design_sn = designData.sn;
+        // formData.alter_design_sn = designData.sn;
         formData.alter_sign_name = signData.name;
-        formData.alter_sign_sn = signData.sn;
+        // formData.alter_sign_sn = signData.sn;
         formData.working_name = sgData.name;
         // 合同附件修改上传格式
         const urlArr = [];
         if (formData.attas) {
           formData.attas.forEach(ele => {
             if (formTypeMaterialPricing === 'E') {
-              urlArr.push({
-                url: ele.URL ? ele.URL : ele,
-              });
+              if (ele.url) {
+              } else {
+                urlArr.push({
+                  url: ele.URL ? ele.URL : ele,
+                });
+              }
             } else {
               urlArr.push({
                 url: ele,
@@ -108,8 +114,25 @@ class MaterialPricingDetail extends PureComponent {
       });
     }
   };
-  onChange = data => {
-    // console.log(data)
+
+  // 变更原因变化
+  reasonChange = checkedValue => {
+    if (checkedValue.indexOf('1') > -1) {
+      this.setState({ designCheck: true });
+    } else {
+      this.setState({ designCheck: false });
+    }
+    if (checkedValue.indexOf('2') > -1) {
+      this.setState({ visaCheck: true });
+    } else {
+      this.setState({ visaCheck: false });
+    }
+
+    if (checkedValue.indexOf('5') > -1) {
+      this.setState({ reasonCheck: true });
+    } else {
+      this.setState({ reasonCheck: false });
+    }
   };
   // 原合同选择的数据
   toOriginContractSelect = data => {
@@ -129,6 +152,15 @@ class MaterialPricingDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ formDatas: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          comcontract_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          comcontract_sn: '',
+        });
+      }
     });
   };
   //设计变更选择的数据
@@ -149,6 +181,15 @@ class MaterialPricingDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ designData: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          alter_design_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          alter_design_sn: '',
+        });
+      }
     });
   };
   //材料批价变更选择的数据
@@ -169,28 +210,37 @@ class MaterialPricingDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ signData: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          alter_sign_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          alter_sign_sn: '',
+        });
+      }
     });
   };
-    // 施工单位选择的数据
-    toTreeSelect = data => {
-      if (!data) {
-        return [];
-      }
-      const newData = [];
-      for (let i = 0; i < data.length; i += 1) {
-        const item = { ...data[i], title: data[i].name, value: data[i].record_id };
-        newData.push(item);
-      }
-      return newData;
-    };
-    // 选中之后的变化
-    toSTreeSelect = item => {
-      getCompanyOne({
-        record_id: item,
-      }).then(data => {
-        this.setState({ sgData: data });
-      });
-    };
+  // 施工单位选择的数据
+  toTreeSelect = data => {
+    if (!data) {
+      return [];
+    }
+    const newData = [];
+    for (let i = 0; i < data.length; i += 1) {
+      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
+      newData.push(item);
+    }
+    return newData;
+  };
+  // 选中之后的变化
+  toSTreeSelect = item => {
+    getCompanyOne({
+      record_id: item,
+    }).then(data => {
+      this.setState({ sgData: data });
+    });
+  };
 
   dispatch = action => {
     const { dispatch } = this.props;
@@ -251,7 +301,6 @@ class MaterialPricingDetail extends PureComponent {
         confirmLoading={submitting}
         destroyOnClose
         onOk={this.onOKClick}
-        onChange={this.onChange}
         onCancel={onCancel}
         style={{ top: 20 }}
         bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', overflowY: 'auto' }}
@@ -312,7 +361,15 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {formDatas.sn}
+                  {getFieldDecorator('comcontract_sn', {
+                    initialValue: formDataMaterialPricing.comcontract_sn,
+                    rules: [
+                      {
+                        required: true,
+                        message: '合同编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -327,15 +384,17 @@ class MaterialPricingDetail extends PureComponent {
                         message: '请选择施工单位',
                       },
                     ],
-                  })( <TreeSelect
-                    showSearch
-                    treeNodeFilterProp="title"
-                    style={{ width: '100%' }}
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    treeData={this.toTreeSelect(treeData)}
-                    onChange={this.toSTreeSelect}
-                    placeholder="请选择"
-                  />)}
+                  })(
+                    <TreeSelect
+                      showSearch
+                      treeNodeFilterProp="title"
+                      style={{ width: '100%' }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      treeData={this.toTreeSelect(treeData)}
+                      onChange={this.toSTreeSelect}
+                      placeholder="请选择"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -367,23 +426,9 @@ class MaterialPricingDetail extends PureComponent {
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       options={materialPricingList.sort(this.compare('value'))}
+                      onChange={this.reasonChange}
                     ></Checkbox.Group>
                   )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24} className={styles.textAreaStyle}>
-                <Form.Item {...formItemLayout2} label="其他原因">
-                  {getFieldDecorator('reason_other', {
-                    initialValue: formDataMaterialPricing.reason_other,
-                    rules: [
-                      {
-                        required: false,
-                        message: '请输入其他原因',
-                      },
-                    ],
-                  })(<Input.TextArea rows={2} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -394,7 +439,7 @@ class MaterialPricingDetail extends PureComponent {
                     initialValue: formDataMaterialPricing.alter_design_id,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.designCheck,
                         message: '请选择设计变更名称',
                       },
                     ],
@@ -413,7 +458,15 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {designData.sn}
+                  {getFieldDecorator('alter_design_sn', {
+                    initialValue: formDataMaterialPricing.alter_design_sn,
+                    rules: [
+                      {
+                        required: this.state.designCheck,
+                        message: '设计变更编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -424,7 +477,7 @@ class MaterialPricingDetail extends PureComponent {
                     initialValue: formDataMaterialPricing.alter_sign_id,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.visaCheck,
                         message: '请选择签证变更名称',
                       },
                     ],
@@ -443,7 +496,30 @@ class MaterialPricingDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="签证变更编号">
-                  {signData.sn}
+                  {getFieldDecorator('alter_sign_sn', {
+                    initialValue: formDataMaterialPricing.alter_sign_sn,
+                    rules: [
+                      {
+                        required: this.state.visaCheck,
+                        message: '签证变更编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} className={styles.textAreaStyle}>
+                <Form.Item {...formItemLayout2} label="其他原因">
+                  {getFieldDecorator('reason_other', {
+                    initialValue: formDataMaterialPricing.reason_other,
+                    rules: [
+                      {
+                        required: this.state.reasonCheck,
+                        message: '请输入其他原因',
+                      },
+                    ],
+                  })(<Input.TextArea rows={2} />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -484,17 +560,17 @@ class MaterialPricingDetail extends PureComponent {
             </Row>
             <Row>
               <Col span={12}>
-                {/* <Form.Item {...formItemLayout} label="发起日期">
+                <Form.Item {...formItemLayout} label="发起日期">
                   {getFieldDecorator('launch_date', {
-                    initialValue: formDataMaterialPricing.launch_date,
+                    initialValue: formDataMaterialPricing.launch_date? moment(formDataMaterialPricing.launch_date, 'YYYY-MM-DD'):'',
                     rules: [
                       {
                         required: false,
-                        message: '请输入发起人',
+                        message: '请输入发起日期',
                       },
                     ],
-                  })(<DatePicker style={{ width: '100%' }} />)}
-                </Form.Item> */}
+                  })(<DatePicker  format="YYYY-MM-DD"  style={{ width: '100%' }} />)}
+                </Form.Item>
               </Col>
             </Row>
             <Row>

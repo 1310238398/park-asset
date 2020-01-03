@@ -10,19 +10,6 @@ import DicShow from '@/components/DictionaryNew/DicShow';
 }))
 @Form.create()
 class ContractSigningShow extends PureComponent {
-  // 原合同选择的数据
-  toOriginContractSelect = data => {
-    if (!data) {
-      return [];
-    }
-    const newData = [];
-    for (let i = 0; i < data.length; i += 1) {
-      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
-      newData.push(item);
-    }
-    return newData;
-  };
-
   renderFirstView = () => {
     const {
       contractSiging: { formDataSiging, treeData, treeOriginConData, planName },
@@ -48,7 +35,11 @@ class ContractSigningShow extends PureComponent {
             </Description>
           </DescriptionList>
           <DescriptionList title="" size="large" col={1} style={{ marginBottom: 20 }}>
-            <Description term="选择合约规划"> {planName}</Description>
+            {/* {formDataSiging.parent_comcontract_name ? (
+              <Description term="选择合约规划"> {formDataSiging.contract_planning_id}</Description>
+            ) : ( */}
+              <Description term="选择合约规划"> {planName}</Description>
+            {/* )} */}
           </DescriptionList>
           <DescriptionList title="" size="large" col={2} style={{ marginBottom: 20 }}>
             <Description term="所属科目"> {formDataSiging.subject}</Description>
@@ -96,12 +87,10 @@ class ContractSigningShow extends PureComponent {
             <Description term="附件信息">
               {attas && attas.length ? (
                 <div>
-                  {attas.map(item => (
-                    <div>
-                      <a href={item.url} target="_blank">
-                        {item.name}
-                      </a>
-                    </div>
+                  {attas.map((item, index) => (
+                    <a href={item.url} target="_blank" key={index}>
+                      {item.name}
+                    </a>
                   ))}
                 </div>
               ) : null}

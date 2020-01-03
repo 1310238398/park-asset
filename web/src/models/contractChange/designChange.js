@@ -100,7 +100,6 @@ export default {
         }
       }
       const response = yield call(contractDesignChangeService.queryDesignChangePage, params, proID);
-      console.log(response);
       yield [
         put({
           type: 'saveDesignChangeList',
@@ -109,13 +108,32 @@ export default {
       ];
     },
 
-    // 查询厂房单条数据
+    // 查询设计变更单条数据
     *fetchFormDesignChange({ payload }, { call, put }) {
       const response = yield call(contractDesignChangeService.getDesignChangeOne, payload);
-      console.log(response);
       if (response.reason) {
         const arrReason = response.reason.split(',');
         response.reason = arrReason;
+      }
+      // 对附件进行处理
+      if (response.attas && response.attas.length > 0) {
+        const attas = [];
+
+        response.attas.forEach(el => {
+          let name;
+          let sName = el.URL.split('/');
+          if (el.Name) {
+            name = el.Name;
+          } else {
+            name = sName[sName.length - 1];
+          }
+          attas.push({
+            name: name,
+            url: el.URL,
+            uid: el.BizID,
+          });
+        });
+        response.attas = attas;
       }
       yield put({
         type: 'saveFormDataDesignChange',
@@ -153,7 +171,7 @@ export default {
           payload: '',
         }),
         put({
-          type: 'saveformDataDesignChange',
+          type: 'saveFormDataDesignChange',
           payload: {},
         }),
         put({
@@ -231,7 +249,7 @@ export default {
           type: 'changeFormVisibleDesignChange',
           payload: false,
         });
-        // TODO 查询门牌列表
+        // TODO 查询设计变更列表
         yield put({
           type: 'fetchDesignChange',
           payload: {
@@ -243,7 +261,7 @@ export default {
       }
     },
     // 提交审核合同
-    *commitDesignChangeForm({ payload }, { call, put }) {
+    *commitDesignChangeForm({ payload }, { call, put,select }) {
       const proID = yield select(state => state.designChange.proID);
       const response = yield call(contractDesignChangeService.commitDesignChange, payload);
       if (response.status === 'OK') {
@@ -259,17 +277,18 @@ export default {
       }
     },
     // 原合同名列表
-    *fetchOriginConTree({ payload }, { call, put }) {
+    *fetchOriginConTree({ payload }, { call, put ,select}) {
+      const proID = yield select(state => state.designChange.proID);
       let params = {
         q: 'page',
         current: 1,
+        state:2,
         pageSize: 50,
       };
       if (payload) {
         params = { ...params, ...payload };
       }
-      const response = yield call(contractSigingService.querySigingPage, params);
-      console.log(response);
+      const response = yield call(contractSigingService.querySigingPage, params,proID);
       const list = response.list || [];
       yield put({
         type: 'saveOriTreeData',
@@ -277,11 +296,9 @@ export default {
       });
     },
 
-    // 删除厂房
+    // 删除设计变更
     *delDesignChange({ payload }, { call, put, select }) {
-      console.log(payload);
       const proID = yield select(state => state.designChange.proID);
-      console.log(proID);
       const response = yield call(contractDesignChangeService.delDesignChange, payload);
       if (response.status === 'OK') {
         message.success('删除成功');

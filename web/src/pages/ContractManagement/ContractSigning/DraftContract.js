@@ -41,7 +41,6 @@ class DraftContract extends PureComponent {
     };
   }
 
-
   dispatch = action => {
     const { dispatch } = this.props;
     dispatch(action);
@@ -54,7 +53,7 @@ class DraftContract extends PureComponent {
     }
 
     const { form } = this.props;
-    
+
     form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return;
@@ -66,11 +65,11 @@ class DraftContract extends PureComponent {
 
       this.dispatch({
         type: 'contractSiging/fetchSiging',
-        payload:{
+        payload: {
           search: formData,
-        pagination: {},
-        proID:proID
-        }
+          pagination: {},
+          proID: proID,
+        },
       });
       this.clearSelectRows();
     });
@@ -170,11 +169,11 @@ class DraftContract extends PureComponent {
 
     this.dispatch({
       type: 'contractSiging/fetchSiging',
-     payload:{
-      search: {},
-      pagination: {},
-      proID: proID,
-     }
+      payload: {
+        search: {},
+        pagination: {},
+        proID: proID,
+      },
     });
   };
 
@@ -193,14 +192,14 @@ class DraftContract extends PureComponent {
     } = this.props;
     this.dispatch({
       type: 'contractSiging/fetchSiging',
-      payload:{
+      payload: {
         pagination: {
           current: pagination.current,
           pageSize: pagination.pageSize,
         },
-        search:{},
-        proID:proID
-      }
+        search: {},
+        proID: proID,
+      },
     });
     this.clearSelectRows();
   };
@@ -215,6 +214,10 @@ class DraftContract extends PureComponent {
 
   // 取消关闭合同页面
   handleDataFormCancel = () => {
+    this.dispatch({
+      type: 'contractSiging/saveFormTypeSiging',
+      payload: '',
+    });
     this.dispatch({
       type: 'contractSiging/changeFormVisibleSiging',
       payload: false,
@@ -233,6 +236,10 @@ class DraftContract extends PureComponent {
   };
   // 取消关闭b补充合同页面
   handleSuppleDataFormCancel = () => {
+    this.dispatch({
+      type: 'contractSiging/saveFormTypeSupplement',
+      payload: '',
+    });
     this.dispatch({
       type: 'contractSiging/changeFormVisibleSupplement',
       payload: false,
@@ -423,7 +430,7 @@ class DraftContract extends PureComponent {
         dataIndex: 'status',
         width: 100,
         render: val => {
-          let value =val.toString();
+          let value = val.toString();
           return <DicShow pcode="contract$#ContractStatus" code={[value]} />;
         },
       },

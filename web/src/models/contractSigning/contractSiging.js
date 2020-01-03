@@ -73,6 +73,9 @@ export default {
     desiginData: {},
     //合约规划数组
     hyArr: [],
+    selectPlanName: '',
+    // 带出来的数据
+    dataSub: {},
   },
   effects: {
     // 甲乙单位树状结构
@@ -111,10 +114,11 @@ export default {
 
     // 查询合同草稿的列表
     *fetchSiging({ payload }, { call, put, select }) {
+      const proID = yield select(state => state.contractSiging.proID);
       let params = {
         state: 1,
       };
-      const proID = payload.proID;
+      // const proID = payload.proID;
       let search = payload.search;
       let pagination = payload.pagination;
 
@@ -154,10 +158,11 @@ export default {
 
     // 查询一览列表
     *fetchContractList({ payload }, { call, put, select }) {
+      const proID = yield select(state => state.contractSiging.proID);
       let params = {
         state: 2,
       };
-      const proID = payload.proID;
+      // const proID = payload.proID;
       let search = payload.search;
       let pagination = payload.pagination;
       if (search) {
@@ -218,33 +223,106 @@ export default {
         response.attas = attas;
       }
       const proId = response.project_id;
-      console.log(proId);
       let para = {
         q: 'contract',
         project_id: proId,
       };
       const pdata = yield call(contractSigingService.contractPlanList, para);
-      console.log('第170行');
-      console.log(pdata);
+      const plist = pdata.list || [];
       if (response.contract_planning_id) {
         const plann = response.contract_planning_id.split('/');
         let params = {
           q: 'list',
           project_id: proId,
-          cost_id: plann[plann.length - 1],
+          cost_id: plann[plann.length - 2],
         };
         const result = yield call(contractSigingService.contractCList, params);
         const list = result.list || [];
-        console.log('第181行');
-        console.log(list);
-        // yield put({
-        //   type: 'savePlanName',
-        //   payload: list[0].cost_name_path + '/' + list[0].name,
-        // });
-      }
+        list.forEach(el => {
+          el.label = el.name;
+          el.value = el.record_id;
+        });
+        //递归循环遍历，重组
+        function find(arr, list) {
+          arr.forEach(item => {
+            item.value = item.cost_id;
+            item.label = item.name;
+            //利用foreach循环遍历
+            if (item.cost_id == list[0].cost_id) {
+              //判断递归结束条件
+              item.children = list;
+            } else if (item.children && item.children.length > 0) {
+              //判断chlidren是否有数据
+              find(item.children, list); //递归调用
+            }
+          });
+        }
+        find(plist, list);
+        yield put({
+          type: 'saveOptinsData',
+          payload: plist,
+        });
 
+        if (list.length > 0) {
+          for (const propList of list) {
+            if (propList.record_id === plann[plann.length - 1]) {
+              yield put({
+                type: 'savePlanName',
+                payload: propList.cost_name_path + '/' + propList.name,
+              });
+              yield put({
+                type: 'saveSelectPlanName',
+                payload: propList.cost_name_path,
+              });
+              response.planning_price = propList.planning_price;
+            }
+          }
+        } else {
+          yield put({
+            type: 'savePlanName',
+            payload: '',
+          });
+        }
+      }
       yield put({
         type: 'saveFormDataSiging',
+        payload: response,
+      });
+    },
+    // 根据原合同获取合同的信息
+    *fetchDesiginOne({ payload }, { call, put }) {
+      let response = yield call(contractSigingService.getSigingOne, payload);
+      const contract_planning_id = response.contract_planning_id;
+      response = {};
+      if (payload.project_id) {
+        let proID = payload.project_id;
+        let para = {
+          q: 'contract',
+          project_id: proID,
+        };
+        const pdata = yield call(contractSigingService.contractPlanList, para);
+        if (payload.contract_planning_id) {
+          const plann = payload.contract_planning_id.split('/');
+          let params = {
+            q: 'list',
+            project_id: proID,
+            cost_id: plann[plann.length - 2],
+          };
+          const result = yield call(contractSigingService.contractCList, params);
+          const list = result.list || [];
+          if (list.length > 0) {
+            for (const propList of list) {
+              if (propList.record_id === plann[plann.length - 1]) {
+                response.contract_planning_name = propList.cost_name_path + '/' + propList.name;
+                response.planning_price = propList.planning_price;
+                response.contract_planning_id = contract_planning_id;
+              }
+            }
+          }
+        }
+      }
+      yield put({
+        type: 'saveDataSub',
         payload: response,
       });
     },
@@ -253,11 +331,13 @@ export default {
       const response0 = yield call(contractSigingService.getDesignOne, payload);
       const response1 = yield call(contractSigingService.getVisaOne, payload);
       const response2 = yield call(contractSigingService.getMaterialOne, payload);
+      const response3 = yield call(contractSigingService.querySettlementPageOne, payload);
       const response = [];
       response.push({
         designData: response0,
         visaData: response1,
         materialData: response2,
+        settlementData: response3,
       });
       yield put({
         type: 'saveDesignDataSiging',
@@ -274,24 +354,19 @@ export default {
 
       if (payload.proID) {
         // 保存proId
-        yield put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        });
+        yield [
+          put({
+            type: 'saveProjectID',
+            payload: payload.proID,
+          }),
+        ];
       }
       yield [
         put({
           type: 'saveFormTypeSiging',
           payload: payload.type,
         }),
-        put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        }),
-        put({
-          type: 'fetchOptionsTree',
-          payload: payload.proID,
-        }),
+
         put({
           type: 'saveFormTitleSiging',
           payload: '新增合同',
@@ -348,10 +423,12 @@ export default {
       });
       if (payload.proID) {
         // 保存proId
-        yield put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        });
+        yield [
+          put({
+            type: 'saveProjectID',
+            payload: payload.proID,
+          }),
+        ];
       }
       yield [
         put({
@@ -366,19 +443,16 @@ export default {
           type: 'saveFormIDSupplement',
           payload: '',
         }),
-        put({
-          type: 'saveProjectID',
-          payload: payload.proID,
-        }),
-        put({
-          type: 'fetchOptionsTree',
-          payload: payload.proID,
-        }),
+
         put({
           type: 'fetchOriginConTree',
         }),
         put({
           type: 'saveFormDataSupplement',
+          payload: {},
+        }),
+        put({
+          type: 'saveDataSub',
           payload: {},
         }),
       ];
@@ -420,6 +494,32 @@ export default {
     // 查询单个补充合同的详情
     *fetchFormSupplement({ payload }, { call, put }) {
       const response = yield call(contractSigingService.getSigingOne, payload);
+      // 对附件进行处理
+      if (response.attas && response.attas.length > 0) {
+        const attas = [];
+
+        response.attas.forEach(el => {
+          let name;
+          let sName = el.URL.split('/');
+          if (el.Name) {
+            name = el.Name;
+          } else {
+            name = sName[sName.length - 1];
+          }
+          attas.push({
+            name: name,
+            url: el.URL,
+            uid: el.BizID,
+          });
+        });
+        response.attas = attas;
+      }
+      if (response.contract_planning_id) {
+        yield put({
+          type: 'fetchDesiginOne',
+          payload: response,
+        });
+      }
       yield put({
         type: 'saveFormDataSupplement',
         payload: response,
@@ -743,6 +843,10 @@ export default {
     saveFormDataSupplement(state, { payload }) {
       return { ...state, formDataSupplement: payload };
     },
+    saveDataSub(state, { payload }) {
+      return { ...state, dataSub: payload };
+    },
+
     // 项目名称
     saveProData(state, { payload }) {
       return { ...state, proData: payload };
@@ -759,6 +863,10 @@ export default {
     savePlanName(state, { payload }) {
       return { ...state, planName: payload };
     },
+    saveSelectPlanName(state, { payload }) {
+      return { ...state, selectPlanName: payload };
+    },
+
     // 保存合同信息
     saveLoadTakeEffect(state, { payload }) {
       return { ...state, loadTakeEffectData: payload };

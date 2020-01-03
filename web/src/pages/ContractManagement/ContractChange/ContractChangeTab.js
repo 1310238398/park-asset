@@ -30,9 +30,16 @@ class ContractChangeTab extends PureComponent {
     this.setState({
       pro_ID: value,
     });
-
     this.props.dispatch({
       type: 'designChange/saveProjectID',
+      payload: value,
+    });
+    this.props.dispatch({
+      type: 'visaChange/saveProjectID',
+      payload: value,
+    });
+    this.props.dispatch({
+      type: 'materialPricing/saveProjectID',
       payload: value,
     });
     if (activeKey === '1') {
@@ -55,10 +62,6 @@ class ContractChangeTab extends PureComponent {
           pagination: {},
         },
       });
-      this.props.dispatch({
-        type: 'visaChange/saveProjectID',
-        payload: value,
-      });
     } else if (activeKey === '3') {
       //材料批价
       this.props.dispatch({
@@ -68,10 +71,6 @@ class ContractChangeTab extends PureComponent {
           search: {},
           pagination: {},
         },
-      });
-      this.props.dispatch({
-        type: 'materialPricing/saveProjectID',
-        payload: value,
       });
     }
   };
@@ -92,7 +91,7 @@ class ContractChangeTab extends PureComponent {
   // tab 切换
   tabChange = activeKey => {
     const { pro_ID } = this.state;
-    console.log(this.props);
+    console.log(pro_ID)
     this.setState({ activeKey });
     // 点击的是设计变更
     if (activeKey === '1') {

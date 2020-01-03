@@ -50,26 +50,25 @@ export default {
     designTreeData: [],
   },
   effects: {
-  // 甲乙单位树状结构
-  *fetchTree({ payload }, { call, put }) {
-    let params = {
-      q: 'page',
-      current: 1,
-      pageSize: 50,
-    };
-    if (payload) {
-      params = { ...params, ...payload };
-    }
-    const response = yield call(contractSigingService.query, params);
-    const list = response.list || [];
-    yield put({
-      type: 'saveTreeData',
-      payload: list,
-    });
-  },
+    // 甲乙单位树状结构
+    *fetchTree({ payload }, { call, put }) {
+      let params = {
+        q: 'page',
+        current: 1,
+        pageSize: 50,
+      };
+      if (payload) {
+        params = { ...params, ...payload };
+      }
+      const response = yield call(contractSigingService.query, params);
+      const list = response.list || [];
+      yield put({
+        type: 'saveTreeData',
+        payload: list,
+      });
+    },
     // 查询签证变更列表
     *fetchVisaChange({ payload }, { call, put, select }) {
-      console.log(payload);
       let params;
       let search = payload.search;
       let pagination = payload.pagination;
@@ -100,7 +99,6 @@ export default {
         }
       }
       const response = yield call(contractVisaChangeService.queryVisaChangePage, params, proID);
-      console.log(response);
       yield [
         put({
           type: 'saveDataVisaChange',
@@ -157,7 +155,7 @@ export default {
       });
     },
 
-    // 查询厂房单条数据
+    // 查签证变更单条数据
     *fetchFormVisaChange({ payload }, { call, put }) {
       const response = yield call(contractVisaChangeService.getVisaChangeOne, payload);
       // 变更原因
@@ -168,6 +166,26 @@ export default {
       if (response.project_stage) {
         const arrStage = response.project_stage.split(',');
         response.project_stage = arrStage;
+      }
+      // 对附件进行处理
+      if (response.attas && response.attas.length > 0) {
+        const attas = [];
+
+        response.attas.forEach(el => {
+          let name;
+          let sName = el.URL.split('/');
+          if (el.Name) {
+            name = el.Name;
+          } else {
+            name = sName[sName.length - 1];
+          }
+          attas.push({
+            name: name,
+            url: el.URL,
+            uid: el.BizID,
+          });
+        });
+        response.attas = attas;
       }
       yield put({
         type: 'saveFormDataVisaChange',
@@ -309,20 +327,20 @@ export default {
       }
     },
     // 保存
-    *submitSureVisaChange({ payload }, { call, put, select }) {
+    *submitSureVisaChange({ payload }, { call, put }) {
       const params = payload.data;
       delete params.record_id;
       const id = payload.id;
-      const proID = yield select(state => state.visaChange.proID);
+      const proID = payload.data.project_id;
       let response;
-      response = yield call(contractVisaChangeService.commitSureChange, params,id);
+      response = yield call(contractVisaChangeService.commitSureChange, params, id);
       if (response.status === 'OK') {
         message.success('签证确认成功');
         yield put({
           type: 'changeFormVisibleVisaSure',
           payload: false,
         });
-        // TODO 查询门牌列表
+        // TODO 查签证变更列表
         yield put({
           type: 'fetchVisaChange',
           payload: {
@@ -331,11 +349,10 @@ export default {
             proID: proID,
           },
         });
-       
       }
     },
 
-    // 删除厂房
+    // 删除签证变更
     *delVisaChange({ payload }, { call, put, select }) {
       const proID = yield select(state => state.visaChange.proID);
       const response = yield call(contractVisaChangeService.delVisaChange, payload);
@@ -369,16 +386,18 @@ export default {
       }
     },
     // 原合同名列表
-    *fetchOriginConTree({ payload }, { call, put }) {
+    *fetchOriginConTree({ payload }, { call, put, select }) {
+      const proID = yield select(state => state.designChange.proID);
       let params = {
         q: 'page',
         current: 1,
+        state: 2,
         pageSize: 50,
       };
       if (payload) {
         params = { ...params, ...payload };
       }
-      const response = yield call(contractSigingService.querySigingPage, params);
+      const response = yield call(contractSigingService.querySigingPage, params, proID);
       const list = response.list || [];
       yield put({
         type: 'saveOriTreeData',

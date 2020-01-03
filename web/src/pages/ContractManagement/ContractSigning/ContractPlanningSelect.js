@@ -14,6 +14,7 @@ function parseValue(value) {
 export class ContractPlanningSelect extends PureComponent {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       value: parseValue(props.value),
       children: [],
@@ -107,18 +108,21 @@ export class ContractPlanningSelect extends PureComponent {
       this.setState({
         options: [...options],
       });
+      this.props.dispatch({
+        type: 'contractSiging/saveOptinsData',
+        payload: options,
+      });
     }, 1000);
   };
 
-
   render() {
     let { options, value } = this.state;
-    const {dataPro} = this.props;
+    const {  dataOptions } = this.props;
     return (
       <div>
         <Cascader
           value={value}
-          options={options}
+          options={dataOptions.length> 0 ? dataOptions : options}
           loadData={this.loadData}
           onChange={this.handleChange}
           style={{ width: '100%' }}

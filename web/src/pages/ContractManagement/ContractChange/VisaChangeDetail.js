@@ -18,11 +18,11 @@ import {
 } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import * as styles from './ContractChange.less';
 import { getSigingOne } from '@/services/contractSiging';
 import { getCompanyOne } from '@/services/contractVisaChange';
 import { getDesignChangeOne } from '@/services/contractDesignChange';
+import moment from 'moment';
 
 @connect(({ visaChange }) => ({
   visaChange,
@@ -38,6 +38,9 @@ class VisaChangeDetail extends PureComponent {
       designData: [],
       sgData: [],
       jlData: [],
+      designCheck: false,
+      reasonCheck: false,
+      stateCheck: false,
     };
   }
 
@@ -55,6 +58,21 @@ class VisaChangeDetail extends PureComponent {
       type: 'visaChange/fetchTree',
     });
   }
+
+  // 变更原因变化
+  reasonChange = checkedValue => {
+    if (checkedValue.indexOf('1') > -1) {
+      this.setState({ designCheck: true });
+    } else {
+      this.setState({ designCheck: false });
+    }
+
+    if (checkedValue.indexOf('5') > -1) {
+      this.setState({ reasonCheck: true });
+    } else {
+      this.setState({ reasonCheck: false });
+    }
+  };
 
   // 点击确认
   onOKClick = () => {
@@ -81,9 +99,9 @@ class VisaChangeDetail extends PureComponent {
         }
 
         formData.comcontract_name = formDatas.name;
-        formData.comcontract_sn = formDatas.sn;
+        // formData.comcontract_sn = formDatas.sn;
         formData.alter_design_name = designData.name;
-        formData.alter_design_sn = designData.sn;
+        // formData.alter_design_sn = designData.sn;
         formData.working_name = sgData.name;
         formData.supervision_name = jlData.name;
         // 合同附件修改上传格式
@@ -91,9 +109,12 @@ class VisaChangeDetail extends PureComponent {
         if (formData.attas) {
           formData.attas.forEach(ele => {
             if (formTypeVisaChange === 'E') {
-              urlArr.push({
-                url: ele.URL ? ele.URL : ele,
-              });
+              if (ele.url) {
+              } else {
+                urlArr.push({
+                  url: ele.URL ? ele.URL : ele,
+                });
+              }
             } else {
               urlArr.push({
                 url: ele,
@@ -130,6 +151,15 @@ class VisaChangeDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ formDatas: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          comcontract_sn: data.sn,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          comcontract_sn: '',
+        });
+      }
     });
   };
   //设计变更选择的数据
@@ -150,6 +180,21 @@ class VisaChangeDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ designData: data });
+      if (data.sn) {
+        this.props.form.setFieldsValue({
+          alter_design_sn: data.sn,
+        });
+        this.props.form.setFieldsValue({
+          alter_design_name: data.name,
+        });
+      } else {
+        this.props.form.setFieldsValue({
+          alter_design_sn: '',
+        });
+        this.props.form.setFieldsValue({
+          alter_design_name: '',
+        });
+      }
     });
   };
   // 施工单位选择的数据
@@ -179,6 +224,14 @@ class VisaChangeDetail extends PureComponent {
     }).then(data => {
       this.setState({ jlData: data });
     });
+  };
+  // 选择项目阶段变化
+  projectStageChange = value => {
+    if (value.indexOf('8') > -1) {
+      this.setState({ stateCheck: true });
+    } else {
+      this.setState({ stateCheck: false });
+    }
   };
 
   render() {
@@ -295,7 +348,15 @@ class VisaChangeDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="合同编号">
-                  {formDatas.sn}
+                  {getFieldDecorator('comcontract_sn', {
+                    initialValue: formDataVisaChange.comcontract_sn,
+                    rules: [
+                      {
+                        required: true,
+                        message: '合同编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -397,6 +458,7 @@ class VisaChangeDetail extends PureComponent {
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       options={visaChangeList.sort(this.compare('value'))}
+                      onChange={this.reasonChange}
                     ></Checkbox.Group>
                   )}
                 </Form.Item>
@@ -409,7 +471,7 @@ class VisaChangeDetail extends PureComponent {
                     initialValue: formDataVisaChange.alter_design_id,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.designCheck,
                         message: '请选择设计变更名称',
                       },
                     ],
@@ -428,7 +490,15 @@ class VisaChangeDetail extends PureComponent {
               </Col>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="设计变更编号">
-                  {designData.sn}
+                  {getFieldDecorator('alter_design_sn', {
+                    initialValue: formDataVisaChange.alter_design_sn,
+                    rules: [
+                      {
+                        required: this.state.designCheck,
+                        message: '设计变更编号不能为空',
+                      },
+                    ],
+                  })(<Input disabled />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -439,7 +509,7 @@ class VisaChangeDetail extends PureComponent {
                     initialValue: formDataVisaChange.reason_other,
                     rules: [
                       {
-                        required: false,
+                        required: this.state.reasonCheck,
                         message: '请输入其他原因',
                       },
                     ],
@@ -505,11 +575,29 @@ class VisaChangeDetail extends PureComponent {
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       options={porjectList.sort(this.compare('value'))}
+                      onChange={this.projectStageChange}
                     ></Checkbox.Group>
                   )}
                 </Form.Item>
               </Col>
             </Row>
+            {/* <Row>
+              <Col span={24} className={styles.textAreaStyle}>
+                <Form.Item {...formItemLayout2} label="项目阶段其他原因">
+                  {getFieldDecorator('project_stage_other', {
+                    initialValue: formDataVisaChange.project_stage_other,
+                    rules: [
+                      {
+                        required: this.state.stateCheck,
+                        message: '请选择',
+                      },
+                    ],
+                  })(
+                   <Input />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row> */}
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起部门">
@@ -546,19 +634,21 @@ class VisaChangeDetail extends PureComponent {
               </Col>
             </Row>
             <Row>
-              {/* <Col span={12}>
+              <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起日期">
                   {getFieldDecorator('launch_date', {
-                    initialValue: formDataVisaChange.launch_date,
+                    initialValue: formDataVisaChange.launch_date
+                      ? moment(formDataVisaChange.launch_date, 'YYYY-MM-DD')
+                      : '',
                     rules: [
                       {
                         required: false,
-                        message: '请输入发起人',
+                        message: '请输入发起日期',
                       },
                     ],
                   })(<DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />)}
                 </Form.Item>
-              </Col> */}
+              </Col>
             </Row>
           </Form>
         </Card>

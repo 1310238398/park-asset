@@ -393,7 +393,6 @@ class VisaChangeList extends PureComponent {
         dataVisaChange: { list, pagination },
       },
     } = this.props;
-    console.log(this.props);
     const { selectedRowKeys, selectedRows } = this.state;
     const columns = [
       {

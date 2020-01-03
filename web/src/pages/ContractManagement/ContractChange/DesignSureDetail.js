@@ -3,9 +3,8 @@ import { connect } from 'dva';
 import { Card, Modal ,Form, Input, InputNumber, Select, DatePicker, Row, Col} from 'antd';
 import DescriptionList from '@/components/DescriptionList';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 const { Description } = DescriptionList;
-
+import moment from 'moment';
 @connect(({ designChange }) => ({
   designChange,
 }))
@@ -120,14 +119,14 @@ class DesignSureDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="确认日期">
                 {getFieldDecorator('affirm_date', {
-                  initialValue: formDataSettlement.affirm_date,
+                  initialValue: formDataSettlement.affirm_date? moment(formDataSettlement.affirm_date, 'YYYY-MM-DD'):'',
                   rules: [
                     {
                       required: true,
                       message: '请选择确认日期',
                     },
                   ],
-                })(<DatePicker style={{ width: '100%' }} placeholder="请选择确认日期" />)}
+                })(<DatePicker  format="YYYY-MM-DD"  style={{ width: '100%' }} placeholder="请选择确认日期" />)}
               </Form.Item>
             </Col>
           </Row>
