@@ -81,6 +81,13 @@ class ContractSettlement extends PureComponent {
         title: '发起日期',
         dataIndex: 'report_date',
         width: 150,
+        render: (text, record) => {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              {!record.report_date ? '' : moment(record.report_date).format('YYYY-MM-DD')}
+            </div>
+          );
+        },
       },
       {
         title: '发起人',

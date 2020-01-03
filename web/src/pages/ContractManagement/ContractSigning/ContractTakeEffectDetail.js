@@ -124,14 +124,22 @@ class ContractTakeEffectDetail extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} label="生效日期">
                 {getFieldDecorator('sign_date', {
-                  initialValue: formDataTakeEffect.sign_date,
+                  initialValue: formDataTakeEffect.sign_date
+                    ? moment(formDataTakeEffect.sign_date, 'YYYY-MM-DD')
+                    : '',
                   rules: [
                     {
                       required: true,
                       message: '请选择生效日期',
                     },
                   ],
-                })(<DatePicker style={{ width: '100%' }} placeholder="请选择生效日期" />)}
+                })(
+                  <DatePicker
+                    format="YYYY-MM-DD"
+                    style={{ width: '100%' }}
+                    placeholder="请选择生效日期"
+                  />
+                )}
               </Form.Item>
             </Col>
           </Row>

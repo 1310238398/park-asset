@@ -279,7 +279,6 @@ export default {
     // 原合同名列表
     *fetchOriginConTree({ payload }, { call, put ,select}) {
       const proID = yield select(state => state.designChange.proID);
-      console.log(proID)
       let params = {
         q: 'page',
         current: 1,

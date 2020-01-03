@@ -206,7 +206,6 @@ class MaterialPricing extends PureComponent {
 
   // 保存材料
   handleModalChange = data => {
-    console.log(data);
     // this.props.dispatch({
     //   type: 'productModule/saveFormDataPro',
     //   payload: data,
@@ -239,7 +238,6 @@ class MaterialPricing extends PureComponent {
     const {
       materialPricing: { formTypeMaterialPricing, formDataMaterialPricing },
     } = this.props;
-    console.log(formDataMaterialPricing);
     if (formTypeMaterialPricing !== 'S') {
       return (
         <MaterialPricingDetail

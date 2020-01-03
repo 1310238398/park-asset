@@ -18,11 +18,11 @@ import {
 } from 'antd';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import * as styles from './ContractChange.less';
 import { getSigingOne } from '@/services/contractSiging';
 import { getCompanyOne } from '@/services/contractVisaChange';
 import { getDesignChangeOne } from '@/services/contractDesignChange';
+import moment from 'moment';
 
 @connect(({ visaChange }) => ({
   visaChange,
@@ -98,9 +98,9 @@ class VisaChangeDetail extends PureComponent {
           formData.xianchangchengben = parseInt(formData.xianchangchengben, 10);
         }
 
-         formData.comcontract_name = formDatas.name;
+        formData.comcontract_name = formDatas.name;
         // formData.comcontract_sn = formDatas.sn;
-         formData.alter_design_name = designData.name;
+        formData.alter_design_name = designData.name;
         // formData.alter_design_sn = designData.sn;
         formData.working_name = sgData.name;
         formData.supervision_name = jlData.name;
@@ -150,7 +150,7 @@ class VisaChangeDetail extends PureComponent {
     getSigingOne({
       record_id: item,
     }).then(data => {
-      this.setState({formDatas:data});
+      this.setState({ formDatas: data });
       if (data.sn) {
         this.props.form.setFieldsValue({
           comcontract_sn: data.sn,
@@ -179,7 +179,7 @@ class VisaChangeDetail extends PureComponent {
     getDesignChangeOne({
       record_id: item,
     }).then(data => {
-      this.setState({designData:data});
+      this.setState({ designData: data });
       if (data.sn) {
         this.props.form.setFieldsValue({
           alter_design_sn: data.sn,
@@ -215,7 +215,6 @@ class VisaChangeDetail extends PureComponent {
       record_id: item,
     }).then(data => {
       this.setState({ sgData: data });
-      
     });
   };
   // 监理单位选中之后的变化
@@ -638,17 +637,16 @@ class VisaChangeDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="发起日期">
                   {getFieldDecorator('launch_date', {
-                    initialValue: formDataVisaChange.launch_date,
+                    initialValue: formDataVisaChange.launch_date
+                      ? moment(formDataVisaChange.launch_date, 'YYYY-MM-DD')
+                      : '',
                     rules: [
                       {
                         required: false,
                         message: '请输入发起日期',
                       },
                     ],
-                  })(
-                  // <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
-                  <div></div>
-                  )}
+                  })(<DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />)}
                 </Form.Item>
               </Col>
             </Row>

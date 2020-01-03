@@ -6,7 +6,6 @@ import DicShow from '@/components/DictionaryNew/DicShow';
 import ContractSupplementAdd from './ContractSupplementAdd';
 import UploadFile from '@/components/UploadFile/UploadFile';
 const { Description } = DescriptionList;
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import moment from 'moment';
 @connect(({ contractSiging }) => ({
   contractSiging,
@@ -15,7 +14,6 @@ import moment from 'moment';
 class ContractSettlementDetail extends PureComponent {
   constructor(props) {
     super(props);
-    this.custom = React.createRef();
     this.state = {
       datas: {},
     };
@@ -43,7 +41,6 @@ class ContractSettlementDetail extends PureComponent {
     const { dispatch } = this.props;
     dispatch(action);
   };
-
   // 送审值失去焦点
   songshenFocus = event => {
     const {
@@ -108,11 +105,11 @@ class ContractSettlementDetail extends PureComponent {
       contractSiging: { formVisibleSettlement, formDataSettlement, submitting, loadTakeEffectData },
       form: { getFieldDecorator, getFieldValue },
       onCancel,
+      report_no,
       dataSupplement,
     } = this.props;
     const { datas } = this.state;
     formDataSettlement = datas;
-
     const formItemLayout = {
       labelCol: {
         span: 6,
@@ -196,7 +193,9 @@ class ContractSettlementDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="报告编号">
                   {getFieldDecorator('report_no', {
-                    initialValue: formDataSettlement.report_no,
+                    initialValue: formDataSettlement.report_no
+                      ? formDataSettlement.report_no
+                      : report_no,
                   })(<Input disabled />)}
                 </Form.Item>
               </Col>
@@ -407,16 +406,22 @@ class ContractSettlementDetail extends PureComponent {
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="报告日期">
                   {getFieldDecorator('report_date', {
-                    initialValue: formDataSettlement.report_date,
+                    initialValue: formDataSettlement.report_date
+                      ? moment(formDataSettlement.report_date, 'YYYY-MM-DD')
+                      : '',
                     rules: [
                       {
                         required: false,
                         message: '请选择报告日期',
                       },
                     ],
-                  })
-                  // (<DatePicker style={{ width: '100%' }} placeholder="请选择报告日期" />)
-                  }
+                  })(
+                    <DatePicker
+                      style={{ width: '100%' }}
+                      format="YYYY-MM-DD"
+                      placeholder="请选择报告日期"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>

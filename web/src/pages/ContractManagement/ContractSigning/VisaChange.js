@@ -111,6 +111,13 @@ class VisaChange extends PureComponent {
         title: '发起日期',
         dataIndex: 'launch_date',
         width: 140,
+        render: (text, record) => {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              {!record.launch_date ? '' : moment(record.launch_date).format('YYYY-MM-DD')}
+            </div>
+          );
+        },
       },
       {
         title: '发起人',

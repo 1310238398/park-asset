@@ -204,9 +204,18 @@ class ContractSigningView extends PureComponent {
     const {
       contractSiging: { formVisibleSettlement, loadTakeEffectData, dataSupplement },
     } = this.props;
+    const arr = [];
+    let report_no;
+    if (dataSupplement.list && dataSupplement.list.length) {
+      dataSupplement.list.forEach(el => {
+        arr.push(el.report_no);
+      });
+      report_no = (Array(8).join(0) + (Math.max.apply(null, arr) + 1)).slice(-8);
+    }
     return (
       <ContractSettlementDetail
         dataSupplement={dataSupplement}
+        report_no={report_no}
         visible={formVisibleSettlement}
         onCancel={this.handleSettlementFormCancel}
         onSubmit={this.handleSettlementFormSubmit}
@@ -217,7 +226,6 @@ class ContractSigningView extends PureComponent {
   handleSettlementFormSubmit = data => {
     const {
       contractSiging: { loadTakeEffectData },
-
     } = this.props;
     this.dispatch({
       type: 'contractSiging/settlementSave',
@@ -242,9 +250,7 @@ class ContractSigningView extends PureComponent {
       type: 'contractSiging/changeFormVisibleSiging',
       payload: false,
     });
-    
   };
-
 
   // 查看单个合同信息
   handleSeeClick = item => {
@@ -262,12 +268,12 @@ class ContractSigningView extends PureComponent {
   // 渲染新增页面还是编辑页面还是查看页面
   renderDataForm() {
     const {
-      contractSiging: { formTypeSiging,proID },
+      contractSiging: { formTypeSiging, proID },
     } = this.props;
 
     if (formTypeSiging !== 'S') {
     } else {
-      return <ContractSigningShow  proID={proID}  onCancel={this.handleDataFormCancel} />;
+      return <ContractSigningShow proID={proID} onCancel={this.handleDataFormCancel} />;
     }
   }
 
@@ -527,7 +533,7 @@ class ContractSigningView extends PureComponent {
               <MaterialPricing data={design > 0 ? desiginData[0].materialData : []} />
             </TabPane>
             <TabPane tab="合同结算" key="7">
-              <ContractSettlement data={design>0?desiginData[0].settlementData:[]}/>
+              <ContractSettlement data={design > 0 ? desiginData[0].settlementData : []} />
             </TabPane>
             {/* <TabPane tab="其他信息" key="8">
               <OtherInformation></OtherInformation>

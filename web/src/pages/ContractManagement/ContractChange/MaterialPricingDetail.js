@@ -20,10 +20,10 @@ import * as styles from './ContractChange.less';
 import MaterialPricingAddTable from './MaterialPricingAddTable';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import UploadFile from '@/components/UploadFile/UploadFile';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
 import { getSigingOne } from '@/services/contractSiging';
 import { getDesignChangeOne } from '@/services/contractDesignChange';
 import { getVisaChangeOne, getCompanyOne } from '@/services/contractVisaChange';
+import moment from 'moment';
 @connect(({ materialPricing }) => ({
   materialPricing,
 }))
@@ -560,17 +560,17 @@ class MaterialPricingDetail extends PureComponent {
             </Row>
             <Row>
               <Col span={12}>
-                {/* <Form.Item {...formItemLayout} label="发起日期">
+                <Form.Item {...formItemLayout} label="发起日期">
                   {getFieldDecorator('launch_date', {
-                    initialValue: formDataMaterialPricing.launch_date,
+                    initialValue: formDataMaterialPricing.launch_date? moment(formDataMaterialPricing.launch_date, 'YYYY-MM-DD'):'',
                     rules: [
                       {
                         required: false,
-                        message: '请输入发起人',
+                        message: '请输入发起日期',
                       },
                     ],
-                  })(<DatePicker style={{ width: '100%' }} />)}
-                </Form.Item> */}
+                  })(<DatePicker  format="YYYY-MM-DD"  style={{ width: '100%' }} />)}
+                </Form.Item>
               </Col>
             </Row>
             <Row>

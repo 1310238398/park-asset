@@ -19,8 +19,7 @@ import {
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import UploadFile from '@/components/UploadFile/UploadFile';
 import { getSigingOne } from '@/services/contractSiging';
-import PicturesWall2 from '@/components/PicturesWall2/PicturesWall2';
-
+import moment from 'moment';
 @connect(({ designChange }) => ({
   designChange,
 }))
@@ -484,15 +483,15 @@ class DesignChangeDetail extends PureComponent {
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} label="发起日期">
-                {/* {getFieldDecorator('launch_date', {
-                  initialValue: formDataDesignChange.launch_date,
+                {getFieldDecorator('launch_date', {
+                  initialValue: formDataDesignChange.launch_date? moment(formDataDesignChange.launch_date, 'YYYY-MM-DD'):'',
                   rules: [
                     {
                       required: false,
                       message: '请输入发起日期',
                     },
                   ],
-                })(<DatePicker  format="YYYY-MM-DD" style={{ width: '100%' }} />)} */}
+                })(<DatePicker  format="YYYY-MM-DD" style={{ width: '100%' }} />)}
               </Form.Item>
             </Col>
             <Col span={12}>
