@@ -66,6 +66,8 @@ class ProjectManageList extends PureComponent {
       },
     });
   };
+  
+
 
   editPro = (item, index) => {
     this.dispatch({
@@ -112,8 +114,6 @@ class ProjectManageList extends PureComponent {
         selectedRows: [],
       });
     }
-
-
   }
 
   handleTableSelectRow = async (selectedRowKeys, selectedRows) => {
