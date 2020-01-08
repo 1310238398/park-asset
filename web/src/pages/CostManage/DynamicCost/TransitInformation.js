@@ -2,45 +2,46 @@ import React,{ PureComponent } from 'react';
 import { Table, Form, Input, Row, Col, Button } from 'antd';
 import { queryTree } from '@/services/dictionary';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import { getDynamicCostProjSetteled } from '@/services/dynamicCostProj';
+import { getDynamicCostProjOnApproval } from '@/services/dynamicCostProj';
 
+// 在途信息
 @Form.create()
-class SettleInformation extends PureComponent{  //结算信息
+class TransitInformation extends PureComponent{
 
     state = {
-        dataList : [],
+        data : [],
         contract_type : [],
         loading : true,
-    }
+    };
 
     componentWillMount(){
         const { subject_id, projectID } = this.props;
 
         queryTree({ q: 'tree', parent_code: "contract$#contractType", level: 0 }).then(res=>{
             if(res && res.error){
-                console.log(res.error.message);
                 this.setState({ loading : false });
+                console.log(res.error.message);
             }else{
                 this.setState({ contract_type : res.list });
                 const param = { projectID : projectID };
                 this.getData(subject_id,param);
             }
         });  
-    }
+    };
 
-    getData = (subject_id,param)=> {
-        getDynamicCostProjSetteled(subject_id,param).then(res => {
+    getData = (subject_id, param) => {
+        getDynamicCostProjOnApproval(subject_id, param).then( res=> {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ dataList : res});
+                this.setState({ data : res});
             }
         })
-    }
+    };
 
     contractDetail = record => {
-        console.log('结算合同详情',record);
+        console.log('在途信息',record);
     }
 
     handleSearchFormSubmit = e => {
@@ -55,15 +56,15 @@ class SettleInformation extends PureComponent{  //结算信息
                 return;
             }
             let formData = { ...values };
-            console.log('搜索条件',formData);
-            //TODO 调用接口查询数据。--根据搜索条件查询
+            console.log('提交数据',formData);
+            //TODO  ----根据搜索条件进行搜索
         })
     };
 
     onResetFormClick = ()=>{
         const { form } = this.props;
         form.resetFields();
-        //TODO清空时，查询数据----根据搜索条件查询
+        //TODO清空时，进行查询。--- 根据搜索条件进行搜索
     }
 
     renderSearchForm(){
@@ -87,13 +88,6 @@ class SettleInformation extends PureComponent{  //结算信息
         return (
             <Form onSubmit={this.handleSearchFormSubmit}  style={{ marginBottom: '10px' }}>
                 <Row gutter={16}>
-                    <Col {...col}>
-                        <Form.Item {...formItemLayout} label="合同编号">
-                        {getFieldDecorator('contract_num', {
-                            initialValue: '',
-                        })(<Input placeholder='请输入合同编号' />)}
-                        </Form.Item>
-                    </Col>
                     <Col {...col}>
                         <Form.Item {...formItemLayout} label="合同名称">
                             {getFieldDecorator('contract_name', {
@@ -137,11 +131,11 @@ class SettleInformation extends PureComponent{  //结算信息
         );
 
     }
-
+    
     render(){
-        
-        const {
-            dataList,
+
+        const  {
+            data,
             contract_type,
             loading,
         } = this.state;
@@ -149,20 +143,13 @@ class SettleInformation extends PureComponent{  //结算信息
         const columns = [
             {
                 title : '合同名称',
-                dataIndex : 'contract_name',
-                key : 'contract_name',
+                dataIndex : 'contract_num',
+                key : 'contract_num',
                 width : 200,
                 align : 'center',
                 render : (data,record) => {
                     return <a onClick={()=> { this.contractDetail(record)}}>{data}</a>
                 }
-            },
-            {
-                title : '合同编号',
-                dataIndex : 'contract_num',
-                key : 'contract_num',
-                width : 200,
-                align : 'center',
             },
             {
                 title : '合同类别',
@@ -186,25 +173,32 @@ class SettleInformation extends PureComponent{  //结算信息
                 align : 'center',
             },
             {
-                title : '结算金额',
-                dataIndex : 'settled',
-                key : 'settled',
+                title : '在途金额',
+                dataIndex : 'on_approval',
+                key : 'on_approval',
                 width : 100,
                 align : 'center',
-            }
+            },
+            {
+                title : '审核状态',
+                dataIndex : 'status',
+                key : 'status',
+                width : 100,
+                align : 'center',
+            },
         ];
 
         return(
             <div>
                 <div>
-                    { this.renderSearchForm() }
+                    {this.renderSearchForm()}
                 </div>
                 <Table
-                    columns = {columns}
-                    dataSource = { dataList }
+                    columns = { columns }
+                    dataSource = { data }
                     rowKey = { record => record.contract_id}
                     bordered = { true }
-                    pagination={false}
+                    pagination = { false }
                     scroll = {{ x : 1000, y : 500 }}
                     loading = { loading }
                 >
@@ -215,4 +209,4 @@ class SettleInformation extends PureComponent{  //结算信息
     }
 }
 
-export default SettleInformation;
+export default TransitInformation;

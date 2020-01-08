@@ -2,10 +2,10 @@ import React,{ PureComponent } from 'react';
 import { Table, Form, Input, Row, Col, Button } from 'antd';
 import { queryTree } from '@/services/dictionary';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-import { getDynamicCostProjSetteled } from '@/services/dynamicCostProj';
+import { getDynamicCostProjUnsetteled } from '@/services/dynamicCostProj';
 
 @Form.create()
-class SettleInformation extends PureComponent{  //结算信息
+class ToSettledInformation extends PureComponent{
 
     state = {
         dataList : [],
@@ -26,10 +26,10 @@ class SettleInformation extends PureComponent{  //结算信息
                 this.getData(subject_id,param);
             }
         });  
-    }
+    };
 
     getData = (subject_id,param)=> {
-        getDynamicCostProjSetteled(subject_id,param).then(res => {
+        getDynamicCostProjUnsetteled(subject_id,param).then( res => {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
@@ -37,11 +37,12 @@ class SettleInformation extends PureComponent{  //结算信息
                 this.setState({ dataList : res});
             }
         })
-    }
+    };
+    
 
     contractDetail = record => {
-        console.log('结算合同详情',record);
-    }
+        console.log('待结算合同详情',record);
+    };
 
     handleSearchFormSubmit = e => {
         if (e) {
@@ -63,8 +64,8 @@ class SettleInformation extends PureComponent{  //结算信息
     onResetFormClick = ()=>{
         const { form } = this.props;
         form.resetFields();
-        //TODO清空时，查询数据----根据搜索条件查询
-    }
+        //TODO清空时，进行查询。---根据搜索条件查询
+    };
 
     renderSearchForm(){
 
@@ -136,10 +137,10 @@ class SettleInformation extends PureComponent{  //结算信息
             </Form>
         );
 
-    }
+    };
 
     render(){
-        
+
         const {
             dataList,
             contract_type,
@@ -186,9 +187,9 @@ class SettleInformation extends PureComponent{  //结算信息
                 align : 'center',
             },
             {
-                title : '结算金额',
-                dataIndex : 'settled',
-                key : 'settled',
+                title : '待结算金额',
+                dataIndex : 'unsettled',
+                key : 'unsettled',
                 width : 100,
                 align : 'center',
             }
@@ -215,4 +216,4 @@ class SettleInformation extends PureComponent{  //结算信息
     }
 }
 
-export default SettleInformation;
+export default ToSettledInformation;

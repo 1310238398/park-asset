@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Card, Form, Input, Button, Table, Modal, Tag } from 'antd';
+import { Card, Table, Modal, Tag } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import FormatCard from './FormatCard';
@@ -7,9 +7,7 @@ import FormatCard from './FormatCard';
 import styles from './FormatManage.less';
 
 import { queryList, del,} from '@/services/formatManage';
-//getList
 
-@Form.create()
 class FormatManage extends PureComponent {
     state = {
         selectedRowKeys: [],
@@ -28,17 +26,16 @@ class FormatManage extends PureComponent {
     componentWillMount(){
 
         const params = { q : "page", current : 1 };
-        //请求接口
         queryList(params).then(res=>{
+            this.setState({ loading : false });
             if(res && res.error){
                 console.log(res.error.message);
                 return;
             }else{
                 this.setState( { data : res } );
             }
-            this.setState({ loading : false });
         });
-    }
+    };
 
     getList = params => {
         queryList(params).then(res=>{
@@ -71,56 +68,6 @@ class FormatManage extends PureComponent {
         }
     };
 
-    // //搜索
-    // handleSearchFormSubmit = e => {
-    //     if (e) {
-    //         e.preventDefault();
-    //     }
-    //     const { form } = this.props;
-
-    //     form.validateFields((err,values) => {
-    //         if(!err) {
-    //             console.log(values)
-    //         }
-    //     })
-    // }
-
-    // //重置搜索内容
-    // handleResetFormClick = () => {
-    //     const { form } = this.props;
-    //     form.resetFields();
-    // };
-
-    // //搜索render
-    // renderSearchForm() {
-    //     const {
-    //         form: { getFieldDecorator },
-    //     } = this.props;
-    //     return (
-    //         <Form layout="inline" onSubmit={this.handleSearchFormSubmit}>
-    //             <Row gutter={16}>
-    //                 <Col md={6} sm={24}>
-    //                     <Form.Item label="业态名称">
-    //                         {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col md={6} sm={24}>
-    //                     <div style={{ overflow: 'hidden' }}>
-    //                         <span style={{ marginBottom: 24 }}>
-    //                             <Button type="primary" htmlType="submit">
-    //                                 查询
-    //                             </Button>
-    //                             <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
-    //                                 重置
-    //                             </Button>
-    //                         </span>
-    //                     </div>
-    //                 </Col>
-    //             </Row>
-    //         </Form>
-    //     );
-    // }
-
     handleAddClick = () => {  //新建操作
         this.clearSelectRows();
         this.setState({ formVisible : true });
@@ -136,10 +83,9 @@ class FormatManage extends PureComponent {
         const params = { q : "page", current : current, pageSize : pageSize };
         if(saved){
             this.setState({ loading : true });
-            //为true，进行保存了，重新拉取列表，进行数据的更新
             this.getList(params);
         }
-        this.setState({ formVisible : false,editInfo : null});
+        this.setState({ formVisible : false, editInfo : null});
         this.clearSelectRows();
     }
 
@@ -148,6 +94,7 @@ class FormatManage extends PureComponent {
         const { selectedRows } = this.state;
         this.setState({ formVisible : true, editInfo : selectedRows[0]});
     };
+
     //删除按钮
     handleDelClick = () => {
         const { selectedRows } = this.state;
@@ -159,6 +106,7 @@ class FormatManage extends PureComponent {
             onOk: this.handleDelOKClick.bind(this, selectedRows[0]),
         });
     };
+
     handleDelOKClick(params) {
         this.setState({ loading : true });
         const { 
@@ -183,9 +131,6 @@ class FormatManage extends PureComponent {
     }
 
     onTableChange = pagination =>{
-        console.log("current",pagination.current);
-        console.log("pagesize",pagination.pageSize);
-
         const params = { q : "page", current : pagination.current, pageSize : pagination.pageSize };
         this.getList(params);
     }
@@ -193,7 +138,7 @@ class FormatManage extends PureComponent {
    
     //页面的render
     render() {
-        const { selectedRowKeys, selectedRows , data:{ list, pagination }, formVisible ,editInfo, loading } = this.state;
+        const { selectedRowKeys, selectedRows , data:{ list, pagination }, formVisible , editInfo, loading } = this.state;
         const columns = [
             {
                 title: '业态名称',
@@ -234,7 +179,6 @@ class FormatManage extends PureComponent {
         const breadcrumbList = [
             { title : "基础设定"},
             { title: '系统设定' },
-            // { title: '业态管理', href: '/systemset/systemset' },
             { title: '业态管理' }
         ];
 
@@ -242,7 +186,6 @@ class FormatManage extends PureComponent {
             <PageHeaderLayout title="业态管理" breadcrumbList={breadcrumbList}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
-                        {/* <div className={styles.tableListForm}>{this.renderSearchForm()}</div> */}
                         <div className={styles.tableListOperator}>
                             <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
                                 新建
@@ -281,7 +224,6 @@ class FormatManage extends PureComponent {
                                 pagination={paginationProps}
                                 onChange = {this.onTableChange}
                                 loading = {loading}
-                            // size="small"
                             />
                         </div>
                     </div>

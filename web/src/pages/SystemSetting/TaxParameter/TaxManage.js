@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Card, Row, Col, Form, Input, Button, Table, Modal } from 'antd';
+import { Card, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import TaxCard from './TaxCard';
@@ -8,7 +8,6 @@ import styles from './TaxManage.less';
 
 import { query, del } from '@/services/taxManage';
 
-@Form.create()
 class TaxManage extends PureComponent {
 
     state = {
@@ -17,15 +16,10 @@ class TaxManage extends PureComponent {
         formVisible: false,
         editInfo: null,
         data: {
-            list: [
-            ],
-            pagination:
-            {
-
-            }
+            list: [],
+            pagination:{}
         },
         loading : true,
-
     }
 
     componentWillMount(){
@@ -64,8 +58,7 @@ class TaxManage extends PureComponent {
 
         const params = { q : "page", current : current, pageSize : pageSize}
         if (saved) {
-            this.setState({ loading : true });
-            // TODO 重新拉取列表     
+            this.setState({ loading : true });  
             this.getList(params);      
         }
         this.setState({ formVisible: false, editInfo: null });
@@ -106,85 +99,6 @@ class TaxManage extends PureComponent {
         this.clearSelectRows();
     }
 
-    // //搜索框
-    // handleSearchFormSubmit = e => {
-    //     if (e) {
-    //         e.preventDefault();
-    //     }
-    //     const { form } = this.props;
-
-    //     form.validateFields((err,values) => {
-    //         if(!err) {
-    //             console.log(values)
-    //         }
-    //     })
-    // };
-
-    // handleResetFormClick = () => {
-    //     const { form } = this.props;
-
-    //     form.resetFields();
-    // }
-
-    // renderSearchForm() {
-    //     const formItemLayout = {
-    //         labelCol: {
-    //             xs: { span: 24 },
-    //             sm: { span: 12 },
-    //             md: { span: 6 },
-    //             lg: { span: 8 },
-    //         },
-    //         wrapperCol: {
-    //             xs: { span: 24 },
-    //             sm: { span: 12 },
-    //             md: { span: 6 },
-    //             lg: { span: 12 },
-    //         },
-    //     };
-    //     const col = {
-    //         sm: 24,
-    //         md: 6,
-    //     };
-    //     const {
-    //         form : { getFieldDecorator },
-    //     } = this.props
-    //     return (
-    //         <Form layout="inline" onSubmit={this.handleSearchFormSubmit}>
-    //             <Row gutter={16}>
-    //                 <Col {...col}>
-    //                     <Form.Item {...formItemLayout} label="税目名称">
-    //                         {
-    //                             getFieldDecorator("name")(<Input placeholder="请输入"></Input>)
-    //                         }
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col {...col}>
-    //                     <Form.Item {...formItemLayout} label="税率">
-    //                         {/* <Input placeholder="请输入"></Input> */}
-    //                         {
-    //                             getFieldDecorator("tax_rate")(<Input placeholder="请输入"></Input>)
-    //                         }
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col {...col} offset={1}>
-    //                     <Form.Item>
-    //                         <div style={{ overflow: 'hidden' }}>
-    //                             <span style={{ marginBottom: 24 }}>
-    //                                 <Button type="primary" htmlType="submit">
-    //                                     查询
-    //                                 </Button>
-    //                                 <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
-    //                                     重置
-    //                                 </Button>
-    //                             </span>
-    //                         </div>
-    //                     </Form.Item>
-    //                 </Col>
-    //             </Row>
-    //         </Form>
-    //     )
-    // }
-
     clearSelectRows = () => {
         const { selectedRowKeys } = this.state;
         if (selectedRowKeys.length === 0) {
@@ -222,18 +136,20 @@ class TaxManage extends PureComponent {
             {
                 title: "税目",
                 dataIndex: "name",
-                width: 100
+                width: 150,
             },
             {
                 title: "税率",
                 dataIndex: "tax_rate",
-                width: 100,
+                width: 80,
+                align :'center',
                 render: data => `${data*100}%`
             },
             {
                 title: "含税计算",
                 dataIndex : "type",
                 width : 80,
+                align: 'center',
                 render : data => {
                     return data == 1 ? "是" : ( data == 2 ? "否" : "错误数据");
                 }
@@ -241,7 +157,7 @@ class TaxManage extends PureComponent {
             {
                 title: "备注",
                 dataIndex: "memo",
-                width: 100,
+                width: 150,
             }
         ]
 
@@ -258,7 +174,6 @@ class TaxManage extends PureComponent {
             <PageHeaderLayout title="税目管理" breadcrumbList={breadcrumbList}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
-                        {/* <div className={styles.tableListForm}>{this.renderSearchForm()}</div> */}
                         <div className={styles.tableListOperator}>
                             <PButton code="add" icon="plus" type="primary" onClick={() => this.handleAddClick()}>
                                 新建
@@ -283,6 +198,7 @@ class TaxManage extends PureComponent {
                                 pagination={paginationProps}
                                 onChange = {this.onTableChange}
                                 loading = { loading }
+                                scroll = {{ y : 700}}
                             />
                         </div>
                     </div>
