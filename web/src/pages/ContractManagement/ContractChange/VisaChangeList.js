@@ -44,17 +44,20 @@ class VisaChangeList extends PureComponent {
 
   componentDidMount() {
     const { proID } = this.props;
-    this.dispatch({
-      type: 'visaChange/fetchOriginConTree',
-    });
-    this.dispatch({
-      type: 'visaChange/fetchVisaChange',
-      payload: {
-        proID: proID,
-        search: {},
-        pagination: {},
-      },
-    });
+    if(proID){
+      this.dispatch({
+        type: 'visaChange/fetchOriginConTree',
+      });
+      this.dispatch({
+        type: 'visaChange/fetchVisaChange',
+        payload: {
+          proID: proID,
+          search: {},
+          pagination: {},
+        },
+      });
+    }
+  
   }
 
   // 重置
