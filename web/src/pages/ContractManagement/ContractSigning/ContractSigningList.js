@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Form, Tabs, TreeSelect } from 'antd';
+import { Card, Form, Tabs, TreeSelect, message } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import ContractSigningView from './ContractSigningView';
 import DraftContract from './DraftContract';
@@ -19,26 +19,28 @@ class ContractSigningList extends PureComponent {
   tabChange = activeKey => {
     const { pro_ID } = this.state;
     this.setState({ activeKey });
-    if (activeKey === '1') {
-      //合同草稿
-      this.props.dispatch({
-        type: 'contractSiging/fetchSiging',
-        payload: {
-          proID: pro_ID,
-          search: {},
-          pagination: {},
-        },
-      });
-    } else if (activeKey === '2') {
-      //合同一栏
-      this.props.dispatch({
-        type: 'contractSiging/fetchContractList',
-        payload: {
-          proID: pro_ID,
-          search: {},
-          pagination: {},
-        },
-      });
+    if (pro_ID) {
+      if (activeKey === '1') {
+        //合同草稿
+        this.props.dispatch({
+          type: 'contractSiging/fetchSiging',
+          payload: {
+            proID: pro_ID,
+            search: {},
+            pagination: {},
+          },
+        });
+      } else if (activeKey === '2') {
+        //合同一栏
+        this.props.dispatch({
+          type: 'contractSiging/fetchContractList',
+          payload: {
+            proID: pro_ID,
+            search: {},
+            pagination: {},
+          },
+        });
+      }
     }
     this.props.dispatch({
       type: 'contractSiging/changeFormVisibleSettlement',
@@ -59,7 +61,6 @@ class ContractSigningList extends PureComponent {
       type: 'contractSiging/queryProTree',
       payload: {},
     });
-  
   }
 
   // 当前项目选择
@@ -110,7 +111,7 @@ class ContractSigningList extends PureComponent {
   render() {
     const { TabPane } = Tabs;
     const {
-      contractSiging: { projectTreeData,proID },
+      contractSiging: { projectTreeData, proID },
     } = this.props;
     const { pro_ID } = this.state;
     this.formateTree(projectTreeData);
@@ -124,7 +125,7 @@ class ContractSigningList extends PureComponent {
           <div>
             <span>当前项目：</span>
             <TreeSelect
-             value={proID}
+              value={proID}
               treeData={projectTreeData}
               style={{ width: 200 }}
               onChange={this.handleChange}

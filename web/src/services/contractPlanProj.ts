@@ -11,7 +11,7 @@ export async function queryContractStatistic(params){
     return request(`/v1/${router}?q=statistic&${stringify(params)}`)
 }
 
-export async function getOneContract(params){
+export async function getOneContractPlan(params){
     return request(`/v1/${router}/${params}`);
 }
 
@@ -20,6 +20,13 @@ export async function createContractPlanProj(params){
         method : 'POST',
         body : params
     })
+}
+
+export async function updateContractPlanProj(params){
+    return request(`/v1/${router}/${params.record_id}`,{
+        method : 'PUT',
+        body : params,
+    });
 }
 
 export async function deleteContractPlanProj(params){

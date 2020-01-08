@@ -233,6 +233,9 @@ export default [
 
           //合约规划
           { path: '/cost/contractPlan', component: './CostManage/ContractPlan/ContractPlanInfo' },
+          //动态成本
+          { path: '/cost/dynamicCost', component: './CostManage/DynamicCost/DynamicCostProj'},
+          { path : '/cost/costmove', component: './CostManage/CostMove/CostMoveMange'}
 
         ],
       },

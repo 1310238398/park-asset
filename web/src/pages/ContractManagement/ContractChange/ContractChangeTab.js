@@ -91,39 +91,41 @@ class ContractChangeTab extends PureComponent {
   // tab 切换
   tabChange = activeKey => {
     const { pro_ID } = this.state;
-    console.log(pro_ID)
     this.setState({ activeKey });
-    // 点击的是设计变更
-    if (activeKey === '1') {
-      this.props.dispatch({
-        type: 'designChange/fetchDesignChange',
-        payload: {
-          proID: pro_ID,
-          search: {},
-          pagination: {},
-        },
-      });
-    } else if (activeKey === '2') {
-      // 点击的是签证变更
-      this.props.dispatch({
-        type: 'visaChange/fetchVisaChange',
-        payload: {
-          proID: pro_ID,
-          search: {},
-          pagination: {},
-        },
-      });
-    } else if (activeKey === '3') {
-      // 点击的是材料批价
-      this.props.dispatch({
-        type: 'materialPricing/fetchMaterialPricing',
-        payload: {
-          proID: pro_ID,
-          search: {},
-          pagination: {},
-        },
-      });
+    if (pro_ID) {
+      // 点击的是设计变更
+      if (activeKey === '1') {
+        this.props.dispatch({
+          type: 'designChange/fetchDesignChange',
+          payload: {
+            proID: pro_ID,
+            search: {},
+            pagination: {},
+          },
+        });
+      } else if (activeKey === '2') {
+        // 点击的是签证变更
+        this.props.dispatch({
+          type: 'visaChange/fetchVisaChange',
+          payload: {
+            proID: pro_ID,
+            search: {},
+            pagination: {},
+          },
+        });
+      } else if (activeKey === '3') {
+        // 点击的是材料批价
+        this.props.dispatch({
+          type: 'materialPricing/fetchMaterialPricing',
+          payload: {
+            proID: pro_ID,
+            search: {},
+            pagination: {},
+          },
+        });
+      }
     }
+
     this.props.dispatch({
       type: 'visaChange/changeFormVisibleVisaChange',
       payload: false,
