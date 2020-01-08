@@ -236,6 +236,13 @@ export default [
 
         ],
       },
+      // 营销管理
+      {
+        path: '/market',
+        routes: [
+          {path: '/market/bidCustomer/entrustedConstruction', component: './MarketManage/LargeCustomer/EntrustedConstruction'},
+        ]
+      },
       // 合同管理
       {
 

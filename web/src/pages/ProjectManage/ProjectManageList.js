@@ -443,8 +443,8 @@ getMenu = (record) => {
     return (
       
       <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}
-       content={ this.renderContent()
-     }>
+      
+     >
          
         <Card bordered={false}>
           <div className={styles.tableList}>
