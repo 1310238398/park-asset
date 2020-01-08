@@ -11,7 +11,6 @@ class FormatCard extends PureComponent {
     componentWillMount(){
         const { editInfo } = this.props;
         if(editInfo){
-            //重新请求数据
             get(editInfo).then(res=>{
                 if(res && res.error){
                     console.log(res.error.message);

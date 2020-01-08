@@ -9,11 +9,10 @@ import { query, create, del, update } from '@/services/projectCostManage';
 import { queryListNotPage } from '@/services/formatManage';
 import { queryList } from '@/services/taxManage';  
 
-
 const EditableContext = React.createContext();
 
 @Form.create()
-class EditableCell extends React.Component {  //根据editing 改变该行的某列是否是可编辑的
+class EditableCell extends React.Component {  
 
     getInput = () => {  //编辑框
         if (this.props.inputType === 'number') {
@@ -93,7 +92,17 @@ class EditableCell extends React.Component {  //根据editing 改变该行的某
 class ProjectCostManage extends PureComponent {
     state = {
         formatList: [],
-        taxList : [],
+        taxList : [
+            {
+                record_id: "0000001",
+                category: "",
+                name: "请选择",
+                calculation_formula: "",
+                type: 1,
+                tax_rate: 0,
+                memo: "",
+            },
+        ],
         dataList: [
         ],
         temp_data : [],
@@ -133,11 +142,18 @@ class ProjectCostManage extends PureComponent {
         });
 
         queryList().then(res =>{
+            const {
+                taxList 
+            } = this.state;
+            const list = taxList;
             if(res && res.error){
                 console.log(res.error.message);
             }else{
                 is_get_tax = true;
-                this.setState({taxList : res.list});
+                for(let i=0;i<res.list.length;i++){
+                    list.push({...res.list[i]})
+                }
+                this.setState({taxList : list});
             }
         });
         this.in = setInterval(()=>{
@@ -344,7 +360,11 @@ class ProjectCostManage extends PureComponent {
             paramsAdd.label = parseInt(getRow.label);
             paramsAdd.name = getRow.name;
             paramsAdd.status = parseInt(getRow.status);
-            paramsAdd.tax_id = getRow.tax_id;
+            if(getRow.tax_id === '0000001'){
+                paramsAdd.tax_id = '';
+            }else{
+                paramsAdd.tax_id = getRow.tax_id;
+            }
             paramsAdd = {...paramsAdd};
             if(chooseBtn == "A"){//添加
                 create(paramsAdd).then(res => {
