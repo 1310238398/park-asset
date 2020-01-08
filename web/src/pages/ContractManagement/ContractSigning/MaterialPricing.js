@@ -21,51 +21,93 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import styles from './ContractSigning.less';
 const FormItem = Form.Item;
+// 取得字典值对应的值
+function arrCon(arrL, arr) {
+  let arrName = '';
+  arrL.forEach(el => {
+    if (arr && arr.length > 0) {
+      for (let i = 0; i < arr.length; i++) {
+        if (el.value === arr[i]) {
+          arrName += el.label;
+          arrName += '，';
+        }
+      }
+    }
+  });
+  return arrName.substring(0, arrName.length - 1);
+}
+// 计算合计值
+function sum(type, arr) {
+  var s = 0;
+  arr.forEach(function(val, idx, arr) {
+    switch (type) {
+      case 'quote_c':
+        s += val.quote_c;
+        break;
+      case 'quote_w':
+        s += val.quote_w;
+        break;
+    }
+  }, 0);
+  return s;
+}
+
+
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
+  materialPricing:state.materialPricing,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
 class MaterialPricing extends PureComponent {
-
+  constructor(props) {
+    super(props);
+   this.state={
+     dataSource : props.data ? props.data :[]
+   }
+  }
+  static getDerivedStateFromProps(nextProps, state) {
+    if ('data' in nextProps) {
+      return {
+        ...state,
+        dataSource: nextProps.data,
+      };
+    }
+    return state;
+  }
+  
   componentDidMount() {
-    const {
-      contractSiging: { formID },
-    } = this.props;
-
-    // this.dispatch({
-    //   type: 'contractSiging/fetch',
-    //   search: {},
-    //   pagination: {},
-    //   pro_id: formID,
-    // });
+    this.props.dispatch({
+      type: 'materialPricing/fetchChangeReason',
+    });
   }
 
   render() {
+    const { dataSource } = this.state;
     const {
-      loading,
-      form: { getFieldDecorator },
-      contractSiging: {
-        formTypeSiging,
-        dataSiging: { list, pagination },
-      },
+      materialPricing: { materialPricingList },
     } = this.props;
     const columns = [
       {
         title: '施工单位',
-        dataIndex: 'name',
+        dataIndex: 'working_name',
         width: 100,
       },
       {
         title: '批价原因',
-        dataIndex: 'index',
+        dataIndex: 'reason',
         width: 150,
+        render: (text, record) => {
+          return <div>{arrCon(materialPricingList, record.reason)}</div>;
+        },
       },
       {
         title: '施工单位报价合计',
-        dataIndex: 'address',
+        dataIndex: 'quote_w',
         width: 150,
+        render: (text, record) => {
+          return <div>{sum('quote_w', record.quotes)}</div>;
+        },
       },
       {
         title: '提案价合计',
@@ -78,67 +120,34 @@ class MaterialPricing extends PureComponent {
         dataIndex: 'tags',
         width: 150,
       },
-      {
+       {
         title: '发起日期',
-        dataIndex: 'age',
-        width: 150,
+        dataIndex: 'launch_date',
+        width: 140,
+        render: (text, record) => {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              {!record.launch_date ? '' : moment(record.launch_date).format('YYYY-MM-DD')}
+            </div>
+          );
+        },
       },
       {
         title: '发起人',
-        dataIndex: 'creator',
-        width: 150,
+        dataIndex: 'launch_person',
+        width: 100,
       },
       {
         title: '状态',
         dataIndex: 'status',
         width: 100,
+        render: val => {
+          let value =val.toString();
+          return <DicShow pcode="contract$#ChangeStatus" code={[value]} />;
+        },
       },
     ];
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      showTotal: total => <span>共{total}条</span>,
-      ...pagination,
-    };
 
-    const data = [
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b542',
-        index: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-        sex: 'nan',
-        creator:'里斯',
-        date:'2019-10-23',
-        status:'2'
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b541',
-        index: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-        sex: 'nan',
-        creator:'里斯',
-        date:'2019-10-23',
-        status:'2'
-      },
-      {
-        record_id: '6cc5f9d-62d3-4367-8197-c7d02557b54e',
-        index: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-        sex: 'nan',
-        creator:'里斯',
-        date:'2019-10-23',
-        status:'2'
-      },
-    ];
 
     return (
       <div>
@@ -146,9 +155,10 @@ class MaterialPricing extends PureComponent {
           <div className={styles.tableList}>
             <div>
               <Table
-                dataSource={data}
+                dataSource={dataSource.list}
                 columns={columns}
                 pagination={false}
+                size="small"
               ></Table>
             </div>
           </div>

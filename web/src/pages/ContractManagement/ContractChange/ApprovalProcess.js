@@ -23,7 +23,6 @@ import styles from './ContractChange.less';
 const FormItem = Form.Item;
 @connect(state => ({
   contractSiging: state.contractSiging,
-  contractSupplement: state.contractSupplement,
   loading: state.loading.models.contractSiging,
 }))
 @Form.create()
@@ -115,6 +114,7 @@ class ApprovalProcess extends PureComponent {
                 dataSource={data}
                 columns={columns}
                 pagination={false}
+                size="small"
               ></Table>
             </div>
           </div>

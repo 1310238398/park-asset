@@ -215,6 +215,9 @@ func (a *LandAppreciationTax) Renew(ctx context.Context, projectID string) error
 
 // Query 查询数据
 func (a *LandAppreciationTax) Query(ctx context.Context, params schema.LandAppreciationTaxQueryParam, opts ...schema.LandAppreciationTaxQueryOptions) (*schema.LandAppreciationTaxQueryResult, error) {
+	//更新数据
+	a.renew(ctx, params.ProjectID)
+
 	return a.LandAppreciationTaxModel.Query(ctx, params, opts...)
 }
 
@@ -231,14 +234,16 @@ func (a *LandAppreciationTax) Get(ctx context.Context, recordID string, opts ...
 
 // GetByProjectID 按项目ID获取土增
 func (a *LandAppreciationTax) GetByProjectID(ctx context.Context, projectID string) (*schema.LandAppreciationTax, error) {
+	err := a.Renew(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+
 	item, err := a.LandAppreciationTaxModel.GetByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	} else if item == nil {
-		err := a.Renew(ctx, projectID)
-		if err != nil {
-			return nil, err
-		}
+
 		item, err = a.LandAppreciationTaxModel.GetByProjectID(ctx, projectID)
 		if err != nil {
 			return nil, err

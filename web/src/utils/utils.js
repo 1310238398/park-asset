@@ -1,6 +1,7 @@
 import moment from 'moment';
 import md5 from 'md5';
 import uuid from 'uuid/v4';
+import { isNullOrUndefined } from 'util';
 
 // 格式化时间戳
 export function formatTimestamp(val, format) {
@@ -98,4 +99,25 @@ export function exitFullscreen() {
   } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   }
+}
+
+/**
+ * 检查对象是否为空对象 {}, null, undefined
+ * WGH
+ * @param {目标对象} value
+ */
+export function isObjectNullOrUndefinedOrEmpty(value) {
+  if (isNullOrUndefined(value)) {
+    return true;
+  }
+  if (typeof value !== 'object') {
+    return false;
+  }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in value) {
+    if ({}.hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
 }

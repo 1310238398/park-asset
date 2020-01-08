@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Icon, Modal, Button } from 'antd';
+import store from '@/utils/store';
 import styles from './PicturesWall.less';
 
 const defaction = '/api/v1/files';
@@ -136,7 +137,7 @@ export default class PicturesWall extends React.Component {
 
   triggerChange = ({ fileList }) => {
     // Should provide an event to pass value to Form.
-    console.log("triggerChange ");
+    console.log('triggerChange ');
     console.log(fileList);
     const { onChange } = this.props;
     if (onChange) {
@@ -150,7 +151,7 @@ export default class PicturesWall extends React.Component {
           return '';
         }
       });
-      console.log("out ");
+      console.log('out ');
       console.log(out);
       if (this.isChg(out)) {
         this.validFilelist = [...out];
@@ -182,7 +183,6 @@ export default class PicturesWall extends React.Component {
 
   handleChange = info => {
     let { fileList } = info;
-
 
     // 1. Limit the number of uploaded files
     // Only to show two recent uploaded files, and old ones will be replaced by the new
@@ -228,6 +228,7 @@ export default class PicturesWall extends React.Component {
     const { previewVisible, previewImage, action, name } = this.state;
     const { listType, bucket, accept, rich, showUploadList, disabled } = this.props;
     const { fileList } = this;
+    const tokenInfo = store.getAccessToken();
     const uprop = {
       action,
       showUploadList,
@@ -236,6 +237,9 @@ export default class PicturesWall extends React.Component {
       data: { bucket },
       name,
       disabled,
+      headers: {
+        Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
+      },
     };
     if (accept) {
       uprop.accept = accept;

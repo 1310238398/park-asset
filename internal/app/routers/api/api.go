@@ -62,6 +62,7 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 		cContractPlanningTemplate *ctl.ContractPlanningTemplate,
 		cBusinessPartner *ctl.BusinessPartner,
 		cProjContractPlanning *ctl.ProjContractPlanning,
+		cProjDynamicCost *ctl.ProjDynamicCost,
 	) error {
 
 		g := app.Group("/api")
@@ -442,10 +443,12 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 			// 注册/api/v1/com-contracts
 			gComContract := v1.Group("com-contract")
 			{
-				// 查询列表
+				// 查询列表-所有
 				gComContract.GET("", cComContract.Query)
 				// 查询一条记录详细信息
 				gComContract.GET("/:id", cComContract.Get)
+				// 查询列表-按项目
+				gComContract.GET("/:id/byproject", cComContract.QueryByProjectID)
 				// 提交审核
 				gComContract.PUT("/:id/commit", cComContract.Commit)
 				// 取消提交审核
@@ -461,29 +464,76 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				// 合同生效
 				gComContract.PUT("/:id/take-effect", cComContract.TakeEffect)
 				// 合同结算
-				gComContract.POST("/:id/settlement", cComContract.CreateSettlement)
+				gComContract.POST("/:id/settlement", cSettlementRecord.Create)
 				// 合同结算列表
-				gComContract.GET("/:id/settlementlist", cComContract.SettlementList)
+				gComContract.GET("/:id/settlementlist", cSettlementRecord.QueryByComContractID)
+				{
+					// 合同设计变更列表
+					gComContract.GET("/:id/alter/design", cComContractAlter.QueryDesignByComContractID)
+					// 合同签证变更列表
+					gComContract.GET("/:id/alter/sign", cComContractAlter.QuerySignByComContractID)
+					// 合同批价列表
+					gComContract.GET("/:id/alter/stuffprice", cComContractAlter.QueryStuffPriceByComContractID)
+					// 合同批价材料列表
+					gComContract.GET("/:id/alter/stuffpriceitem", cComContractAlter.QueryStuffPriceItemByStuffPriceID)
+				}
 			}
-
 			// 注册/api/v1/settlement-records
 			gSettlementRecord := v1.Group("settlement-records")
 			{
-				gSettlementRecord.GET("", cSettlementRecord.Query)
 				gSettlementRecord.GET(":id", cSettlementRecord.Get)
-				gSettlementRecord.POST("", cSettlementRecord.Create)
 				gSettlementRecord.PUT(":id", cSettlementRecord.Update)
 				gSettlementRecord.DELETE(":id", cSettlementRecord.Delete)
 			}
 
 			// 注册/api/v1/com-contract-alters
-			gComContractAlter := v1.Group("com-contract-alters")
+			gComContractAlter := v1.Group("com-contract-alter")
 			{
-				gComContractAlter.GET("", cComContractAlter.Query)
-				gComContractAlter.GET(":id", cComContractAlter.Get)
-				gComContractAlter.POST("", cComContractAlter.Create)
-				gComContractAlter.PUT(":id", cComContractAlter.Update)
-				gComContractAlter.DELETE(":id", cComContractAlter.Delete)
+				//通过项目取设计变更
+				gComContractAlter.GET("designsbyproject/:id", cComContractAlter.QueryDesignByProjectID)
+				designGroup := gComContractAlter.Group("design")
+				{
+					designGroup.POST("", cComContractAlter.CreateDesign)
+					designGroup.GET(":id", cComContractAlter.GetDesign)
+					designGroup.PUT(":id", cComContractAlter.UpdateDesign)
+					designGroup.DELETE(":id", cComContractAlter.DeleteDesign)
+					designGroup.PUT(":id/commit", cComContractAlter.CommitDesign)
+					designGroup.PUT(":id/passcheck", cComContractAlter.PassCheckDesign)
+					designGroup.PUT(":id/reback", cComContractAlter.RebackDesign)
+					designGroup.PUT(":id/affirm", cComContractAlter.AffirmDesign)
+				}
+				//通过项目取签证变更
+				gComContractAlter.GET("signsbyproject/:id", cComContractAlter.QuerySignByProjectID)
+				signGroup := gComContractAlter.Group("sign")
+				{
+					signGroup.POST("", cComContractAlter.CreateSign)
+					signGroup.GET(":id", cComContractAlter.GetSign)
+					signGroup.PUT(":id", cComContractAlter.UpdateSign)
+					signGroup.DELETE(":id", cComContractAlter.DeleteSign)
+					signGroup.PUT(":id/commit", cComContractAlter.CommitSign)
+					signGroup.PUT(":id/passcheck", cComContractAlter.PassCheckSign)
+					signGroup.PUT(":id/reback", cComContractAlter.RebackSign)
+					signGroup.PUT(":id/affirm", cComContractAlter.AffirmSign)
+				}
+				//通过项目取材料批价
+				gComContractAlter.GET("stuffpricesbyproject/:id", cComContractAlter.QueryStuffPriceByProjectID)
+				stuffPriceGroup := gComContractAlter.Group("stuffprice")
+				{
+					stuffPriceGroup.POST("", cComContractAlter.CreateStuffPrice)
+					stuffPriceGroup.GET(":id", cComContractAlter.GetStuffPrice)
+					stuffPriceGroup.PUT(":id", cComContractAlter.UpdateStuffPrice)
+					stuffPriceGroup.DELETE(":id", cComContractAlter.DeleteStuffPrice)
+					stuffPriceGroup.PUT(":id/commit", cComContractAlter.CommitStuffPrice)
+					stuffPriceGroup.PUT(":id/passcheck", cComContractAlter.PassCheckStuffPrice)
+					stuffPriceGroup.PUT(":id/reback", cComContractAlter.RebackStuffPrice)
+				}
+				stuffPriceItemGroup := gComContractAlter.Group("stuffpriceitem")
+				{
+					stuffPriceItemGroup.POST("", cComContractAlter.CreateStuffPriceItem)
+					stuffPriceItemGroup.GET(":id", cComContractAlter.GetStuffPriceItem)
+					stuffPriceItemGroup.PUT(":id", cComContractAlter.UpdateStuffPriceItem)
+					stuffPriceItemGroup.DELETE(":id", cComContractAlter.DeleteStuffPriceItem)
+				}
 			}
 			// 注册/api/v1/contract-planning-templates
 			gContractPlanningTemplate := v1.Group("contract-planning-templates")
@@ -514,6 +564,18 @@ func RegisterRouter(app *gin.Engine, container *dig.Container) error {
 				gProjContractPlanning.PUT(":id", cProjContractPlanning.Update)
 				gProjContractPlanning.PUT(":id/apply", cProjContractPlanning.Apply)
 				gProjContractPlanning.DELETE(":id", cProjContractPlanning.Delete)
+			}
+			// 注册/api/v1/proj-dynamic-cost  项目动态成本
+			gProjDynamicCost := v1.Group("proj-dynamic-cost")
+			{
+				gProjDynamicCost.GET("", cProjDynamicCost.Query)
+				gProjDynamicCost.GET(":id", cProjDynamicCost.GetProjDynamicCost)
+				gProjDynamicCost.GET(":id/plans", cProjDynamicCost.QueryProjDynamicPlanning)
+				gProjDynamicCost.GET(":id/setteled", cProjDynamicCost.QueryProjDynamicSettled)
+				gProjDynamicCost.GET(":id/unsettled", cProjDynamicCost.QueryProjDynamicUnsettled)
+				gProjDynamicCost.GET(":id/on-approval", cProjDynamicCost.QueryProjDynamicOnApproval)
+				gProjDynamicCost.GET(":id/transfer", cProjDynamicCost.QueryProjDynamicTransfer)
+				gProjDynamicCost.POST("transfer", cProjDynamicCost.CreateTransfer)
 			}
 
 		}

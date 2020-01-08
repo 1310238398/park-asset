@@ -1,29 +1,25 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'dva';
 import { Cascader, Radio } from 'antd';
 import { contractPlanList } from '@/services/contractSiging';
 import { contractCList } from '@/services/contractSiging';
-const sep = '/';
 
+const sep = '/';
+function parseValue(value) {
+  return value ? value.split(sep) : [];
+}
+@connect(state => ({
+  contractSiging: state.contractSiging,
+}))
 export class ContractPlanningSelect extends PureComponent {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
-      value: props.value,
-      // options: [],
+      value: parseValue(props.value),
       children: [],
       items: [],
-       options:[
-        {
-          value: 'zhejiang',
-          label: 'Zhejiang',
-          isLeaf: false,
-        },
-        {
-          value: 'jiangsu',
-          label: 'Jiangsu',
-          isLeaf: false,
-        },
-      ]
+      options: [],
     };
   }
 
@@ -35,7 +31,7 @@ export class ContractPlanningSelect extends PureComponent {
     }).then(data => {
       const { list } = data;
       const lis = this.toPlanningSelect(list);
-      this.setState({options:lis});
+      this.setState({ options: lis });
     });
   }
 
@@ -45,18 +41,18 @@ export class ContractPlanningSelect extends PureComponent {
     }
     const newData = [];
     for (let i = 0; i < data.length; i += 1) {
-      const item = { ...data[i], label: data[i].name, value: data[i].cost_id , isLeaf: false};
+      const item = { ...data[i], label: data[i].name, value: data[i].cost_id, isLeaf: false };
       if (item.children && item.children.length > 0) {
         item.children = this.toPlanningSelect(item.children);
       }
-     newData.push(item);
+      newData.push(item);
     }
     return newData;
   };
-  
+
   static getDerivedStateFromProps(nextProps, state) {
     if ('value' in nextProps) {
-      return { ...state, value: nextProps.value };
+      return { ...state, value: parseValue(nextProps.value) };
     }
     return state;
   }
@@ -79,7 +75,7 @@ export class ContractPlanningSelect extends PureComponent {
     const { proID } = this.props;
     contractCList({
       q: 'list',
-      project_id:proID,
+      project_id: proID,
       cost_id: value,
     }).then(data => {
       const { list } = data;
@@ -87,12 +83,11 @@ export class ContractPlanningSelect extends PureComponent {
         const item = {
           ...list[i],
           label: list[i].name,
-          value: list[i].cost_id,
+          value: list[i].record_id,
         };
         childrenList.push(item);
       }
       this.setState({ children: childrenList });
-      // load options lazily
     });
   };
 
@@ -106,22 +101,28 @@ export class ContractPlanningSelect extends PureComponent {
       targetOption.loading = false;
       const tarChildren = [];
       for (let j = 0; j < children.length; j += 1) {
-        const item = { ...children[j], label:`${children[j].name}`, value: children[j].cost_id };
+        const item = { ...children[j], label: `${children[j].name}`, value: children[j].record_id };
         tarChildren.push(item);
       }
       targetOption.children = tarChildren;
       this.setState({
         options: [...options],
       });
+      this.props.dispatch({
+        type: 'contractSiging/saveOptinsData',
+        payload: options,
+      });
     }, 1000);
   };
 
   render() {
-    const { options, value } = this.state;
+    let { options, value } = this.state;
+    const {  dataOptions } = this.props;
     return (
-      <div style={{ width: '300px' }}>
+      <div>
         <Cascader
-          options={this.state.options}
+          value={value}
+          options={dataOptions.length> 0 ? dataOptions : options}
           loadData={this.loadData}
           onChange={this.handleChange}
           style={{ width: '100%' }}

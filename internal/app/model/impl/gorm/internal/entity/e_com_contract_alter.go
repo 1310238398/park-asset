@@ -12,8 +12,40 @@ func GetComContractAlterDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
 	return getDBWithModel(ctx, defDB, ComContractAlter{})
 }
 
+// GetComContractAlterDesignDB 变更管理
+func GetComContractAlterDesignDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterDesign{})
+}
+
+// GetComContractAlterSignDB 变更管理
+func GetComContractAlterSignDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterSign{})
+}
+
+// GetComContractAlterStuffPriceDB 变更管理
+func GetComContractAlterStuffPriceDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterStuffPrice{})
+}
+
+// GetComContractAlterStuffPriceItemDB 变更管理
+func GetComContractAlterStuffPriceItemDB(ctx context.Context, defDB *gorm.DB) *gorm.DB {
+	return getDBWithModel(ctx, defDB, ComContractAlterStuffPriceItem{})
+}
+
 // SchemaComContractAlter 变更管理
 type SchemaComContractAlter schema.ComContractAlter
+
+// SchemaComContractAlterDesign 变更管理
+type SchemaComContractAlterDesign schema.ComContractAlterDesign
+
+// SchemaComContractAlterSign 变更管理
+type SchemaComContractAlterSign schema.ComContractAlterSign
+
+// SchemaComContractAlterStuffPrice 变更管理
+type SchemaComContractAlterStuffPrice schema.ComContractAlterStuffPrice
+
+// SchemaComContractAlterStuffPriceItem 变更管理
+type SchemaComContractAlterStuffPriceItem schema.ComContractAlterStuffPriceItem
 
 // ToComContractAlter 转换为变更管理实体
 func (a SchemaComContractAlter) ToComContractAlter() *ComContractAlter {
@@ -38,8 +70,10 @@ type ComContractAlterDesign struct {
 	Creator         *string `gorm:"column:creator;size:36;index;"`       // 创建者
 	SN              string  `gorm:"column:sn"`                           // 变更编号
 	Name            string  `gorm:"column:name"`                         // 变更主题名称
-	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
+	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"` // 合同ID
+	ComContractSN   string  `gorm:"column:comcontract_sn;"`              // 合同编号
 	ComContractName string  `gorm:"column:comcontract_name"`             // 合同名称
+	ProjectID       string  `gorm:"column:project_id;size:36;index"`     // 项目ID
 	LaunchDept      string  `gorm:"column:launch_dept"`                  // 发起部门
 	LaunchPerson    string  `gorm:"column:launch_person"`                // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                  // 发起日期
@@ -57,6 +91,9 @@ type ComContractAlterDesign struct {
 	AlterType       string  `gorm:"column:alter_type"`                   // 变更类型: 一般变更 重大变更
 	Remark          string  `gorm:"column:remark"`                       // 备注
 	Status          uint8   `gorm:"column:status"`                       // 状态： 0 保存 1提交审核 2审核通过
+	AffirmAmount    float64 `gorm:"column:affirm_amount"`                // 确认结算金额
+	AffirmRemark    string  `gorm:"column:affirm_remark"`                // 确认结算备注
+	AffirmDate      string  `gorm:"affirm_date"`                         // 结算日期
 }
 
 // ComContractAlterSign 签证变更
@@ -66,15 +103,20 @@ type ComContractAlterSign struct {
 	Creator              *string `gorm:"column:creator;size:36;index;"`       // 创建者
 	SN                   string  `gorm:"column:sn"`                           // 变更编号
 	Name                 string  `gorm:"column:name"`                         // 变更主题名称
-	ComContractID        string  `gorm:"column:comcontract_id;size:36;index"` // 合同编号
+	ComContractID        string  `gorm:"column:comcontract_id;size:36;index"` // 合同ID
+	ComContractSN        string  `gorm:"column:comcontract_sn;"`              // 合同编号
 	ComContractName      string  `gorm:"column:comcontract_name"`             // 合同名称
+	ProjectID            string  `gorm:"column:project_id;size:36;index"`     // 项目ID
 	AlterDesignID        string  `gorm:"column:alter_design_id"`              // 设计变更ID
+	AlterDesignSN        string  `gorm:"column:alter_design_sn"`              // 设计变更编号
 	AlterDesignName      string  `gorm:"column:alter_design_name"`            // 设计变更名称
 	LaunchDept           string  `gorm:"column:launch_dept"`                  // 发起部门
 	LaunchPerson         string  `gorm:"column:launch_person"`                // 发起人
 	LaunchDate           string  `gorm:"column:launch_date"`                  // 发起日期
-	WorkingCompany       string  `gorm:"column:working_company"`              // 施工单位
-	SupervisionCompany   string  `gorm:"column:supervision_company"`          // 监理单位
+	WorkingCompany       string  `gorm:"column:working_company"`              // 施工单位ID
+	WorkingName          string  `gorm:"column:working_name"`                 // 施工单位名称
+	SupervisionCompany   string  `gorm:"column:supervision_company"`          // 监理单位ID
+	SupervisionName      string  `gorm:"column:supervision_name"`             // 监理单位名称
 	AlterSignType        string  `gorm:"column:alter_sign_type"`              // 签证类型: 技术签证、经济签证、工期签证、其他签证
 	SubsectionName       string  `gorm:"column:subsection_name"`              // 分布工程名称
 	Reason               string  `gorm:"column:reason"`                       // 签证原因
@@ -93,6 +135,13 @@ type ComContractAlterSign struct {
 	Remark   string `gorm:"column:remark"`    // 备注
 	Status   uint8  `gorm:"column:status"`    // 状态： 0 保存 1提交审核 2审核通过
 	SignDate string `gorm:"column:sign_date"` // 签证日期
+
+	AffirmWorkingCompany string  `gorm:"affirm_working_company"` //确认信息-施工单位ID
+	AffirmWorkingName    string  `gorm:"affirm_working_name"`    //确认信息-施工单位名称
+	AffirmWorkNum        string  `gorm:"affirm_work_num"`        //确认信息-工程量
+	AffirmAmount         float64 `gorm:"affirm_amount"`          // 结算金额
+	AffirmDate           string  `gorm:"affirm_date"`            // 结算日期
+	AffirmRemark         string  `gorm:"affirm_remark"`          // 结算备注
 }
 
 // ComContractAlterStuffPrice 材料批价
@@ -102,16 +151,22 @@ type ComContractAlterStuffPrice struct {
 	Creator         *string `gorm:"column:creator;size:36;index;"`        // 创建者
 	SN              string  `gorm:"column:sn"`                            //  批价编号
 	Name            string  `gorm:"column:name"`                          // 合同名称
-	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"`  // 合同编号
+	ComContractID   string  `gorm:"column:comcontract_id;size:36;index"`  // 合同ID
+	ComContractSN   string  `gorm:"column:comcontract_sn;"`               // 合同编号
+	ProjectID       string  `gorm:"column:project_id;size:36;index"`      // 项目ID
 	ComContractName string  `gorm:"column:comcontract_name"`              // 合同名称
 	AlterDesignID   string  `gorm:"column:alter_design_id;size:36;index"` // 设计变更ID
+	AlterDesignSN   string  `gorm:"column:alter_design_sn"`               // 设计变更编号
 	AlterDesignName string  `gorm:"column:alter_design_name"`             // 设计变更名称
 	AlterSignID     string  `gorm:"column:alter_sign_id"`                 // 签证变更ID
+	AlterSignSN     string  `gorm:"column:alter_sign_sn"`                 // 签证变更编号
 	AlterSignName   string  `gorm:"column:alter_sign_name"`               // 签证变更名称
+	ProjectName     string  `gorm:"column:project_name"`                  // 工程名称
 	LaunchDept      string  `gorm:"column:launch_dept"`                   // 发起部门
 	LaunchPerson    string  `gorm:"column:launch_person"`                 // 发起人
 	LaunchDate      string  `gorm:"column:launch_date"`                   // 发起日期
-	WorkingCompany  string  `gorm:"column:working_company"`               // 施工单位
+	WorkingCompany  string  `gorm:"column:working_company"`               // 施工单位ID
+	WorkingName     string  `gorm:"column:working_name"`                  // 施工单位名称
 	Reason          string  `gorm:"column:reason"`                        // 签证原因
 	ReasonOther     string  `gorm:"column:reason_other"`                  // 变更其他原因
 	Content         string  `gorm:"column:content"`                       // 变更内容
@@ -123,6 +178,8 @@ type ComContractAlterStuffPrice struct {
 // ComContractAlterStuffPriceItem 材料批价表
 type ComContractAlterStuffPriceItem struct {
 	Model
+	RecordID          *string `gorm:"column:record_id;size:36;index;"`            // 记录ID
+	Creator           *string `gorm:"column:creator;size:36;index;"`              // 创建者
 	AlterStuffPriceID string  `gorm:"column:alter_stuff_price_id;size:36;index;"` // 材料批价id
 	Name              string  `gorm:"column:name"`                                // 合同名称
 	Specification     string  `gorm:"column:specification"`                       // 规格
@@ -183,6 +240,336 @@ func (a ComContractAlters) ToSchemaComContractAlters() []*schema.ComContractAlte
 	list := make([]*schema.ComContractAlter, len(a))
 	for i, item := range a {
 		list[i] = item.ToSchemaComContractAlter()
+	}
+	return list
+}
+
+/////////////////////////设计变更//////////////////////////////
+
+// ToSchemaComContractAlterDesign 转换为变更管理对象
+func (a ComContractAlterDesign) ToSchemaComContractAlterDesign() *schema.ComContractAlterDesign {
+	item := &schema.ComContractAlterDesign{
+		RecordID:        *a.RecordID,
+		Creator:         *a.Creator,
+		CreatedAt:       a.CreatedAt,
+		UpdatedAt:       a.UpdatedAt,
+		SN:              a.SN,
+		Name:            a.Name,
+		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
+		ProjectID:       a.ProjectID,
+		ComContractName: a.ComContractName,
+		LaunchDept:      a.LaunchDept,
+		LaunchPerson:    a.LaunchPerson,
+		LaunchDate:      a.LaunchDate,
+		ModifyPosition:  a.ModifyPosition,
+		Reason:          a.Reason,
+		ReasonOther:     a.ReasonOther,
+		Content:         a.Content,
+		EstiMate:        a.EstiMate,
+		OfficialAmount:  a.OfficialAmount,
+		WorkingState:    a.WorkingState,
+		PurchaseState:   a.PurchaseState,
+		CostInitial:     a.CostInitial,
+		NeedCheck:       a.NeedCheck,
+		CostChange:      a.CostChange,
+		AlterType:       a.AlterType,
+		Remark:          a.Remark,
+		Status:          a.Status,
+		AffirmAmount:    a.AffirmAmount,
+		AffirmDate:      a.AffirmDate,
+		AffirmRemark:    a.AffirmRemark,
+	}
+	return item
+}
+
+// ToComContractAlterDesign 转换为变更管理实体
+func (a SchemaComContractAlterDesign) ToComContractAlterDesign() *ComContractAlterDesign {
+	item := &ComContractAlterDesign{
+		RecordID:        &a.RecordID,
+		Creator:         &a.Creator,
+		SN:              a.SN,
+		Name:            a.Name,
+		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
+		ProjectID:       a.ProjectID,
+		ComContractName: a.ComContractName,
+		LaunchDept:      a.LaunchDept,
+		LaunchPerson:    a.LaunchPerson,
+		LaunchDate:      a.LaunchDate,
+		ModifyPosition:  a.ModifyPosition,
+		Reason:          a.Reason,
+		ReasonOther:     a.ReasonOther,
+		Content:         a.Content,
+		EstiMate:        a.EstiMate,
+		OfficialAmount:  a.OfficialAmount,
+		WorkingState:    a.WorkingState,
+		PurchaseState:   a.PurchaseState,
+		CostInitial:     a.CostInitial,
+		NeedCheck:       a.NeedCheck,
+		CostChange:      a.CostChange,
+		AlterType:       a.AlterType,
+		Remark:          a.Remark,
+		Status:          a.Status,
+		AffirmAmount:    a.AffirmAmount,
+		AffirmDate:      a.AffirmDate,
+		AffirmRemark:    a.AffirmRemark,
+	}
+	return item
+}
+
+// ComContractAlterDesigns 变更管理列表
+type ComContractAlterDesigns []*ComContractAlterDesign
+
+// ToSchemaComContractAlterDesigns 转换为变更管理对象列表
+func (a ComContractAlterDesigns) ToSchemaComContractAlterDesigns() []*schema.ComContractAlterDesign {
+	list := make([]*schema.ComContractAlterDesign, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterDesign()
+	}
+	return list
+}
+
+////////////////////////////签证变更////////////////////////////
+
+// ToSchemaComContractAlterSign 转换为变更管理对象
+func (a ComContractAlterSign) ToSchemaComContractAlterSign() *schema.ComContractAlterSign {
+	item := &schema.ComContractAlterSign{
+		RecordID:             *a.RecordID,
+		Creator:              *a.Creator,
+		CreatedAt:            a.CreatedAt,
+		UpdatedAt:            a.UpdatedAt,
+		SN:                   a.SN,
+		Name:                 a.Name,
+		ComContractID:        a.ComContractID,
+		ComContractSN:        a.ComContractSN,
+		ProjectID:            a.ProjectID,
+		ComContractName:      a.ComContractName,
+		AlterDesignID:        a.AlterDesignID,
+		AlterDesignSN:        a.AlterDesignSN,
+		AlterDesignName:      a.AlterDesignName,
+		LaunchDept:           a.LaunchDept,
+		LaunchPerson:         a.LaunchPerson,
+		LaunchDate:           a.LaunchDate,
+		WorkingCompany:       a.WorkingCompany,
+		WorkingName:          a.WorkingName,
+		SupervisionCompany:   a.SupervisionCompany,
+		SupervisionName:      a.SupervisionName,
+		AlterSignType:        a.AlterSignType,
+		SubsectionName:       a.SubsectionName,
+		Reason:               a.Reason,
+		ReasonOther:          a.ReasonOther,
+		Content:              a.Content,
+		EstiMate:             a.EstiMate,
+		SettlementAmount:     a.SettlementAmount,
+		WorkingCompanyCharge: a.WorkingCompanyCharge,
+		ProjectStage:         a.ProjectStage,
+		Jianliyijian:         a.Jianliyijian,
+		Shejitu:              a.Shejitu,
+		XianChangChengben:    a.XianChangChengben,
+		XianChangGusuan:      a.XianChangGusuan,
+		Remark:               a.Remark,
+		Status:               a.Status,
+		SignDate:             a.SignDate,
+		AffirmAmount:         a.AffirmAmount,
+		AffirmDate:           a.AffirmDate,
+		AffirmRemark:         a.AffirmRemark,
+		AffirmWorkingCompany: a.AffirmWorkingCompany,
+		AffirmWorkingName:    a.AffirmWorkingName,
+		AffirmWorkNum:        a.AffirmWorkNum,
+	}
+	return item
+}
+
+// ToComContractAlterSign 转换为变更管理实体
+func (a SchemaComContractAlterSign) ToComContractAlterSign() *ComContractAlterSign {
+	item := &ComContractAlterSign{
+		RecordID:             &a.RecordID,
+		Creator:              &a.Creator,
+		SN:                   a.SN,
+		Name:                 a.Name,
+		ComContractID:        a.ComContractID,
+		ComContractSN:        a.ComContractSN,
+		ProjectID:            a.ProjectID,
+		ComContractName:      a.ComContractName,
+		AlterDesignID:        a.AlterDesignID,
+		AlterDesignSN:        a.AlterDesignSN,
+		AlterDesignName:      a.AlterDesignName,
+		LaunchDept:           a.LaunchDept,
+		LaunchPerson:         a.LaunchPerson,
+		LaunchDate:           a.LaunchDate,
+		WorkingCompany:       a.WorkingCompany,
+		WorkingName:          a.WorkingName,
+		SupervisionCompany:   a.SupervisionCompany,
+		SupervisionName:      a.SupervisionName,
+		AlterSignType:        a.AlterSignType,
+		SubsectionName:       a.SubsectionName,
+		Reason:               a.Reason,
+		ReasonOther:          a.ReasonOther,
+		Content:              a.Content,
+		EstiMate:             a.EstiMate,
+		SettlementAmount:     a.SettlementAmount,
+		WorkingCompanyCharge: a.WorkingCompanyCharge,
+		ProjectStage:         a.ProjectStage,
+		Jianliyijian:         a.Jianliyijian,
+		Shejitu:              a.Shejitu,
+		XianChangChengben:    a.XianChangChengben,
+		XianChangGusuan:      a.XianChangGusuan,
+		Remark:               a.Remark,
+		Status:               a.Status,
+		SignDate:             a.SignDate,
+		AffirmAmount:         a.AffirmAmount,
+		AffirmDate:           a.AffirmDate,
+		AffirmRemark:         a.AffirmRemark,
+		AffirmWorkingCompany: a.AffirmWorkingCompany,
+		AffirmWorkingName:    a.AffirmWorkingName,
+		AffirmWorkNum:        a.AffirmWorkNum,
+	}
+	return item
+}
+
+// ComContractAlterSigns 变更管理列表
+type ComContractAlterSigns []*ComContractAlterSign
+
+// ToSchemaComContractAlterSigns 转换为变更管理对象列表
+func (a ComContractAlterSigns) ToSchemaComContractAlterSigns() []*schema.ComContractAlterSign {
+	list := make([]*schema.ComContractAlterSign, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterSign()
+	}
+	return list
+}
+
+///////////////////////////材料变更/////////////////////////////
+
+// ToSchemaComContractAlterStuffPrice 转换为变更管理对象
+func (a ComContractAlterStuffPrice) ToSchemaComContractAlterStuffPrice() *schema.ComContractAlterStuffPrice {
+	item := &schema.ComContractAlterStuffPrice{
+		RecordID:        *a.RecordID,
+		Creator:         *a.Creator,
+		CreatedAt:       a.CreatedAt,
+		UpdatedAt:       a.UpdatedAt,
+		SN:              a.SN,
+		Name:            a.Name,
+		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
+		ProjectID:       a.ProjectID,
+		ComContractName: a.ComContractName,
+		AlterDesignID:   a.AlterDesignID,
+		AlterDesignSN:   a.AlterDesignSN,
+		AlterDesignName: a.AlterDesignName,
+		AlterSignID:     a.AlterSignID,
+		AlterSignSN:     a.AlterSignSN,
+		AlterSignName:   a.AlterSignName,
+		LaunchDept:      a.LaunchDept,
+		LaunchPerson:    a.LaunchPerson,
+		LaunchDate:      a.LaunchDate,
+		WorkingCompany:  a.WorkingCompany,
+		WorkingName:     a.WorkingName,
+		ProjectName:     a.ProjectName,
+		Reason:          a.Reason,
+		ReasonOther:     a.ReasonOther,
+		Content:         a.Content,
+		Remark:          a.Remark,
+		Status:          a.Status,
+		SignDate:        a.SignDate,
+	}
+	return item
+}
+
+// ToComContractAlterStuffPrice 转换为变更管理实体
+func (a SchemaComContractAlterStuffPrice) ToComContractAlterStuffPrice() *ComContractAlterStuffPrice {
+	item := &ComContractAlterStuffPrice{
+		RecordID:        &a.RecordID,
+		Creator:         &a.Creator,
+		SN:              a.SN,
+		Name:            a.Name,
+		ComContractID:   a.ComContractID,
+		ComContractSN:   a.ComContractSN,
+		ProjectID:       a.ProjectID,
+		ComContractName: a.ComContractName,
+		AlterDesignID:   a.AlterDesignID,
+		AlterDesignSN:   a.AlterDesignSN,
+		AlterDesignName: a.AlterDesignName,
+		AlterSignID:     a.AlterSignID,
+		AlterSignSN:     a.AlterSignSN,
+		AlterSignName:   a.AlterSignName,
+		LaunchDept:      a.LaunchDept,
+		LaunchPerson:    a.LaunchPerson,
+		LaunchDate:      a.LaunchDate,
+		WorkingCompany:  a.WorkingCompany,
+		WorkingName:     a.WorkingName,
+		ProjectName:     a.ProjectName,
+		Reason:          a.Reason,
+		ReasonOther:     a.ReasonOther,
+		Content:         a.Content,
+		Remark:          a.Remark,
+		Status:          a.Status,
+		SignDate:        a.SignDate,
+	}
+	return item
+}
+
+// ComContractAlterStuffPrices 变更管理列表
+type ComContractAlterStuffPrices []*ComContractAlterStuffPrice
+
+// ToSchemaComContractAlterStuffPrices 转换为变更管理对象列表
+func (a ComContractAlterStuffPrices) ToSchemaComContractAlterStuffPrices() []*schema.ComContractAlterStuffPrice {
+	list := make([]*schema.ComContractAlterStuffPrice, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterStuffPrice()
+	}
+	return list
+}
+
+/////////////////////////////材料变更///////////////////////////
+
+// ToSchemaComContractAlterStuffPriceItem 转换为变更管理对象
+func (a ComContractAlterStuffPriceItem) ToSchemaComContractAlterStuffPriceItem() *schema.ComContractAlterStuffPriceItem {
+	item := &schema.ComContractAlterStuffPriceItem{
+		RecordID:          *a.RecordID,
+		Creator:           *a.Creator,
+		CreatedAt:         a.CreatedAt,
+		UpdatedAt:         a.UpdatedAt,
+		AlterStuffPriceID: a.AlterStuffPriceID,
+		Name:              a.Name,
+		Specification:     a.Specification,
+		Unit:              a.Unit,
+		Count:             a.Count,
+		QuoteW:            a.QuoteW,
+		QuoteC:            a.QuoteC,
+		Remark:            a.Remark,
+		Status:            a.Status,
+	}
+	return item
+}
+
+// ToComContractAlterStuffPriceItem 转换为变更管理实体
+func (a SchemaComContractAlterStuffPriceItem) ToComContractAlterStuffPriceItem() *ComContractAlterStuffPriceItem {
+	item := &ComContractAlterStuffPriceItem{
+		RecordID:          &a.RecordID,
+		Creator:           &a.Creator,
+		AlterStuffPriceID: a.AlterStuffPriceID,
+		Name:              a.Name,
+		Specification:     a.Specification,
+		Unit:              a.Unit,
+		Count:             a.Count,
+		QuoteW:            a.QuoteW,
+		QuoteC:            a.QuoteC,
+		Remark:            a.Remark,
+		Status:            a.Status,
+	}
+	return item
+}
+
+// ComContractAlterStuffPriceItems 变更管理列表
+type ComContractAlterStuffPriceItems []*ComContractAlterStuffPriceItem
+
+// ToSchemaComContractAlterStuffPriceItems 转换为变更管理对象列表
+func (a ComContractAlterStuffPriceItems) ToSchemaComContractAlterStuffPriceItems() []*schema.ComContractAlterStuffPriceItem {
+	list := make([]*schema.ComContractAlterStuffPriceItem, len(a))
+	for i, item := range a {
+		list[i] = item.ToSchemaComContractAlterStuffPriceItem()
 	}
 	return list
 }
