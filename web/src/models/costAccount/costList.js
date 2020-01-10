@@ -12,8 +12,6 @@ export default {
     formatUnitPriceData: [],
     formatTotalPriceData: [],
     treeDepth: [], // 树的深度层级
-    
-
   },
   effects: {
 

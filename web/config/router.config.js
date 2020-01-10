@@ -243,7 +243,12 @@ export default [
       {
         path: '/market',
         routes: [
+          // 委托建设合同
           {path: '/market/bidCustomer/entrustedConstruction', component: './MarketManage/LargeCustomer/EntrustedConstruction'},
+          // 文件管理
+          {path: '/market/bidCustomer/fileManage', component: './MarketManage/LargeCustomer/FileManage'},
+          // 合同详情
+          {path: '/market/bidCustomer/contract_detail', component: './MarketManage/LargeCustomer/ContractDetail'},
         ]
       },
       // 合同管理

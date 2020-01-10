@@ -19,7 +19,7 @@ import DicSelect from '@/components/DictionaryNew/DicSelect';
  
   costAccount: state.costAccount,
   costList: state.costList,
-   salesPlan: state.salesPlan,
+  salesPlan: state.salesPlan,
 }))
 export default class CostAccountDetail extends PureComponent {
   constructor(props) {
@@ -169,45 +169,6 @@ export default class CostAccountDetail extends PureComponent {
     const { pro_id, formType} = this.state;
     const { projectManage:{ data:{list}}, costAccount:{ projectTreeData, formID }} = this.props;
     
-    const treeData = [
-      { selectable: false,
-        title: <span style={{ color: '#cccccc' }}>Node1</span>,
-        value: '0-0',
-        key: '组织',
-      
-        children: [
-          {
-            title: 'Child Node1',
-            value: '0-0-0',
-            key: '项目',
-          },
-        ],
-      },
-      {
-        title: 'Node2',
-        value: '0-1',
-        key: '组织1',
-        selectable: false,
-        children: [
-          {
-            title: 'Child Node3',
-            value: '0-1-0',
-            key: '0-1-0',
-          },
-          {
-            title: 'Child Node4',
-            value: '0-1-1',
-            key: '0-1-1',
-          },
-          {
-            title: 'Child Node5',
-            value: '0-1-2',
-            key: '0-1-2',
-          },
-        ],
-      },
-    ];
-
     this.formateTree(projectTreeData);
     
     return (

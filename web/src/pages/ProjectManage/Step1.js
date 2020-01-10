@@ -126,7 +126,6 @@ export default class Step1 extends PureComponent {
    
   };
 
-  
   handleDataFormSubmit = data => {
     console.log("选择好了");
 
