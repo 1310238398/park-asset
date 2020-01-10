@@ -6,9 +6,6 @@ import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import DicShow from '@/components/DictionaryNew/DicShow';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
-
-
-
 import styles from './CostAccount.less';
 //import { catchClause } from '@babel/types';
 const data = [];
@@ -82,9 +79,7 @@ class CostAccountList extends PureComponent {
     this.dispatch({
       type: 'costAccount/queryPlotList',
     });
-
   }
-
 
   dispatch = action => {
     const { dispatch } = this.props;

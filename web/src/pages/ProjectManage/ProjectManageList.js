@@ -66,6 +66,8 @@ class ProjectManageList extends PureComponent {
       },
     });
   };
+  
+
 
   editPro = (item, index) => {
     this.dispatch({
@@ -112,8 +114,6 @@ class ProjectManageList extends PureComponent {
         selectedRows: [],
       });
     }
-
-
   }
 
   handleTableSelectRow = async (selectedRowKeys, selectedRows) => {
@@ -443,8 +443,8 @@ getMenu = (record) => {
     return (
       
       <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}
-       content={ this.renderContent()
-     }>
+      
+     >
          
         <Card bordered={false}>
           <div className={styles.tableList}>

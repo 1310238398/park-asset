@@ -18,6 +18,7 @@ export default {
     formType: '',
     formVisible: false,
     newFormVisible: false,
+    selectUserFromOrganizationVisible: false,
     currentIndex: 0, // 编辑页面当前所在页面索引
     formData: {}, // 一条数据详情
     businessFormat: [], // 项目的业态数据
@@ -403,6 +404,9 @@ export default {
     },
     changeFormVisible(state, { payload }) {
       return { ...state, formVisible: payload };
+    },
+    changeSelectUserFromOrganizationVisible(state, { payload }) {
+      return { ...state, selectUserFromOrganizationVisible: payload };
     },
     changeNewFormVisible(state, { payload }) {
       return { ...state, newFormVisible: payload };
