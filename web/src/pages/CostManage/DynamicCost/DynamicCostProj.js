@@ -117,7 +117,7 @@ class DynamicCostProj extends PureComponent{
             if(res && res.error){
                 console.log(res.error.message);
             }else{
-                this.setState({ data : res });
+                this.setState({ data : res.list });
             }
         });
     }
@@ -154,8 +154,8 @@ class DynamicCostProj extends PureComponent{
             },
             {
                 title : '结算金额',
-                dataIndex : 'settled',
-                key : 'settled',
+                dataIndex : 'Settled',
+                key : 'Settled',
                 width : 100,
                 align : 'center',
             },

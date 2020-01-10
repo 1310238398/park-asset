@@ -20,14 +20,15 @@ class DynamicCostProjDetail extends PureComponent{
 
     state = {
         info : null,
+        temp_info : null
     }
 
     async componentWillMount(){
 
         const { info, projectID } = this.props;
-        const param = { projectID : projectID };
-        //TODO查询接口,最新的数据。
-        getDynamicCostProjDetail(info,param).then(res => {
+        this.setState({ temp_info : info });
+        // const param = { projectID : projectID }
+        getDynamicCostProjDetail(info).then(res => {
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
@@ -47,7 +48,7 @@ class DynamicCostProjDetail extends PureComponent{
               <DescriptionList title="" size="large" col={6} style={{ marginBottom: 32 }}>
                 <Description term="科目名称">{info.cost_name.toString() }</Description>
                 <Description term="目标金额">{info.target_cost.toString()}</Description>
-                <Description term="结算金额">{info.settled.toString()}</Description>
+                <Description term="结算金额">{info.Settled.toString()}</Description>
               </DescriptionList>
             </div>
             <div className={styles.form} style={{ marginTop: 25 }}>
@@ -72,7 +73,7 @@ class DynamicCostProjDetail extends PureComponent{
 
         const { formVisiable, cancel } = this.props;
 
-        const { info } = this.state;
+        const { info, temp_info } = this.state;
         const { projectID } = this.props;
         
         return (
@@ -107,9 +108,12 @@ class DynamicCostProjDetail extends PureComponent{
                         <TabPane tab="规划信息" key="4">
                             <PlaneInformation subject_id={info.proj_cost_id} projectID={projectID}></PlaneInformation>
                         </TabPane>
-                        <TabPane tab="调动信息" key="5">
+                        {
+                          !temp_info.children && 
+                          <TabPane tab="调动信息" key="5">
                             <TransferInformation subject_id={info.proj_cost_id}></TransferInformation>
                         </TabPane>
+                        }
                     </Tabs> }
                 </Card>
             </Modal>

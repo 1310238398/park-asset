@@ -22,19 +22,19 @@ class SettleInformation extends PureComponent{  //结算信息
                 this.setState({ loading : false });
             }else{
                 this.setState({ contract_type : res.list });
-                const param = { projectID : projectID };
-                this.getData(subject_id,param);
+                // const param = { projectID : projectID };
+                this.getData(subject_id);
             }
         });  
     }
 
-    getData = (subject_id,param)=> {
-        getDynamicCostProjSetteled(subject_id,param).then(res => {
+    getData = (subject_id)=> {
+        getDynamicCostProjSetteled(subject_id).then(res => {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ dataList : res});
+                this.setState({ dataList : res.list});
             }
         })
     }

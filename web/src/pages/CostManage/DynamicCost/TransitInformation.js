@@ -23,19 +23,19 @@ class TransitInformation extends PureComponent{
                 console.log(res.error.message);
             }else{
                 this.setState({ contract_type : res.list });
-                const param = { projectID : projectID };
-                this.getData(subject_id,param);
+                // const param = { projectID : projectID };
+                this.getData(subject_id);
             }
         });  
     };
 
-    getData = (subject_id, param) => {
-        getDynamicCostProjOnApproval(subject_id, param).then( res=> {
+    getData = (subject_id) => {
+        getDynamicCostProjOnApproval(subject_id).then( res=> {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ data : res});
+                this.setState({ data : res.list});
             }
         })
     };
@@ -143,8 +143,8 @@ class TransitInformation extends PureComponent{
         const columns = [
             {
                 title : '合同名称',
-                dataIndex : 'contract_num',
-                key : 'contract_num',
+                dataIndex : 'contract_name',
+                key : 'contract_name',
                 width : 200,
                 align : 'center',
                 render : (data,record) => {
