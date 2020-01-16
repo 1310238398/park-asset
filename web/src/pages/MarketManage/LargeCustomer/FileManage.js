@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Card, Form, Row, Col, Input, Select, Button, Table } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
-import styles from '../MarketManage2.less';
+import styles from '../../ProjectManage/ProjectManage.less';
 @connect(state => ({
   entrustedConstruction: state.entrustedConstruction,
   loading: state.loading.models.entrustedConstruction,

@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card,  Row, Col,Form, Input, Select, Button, Table } from 'antd';
+import { Card,  Row, Col,Form, Input, Select, Button, Table, Modal } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
-import styles from '../MarketManage2.less';
+import styles from '../../ProjectManage/ProjectManage.less';
+import NewContract from './NewContract';
 @connect(state => ({
   entrustedConstruction: state.entrustedConstruction,
    loading: state.loading.models.entrustedConstruction,
@@ -28,16 +29,14 @@ class EntrustedConstruction extends PureComponent {
   };
 
   renderNewForm() {
-    return <div></div>;
+    return <NewContract></NewContract>;
   }
 
   handleAddClick = () => {
-    // this.dispatch({
-    //   type: 'projectManage/loadForm',
-    //   payload: {
-    //     type: 'A',
-    //   },
-    // });
+    this.dispatch({
+      type: 'entrustedConstruction/saveFormVisible',
+      payload: true,
+    });
   };
 
   handleEditClick = (record_id) => {
@@ -171,6 +170,28 @@ class EntrustedConstruction extends PureComponent {
     this.clearSelectRows(); 
   };
 
+  handleDelClick = () => {
+    const { selectedRows } = this.state;
+    if (selectedRows.length === 0) {
+      return;
+    }
+    const item = selectedRows[0];
+    Modal.confirm({
+      title: `确定删除【合同：${item.name}】？`,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: this.handleDelOKClick.bind(this, item.record_id),
+    });
+  };
+
+    handleDelOKClick(id) {
+    this.dispatch({
+      type: '',
+      payload: { record_id: id },
+    });
+    this.clearSelectRows();
+  }
   
 
   render() {
@@ -305,7 +326,7 @@ class EntrustedConstruction extends PureComponent {
                   code="delete"
                   icon="delete"
                   type="danger"
-                  onClick={() => {}}
+                  onClick={() => {this.handleDelClick()}}
                 >
                   删除
                 </PButton>
@@ -325,7 +346,7 @@ class EntrustedConstruction extends PureComponent {
               <Table
                 rowSelection={{
                   selectedRowKeys,
-                  //  onChange: this.handleTableSelectRow,
+                  // onChange: this.handleTableSelectRow,
                   // type: "radio",
                   onSelect: this.handleSelect,
                 }}

@@ -215,7 +215,6 @@ class CostExpenseNode extends PureComponent {
     ],
     editingKey: '',
     addingNew: false, // 表示正在添加新的item
-
     expandHang: [],
     expandedRowKeys: [],
   };

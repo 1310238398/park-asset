@@ -2,8 +2,10 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Form, Row, Col, Input, Select, Button, Tabs, TreeSelect } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import styles from '../MarketManage2.less';
+import styles from '../../ProjectManage/ProjectManage.less';
 import BasicInfo from './BasicInfo';
+import Node from './Node';
+ import ApprovalProgress from './ApprovalProgress';
 const { TabPane } = Tabs;
 @connect(state => ({
   entrustedConstruction: state.entrustedConstruction,
@@ -99,7 +101,7 @@ class ContractDetail extends PureComponent {
           <div>
             <span>当前合同：</span>
             <TreeSelect
-               value={formID}
+             // value={formID}
               treeData={treeData}
               style={{ width: 200 }}
               // onBlur={this.handleChange}
@@ -116,10 +118,10 @@ class ContractDetail extends PureComponent {
             <BasicInfo></BasicInfo>
             </TabPane>
             <TabPane tab="执行节点" key="2">
-            <div>执行节点</div>
+           <Node></Node>
             </TabPane>
-            <TabPane tab="审批流程" key="3">
-            <div>审批流程</div>
+            <TabPane tab="审批进度" key="3">
+            <ApprovalProgress></ApprovalProgress>
             </TabPane>      
           </Tabs>
         </Card>

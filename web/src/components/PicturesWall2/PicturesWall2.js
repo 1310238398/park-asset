@@ -16,6 +16,7 @@ export default class PicturesWall2 extends React.Component {
     showUploadList: PropTypes.bool,
     // value: PropTypes.arrayOf(PropTypes.string),
     action: PropTypes.string,
+    canUpload: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -26,6 +27,7 @@ export default class PicturesWall2 extends React.Component {
     listType: 'text',
     //  value: undefined,
     action: defaction,
+    canUpload: true,
   };
 
   constructor(props) {
@@ -229,7 +231,7 @@ export default class PicturesWall2 extends React.Component {
 
   render() {
     const { previewVisible, previewImage, action, name } = this.state;
-    const { listType, bucket, accept, rich, showUploadList, disabled } = this.props;
+    const { listType, bucket, accept, rich, showUploadList, disabled, canUpload } = this.props;
     const { fileList } = this;
     const tokenInfo = store.getAccessToken();
     const uprop = {
@@ -287,11 +289,11 @@ export default class PicturesWall2 extends React.Component {
       return (
         <div className="clearfix">
           <Upload {...uprop} onPreview={this.handlePreview} onChange={this.handleChange}>
-            {fileList.length >= this.props.num ? null : (
+            {( canUpload && fileList.length < this.props.num ) ?  (
               <Button>
                 <Icon type="upload" /> 上传
               </Button>
-            )}
+            ): null }
           </Upload>
         </div>
       );

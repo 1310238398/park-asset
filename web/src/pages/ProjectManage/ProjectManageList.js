@@ -424,12 +424,12 @@ getMenu = (record) => {
     
     ];
 
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      showTotal: total => <span>共{total}条</span>,
-      ...pagination,
-    };
+    // const paginationProps = {
+    //   showSizeChanger: true,
+    //   showQuickJumper: true,
+    //   showTotal: total => <span>共{total}条</span>,
+    //   ...pagination,
+    // };
 
     const breadcrumbList = [
       { title: '项目管理' },
@@ -442,7 +442,7 @@ getMenu = (record) => {
    
     return (
       
-      <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}
+    <PageHeaderLayout title="项目管理" breadcrumbList={breadcrumbList}
       
      >
          
@@ -511,7 +511,7 @@ getMenu = (record) => {
                 rowKey={record => record.record_id}
                 dataSource={list}
                 columns={columns}
-                pagination={paginationProps}
+                pagination={false}//{paginationProps}
                 onChange={this.handleTableChange}
                 // onRow={record => {
                 //   return {

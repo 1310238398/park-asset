@@ -83,8 +83,6 @@ class AddNewSalesPlan extends PureComponent {
 
       console.log("创建计划需要提交的数据 ");
       console.log(submitData);
-
-
       this.dispatch({
         type: 'salesPlan/createPlan',
         payload: submitData,
