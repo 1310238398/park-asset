@@ -81,7 +81,7 @@ class NewContract extends PureComponent {
         //   style={{ height: 800 }}
         bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', height: '500px', overflowY: 'auto' }}
       >
-        <Card bordered={false}>
+        <Card bordered={false} >
         <Form labelAlign="left" >
           <Row gutter={16}>
             <Col md={12} sm={24}>

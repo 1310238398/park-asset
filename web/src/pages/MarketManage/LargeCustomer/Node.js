@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Table, Button, Card, Dropdown , Menu, Icon} from 'antd';
 import styles from '../../ProjectManage/ProjectManage.less';
+import NewNode from './NewNode';
+
 const { SubMenu } = Menu;
 @connect(state => ({
   entrustedConstruction: state.entrustedConstruction,
@@ -41,29 +43,52 @@ class Node extends PureComponent {
     }
   };
 
+  createNew(record_id, add_type) {
+   
+    this.dispatch({
+      type: 'entrustedConstruction/saveNewNodeFormVisible',
+      payload:true,
+    
+    });
+
+    this.dispatch({
+      type: 'entrustedConstruction/saveAddNodeType',
+      payload:add_type,
+    
+    });
+    this.dispatch({
+      type: 'entrustedConstruction/saveAddNodeRecordID',
+      payload:record_id,
+    
+    });
+
+
+
+  }
+
   editMenu = record => {
     return (
       <Menu>
         <SubMenu title="新建">
-          <Menu.Item>同级添加</Menu.Item>
-          <Menu.Item>子级添加</Menu.Item>
+          <Menu.Item onClick={() =>  this.createNew(record, "up")}>向上添加</Menu.Item>
+          <Menu.Item onClick={() =>  this.createNew(record, "down")}>向下添加</Menu.Item>
         </SubMenu>
         <SubMenu title="编辑" >
-          <Menu.Item>基本信息</Menu.Item>
-          <Menu.Item>附件</Menu.Item>
+          <Menu.Item onClick={() =>  {}}>基本信息</Menu.Item>
+          <Menu.Item onClick={() =>  {}}>附件</Menu.Item>
         </SubMenu>
         <SubMenu title="查看" >
-          <Menu.Item>基本信息</Menu.Item>
-          <Menu.Item>附件</Menu.Item>
+          <Menu.Item onClick={() =>  {}}>基本信息</Menu.Item>
+          <Menu.Item onClick={() =>  {}}>附件</Menu.Item>
         </SubMenu>
-       
-        <Menu.Item>删除</Menu.Item>
-       
-        
+        <Menu.Item onClick={() =>  {}}>删除</Menu.Item>
       </Menu>
     );
   };
 
+  newNode = () => {
+    return <NewNode></NewNode>
+  }
   render() {
     const {
       loading,
@@ -206,6 +231,9 @@ class Node extends PureComponent {
             // onChange={this.handleTableChange}
           ></Table>
         </div>
+        {
+          this.newNode()
+        }
       </Card>
     );
   }

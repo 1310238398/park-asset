@@ -6,6 +6,7 @@ import styles from '../../ProjectManage/ProjectManage.less';
 import BasicInfo from './BasicInfo';
 import Node from './Node';
  import ApprovalProgress from './ApprovalProgress';
+ import OperationHis from './OperationHis';
 const { TabPane } = Tabs;
 @connect(state => ({
   entrustedConstruction: state.entrustedConstruction,
@@ -122,7 +123,10 @@ class ContractDetail extends PureComponent {
             </TabPane>
             <TabPane tab="审批进度" key="3">
             <ApprovalProgress></ApprovalProgress>
-            </TabPane>      
+            </TabPane>  
+            <TabPane tab="操作日志" key="4">
+            <OperationHis></OperationHis>
+            </TabPane>     
           </Tabs>
         </Card>
       </PageHeaderLayout>
