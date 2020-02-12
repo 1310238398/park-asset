@@ -3,6 +3,7 @@ import { Table, Form, Input, Row, Col, Button } from 'antd';
 import { queryTree } from '@/services/dictionary';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import { getDynamicCostProjOnApproval } from '@/services/dynamicCostProj';
+import ContractDetail from './ContractDetails';
 
 // 在途信息
 @Form.create()
@@ -12,10 +13,12 @@ class TransitInformation extends PureComponent{
         data : [],
         contract_type : [],
         loading : true,
+        formVisiable : false,
+        info : null,
     };
 
     componentWillMount(){
-        const { subject_id, projectID } = this.props;
+        const { subject_id } = this.props;
 
         queryTree({ q: 'tree', parent_code: "contract$#contractType", level: 0 }).then(res=>{
             if(res && res.error){
@@ -23,7 +26,6 @@ class TransitInformation extends PureComponent{
                 console.log(res.error.message);
             }else{
                 this.setState({ contract_type : res.list });
-                // const param = { projectID : projectID };
                 this.getData(subject_id);
             }
         });  
@@ -41,7 +43,12 @@ class TransitInformation extends PureComponent{
     };
 
     contractDetail = record => {
-        console.log('在途信息',record);
+        console.log('在途信息');
+        this.setState({ formVisiable : true, info : record });
+    }
+
+    cancelConDetail = ()=> {
+        this.setState({ formVisiable : false, info : null });
     }
 
     handleSearchFormSubmit = e => {
@@ -138,7 +145,13 @@ class TransitInformation extends PureComponent{
             data,
             contract_type,
             loading,
+            formVisiable,
+            info,
         } = this.state;
+
+        const {
+            projectID,
+        } = this.props;
 
         const columns = [
             {
@@ -146,7 +159,6 @@ class TransitInformation extends PureComponent{
                 dataIndex : 'contract_name',
                 key : 'contract_name',
                 width : 200,
-                align : 'center',
                 render : (data,record) => {
                     return <a onClick={()=> { this.contractDetail(record)}}>{data}</a>
                 }
@@ -204,6 +216,10 @@ class TransitInformation extends PureComponent{
                 >
 
                 </Table>
+                {
+                    formVisiable &&
+                    <ContractDetail formVisiable={ formVisiable } cancel={this.cancelConDetail} info={info} projectID={projectID}></ContractDetail>
+                }
             </div>
         )
     }

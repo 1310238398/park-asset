@@ -11,9 +11,7 @@ class PlaneInformation extends PureComponent{ // 规划信息
     };
 
     componentWillMount(){
-        const { subject_id, projectID } = this.props;
-
-        // const param = { projectID : projectID };
+        const { subject_id } = this.props;
         this.getData(subject_id);
     }
 
@@ -27,10 +25,6 @@ class PlaneInformation extends PureComponent{ // 规划信息
             }
         })
     };
-
-    contractDetail = record => {
-        console.log('规划信息',record);
-    }
 
     handleSearchFormSubmit = e => {
         if (e) {
@@ -83,17 +77,17 @@ class PlaneInformation extends PureComponent{ // 规划信息
                         </Form.Item>
                     </Col>
                     <Col {...col}>
-                    <div style={{ overflow: 'hidden' }}>
-                        <span style={{ marginBottom: 24 }}>
-                            <Button type="primary" htmlType="submit">
-                            查询
-                            </Button>
-                            <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
-                            重置
-                            </Button>
-                        </span>
-                    </div>
-                </Col>
+                        <div style={{ overflow: 'hidden' }}>
+                            <span style={{ marginBottom: 24 }}>
+                                <Button type="primary" htmlType="submit">
+                                查询
+                                </Button>
+                                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                                重置
+                                </Button>
+                            </span>
+                        </div>
+                    </Col>
                 </Row>
             </Form>
         );
@@ -104,6 +98,7 @@ class PlaneInformation extends PureComponent{ // 规划信息
         
         const { 
             data,
+            loading,
         } = this.state;
 
         const columns = [
@@ -112,9 +107,6 @@ class PlaneInformation extends PureComponent{ // 规划信息
                 dataIndex : 'contract_name',
                 key : 'contract_name',
                 width : 200,
-                render : (data,record) => {
-                    return <a onClick={()=> { this.contractDetail(record)}}>{data}</a>
-                }
             },
             {
                 title : '合同规划金额',
@@ -158,6 +150,7 @@ class PlaneInformation extends PureComponent{ // 规划信息
                     bordered = { true }
                     pagination = { false }
                     scroll = {{ x : 1000, y : 500}}
+                    loading = { loading }
                 >
 
                 </Table>

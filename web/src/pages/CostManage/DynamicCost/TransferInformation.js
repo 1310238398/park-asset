@@ -1,20 +1,19 @@
 import React,{ PureComponent } from 'react';
-import { Table } from 'antd';
+import { Table, Form, Row, Col, Select, Button } from 'antd';
 import { getDynamicCostProjTransfer } from '@/services/dynamicCostProj'
 
 
 //调动信息
+@Form.create()
 class TransferInformation extends PureComponent{
 
     state = {
-        data : {
-            list : [],
-        },
+        data : [],
         loading : true,
     };
 
     componentWillMount(){
-        const { subject_id, projectID } = this.props;
+        const { subject_id } = this.props;
         this.getData(subject_id);
     }
 
@@ -24,17 +23,89 @@ class TransferInformation extends PureComponent{
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ data : res});
+                this.setState({ data : res.list});
             }
         })
+    }
+
+    handleSearchFormSubmit = e => {
+        if (e) {
+          e.preventDefault();
+        }
+
+        const { form } = this.props;
+
+        form.validateFields((err,values) => {
+            if(err){
+                return;
+            }
+            let formData = { ...values };
+            console.log('提交数据',formData);
+        })
+    };
+
+    onResetFormClick = ()=>{
+        const { form } = this.props;
+        form.resetFields();
+        //TODO清空时，进行查询。---
+    }
+
+    renderSearchForm(){
+        const {
+            form :{
+                getFieldDecorator,
+            }
+        } = this.props;
+
+        const col = {
+            sm: 24,
+            md: 6,
+        };
+
+        const formItemLayout = {
+            labelCol:{
+                span :8,
+            },
+            wrapperCol :{
+                span :16,
+            }
+        };
+
+        return(
+            <Form onSubmit={this.handleSearchFormSubmit}  style={{ marginBottom: '10px' }}>
+                <Row gutter={16}>
+                    <Col {...col}>
+                        <Form.Item {...formItemLayout} label='调动类型'>
+                            {getFieldDecorator('transfer_type',{
+                                initialValue : '',
+                            })(<Select placeholder="请选择" style={{ width: '100%' }} allowClear={true} >
+                                <Select.Option value="1">调出</Select.Option>
+                                <Select.Option value="2">调入</Select.Option>
+                                <Select.Option value="3">内部调整</Select.Option>
+                            </Select>)}
+                        </Form.Item>
+                    </Col>
+                    <Col {...col}>
+                        <div style={{ overflow: 'hidden' }}>
+                            <span style={{ marginBottom: 24 }}>
+                                <Button type="primary" htmlType="submit">
+                                查询
+                                </Button>
+                                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                                重置
+                                </Button>
+                            </span>
+                        </div>
+                    </Col>
+                </Row>
+            </Form>
+        );
     }
 
     render(){
 
         const {
-            data :{
-                list
-            },
+            data,
             loading,
         } = this.state;
         
@@ -120,9 +191,12 @@ class TransferInformation extends PureComponent{
 
         return(
             <div>
+                <div>
+                    { this.renderSearchForm() }
+                </div>
                 <Table
                     columns = { columns }
-                    dataSource = { list }
+                    dataSource = { data }
                     rowKey = { record => record.record_id }
                     bordered = { true }
                     pagination = { false }

@@ -20,14 +20,13 @@ class DynamicCostProjDetail extends PureComponent{
 
     state = {
         info : null,
-        temp_info : null
+        temp_info : null,
     }
 
     async componentWillMount(){
 
-        const { info, projectID } = this.props;
+        const { info } = this.props;
         this.setState({ temp_info : info });
-        // const param = { projectID : projectID }
         getDynamicCostProjDetail(info).then(res => {
             if( res && res.error ){
                 console.log(res.error.message);
@@ -48,7 +47,7 @@ class DynamicCostProjDetail extends PureComponent{
               <DescriptionList title="" size="large" col={6} style={{ marginBottom: 32 }}>
                 <Description term="科目名称">{info.cost_name.toString() }</Description>
                 <Description term="目标金额">{info.target_cost.toString()}</Description>
-                <Description term="结算金额">{info.Settled.toString()}</Description>
+                <Description term="结算金额">{info.settled.toString()}</Description>
               </DescriptionList>
             </div>
             <div className={styles.form} style={{ marginTop: 25 }}>
@@ -71,10 +70,9 @@ class DynamicCostProjDetail extends PureComponent{
 
     render(){
 
-        const { formVisiable, cancel } = this.props;
+        const { formVisiable, cancel, projectID } = this.props;
 
         const { info, temp_info } = this.state;
-        const { projectID } = this.props;
         
         return (
             <Modal
@@ -94,7 +92,7 @@ class DynamicCostProjDetail extends PureComponent{
                 bodyStyle={{ height: 700, overflowY: 'scroll' }}
             >
                 {info &&  this.renderFirstView()}
-                <Card bordered={false}>
+                <Card bordered={true}>
                     {info && <Tabs defaultActiveKey="1">
                         <TabPane tab="结算信息" key="1">
                             <SettleInformation subject_id={info.proj_cost_id} projectID={projectID}></SettleInformation>
@@ -106,7 +104,7 @@ class DynamicCostProjDetail extends PureComponent{
                             <TransitInformation subject_id={info.proj_cost_id} projectID={projectID}></TransitInformation>
                         </TabPane>
                         <TabPane tab="规划信息" key="4">
-                            <PlaneInformation subject_id={info.proj_cost_id} projectID={projectID}></PlaneInformation>
+                            <PlaneInformation subject_id={info.proj_cost_id}></PlaneInformation>
                         </TabPane>
                         {
                           !temp_info.children && 
