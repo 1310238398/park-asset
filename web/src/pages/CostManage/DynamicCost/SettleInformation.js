@@ -3,6 +3,7 @@ import { Table, Form, Input, Row, Col, Button } from 'antd';
 import { queryTree } from '@/services/dictionary';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import { getDynamicCostProjSetteled } from '@/services/dynamicCostProj';
+import ContractDetail from './ContractDetails';
 
 @Form.create()
 class SettleInformation extends PureComponent{  //结算信息
@@ -11,10 +12,12 @@ class SettleInformation extends PureComponent{  //结算信息
         dataList : [],
         contract_type : [],
         loading : true,
+        formVisiable : false,
+        info : null,
     }
 
     componentWillMount(){
-        const { subject_id, projectID } = this.props;
+        const { subject_id } = this.props;
 
         queryTree({ q: 'tree', parent_code: "contract$#contractType", level: 0 }).then(res=>{
             if(res && res.error){
@@ -22,27 +25,32 @@ class SettleInformation extends PureComponent{  //结算信息
                 this.setState({ loading : false });
             }else{
                 this.setState({ contract_type : res.list });
-                const param = { projectID : projectID };
-                this.getData(subject_id,param);
+                this.getData(subject_id);
             }
         });  
     }
 
-    getData = (subject_id,param)=> {
-        getDynamicCostProjSetteled(subject_id,param).then(res => {
+    getData = (subject_id)=> {
+        getDynamicCostProjSetteled(subject_id).then(res => {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ dataList : res});
+                this.setState({ dataList : res.list});
             }
         })
     }
 
+    //合同详情
     contractDetail = record => {
-        console.log('结算合同详情',record);
+        this.setState({ formVisiable : true, info : record });
     }
 
+    cancelConDetail = ()=> {
+        this.setState({ formVisiable : false, info : null });
+    }
+
+    //搜索
     handleSearchFormSubmit = e => {
         if (e) {
           e.preventDefault();
@@ -144,7 +152,13 @@ class SettleInformation extends PureComponent{  //结算信息
             dataList,
             contract_type,
             loading,
+            formVisiable,
+            info,
         } = this.state;
+
+        const {
+            projectID,
+        } = this.props;
 
         const columns = [
             {
@@ -152,7 +166,7 @@ class SettleInformation extends PureComponent{  //结算信息
                 dataIndex : 'contract_name',
                 key : 'contract_name',
                 width : 200,
-                align : 'center',
+                // align : 'center',
                 render : (data,record) => {
                     return <a onClick={()=> { this.contractDetail(record)}}>{data}</a>
                 }
@@ -210,6 +224,10 @@ class SettleInformation extends PureComponent{  //结算信息
                 >
 
                 </Table>
+                {
+                    formVisiable &&
+                    <ContractDetail formVisiable={ formVisiable } cancel={this.cancelConDetail} info={info} projectID={projectID}></ContractDetail>
+                }
             </div>
         )
     }

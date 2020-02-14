@@ -11,26 +11,20 @@ class PlaneInformation extends PureComponent{ // 规划信息
     };
 
     componentWillMount(){
-        const { subject_id, projectID } = this.props;
-
-        const param = { projectID : projectID };
-        // this.getData(subject_id,param);
+        const { subject_id } = this.props;
+        this.getData(subject_id);
     }
 
-    getData = (subject_id, param) => {
-        getDynamicCostProjPlane(subject_id, param).then( res=> {
+    getData = (subject_id) => {
+        getDynamicCostProjPlane(subject_id).then( res=> {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ data : res});
+                this.setState({ data : res.list});
             }
         })
     };
-
-    contractDetail = record => {
-        console.log('规划信息',record);
-    }
 
     handleSearchFormSubmit = e => {
         if (e) {
@@ -83,17 +77,17 @@ class PlaneInformation extends PureComponent{ // 规划信息
                         </Form.Item>
                     </Col>
                     <Col {...col}>
-                    <div style={{ overflow: 'hidden' }}>
-                        <span style={{ marginBottom: 24 }}>
-                            <Button type="primary" htmlType="submit">
-                            查询
-                            </Button>
-                            <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
-                            重置
-                            </Button>
-                        </span>
-                    </div>
-                </Col>
+                        <div style={{ overflow: 'hidden' }}>
+                            <span style={{ marginBottom: 24 }}>
+                                <Button type="primary" htmlType="submit">
+                                查询
+                                </Button>
+                                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                                重置
+                                </Button>
+                            </span>
+                        </div>
+                    </Col>
                 </Row>
             </Form>
         );
@@ -104,44 +98,41 @@ class PlaneInformation extends PureComponent{ // 规划信息
         
         const { 
             data,
+            loading,
         } = this.state;
 
         const columns = [
             {
                 title : '合同名称',
-                dataIndex : 'name',
-                key : 'name',
+                dataIndex : 'contract_name',
+                key : 'contract_name',
                 width : 200,
-                align : 'center',
-                render : (data,record) => {
-                    return <a onClick={()=> { this.contractDetail(record)}}>{data}</a>
-                }
             },
             {
                 title : '合同规划金额',
-                dataIndex : 'plane_cost',
-                key : 'plane_cost',
+                dataIndex : 'contract_plan_amount',
+                key : 'contract_plan_amount',
                 width:100,
                 align : 'center',
             },
             {
                 title : '合同预估金额',
-                dataIndex : 'estimate_cost',
-                key : 'estimate_cost',
+                dataIndex : 'contract_estimate_amount',
+                key : 'contract_estimate_amount',
                 width : 100,
                 align : 'center',
             },
             {
                 title : '合同签订金额',
-                dataIndex : 'sign_cost',
-                key : 'sign_cost',
+                dataIndex : 'contract_signed_amount',
+                key : 'contract_signed_amount',
                 width : 100,
                 align : 'center',
             },
             {
                 title : '余额',
-                dataIndex : 'blance',
-                key : 'blance',
+                dataIndex : 'balance',
+                key : 'balance',
                 width : 100,
                 align :'center',
             },
@@ -155,10 +146,11 @@ class PlaneInformation extends PureComponent{ // 规划信息
                 <Table
                     columns = { columns }
                     dataSource = { data }
-                    rowKey = { record => record.record_id }
+                    rowKey = { record => record.contract_id }
                     bordered = { true }
                     pagination = { false }
                     scroll = {{ x : 1000, y : 500}}
+                    loading = { loading }
                 >
 
                 </Table>
