@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import PicturesWall2 from '../../../components/PicturesWall2/PicturesWall2';
 import {
   Form,
   Input,
@@ -14,6 +15,75 @@ import {
   DatePicker,
   Card,
 } from 'antd';
+
+const EditableContext = React.createContext();
+const EditableRow = ({ form, index, ...props }) => (
+  <EditableContext.Provider value={form}>
+    <tr {...props} />
+  </EditableContext.Provider>
+);
+
+const EditableFormRow = Form.create()(EditableRow);
+
+@Form.create()
+class EditableCell extends React.Component {
+  getInput = () => {
+    if (this.props.inputType === 'number') {
+      return (
+        <InputNumber
+          formatter={value => `${value}`.replace(/\B(?<!\.\d)(?<=\d)(?=(\d{3})+\b)/g, ',')}
+          parser={value => value.replace(/\\s?|(,*)/g, '')}
+          style={{ width: '100%' }}
+        />
+      );
+    }
+    else if (this.props.inputType === 'text') {
+      return <Input />;
+    }
+    else {
+      return <Input />;
+    }
+   
+  };
+
+  renderCell = ({ getFieldDecorator }) => {
+    const {
+      editing,
+      dataIndex,
+      title,
+      inputType,
+      record,
+      index,
+      // form: { getFieldDecorator, getFieldValue },
+      children,
+      ...restProps
+    } = this.props;
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item style={{ margin: 0 }}>
+            {getFieldDecorator(dataIndex, {
+              rules: [
+                {
+                  required: true,
+                  message: `请输入 ${title}!`,
+                },
+              ],
+              initialValue: record[dataIndex],
+            })(this.getInput())}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  };
+
+  render() {
+    return <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>;
+  }
+}
+
 @connect(state => ({
   entrustedConstruction: state.entrustedConstruction,
 }))
@@ -67,7 +137,7 @@ class NewNode extends PureComponent {
           paddingTop: '15px',
         }}
       >
-        <Card bordered={false} bodyStyle={{ paddingTop: '10px' }}>
+        <Card bordered={false} bodyStyle={{ paddingTop: '10px' }}  title="基本信息" type="inner">
           <Form >
             <Row gutter={16}>
               <Col md={12} sm={24}>
@@ -263,6 +333,29 @@ class NewNode extends PureComponent {
             </Row>
           </Form>
         </Card>
+      <Card bordered={false} bodyStyle={{ paddingTop: '10px' }}  title="执行过程" type="inner">
+        
+      </Card>
+      <Card bordered={false} bodyStyle={{ paddingTop: '10px' }}  title="节点附件" type="inner">
+      <Row gutter={16}>
+                <Col md={12} sm={24}>
+                  <Form.Item {...formItemLayout} label="上传合同" >
+                    {getFieldDecorator('upload', {
+                      // initialValue: moment(formData.end_time),
+                      // rules: [
+                      //   {
+                      //     required: true,
+                      //     message: '请选择时间',
+                      //   },
+                      // ],
+                    })(<PicturesWall2 num={5} />)}
+                  </Form.Item>
+                </Col>
+              </Row>
+        </Card>
+        <Card bordered={false} bodyStyle={{ paddingTop: '10px' }}  title="完成凭证" type="inner">
+        
+      </Card>
       </Modal>
     );
   }

@@ -716,8 +716,6 @@ class BasicInfo extends PureComponent {
               </div>
               
                 </div>
-             
-
                 <Table
                   components={components}
                   //loading={loading}

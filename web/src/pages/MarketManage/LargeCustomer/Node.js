@@ -66,6 +66,20 @@ class Node extends PureComponent {
 
   }
 
+  editNode = (record_id) =>  {
+    console.log("编辑节点");
+    this.dispatch({
+      type: 'entrustedConstruction/saveNewNodeFormVisible',
+      payload:true,
+    
+    });
+  }
+
+  // 向上级提交完成节点申请
+  applyFinish = () => {
+
+  }
+
   editMenu = record => {
     return (
       <Menu>
@@ -73,15 +87,15 @@ class Node extends PureComponent {
           <Menu.Item onClick={() =>  this.createNew(record, "up")}>向上添加</Menu.Item>
           <Menu.Item onClick={() =>  this.createNew(record, "down")}>向下添加</Menu.Item>
         </SubMenu>
-        <SubMenu title="编辑" >
-          <Menu.Item onClick={() =>  {}}>基本信息</Menu.Item>
-          <Menu.Item onClick={() =>  {}}>附件</Menu.Item>
-        </SubMenu>
-        <SubMenu title="查看" >
-          <Menu.Item onClick={() =>  {}}>基本信息</Menu.Item>
-          <Menu.Item onClick={() =>  {}}>附件</Menu.Item>
-        </SubMenu>
+       
+          <Menu.Item onClick={() =>  this.editNode(record)}>编辑</Menu.Item>
+         
+        
+        
+          <Menu.Item onClick={() =>  this.editNode(record)}>查看</Menu.Item>
+        
         <Menu.Item onClick={() =>  {}}>删除</Menu.Item>
+        <Menu.Item onClick={() =>  {}}>完成申请</Menu.Item>
       </Menu>
     );
   };
