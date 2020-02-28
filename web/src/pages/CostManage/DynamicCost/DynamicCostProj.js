@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Table, Card, TreeSelect } from 'antd';
+import { Table, Card, TreeSelect,Tag } from 'antd';
 import { connect } from 'dva';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import DynamicCostProjDetail from './DynamicCostProjDetail';
@@ -13,76 +13,12 @@ class DynamicCostProj extends PureComponent{
     state = {
         projectID : '',
         data :[
-            // {
-            //     record_id : '1',
-            //     name : '开发成本',
-            //     target_cost : 50000000,
-            //     settlement_amount : 20000000,
-            //     to_settled_amount : 10000000,
-            //     transit_amount : 10000000,
-            //     remain_plann_amount : 50000,
-            //     result_amount : 40050000,
-            //     transfer_amount : 0,
-            //     balance : 0,
-            //     children : [
-            //         {
-            //             record_id : '1-1',
-            //             name : '土地征用及拆迁补偿费',
-            //             target_cost : 50000000,
-            //             settlement_amount : 20000000,
-            //             to_settled_amount : 10000000,
-            //             transit_amount : 10000000,
-            //             remain_plann_amount : 50000,
-            //             result_amount : 40050000,
-            //             transfer_amount : 0,
-            //             balance : 0,
-            //         },
-            //         {
-            //             record_id : '1-2',
-            //             name : '建筑安装工程费',
-            //             target_cost : 50000000,
-            //             settlement_amount : 20000000,
-            //             to_settled_amount : 10000000,
-            //             transit_amount : 10000000,
-            //             remain_plann_amount : 50000,
-            //             result_amount : 40050000,
-            //             transfer_amount : 0,
-            //             balance : 0,
-            //             children : [
-            //                 {
-            //                     record_id : '1-2-1',
-            //                     name : '主体工程（含甲供材料及设备）',
-            //                     target_cost : 50000000,
-            //                     settlement_amount : 20000000,
-            //                     to_settled_amount : 10000000,
-            //                     transit_amount : 10000000,
-            //                     remain_plann_amount : 50000,
-            //                     result_amount : 40050000,
-            //                     transfer_amount : 0,
-            //                     balance : 0,
-            //                     children : [
-            //                         {
-            //                             record_id : '1-2-1-1',
-            //                             name : '土石方',
-            //                             target_cost : 50000000,
-            //                             settlement_amount : 20000000,
-            //                             to_settled_amount : 10000000,
-            //                             transit_amount : 10000000,
-            //                             remain_plann_amount : 50000,
-            //                             result_amount : 40050000,
-            //                             transfer_amount : 0,
-            //                             balance : 0,
-            //                         }
-            //                     ]
-            //                 }
-            //             ]
-            //         }
-            //     ]
-            // },
         ],
         loading : false,
         formVisiable : false,
         seeInfo : null,
+        expandedRowKeys : [],
+        deep : [],
     };
 
     componentWillMount(){
@@ -117,7 +53,12 @@ class DynamicCostProj extends PureComponent{
             if(res && res.error){
                 console.log(res.error.message);
             }else{
-                this.setState({ data : res });
+                const d_arr = [];
+                this.setState({ data : res.list });
+                for(let i=1;i<=res.deep;i++){
+                    d_arr.push(i);
+                }
+                this.setState({ deep : d_arr });
             }
         });
     }
@@ -129,9 +70,67 @@ class DynamicCostProj extends PureComponent{
     cancel = () => {
         this.setState({ formVisiable : false, seeInfo : null });
     };
+
+    handleOnExpand = (expanded, record) => {
+        const { expandedRowKeys } = this.state;
+        let expand_temp = [...expandedRowKeys];
+        if(expanded){ //展开
+            if(expand_temp.indexOf(record.proj_cost_id)==-1){
+                expand_temp.push(record.proj_cost_id);
+                expand_temp.sort();
+            }
+        }else{ //收起
+            //TODO去除该项下的展开的子级。
+            const children_arr = this.getExpandChildren(record);
+            for( let i=0; i<children_arr.length; i++){
+                for(let j=0; j<expand_temp.length;j++){
+                    if (expand_temp[j] === children_arr[i]){
+                        expand_temp.splice(j, 1);
+                        break;
+                    }
+                }
+            }
+        }
+        this.setState({ expandedRowKeys : [...expand_temp]});
+    }
+
+    getExpandChildren = ( record ) => { 
+        let e_children = [];
+        let i=0;
+        if(record.children){
+            e_children.push(record.proj_cost_id);
+            for(i=0; i<record.children.length;i++){
+                const children = this.getExpandChildren(record.children[i]);
+                e_children.push(...children);
+            }
+        }
+        return e_children;
+    }
+
+    handleTag = (item) => {
+        const {
+            data,
+        } = this.state;
+        const arr = this.getExpandId( item, data);
+        this.setState({ expandedRowKeys : arr });
+    }
+
+    //控制展开显示的列表
+    getExpandId = ( tag, dataList ) => {
+        let expand_arr = [];
+        for(let i=0; i<dataList.length; i++ ){
+            if(dataList[i].level < tag && dataList[i].children){
+                expand_arr.push(dataList[i].proj_cost_id);
+                const children = this.getExpandId(tag,dataList[i].children);
+                expand_arr.push(...children);
+            }
+        }
+        return expand_arr;
+    }
+    
     render(){
 
-        const { data, loading, formVisiable, seeInfo, projectID } = this.state;
+        const { data, loading, formVisiable, seeInfo, projectID, expandedRowKeys, deep } = this.state;
 
         const breadcrumbList = [
             { title : '成本管理'},
@@ -238,17 +237,31 @@ class DynamicCostProj extends PureComponent{
                         </TreeSelect>
                     </div>} breadcrumbList={breadcrumbList}>
                     <Card bordered={false}>
-                        <Table
-                            columns = { columns }
-                            dataSource = { data }
-                            rowKey={ record => record.cost_id }
-                            pagination={false}
-                            bordered = { true }
-                            scroll  = { { x : 1500, y : 800 } }
-                            loading = { loading }
-                        >    
+                        <div className='tableList'>
+                            <div className='tableListOperator' style={{ marginBottom : '16px'}}>
+                                控制科目列表
+                                <span style={{ marginLeft : '8px' }}>
+                                {
+                                    deep && deep.map(item => 
+                                        <Tag key={item} color = 'blue' onClick={() => this.handleTag(item)}>{item}</Tag>
+                                    )
+                                }
+                                </span>
+                            </div>
+                            <Table
+                                columns = { columns }
+                                expandedRowKeys={expandedRowKeys}
+                                dataSource = { data }
+                                rowKey={ record => record.proj_cost_id }
+                                pagination={false}
+                                bordered = { true }
+                                scroll  = { { x : 1500, y : 800 } }
+                                loading = { loading }
+                                onExpand={this.handleOnExpand}
+                            >    
 
-                        </Table>
+                            </Table>
+                        </div>
                     </Card>
                     {
                         formVisiable &&

@@ -1,9 +1,9 @@
 import React,{ PureComponent } from 'react';
-import { TreeSelect, Card, Tree, Row, Col, Table, Layout, Button } from 'antd';
+import { TreeSelect, Card, Tree, Row, Col, Table, Layout, Button, Form, Input } from 'antd';
 import { connect } from 'dva';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import { queryTree } from '@/services/dictionary';
-import { getCostMoveSubjectList } from '@/services/dynamicCostProj';
+import { getCostMoveSubjectList, getDynamicCostProjPlane } from '@/services/dynamicCostProj';
 import CostMoveCard from './CostMoveCard';
 
 import styles from './CostMoveMange.less';
@@ -14,13 +14,11 @@ const { TreeNode } = Tree;
 @connect(state =>({
     costAccount: state.costAccount,
 }))
+@Form.create()
 class CostMoveMange extends PureComponent{
 
     state = {
         data : [
-            {
-                record_id : 1,
-            },
         ],
         projectID : '',
         treeData : [],
@@ -30,6 +28,7 @@ class CostMoveMange extends PureComponent{
         selectedRowKeys: [],
         selectedRows: [],
         formVisible : false,
+        loading : true
     };
 
     componentWillMount(){
@@ -51,7 +50,8 @@ class CostMoveMange extends PureComponent{
         dispatch(action);
     };
 
-    formateTree(list) {  //项目列表处理
+    //项目列表处理
+    formateTree(list) {  
         for (let i = 0; i < list.length; i++) {
             let item = list[i];
             if (!item.selectable) {
@@ -66,17 +66,28 @@ class CostMoveMange extends PureComponent{
     handleProChange = (value, label) => {
         this.setState({ projectID : value });
         const param = { projectID : value };
-        getCostMoveSubjectList(param).then(res=>{ //查询科目列表
+        //查询科目列表
+        getCostMoveSubjectList(param).then(res=>{ 
             if(res && res.error){
                 console.log(res.error.message);
             }else{
-                this.setState({ treeData : res });
-                // const info = { target_cost : res[0].target_cost, plan_amount : res[0].plan_amount, left_amount : res[0].left_amount };
-                this.setState({ staticInfo : res[0], proj_cost_id : res[0].proj_cost_id });
+                this.setState({ treeData : res.list });
+                this.setState({ staticInfo : res.list[0], proj_cost_id : res.list[0].proj_cost_id });
+                this.getData(res.list[0].proj_cost_id);
             }
         });
-        //和静态展示数据。静态展示数据已经得到在该接口
-        //和第一个科目列表下的第一个科目下的合同列表数据。
+    };
+
+    //合同列表
+    getData = (proj_cost_id) => {
+        getDynamicCostProjPlane(proj_cost_id).then( res=> {
+            this.setState({ loading : false });
+            if( res && res.error ){
+                console.log(res.error.message);
+            }else{
+                this.setState({ data : res.list});
+            }
+        })
     };
 
     getStatic = ( tree, rid ) => {
@@ -115,18 +126,18 @@ class CostMoveMange extends PureComponent{
             proj_cost_id,
         } = this.state;
 
-        if(e.selected){
-            //TODO查询该科目下的合同。
-            let temp = this.getStatic( treeData, selectedKeys[0] );
-            // const info = { target_cost : temp.target_cost, plan_amount : temp.plan_amount, left_amount : temp.left_amount };
-            this.setState({ staticInfo : temp, proj_cost_id : selectedKeys[0] });
+        // const param = { projectID : projectID };
+        this.setState({ loading : true });
 
+        if(e.selected){
+            let temp = this.getStatic( treeData, selectedKeys[0] );
+            this.setState({ staticInfo : temp, proj_cost_id : selectedKeys[0] });
+            this.getData(selectedKeys[0]);
         }
         else{
-            //TODO查询该科目下的合同。
             let temp = this.getStatic( treeData, proj_cost_id );
-            // const info = { target_cost : temp.target_cost, plan_amount : temp.plan_amount, left_amount : temp.left_amount };
             this.setState({ staticInfo : temp, proj_cost_id : proj_cost_id });
+            this.getData(proj_cost_id);
         }
     };
 
@@ -152,7 +163,6 @@ class CostMoveMange extends PureComponent{
         this.setState({ selectedRowKeys: [], selectedRows: [] });
     };
 
-
     renderDataShow(){
 
         const { staticInfo }= this.state;
@@ -177,9 +187,51 @@ class CostMoveMange extends PureComponent{
         )
     };
 
-    renderFormInfo(){
+    renderSearchForm(){
 
-    };
+        const {
+            form: { getFieldDecorator },
+        } = this.props;
+
+        const formItemLayout = {
+            labelCol: {
+                span: 6,
+            },
+            wrapperCol: {
+                span: 18,
+            },
+        };
+        const col = {
+            sm: 24,
+            md: 12,
+        };
+        return (
+            <Form onSubmit={this.handleSearchFormSubmit} className={styles.form}  style={{ marginBottom: '10px' }}>
+                <Row gutter={16}>
+                    <Col {...col}>
+                        <Form.Item {...formItemLayout} label="合同名称">
+                            {getFieldDecorator('name', {
+                                initialValue: '',
+                            })(<Input placeholder="请输入合同名称" />)}
+                        </Form.Item>
+                    </Col>
+                    <Col {...col}>
+                    <div style={{ overflow: 'hidden' }}>
+                        <span style={{ marginBottom: 24 }}>
+                            <Button type="primary" htmlType="submit">
+                            查询
+                            </Button>
+                            <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                            重置
+                            </Button>
+                        </span>
+                    </div>
+                </Col>
+                </Row>
+            </Form>
+        );
+
+    }
 
     //调动操作
     costMove = () => {
@@ -206,6 +258,7 @@ class CostMoveMange extends PureComponent{
             selectedRowKeys,
             selectedRows,
             formVisible,
+            loading,
         } = this.state;
 
         const {
@@ -223,9 +276,9 @@ class CostMoveMange extends PureComponent{
         const columns = [
             {
                 title : '合同名称',
-                dataIndex : 'name',
-                key : 'name',
-                width : 150,
+                dataIndex : 'contract_name',
+                key : 'contract_name',
+                width : 200,
             },
             {
                 title : '合同类别',
@@ -243,6 +296,34 @@ class CostMoveMange extends PureComponent{
                         return '';
                     }
                 }
+            },
+            {
+                title : '合同规划金额',
+                dataIndex : 'contract_plan_amount',
+                key : 'contract_plan_amount',
+                width:100,
+                align : 'center',
+            },
+            {
+                title : '合同预估金额',
+                dataIndex : 'contract_estimate_amount',
+                key : 'contract_estimate_amount',
+                width : 100,
+                align : 'center',
+            },
+            {
+                title : '合同签订金额',
+                dataIndex : 'contract_signed_amount',
+                key : 'contract_signed_amount',
+                width : 100,
+                align : 'center',
+            },
+            {
+                title : '余额',
+                dataIndex : 'balance',
+                key : 'balance',
+                width : 100,
+                align :'center',
             },
         ];
 
@@ -283,6 +364,9 @@ class CostMoveMange extends PureComponent{
                                             <div style={{ marginBottom : 20 }}>{this.renderDataShow()}</div>
                                         }
                                         {
+                                            this.renderSearchForm()
+                                        }
+                                        {
                                             selectedRows.length === 1 &&
                                             <Button style={{ marginBottom : 15}} type="primary" onClick={this.costMove}>
                                                 调动
@@ -291,11 +375,12 @@ class CostMoveMange extends PureComponent{
                                         <Table
                                             columns = { columns }
                                             rowSelection={{ selectedRowKeys, onChange: this.handleTableSelectRow }}
-                                            rowKey = { record => record.record_id}
+                                            rowKey = { record => record.contract_id}
                                             scroll = { {x :1000,y : 700}  }
                                             bordered = { true }
                                             dataSource = { data }
                                             pagination = {false}
+                                            loading = { loading }
                                         >
             
                                         </Table>

@@ -20,14 +20,14 @@ class DynamicCostProjDetail extends PureComponent{
 
     state = {
         info : null,
+        temp_info : null,
     }
 
     async componentWillMount(){
 
-        const { info, projectID } = this.props;
-        const param = { projectID : projectID };
-        //TODO查询接口,最新的数据。
-        getDynamicCostProjDetail(info,param).then(res => {
+        const { info } = this.props;
+        this.setState({ temp_info : info });
+        getDynamicCostProjDetail(info).then(res => {
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
@@ -70,10 +70,9 @@ class DynamicCostProjDetail extends PureComponent{
 
     render(){
 
-        const { formVisiable, cancel } = this.props;
+        const { formVisiable, cancel, projectID } = this.props;
 
-        const { info } = this.state;
-        const { projectID } = this.props;
+        const { info, temp_info } = this.state;
         
         return (
             <Modal
@@ -93,7 +92,7 @@ class DynamicCostProjDetail extends PureComponent{
                 bodyStyle={{ height: 700, overflowY: 'scroll' }}
             >
                 {info &&  this.renderFirstView()}
-                <Card bordered={false}>
+                <Card bordered={true}>
                     {info && <Tabs defaultActiveKey="1">
                         <TabPane tab="结算信息" key="1">
                             <SettleInformation subject_id={info.proj_cost_id} projectID={projectID}></SettleInformation>
@@ -105,11 +104,14 @@ class DynamicCostProjDetail extends PureComponent{
                             <TransitInformation subject_id={info.proj_cost_id} projectID={projectID}></TransitInformation>
                         </TabPane>
                         <TabPane tab="规划信息" key="4">
-                            <PlaneInformation subject_id={info.proj_cost_id} projectID={projectID}></PlaneInformation>
+                            <PlaneInformation subject_id={info.proj_cost_id}></PlaneInformation>
                         </TabPane>
-                        <TabPane tab="调动信息" key="5">
+                        {
+                          !temp_info.children && 
+                          <TabPane tab="调动信息" key="5">
                             <TransferInformation subject_id={info.proj_cost_id}></TransferInformation>
                         </TabPane>
+                        }
                     </Tabs> }
                 </Card>
             </Modal>

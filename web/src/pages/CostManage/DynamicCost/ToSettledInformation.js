@@ -3,18 +3,21 @@ import { Table, Form, Input, Row, Col, Button } from 'antd';
 import { queryTree } from '@/services/dictionary';
 import DicSelect from '@/components/DictionaryNew/DicSelect';
 import { getDynamicCostProjUnsetteled } from '@/services/dynamicCostProj';
+import ContractDetail from './ContractDetails';
 
 @Form.create()
-class ToSettledInformation extends PureComponent{
+class ToSettledInformation extends PureComponent{//待结算信息
 
     state = {
         dataList : [],
         contract_type : [],
         loading : true,
+        formVisiable : false,
+        info : null,
     }
 
     componentWillMount(){
-        const { subject_id, projectID } = this.props;
+        const { subject_id } = this.props;
 
         queryTree({ q: 'tree', parent_code: "contract$#contractType", level: 0 }).then(res=>{
             if(res && res.error){
@@ -22,27 +25,31 @@ class ToSettledInformation extends PureComponent{
                 this.setState({ loading : false });
             }else{
                 this.setState({ contract_type : res.list });
-                const param = { projectID : projectID };
-                this.getData(subject_id,param);
+                this.getData(subject_id);
             }
         });  
     };
 
-    getData = (subject_id,param)=> {
-        getDynamicCostProjUnsetteled(subject_id,param).then( res => {
+    getData = (subject_id)=> {
+        getDynamicCostProjUnsetteled(subject_id).then( res => {
             this.setState({ loading : false });
             if( res && res.error ){
                 console.log(res.error.message);
             }else{
-                this.setState({ dataList : res});
+                this.setState({ dataList : res.list});
             }
         })
     };
     
 
     contractDetail = record => {
-        console.log('待结算合同详情',record);
+        console.log('待结算合同详情');
+        this.setState({ formVisiable : true, info : record });
     };
+
+    cancelConDetail = ()=> {
+        this.setState({ formVisiable : false, info : null });
+    }
 
     handleSearchFormSubmit = e => {
         if (e) {
@@ -145,7 +152,13 @@ class ToSettledInformation extends PureComponent{
             dataList,
             contract_type,
             loading,
+            formVisiable,
+            info,
         } = this.state;
+
+        const {
+            projectID,
+        } = this.props;
 
         const columns = [
             {
@@ -153,7 +166,7 @@ class ToSettledInformation extends PureComponent{
                 dataIndex : 'contract_name',
                 key : 'contract_name',
                 width : 200,
-                align : 'center',
+                // align : 'center',
                 render : (data,record) => {
                     return <a onClick={()=> { this.contractDetail(record)}}>{data}</a>
                 }
@@ -211,6 +224,10 @@ class ToSettledInformation extends PureComponent{
                 >
 
                 </Table>
+                {
+                    formVisiable &&
+                    <ContractDetail formVisiable={ formVisiable } cancel={this.cancelConDetail} info={info} projectID={projectID}></ContractDetail>
+                }
             </div>
         )
     }

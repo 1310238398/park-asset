@@ -182,7 +182,6 @@ class ProjectCostManage extends PureComponent {
     handleOnExpand = (expanded, record) => {  
         const { expandedRowKeys } = this.state;
         let expandHang = [...expandedRowKeys];
-        let flag = false;
         if (expanded) {  
             if(expandHang.indexOf(record.record_id)==-1){
                 expandHang.push(record.record_id);

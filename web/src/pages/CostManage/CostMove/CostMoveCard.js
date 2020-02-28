@@ -6,9 +6,12 @@ class CostMoveCard extends PureComponent{
 
     state = {
         treeData : [],
+        tranf_balance : null,
     }
 
     componentWillMount(){
+        const { contractInfo } = this.props;
+        this.setState({ tranf_balance : contractInfo.balance });
         //查询列表数据得到数据进行测试
     }
 
@@ -33,6 +36,8 @@ class CostMoveCard extends PureComponent{
             staticInfo,
             contractInfo
         } =  this.props;
+
+        const { tranf_balance } = this.state;
 
         const formItemLayout = {
             labelCol: {
@@ -83,19 +88,19 @@ class CostMoveCard extends PureComponent{
                     <Row>
                         <Col md={12} sm={24}>
                             <Form.Item {...formItemLayout} label='合同名称'>
-                                <Input value={'合同名称'} readOnly={true}></Input>
+                                <Input value={contractInfo.contract_name} readOnly={true}></Input>
                             </Form.Item>
                         </Col>
                         <Col md={12} sm={24}>
                             <Form.Item {...formItemLayout} label='余额'>
-                                <Input value={'余额'} readOnly={true}></Input>
+                                <Input value={contractInfo.balance} readOnly={true}></Input>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col md={12} sm={24}>
                             <Form.Item {...formItemLayout} label='调整后余额'>
-                                <Input value={'调整余额'} readOnly={true}></Input>
+                                <Input value={tranf_balance} readOnly={true}></Input>
                             </Form.Item>
                         </Col>
                     </Row>
