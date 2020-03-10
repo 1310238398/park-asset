@@ -4,7 +4,7 @@
 
 ```
 cd ~/go/src
-git clone https://gogs.xiaoyuanjijiehao.com/jingutong/gxt-park-assets.git
+git clone https://github.com/1310238398/park-asset.git
 ```
 
 ## 编译并运行
