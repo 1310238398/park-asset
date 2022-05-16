@@ -27,15 +27,23 @@ github.com/davecgh/go-spew/spew
 github.com/dgrijalva/jwt-go
 # github.com/gin-contrib/cors v1.3.0
 github.com/gin-contrib/cors
-# github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3
+# github.com/gin-contrib/sse v0.1.0
 github.com/gin-contrib/sse
-# github.com/gin-gonic/gin v1.4.0
+# github.com/gin-gonic/gin v1.7.0
 github.com/gin-gonic/gin
 github.com/gin-gonic/gin/binding
+github.com/gin-gonic/gin/internal/bytesconv
 github.com/gin-gonic/gin/internal/json
 github.com/gin-gonic/gin/render
 # github.com/go-ini/ini v1.46.0
 github.com/go-ini/ini
+# github.com/go-playground/locales v0.13.0
+github.com/go-playground/locales
+github.com/go-playground/locales/currency
+# github.com/go-playground/universal-translator v0.17.0
+github.com/go-playground/universal-translator
+# github.com/go-playground/validator/v10 v10.4.1
+github.com/go-playground/validator/v10
 # github.com/go-redis/redis v6.15.5+incompatible
 github.com/go-redis/redis
 github.com/go-redis/redis/internal
@@ -48,7 +56,7 @@ github.com/go-redis/redis/internal/util
 github.com/go-redis/redis_rate
 # github.com/go-sql-driver/mysql v1.4.1
 github.com/go-sql-driver/mysql
-# github.com/golang/protobuf v1.3.1
+# github.com/golang/protobuf v1.3.3
 github.com/golang/protobuf/proto
 # github.com/google/gops v0.3.6
 github.com/google/gops/agent
@@ -61,13 +69,15 @@ github.com/jinzhu/gorm
 github.com/jinzhu/gorm/dialects/mysql
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
-# github.com/json-iterator/go v1.1.7
+# github.com/json-iterator/go v1.1.9
 github.com/json-iterator/go
 # github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1
 github.com/kardianos/osext
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/mattn/go-isatty v0.0.7
+# github.com/leodido/go-urn v1.2.0
+github.com/leodido/go-urn
+# github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
 # github.com/minio/minio-go v6.0.14+incompatible
 github.com/minio/minio-go
@@ -109,23 +119,24 @@ github.com/tidwall/rtree
 github.com/tidwall/rtree/base
 # github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563
 github.com/tidwall/tinyqueue
-# github.com/ugorji/go v1.1.4
+# github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
 # go.uber.org/dig v0.0.0-20190614173321-8a567bf6562e
 go.uber.org/dig
 go.uber.org/dig/internal/digreflect
 go.uber.org/dig/internal/dot
-# golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
+# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 golang.org/x/crypto/argon2
 golang.org/x/crypto/blake2b
+golang.org/x/crypto/sha3
 # golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
 golang.org/x/net/http/httpguts
 golang.org/x/net/idna
 golang.org/x/net/publicsuffix
-# golang.org/x/sys v0.0.0-20190507160741-ecd444e8653b
+# golang.org/x/sys v0.0.0-20200116001909-b77594299b42
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+# golang.org/x/text v0.3.2
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
@@ -134,7 +145,5 @@ golang.org/x/text/unicode/norm
 golang.org/x/time/rate
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine/cloudsql
-# gopkg.in/go-playground/validator.v8 v8.18.2
-gopkg.in/go-playground/validator.v8
-# gopkg.in/yaml.v2 v2.2.2
+# gopkg.in/yaml.v2 v2.2.8
 gopkg.in/yaml.v2
